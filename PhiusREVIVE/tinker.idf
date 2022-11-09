@@ -1,0 +1,14 @@
+!- Windows Line endings 
+
+CURVE:CUBIC,
+    CombinedPowerAndFanEff,    !- Name
+    0,                        !- Coefficient1 Constant
+    0.027411,                 !- Coefficient2 x
+    0.00874,                  !- Coefficient3 x2
+    0.969563,                 !- Coefficient4 x3
+    0.5,                      !- Minimum Value of x
+    1.5,                      !- Maximum Value of x
+    0.01,                     !- Minimum Curve Output
+    1.5,                      !- Maximum Curve Output
+    Dimensionless,            !- Input Unit Type for X
+    Dimensionless;            !- Output Unit Type

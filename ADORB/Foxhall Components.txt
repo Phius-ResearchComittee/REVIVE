@@ -1,0 +1,212 @@
+Item Component
+Estimated
+Quantity Unit
+Estimated Unit
+Cost
+Estimated Total
+Cost
+Year Last
+Done
+Frequency or
+Normal
+Service Life
+Estimated
+Remaining
+Useful Life
+Next
+Year
+Component
+Assessment in
+Current
+Dollars, without
+1.00 Parking Garage
+1.01 Concrete repairs, B1 level# 1 AL $ 50,000 $ 50,000 2011 12 5 2023 $ 4,167
+1.02 Vehicle traffic coating B1 level, first time# 23,000 SF $ 6.00 $ 138,000 - one_time_project 5 2023 $ -
+1.03 Vehicle traffic coating, B1 level, recoat# 23,000 SF $ 4.00 $ 92,000 - 12 17 2035 $ 7,667
+1.04 Concrete repairs, B2 level# 1 AL $ 40,000 $ 40,000 2011 20 13 2031 $ 2,000
+1.05 Vehicle traffic coating B2 level, first time# 18,000 SF $ 6.00 $ 108,000 - one_time_project 6 2024 $ -
+1.06 Vehicle traffic coating, B2 level, recoat# 18,000 SF $ 4.00 $ 72,000 - 12 18 2036 $ 6,000
+1.07 Paint garage# 1 LS $ 80,000 $ 80,000 - 20 6 2024 $ 4,000
+1.08 Garage door replacement# 2 EA $ 15,000 $ 30,000 - 15 5 2023 $ 2,000
+1.09 Garage door repair allowance# 1 AL $ 5,000 $ 5,000 - 5 10 2028 $ 1,000
+1.10 Loading dock doors replacement# 1 LS $ 15,000 $ 15,000 - 15 4 2022 $ 1,000
+1.11 Garage railings# 1 AL $ 5,000 $ 5,000 - 40 6 2024 $ 125
+1.12 Garage exhaust fans# 1 AL $ 5,000 $ 5,000 - 10 5 2023 $ 500
+1.13 Wall leak repair allowance# 1 AL $ 6,000 $ 6,000 - 10 1 2019 $ 600
+1.14 Garage expansion joint seal# 80 LF $ 200 $ 16,000 - 15 5 2023 $ 1,067
+1.15 Garage steel beams and fireproofing# 1 AL $ 10,000 $ 10,000 1972 55 6 2024 $ 182
+2.00 Site Features
+2.01 Gate house exterior refurbish# 1 AL $ 15,000 $ 15,000 - 20 6 2024 $ 750
+2.02 Gate house interior refurbish# 1 AL $ 15,000 $ 15,000 - 20 6 2024 $ 750
+2.03 Board room building exterior repairs# 1 AL $ 80,000 $ 80,000 - 20 4 2022 $ 4,000
+2.04 Board room building interior refurbish# 1 AL $ 50,000 $ 50,000 - 20 4 2022 $ 2,500
+2.05 Water feature pump and filter# 1 LS $ 5,000 $ 5,000 - 15 3 2021 $ 333
+2.06 Water feature piping# 1 AL $ 30,000 $ 30,000 1972 55 9 2027 $ 545
+2.07 Upper basin wall and basin repairs# 1 AL $ 7,500 $ 7,500 - 10 6 2024 $ 750
+2.08 Upper basin coating# 1,000 SF $ 5.00 $ 5,000 2014 10 6 2024 $ 500
+2.09 Stone wall repairs# 1 AL $ 25,000 $ 25,000 - 10 1 2019 $ 2,500
+2.10 Reflecting pool basin repairs# 1 AL $ 10,000 $ 10,000 - 10 6 2024 $ 1,000
+2.11 Reflecting pool basin coating# 10,000 SF $ 5.00 $ 50,000 2014 10 6 2024 $ 5,000
+2.12 Tennis court fence# 400 LF $ 50 $ 20,000 - 40 14 2032 $ 500
+2.13 Tennis court nets and wind screens# 1 LS $ 5,000 $ 5,000 - 15 10 2028 $ 333
+2.14 Tennis court resurfacing# 1 LS $ 35,000 $ 35,000 2013 15 10 2028 $ 2,333
+2.15 Tennis court reconstruction# 1 LS $ 150,000 $ 150,000 1972 60 14 2032 $ 2,500
+2.16 Property perimeter fence# 200 LF $ 50 $ 10,000 1972 55 9 2027 $ 182
+2.17 Signage and site fixtures# 1 AL $ 10,000 $ 10,000 - 20 6 2024 $ 500
+2.18 Drainage improvement allowance# 1 AL $ 25,000 $ 25,000 - 20 8 2026 $ 1,250
+2.19 Tree maintenance and repair allowance# 1 AL $ 30,000 $ 30,000 - 20 3 2021 $ 1,500
+2.20 Landscape restoration allowance# 1 AL $ 30,000 $ 30,000 - 20 4 2022 $ 1,500
+2.21 Irrigation allowance# 1 AL $ 15,000 $ 15,000 2012 15 9 2027 $ 1,000
+2.22 Handrails# 1 AL $ 10,000 $ 10,000 - 10 8 2026 $ 1,000
+2.23 Sidewalk replacement# 1 AL $ 25,000 $ 25,000 - 10 3 2021 $ 2,500
+2.24 Front asphalt pavement sealing# 2,600 SY $ 3.00 $ 7,800 2016 6 4 2022 $ 1,300
+2.25 Service area asphalt pavement sealing# 850 SY $ 3.00 $ 2,550 2016 6 4 2022 $ 425
+2.26 Front asphalt milling and repaving# 2,600 SY $ 25 $ 65,000 - 24 16 2034 $ 2,708
+2.27 Service area asphalt milling and repaving# 850 SY $ 25 $ 21,250 - 24 16 2034 $ 885
+2.28 Curb and gutter replacement allowance# 1 AL $ 25,000 $ 25,000 - 24 16 2034 $ 1,042
+2.29 Trench drains# 1 AL $ 25,000 $ 25,000 - 20 16 2034 $ 1,250
+2.30 Site master plan# 1 AL $ 5,000 $ 5,000 - 20 2 2020 $ 250
+2.31 Stormwater system repair allowance# 1 AL $ 40,000 $ 40,000 - 15 10 2028 $ 2,667
+2.32 Storage shed# 1 AL $ 20,000 $ 20,000 - 30 2 2020 $ 667
+3.00 Pool Facilities
+3.01 Whitecoat pool# 1 LS $ 10,000 $ 10,000 2018 8 8 2026 $ 1,250
+3.02 Tile and coping# 150 LF $ 80 $ 12,000 2018 25 25 2043 $ 480
+3.03 Pool deck coating# 3,000 SF $ 5.00 $ 15,000 2018 10 10 2028 $ 1,500
+3.04 Pool pump and filters# 1 LS $ 5,000 $ 5,000 2018 15 15 2033 $ 333
+3.05 Pool piping# 1 LS $ 30,000 $ 30,000 - 50 20 2038 $ 600
+3.06 Redecorate pool area# 1 AL $ 10,000 $ 10,000 2018 12 12 2030 $ 833
+3.07 Pool heat exchanger# 1 EA $ 10,000 $ 10,000 - 35 7 2025 $ 286
+3.08 Pool furniture allowance# 1 AL $ 8,000 $ 8,000 2018 8 8 2026 $ 1,000
+3.09 Pool deck replacement# 3,000 SF $ 25 $ 75,000 2018 30 20 2038 $ 2,500
+3.10 Pool fittings and fixtures# 1 LS $ 20,000 $ 20,000 2018 30 20 2038 $ 667
+3.11 Pool doors and windows# 1 LS $ 80,000 $ 80,000 1972 50 4 2022 $ 1,600
+3.12 Pool area lighting# 1 LS $ 25,000 $ 25,000 2018 15 15 2033 $ 1,667
+4.00 Roofing
+4.01 Gate house roof# 1 LS $ 6,000 $ 6,000 1972 50 4 2022 $ 120
+4.02 Board room building roof# 3,000 SF $ 15 $ 45,000 2011 20 13 2031 $ 2,250
+4.03 Main roof replacement# 28,000 SF $ 35 $ 980,000 1990 35 7 2025 $ 28,000
+4.04 Main roof repairs# 1 AL $ 10,000 $ 10,000 - 10 17 2035 $ 1,000
+4.05 Roof expansion joint# 80 LF $ 70 $ 5,600 - 15 7 2025 $ 373
+4.06 Cooling tower roof replacement# 1,200 SF $ 40 $ 48,000 1990 25 7 2025 $ 1,920
+4.07 Cooling tower roof repairs# 1 AL $ 3,000 $ 3,000 - 10 1 2019 $ 300
+4.08 West stairway roof replacement# 1,200 SF $ 30 $ 36,000 1990 35 7 2025 $ 1,029
+4.09 West stairway roof repairs# 1 AL $ 2,000 $ 2,000 - 15 17 2035 $ 133
+4.10 Roof fall protection# 1 AL $ 20,000 $ 20,000 - 15 1 2019 $ 1,333
+4.11 Roof anchors# 1 LS $ 250,000 $ 250,000 - 35 7 2025 $ 7,143
+4.12 Entrance canopy roof# 1,000 SF $ 20 $ 20,000 - 20 12 2030 $ 1,000
+4.13 Roof over pool area# 1 LS $ 8,000 $ 8,000 1972 50 4 2022 $ 160
+4.14 Waterfall equipment room roof# 1 LS $ 10,000 $ 10,000 - 30 6 2024 $ 333
+5.00 Building Exterior
+5.01 Exterior maintenance program# 1 LS $ 600,000 $ 600,000 - one_time_project 2 2020 $ -
+5.02 Replace exterior caulk# 55,000 LF $ 7.00 $ 385,000 - 15 11 2029 $ 25,667
+5.03 Clean exterior walls# 1 LS $ 300,000 $ 300,000 - 15 11 2029 $ 20,000
+5.04 Concrete repair allowance# 1 AL $ 300,000 $ 300,000 - 15 11 2029 $ 20,000
+5.05 Recoat balcony and terrace decks# 65,000 SF $ 8.00 $ 520,000 - 15 11 2029 $ 34,667
+5.06 Repair and paint balcony ceilings# 65,000 SF $ 5.00 $ 325,000 - 15 11 2029 $ 21,667
+5.07 Stucco repair allowance# 1 AL $ 50,000 $ 50,000 - 15 11 2029 $ 3,333
+5.08 Brick pointing allowance# 1 AL $ 50,000 $ 50,000 - 15 11 2029 $ 3,333
+5.09 Paint balcony railings# 1 LS $ 400,000 $ 400,000 - one_time_project 2 2020 $ -
+5.10 Replace balcony railings# 5,500 LF $ 200 $ 1,100,000 1972 55 21 2039 $ 20,000
+5.11 Replace residential windows and doors# 47,000 SF $ 70 $ 3,290,000 1972 55 21 2039 $ 59,818
+5.12 Replace curtainwall at elevator lobbies# 2,800 SF $ 85 $ 238,000 1972 55 11 2029 $ 4,327
+5.13 Replace other windows# 600 SF $ 75 $ 45,000 1972 55 11 2029 $ 818
+5.14 Replace main lobby doors and windows# 1 LS $ 60,000 $ 60,000 1972 55 11 2029 $ 1,091
+5.15 Stone walls at main entrance# 1 AL $ 50,000 $ 50,000 - 20 7 2025 $ 2,500
+5.16 Entrance canopy soffit# 1 AL $ 20,000 $ 20,000 - 15 7 2025 $ 1,333
+5.17 Terrace soffits# 1 AL $ 30,000 $ 30,000 - 15 21 2039 $ 2,000
+5.18 Paint exterior concrete# 1 LS $ 50,000 $ 50,000 - 15 21 2039 $ 3,333
+5.19 Post tensioned concrete repair allowance# 1 AL $ 40,000 $ 40,000 - 15 21 2039 $ 2,667
+5.20 Cooling tower screen walls# 1 AL $ 20,000 $ 20,000 1972 40 6 2024 $ 500
+6.00 Mechanical Systems
+6.01 Refurbish cooling towers# 1 AL $ 65,000 $ 65,000 - 30 48 2066 $ 2,167
+6.02 Replace cooling towers# 2 EA $ 150,000 $ 300,000 2006 30 18 2036 $ 10,000
+6.03 Refurbish chillers# 1 AL $ 30,000 $ 30,000 - 30 36 2054 $ 1,000
+6.04 Replace chillers# 2 EA $ 250,000 $ 500,000 1994 30 6 2024 $ 16,667
+6.05 Refurbish boilers# 1 AL $ 30,000 $ 30,000 - 15 18 2036 $ 2,000
+6.06 Replace boilers# 2 EA $ 550,000 $ 1,100,000 1972 30 3 2021 $ 36,667
+6.07 Heat exchanger 1 - basement areas# 1 EA $ 35,000 $ 35,000 1972 30 4 2022 $ 1,167
+6.08 Heat exchanger 2 - residential FCUs# 1 EA $ 50,000 $ 50,000 1972 30 5 2023 $ 1,667
+6.09 Heat exchanger 3 - domestic hot water# 0 EA $ 35,000 $ 35,000 1972 - - - $ -
+6.10 Heat exchanger 4 - swimming pool# 1 EA $ 30,000 $ 30,000 1972 30 7 2025 $ 1,000
+6.11 Steam condensate tank# 1 EA $ 40,000 $ 40,000 2016 40 38 2056 $ 1,000
+6.12 Chilled water pumps# 2 EA $ 15,000 $ 30,000 - 30 2 2020 $ 1,000
+6.13 Condenser water pumps# 2 EA $ 15,000 $ 30,000 - 30 4 2022 $ 1,000
+6.14 Heating hot water pumps# 2 EA $ 15,000 $ 30,000 - 30 6 2024 $ 1,000
+6.15 Heating hot water loop pumps# 2 EA $ 8,000 $ 16,000 - 30 8 2026 $ 533
+6.16 HVAC control system# 1 LS $ 40,000 $ 40,000 - 30 10 2028 $ 1,333
+6.17 AHU-1 - west hallways and residences# 1 EA $ 100,000 $ 100,000 2008 30 20 2038 $ 3,333
+6.18 AHU-2 - east hallways and residences# 1 EA $ 100,000 $ 100,000 2008 30 20 2038 $ 3,333
+6.19 AHU-3 - B3 level# 1 EA $ 50,000 $ 50,000 2007 30 19 2037 $ 1,667
+6.20 AHU-4 - swimming pool# 1 EA $ 75,000 $ 75,000 2007 30 19 2037 $ 2,500
+6.21 Steam injection humidifiers# 2 EA $ 8,000 $ 16,000 2000 25 7 2025 $ 640
+6.22 Roof level exhaust fans# 1 LS $ 360,000 $ 360,000 - 30 1 2019 $ 12,000
+6.23 Mechanical room exhaust fans# 1 AL $ 5,000 $ 5,000 - 10 4 2022 $ 500
+6.24 Valve replacement allowance# 1 AL $ 20,000 $ 20,000 - 5 2 2020 $ 4,000
+6.25 East system water piping# 1 LS $ 800,000 $ 800,000 1972 55 9 2027 $ 14,545
+6.26 West system water piping# 1 LS $ 700,000 $ 700,000 1972 55 9 2027 $ 12,727
+6.27 Condenser water piping# 1 LS $ 60,000 $ 60,000 1972 60 14 2032 $ 1,000
+6.28 Boiler room piping and valves# 1 LS $ 100,000 $ 100,000 1972 65 19 2037 $ 1,538
+6.29 Boiler breeching# 1 LS $ 40,000 $ 40,000 1972 45 3 2021 $ 889
+6.30 Boiler flue# 1 AL $ 50,000 $ 50,000 1972 50 5 2023 $ 1,000
+6.31 Boiler room ventilation fan# 1 EA $ 25,000 $ 25,000 - 35 11 2029 $ 714
+6.32 Residential fan coil units# 549 EA $ 5,000 $ 2,745,000 2014 30 26 2044 $ 91,500
+6.33 Common area fan coil units# 18 EA $ 5,000 $ 90,000 2015 30 27 2045 $ 3,000
+6.34 AHU & pipe modifications for new system# 1 LS $ 50,000 $ 50,000 - one_time_project 3 2021 $ -
+6.35 Fuel oil tank# 1 EA $ 60,000 $ 60,000 - 40 12 2030 $ 1,500
+6.36 Fuel oil transfer pumps and piping# 1 LS $ 25,000 $ 25,000 - 30 10 2028 $ 833
+6.37 Indoor air ducts# 1 AL $ 150,000 $ 150,000 1972 65 19 2037 $ 2,308
+6.38 Air balancing# 1 AL $ 10,000 $ 10,000 - 10 2 2020 $ 1,000
+6.39 Board room building HVAC# 1 LS $ 25,000 $ 25,000 2000 25 7 2025 $ 1,000
+6.40 Elevator machine room HVAC# 2 EA $ 20,000 $ 40,000 2009 20 11 2029 $ 2,000
+7.00 Electrical Systems
+7.01 High voltage switchgear# 1 LS $ 550,000 $ 550,000 1972 60 14 2032 $ 9,167
+7.02 Dry transformers# 1 LS $ 50,000 $ 50,000 1972 60 14 2032 $ 833
+7.03 Common element load centers# 1 LS $ 250,000 $ 250,000 1972 60 14 2032 $ 4,167
+7.04 EV charging station equipment# 1 LS $ 30,000 $ 30,000 2018 30 30 2048 $ 1,000
+7.05 Common element wiring# 1 LS $ 250,000 $ 250,000 1972 65 19 2037 $ 3,846
+7.06 Emergency generator# 1 EA $ 120,000 $ 120,000 2009 30 21 2039 $ 4,000
+7.07 Transfer switches# 1 LS $ 35,000 $ 35,000 2009 30 21 2039 $ 1,167
+7.08 Interior lighting# 1 AL $ 25,000 $ 25,000 - 30 12 2030 $ 833
+7.09 Garage lighting# 1 AL $ 15,000 $ 15,000 - 30 10 2028 $ 500
+7.10 Exterior lighting# 1 AL $ 25,000 $ 25,000 - 20 8 2026 $ 1,250
+7.11 Electric system preventive maintenance# 1 AL $ 10,000 $ 10,000 - 3 2 2020 $ 3,333
+7.12 Electric unit heaters# 1 AL $ 5,000 $ 5,000 - 10 8 2026 $ 500
+8.00 Plumbing Systems
+8.01 Domestic water booster pumps# 1 LS $ 40,000 $ 40,000 2007 25 14 2032 $ 1,600
+8.02 Domestic water circulating pump# 1 EA $ 5,000 $ 5,000 - 15 8 2026 $ 333
+8.03 Domestic water pressure tank# 1 EA $ 15,000 $ 15,000 2007 35 24 2042 $ 429
+8.04 Domestic hot water boilers & tank# 1 LS $ 180,000 $ 180,000 - 30 3 2021 $ 6,000
+8.05 Water main# 1 EA $ 40,000 $ 40,000 1972 65 19 2037 $ 615
+8.06 Domestic water distribution pipes# 1 LS $ 1,200,000 $ 1,200,000 1972 55 9 2027 $ 21,818
+8.07 Sanitary drain pipe risers# 1 LS $ 1,200,000 $ 1,200,000 1972 60 14 2032 $ 20,000
+8.08 Storm water drain risers# 1 LS $ 200,000 $ 200,000 1972 60 14 2032 $ 3,333
+8.09 Storm and sanitary drain main pipes# 1 AL $ 50,000 $ 50,000 1972 10 6 2024 $ 5,000
+8.10 Condensate drain pipes# 1 LS $ 600,000 $ 600,000 1972 55 9 2027 $ 10,909
+8.11 Dry valves for garage sprinklers# 1 LS $ 30,000 $ 30,000 2017 15 14 2032 $ 2,000
+8.12 Garage sprinkler pipes# 1 LS $ 150,000 $ 150,000 1972 55 9 2027 $ 2,727
+8.13 Gas pipe system# 1 AL $ 50,000 $ 50,000 1972 70 24 2042 $ 714
+9.00 Miscellaneous Equipment
+9.01 Elevator hoisting equipment and controls# 6 EA $ 180,000 $ 1,080,000 2009 40 31 2049 $ 27,000
+9.02 Elevator door equipment# 6 EA $ 35,000 $ 210,000 2009 20 11 2029 $ 10,500
+9.03 Elevator cab redecoration allowance# 6 EA $ 15,000 $ 90,000 2009 20 11 2029 $ 4,500
+9.04 Fire alarm control panels# 1 AL $ 40,000 $ 40,000 2017 20 19 2037 $ 2,000
+9.05 Fire alarm system renovation# 1 AL $ 500,000 $ 500,000 2017 40 39 2057 $ 12,500
+9.06 Surveillance equipment# 1 AL $ 30,000 $ 30,000 - 15 5 2023 $ 2,000
+9.07 Trash compactors# 2 EA $ 25,000 $ 50,000 1991 30 3 2021 $ 1,667
+9.08 Entry access systems# 1 LS $ 40,000 $ 40,000 - 30 8 2026 $ 1,333
+9.09 Trash chutes# 2 EA $ 40,000 $ 80,000 - 30 8 2026 $ 2,667
+10.00 Interior Finishes and Furnishing
+10.01 Hallway redecoration# 1 AL $ 500,000 $ 500,000 2018 15 15 2033 $ 33,333
+10.02 Elevator lobby redecoration# 1 AL $ 100,000 $ 100,000 2018 15 15 2033 $ 6,667
+10.03 Painting allowance# 1 AL $ 60,000 $ 60,000 2018 7 7 2025 $ 8,571
+10.04 Common area furnishing allowance# 1 AL $ 60,000 $ 60,000 2018 15 15 2033 $ 4,000
+10.05 Unit entry doors# 1 AL $ 250,000 $ 250,000 - 50 32 2050 $ 5,000
+10.06 Lobby renovation# 1 AL $ 120,000 $ 120,000 2018 20 20 2038 $ 6,000
+10.07 Management office redecoration# 1 AL $ 30,000 $ 30,000 - 20 4 2022 $ 1,500
+10.08 Service hallway redecoration# 1 AL $ 60,000 $ 60,000 - 15 10 2028 $ 4,000
+10.09 Locker and bath room renovation# 1 AL $ 80,000 $ 80,000 2018 20 20 2038 $ 4,000
+10.10 Sauna renovation# 1 AL $ 30,000 $ 30,000 2018 15 15 2033 $ 2,000
+10.11 Fitness center equipment replacement# 1 AL $ 15,000 $ 15,000 2018 7 7 2025 $ 2,143
+10.12 Fitness center redecoration# 1 AL $ 30,000 $ 30,000 2018 15 15 2033 $ 2,000
+10.13 Office equipment# 1 AL $ 5,000 $ 5,000 - 5 1 2019 $ 1,000
+10.14 Mailboxes# 1 LS $ 50,000 $ 50,000 - 40 10 2028 $ 1,250
