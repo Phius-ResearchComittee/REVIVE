@@ -1,4 +1,6 @@
-Program Version,EnergyPlus, Version 9.5.0-de239b2e5f, YMD=2022.11.04 21:31,
+Program Version,EnergyPlus, Version 9.5.0-de239b2e5f, YMD=2022.12.14 17:01,
+   ** Warning ** Version: in IDF="22.1" not the same as expected="9.5"
+   ** Warning ** Version: in IDF="22.1" not the same as expected="9.5"
    ************* Beginning Zone Sizing Calculations
    ** Warning ** Foundation:Kiva="SLAB DETAILS", no Interior Horizontal Insulation Material Name defined
    **   ~~~   ** Interior Horizontal Insulation Depth will not be used.
@@ -12,26 +14,8 @@ Program Version,EnergyPlus, Version 9.5.0-de239b2e5f, YMD=2022.11.04 21:31,
    ** Warning ** Entered Zone Volumes differ from calculated zone volume(s).
    **   ~~~   ** ...use Output:Diagnostics,DisplayExtraWarnings; to show more details on individual zones.
    ** Warning ** CalculateZoneVolume: 1 zone is not fully enclosed. For more details use:  Output:Diagnostics,DisplayExtrawarnings; 
-   ** Warning ** CheckUsedConstructions: There are 27 nominally unused constructions in input.
+   ** Warning ** CheckUsedConstructions: There are 29 nominally unused constructions in input.
    **   ~~~   ** For explicit details on each unused construction, use Output:Diagnostics,DisplayExtraWarnings;
-   ** Warning ** For object = Coil:Cooling:DX:SingleSpeed, name = "ZONE1PTHPDXCOOLCOIL"
-   **   ~~~   ** Calculated outlet air relative humidity greater than 1. The combination of
-   **   ~~~   ** rated air volume flow rate, total cooling capacity and sensible heat ratio yields coil exiting
-   **   ~~~   ** air conditions above the saturation curve. Possible fixes are to reduce the rated total cooling
-   **   ~~~   ** capacity, increase the rated air volume flow rate, or reduce the rated sensible heat ratio for this coil.
-   **   ~~~   ** If autosizing, it is recommended that all three of these values be autosized.
-   **   ~~~   ** ...Inputs used for calculating cooling coil bypass factor.
-   **   ~~~   ** ...Inlet Air Temperature     = 26.67 C
-   **   ~~~   ** ...Outlet Air Temperature    = 10.91 C
-   **   ~~~   ** ...Inlet Air Humidity Ratio  = 1.118470E-002 kgWater/kgDryAir
-   **   ~~~   ** ...Outlet Air Humidity Ratio = 9.080474E-003 kgWater/kgDryAir
-   **   ~~~   ** ...Total Cooling Capacity used in calculation = 2303.97 W
-   **   ~~~   ** ...Air Mass Flow Rate used in calculation     = 0.107324 kg/s
-   **   ~~~   ** ...Air Volume Flow Rate used in calculation   = 9.278067E-002 m3/s
-   **   ~~~   **  During Warmup, Environment=CHICAGO MIDWAY AP ANN HTG 99.6% CONDNS DB, at Simulation time=01/21 00:00 - 00:15
-   **   ~~~   ** CalcCBF: SHR adjusted to achieve valid outlet air properties and the simulation continues.
-   **   ~~~   ** CalcCBF: initial SHR = 0.75000
-   **   ~~~   ** CalcCBF: adjusted SHR = 0.70135
    ************* Testing Individual Branch Integrity
    ************* All Branches passed integrity testing
    ************* Testing Individual Supply Air Path Integrity
@@ -61,4 +45,4 @@ Program Version,EnergyPlus, Version 9.5.0-de239b2e5f, YMD=2022.11.04 21:31,
    *************
    ************* EnergyPlus Warmup Error Summary. During Warmup: 0 Warning; 0 Severe Errors.
    ************* EnergyPlus Sizing Error Summary. During Sizing: 7 Warning; 0 Severe Errors.
-   ************* EnergyPlus Completed Successfully-- 9 Warning; 0 Severe Errors; Elapsed Time=00hr 00min 16.29sec
+   ************* EnergyPlus Completed Successfully-- 10 Warning; 0 Severe Errors; Elapsed Time=00hr 00min  4.46sec

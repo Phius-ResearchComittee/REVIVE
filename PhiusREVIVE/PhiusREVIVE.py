@@ -1,7 +1,7 @@
 #=============================================================================================================================
 # PhiusREVIVE Program Tool
-# Updated 2022/10/18
-# v22.1.1
+# Updated 2022/12/13
+# v22.1.2
 #
 #
 
@@ -48,7 +48,7 @@ import eppy as eppy
 from eppy import modeleditor
 from eppy.modeleditor import IDF
 from eppy.runner.run_functions import runIDFs
-import PySimpleGUI as sg
+# import PySimpleGUI as sg
 from PIL import Image, ImageTk
 import os
 from eppy.results import readhtml # the eppy module with functions to read the html
@@ -62,7 +62,58 @@ pp = pprint.PrettyPrinter()
 
 
 #==============================================================================================================================
-# 2. Simple GUI Setup
+# 2.0 Function Definitions
+#==============================================================================================================================
+
+
+# This function builds E+ contstructions from different layers: 
+def constructionBuilder(constructionName, constructionLayers):
+    params = [x for x in constructionLayers]
+    layers = {}
+    count = 0
+    for i,param in enumerate(params):
+        count = count + 1
+        layers['Layer_' + str(count)] = param
+
+    layers.pop('Layer_1')
+    idf1.newidfobject('Construction',
+    Name = str(constructionName),
+    Outside_Layer = str(constructionLayers[0]),
+    **layers)
+
+# This function creates a compact schedule from an hourly list of values: 
+def hourSch(nameSch, hourlyValues):
+    params = [x for x in hourlyValues]
+    schValues = {}
+    count = 2
+    for i,param in enumerate(params):
+        count = count + 1
+        schValues['Field_' + str(count)] = ('Until: ' + str(i + 1) + ':00')
+        count = count + 1
+        schValues['Field_' + str(count)] = param
+    idf1.newidfobject('Schedule:Compact',
+    Name = str(nameSch),
+    Schedule_Type_Limits_Name = 'Fraction',
+    Field_1 = 'Through: 12/31',
+    Field_2 = 'For: AllDays',
+    **schValues)
+
+# Not sure of the purposed of this one completely - AM to check 
+def zeroSch(nameSch):
+    idf1.newidfobject('Schedule:Compact',
+        Name = str(nameSch),
+        Schedule_Type_Limits_Name = 'Fraction',
+        Field_1 = 'Through: 12/31',
+        Field_2 = 'For: SummerDesignDay',
+        Field_3 = 'Until: 24:00',
+        Field_4 = 1,
+        Field_5 = 'For: AllOtherDays',
+        Field_6 = 'Until: 24:00',
+        Field_7 = 0
+    ) 
+
+#==============================================================================================================================
+# 3.0 Option Databasing
 #==============================================================================================================================
 
 values = {}
@@ -75,13 +126,10 @@ envelopeOptions = ('Brick Wall', 'Ext_Door1', 'Thermal_Mass', 'Interior_Floor', 
 mechOptions = ('PTHP', 'Furnace with DX Cooling')
 
 #==============================================================================================================================
-# 2.1 Streamlit
+# 4.0 Streamlit
 #==============================================================================================================================
-#st.image('C:\Users\amitc\Documents\GitHub\Phius-REVIVE\Project Program\PhiusREVIVE\al_REVIVE_PILOT_logo.png')
 
-# image = Image.open('C:/Users/amitc/Documents/GitHub/Phius-REVIVE/Project Program/PhiusREVIVE/Phius-Logo_CMYK__Color.png')
-image = Image.open('C:/Users/amitc/Documents/GitHub/Phius-REVIVE/Project Program/PhiusREVIVE/al_REVIVE_PILOT_logo.png')
-
+image = Image.open('C:/Users/amitc_crl/OneDrive/Documents/GitHub/REVIVE/PhiusREVIVE/al_REVIVE_PILOT_logo.png')
 
 st.set_page_config(
     page_title="PhiusREVIVE",
@@ -92,17 +140,17 @@ st.set_page_config(
 st.image(image) #, width=5)
 st.title('Phius REVIVE Pilot Tool')
 
-tab1, tab2, tab4, tab3 = st.tabs(['Linked Files','Envelope Inputs', 'Mechanical Inputs', 'Results'])
+tab1, tab2, tab5, tab4, tab3 = st.tabs(['Linked Files','Envelope Inputs', 'Internal Gain Inputs', 'Mechanical Inputs', 'Results'])
 
 with st.form('Model Inputs'):
     run = st.form_submit_button('Run Analysis')
     with tab1:
         st.header('Linked Files')
-        values['iddFile'] = st.text_input('IDD File Location', 'C:/EnergyPlusV9-5-0/Energy+.idd')
-        values['StudyFolder'] = st.text_input('Study Folder Location', 'C:/Users/amitc/Documents/GitHub/Phius-REVIVE/Project Program/PhiusREVIVE/Testing/test1')
-        values['GEO'] =  st.text_input('Select IDF With Building Geometry', 'C:/Users/amitc/Documents/GitHub/Phius-REVIVE/Project Program/PhiusREVIVE/Testing/PNNL_SF_Geometry.idf')
-        values['DDY'] = st.text_input('Select DDY Location', 'C:/Users/amitc/Documents/GitHub/Phius-REVIVE/Project Program/PhiusREVIVE/Testing/USA_IL_Chicago-Midway.AP.725340_TMY3.ddy')
-        values['EPW'] = st.text_input('Select EPW File Location','C:/Users/amitc/Documents/GitHub/Phius-REVIVE/Project Program/PhiusREVIVE/Testing/USA_IL_Chicago-Midway.AP.725340_TMY3.epw')
+        values['iddFile'] = st.text_input('IDD File Location', 'C:/EnergyPlusV22-1-0/Energy+.idd')
+        values['StudyFolder'] = st.text_input('Study Folder Location', 'C:/Users/amitc_crl/OneDrive/Documents/GitHub/REVIVE/PhiusREVIVE/Testing/test1')
+        values['GEO'] =  st.text_input('Select IDF With Building Geometry', 'C:/Users/amitc_crl/OneDrive/Documents/GitHub/REVIVE/PhiusREVIVE/Testing/PNNL_SF_Geometry.idf')
+        values['DDY'] = st.text_input('Select DDY Location', 'C:/Users/amitc_crl/OneDrive/Documents/GitHub/REVIVE/PhiusREVIVE/Testing/USA_IL_Chicago-Midway.AP.725340_TMY3.ddy')
+        values['EPW'] = st.text_input('Select EPW File Location','C:/Users/amitc_crl/OneDrive/Documents/GitHub/REVIVE/PhiusREVIVE/Testing/USA_IL_Chicago-Midway.AP.725340_TMY3.epw')
     with tab2:
         st.header('Envelope Inputs')
         values['BaseFileName'] = st.text_input('Test File Name','test3')
@@ -110,7 +158,7 @@ with st.form('Model Inputs'):
         values['ICFA'] = st.number_input('ICFA [sf]', 2128)
         values['PartitionRatio'] = st.number_input('Parition to ICFA Ratio', 1.0)
         st.subheader('Envelope Details')
-        flowCoefficient = st.number_input('Flow Coefficient', 0.0040, format= '%f')
+        
 
         envelope1, envelope2 = st.columns(2)
         with envelope1:
@@ -121,34 +169,50 @@ with st.form('Model Inputs'):
             Ext_Door1_base = 'Ext_Door1'
             Ext_Window1_Base_Ufactor = (st.number_input('Set Baseline Ext Window 1 U-Factor'))*5.678263337
             Ext_Window1_Base_SHGC = (st.number_input('Set Baseline Ext Window 1 SHGC'))
+            flowCoefficient = st.number_input('Flow Coefficient Baseline')
             Int_Floor1 = 'Interior_Floor'
         with envelope2:
             st.subheader('Proposed Case')
             Ext_Wall1_prop = st.selectbox('Set Proposed Ext Wall 1', envelopeOptions)
             Ext_Roof1_prop = st.selectbox('Set Proposed Ext Roof 1', envelopeOptions)
             Ext_Floor1_prop = st.selectbox('Set Proposed Ext Floor 1', envelopeOptions)
+            Ext_Window1_prop_Ufactor = (st.number_input('Set Proposed Ext Window 1 U-Factor'))*5.678263337
+            Ext_Window1_prop_SHGC = (st.number_input('Set Proposed Ext Window 1 SHGC'))
+            flowCoefficient_prop = st.number_input('Flow Coefficient Proposed')
             Ext_Door1_prop = 'Brick Wall'
             Ext_Window1_prop = 'Brick Window'
-    with tab4:
-        st.header('Mechanical Inputs')
-        Mech_base = st.selectbox('Set baseline mechanical system', mechOptions)
-        if Mech_base == 'PTHP':
-            PTHP_HeatingCOP_base = st.number_input('Nominal heating COP', 3.0, format= '%f')
-            PTHP_CoolingCOP_base = st.number_input('Nominal cooling COP', 3.0, format= '%f')
-
-    # with tab3:
-    #     st.header('Results')
-    #     hourly = pd.read_csv(str(values['StudyFolder']) + '\eplusout.csv')
-    #     st.line_chart(hourly, x='Date/Time', y=['ZONE 1:Zone Air Temperature [C](Hourly)', 'Environment:Site Outdoor Air Drybulb Temperature [C](Hourly)'])
+    with tab5:
+        st.header('Internal Heat Gains')
+        ihg1, ihg2 = st.columns(2)
+        with ihg1:
+            fridge_base = st.number_input('Enter baseline refridgerator [kWh/yr]', 445)
+        with ihg2:
+            fridge_prop = st.number_input('Enter proposed refridgerator [kWh/yr]', 445+
+            )
 
     
+    with tab4:
+        st.header('Mechanical Inputs')
+        mech1, mech2 = st.columns(2)
+
+        with mech1:
+            Mech_base = st.selectbox('Set baseline mechanical system', mechOptions)
+            if Mech_base == 'PTHP':
+                PTHP_HeatingCOP_base = st.number_input('Baseline nominal heating COP', 3.0, format= '%f')
+                PTHP_CoolingCOP_base = st.number_input('Baseline cooling COP', 3.0, format= '%f')
+        with mech2:
+            Mech_prop = st.selectbox('Set proposed mechanical system', mechOptions)
+            if Mech_prop == 'PTHP':
+                PTHP_HeatingCOP_prop = st.number_input('Proposed nominal heating COP', 3.0, format= '%f')
+                PTHP_CoolingCOP_prop = st.number_input('Proposed nominal cooling COP', 3.0, format= '%f')
+
     st.write('#### Simulation Progress:')
     prog_bar = st.progress(0)
 
     
     if run:
         #==============================================================================================================================
-        # 3.i Testing inputs
+        # 5.i Testing inputs
         #==============================================================================================================================
 
         icfa = values['ICFA']
@@ -162,9 +226,9 @@ with st.form('Model Inputs'):
         lights = ((2 + 0.8 * (4 - 3 * fracHighEff / 3.7)*(455 + 0.8 * icfa) * 0.8) / 365) #power per day W use Phius calc
 
         iddfile = str(values['iddFile'])
-        IDF.setiddname(iddfile)
+        # IDF.setiddname(iddfile)
         #==============================================================================================================================
-        # 3. Import Files
+        # 6. Import Files
         #==============================================================================================================================
 
         BaseFileName = values['BaseFileName']
@@ -197,6 +261,10 @@ with st.form('Model Inputs'):
         windowNames = []
 
         #######DELETE####################
+
+        #==============================================================================================================================
+        # 6. Importing from geometry file
+        #==============================================================================================================================
 
         for zone in idfg.idfobjects['Zone']:
             idf1.copyidfobject(zone)
@@ -281,7 +349,7 @@ with st.form('Model Inputs'):
         #==============================================================================================================================
 
         idf1.newidfobject('Version',
-            Version_Identifier = 9.5
+            Version_Identifier = 22.1
             )
 
         idf1.newidfobject('SimulationControl',
@@ -792,19 +860,7 @@ with st.form('Model Inputs'):
             Outside_Layer = 'G05_25mm_wood'
             )
 
-        def constructionBuilder(constructionName, constructionLayers):
-            params = [x for x in constructionLayers]
-            layers = {}
-            count = 0
-            for i,param in enumerate(params):
-                count = count + 1
-                layers['Layer_' + str(count)] = param
-       
-            layers.pop('Layer_1')
-            idf1.newidfobject('Construction',
-            Name = str(constructionName),
-            Outside_Layer = str(constructionLayers[0]),
-            **layers)
+
 
         constructionBuilder('Interior_Floor', ['Plywood_(Douglas_Fir)_-_12.7mm', 'F05_Ceiling_air_space_resistance', 'G01a_19mm_gypsum_board'])
         constructionBuilder('Exterior_Slab_UnIns', ['M15_200mm_heavyweight_concrete'])
@@ -1422,22 +1478,9 @@ with st.form('Model Inputs'):
         SchValues_MELs = [0.008, 0.008, 0.008, 0.008, 0.024, 0.050, 0.056, 0.050, 0.022, 0.015, 0.015, 0.015, 0.015, 0.015, 0.026, 0.015, 0.056, 0.078, 0.105, 0.126, 0.128, 0.088, 0.049, 0.020]
 
 
-        def hourSch(nameSch, hourlyValues):
-            params = [x for x in hourlyValues]
-            schValues = {}
-            count = 2
-            for i,param in enumerate(params):
-                count = count + 1
-                schValues['Field_' + str(count)] = ('Until: ' + str(i + 1) + ':00')
-                count = count + 1
-                schValues['Field_' + str(count)] = param
 
-            idf1.newidfobject('Schedule:Compact',
-            Name = str(nameSch),
-            Schedule_Type_Limits_Name = 'Fraction',
-            Field_1 = 'Through: 12/31',
-            Field_2 = 'For: AllDays',
-            **schValues)
+
+
 
         hourSch(SchName_Lighting, SchValues_Lighting)
 
@@ -1624,18 +1667,6 @@ with st.form('Model Inputs'):
         SchValues_MELs = [0.008, 0.008, 0.008, 0.008, 0.024, 0.050, 0.056, 0.050, 0.022, 0.015, 0.015, 0.015, 0.015, 0.015, 0.026, 0.015, 0.056, 0.078, 0.105, 0.126, 0.128, 0.088, 0.049, 0.020]
 
 
-        def zeroSch(nameSch):
-            idf1.newidfobject('Schedule:Compact',
-                Name = str(nameSch),
-                Schedule_Type_Limits_Name = 'Fraction',
-                Field_1 = 'Through: 12/31',
-                Field_2 = 'For: SummerDesignDay',
-                Field_3 = 'Until: 24:00',
-                Field_4 = 1,
-                Field_5 = 'For: AllOtherDays',
-                Field_6 = 'Until: 24:00',
-                Field_7 = 0
-            ) 
 
         zeroSch(SchName_Lighting)
 

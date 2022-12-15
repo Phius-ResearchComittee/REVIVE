@@ -1,7 +1,7 @@
 !- Windows Line endings 
 
 VERSION,
-    9.5;                      !- Version Identifier
+    22.1;                     !- Version Identifier
 
 SIMULATIONCONTROL,
     Yes,                      !- Do Zone Sizing Calculation
@@ -744,8 +744,8 @@ MATERIAL:AIRGAP,
 
 WINDOWMATERIAL:SIMPLEGLAZINGSYSTEM,
     Ext_Window1_Base,         !- Name
-    2.2713053348,             !- UFactor
-    0.4;                      !- Solar Heat Gain Coefficient
+    2.8391316685,             !- UFactor
+    0.5;                      !- Solar Heat Gain Coefficient
 
 WINDOWMATERIAL:SHADE,
     HighReflect,              !- Name
@@ -996,7 +996,7 @@ Zone,
 BuildingSurface:Detailed,
     Slab,                     !- Name
     Floor,                    !- Surface Type
-    Exterior_Slab_+_2in_EPS,    !- Construction Name
+    Brick Wall,               !- Construction Name
     Zone 1,                   !- Zone Name
     Foundation,               !- Outside Boundary Condition
     Slab Details,             !- Outside Boundary Condition Object
@@ -1020,7 +1020,7 @@ BuildingSurface:Detailed,
 BuildingSurface:Detailed,
     Front Wall 1,             !- Name
     Wall,                     !- Surface Type
-    Exterior_Wall_+7.5in_EPS,    !- Construction Name
+    Brick Wall,               !- Construction Name
     Zone 1,                   !- Zone Name
     Outdoors,                 !- Outside Boundary Condition
     ,                         !- Outside Boundary Condition Object
@@ -1044,7 +1044,7 @@ BuildingSurface:Detailed,
 BuildingSurface:Detailed,
     Left Wall 1,              !- Name
     Wall,                     !- Surface Type
-    Exterior_Wall_+7.5in_EPS,    !- Construction Name
+    Brick Wall,               !- Construction Name
     Zone 1,                   !- Zone Name
     Outdoors,                 !- Outside Boundary Condition
     ,                         !- Outside Boundary Condition Object
@@ -1068,7 +1068,7 @@ BuildingSurface:Detailed,
 BuildingSurface:Detailed,
     Attic,                    !- Name
     Ceiling,                  !- Surface Type
-    Exterior_Wall_+1in_EPS,    !- Construction Name
+    Brick Wall,               !- Construction Name
     Zone 1,                   !- Zone Name
     Outdoors,                 !- Outside Boundary Condition
     ,                         !- Outside Boundary Condition Object
@@ -1092,7 +1092,7 @@ BuildingSurface:Detailed,
 BuildingSurface:Detailed,
     Right Wall 2,             !- Name
     Wall,                     !- Surface Type
-    Exterior_Wall_+7.5in_EPS,    !- Construction Name
+    Brick Wall,               !- Construction Name
     Zone 1,                   !- Zone Name
     Outdoors,                 !- Outside Boundary Condition
     ,                         !- Outside Boundary Condition Object
@@ -1116,7 +1116,7 @@ BuildingSurface:Detailed,
 BuildingSurface:Detailed,
     Back Wall 1,              !- Name
     Wall,                     !- Surface Type
-    Exterior_Wall_+7.5in_EPS,    !- Construction Name
+    Brick Wall,               !- Construction Name
     Zone 1,                   !- Zone Name
     Outdoors,                 !- Outside Boundary Condition
     ,                         !- Outside Boundary Condition Object
@@ -1140,7 +1140,7 @@ BuildingSurface:Detailed,
 BuildingSurface:Detailed,
     Right Wall 1,             !- Name
     Wall,                     !- Surface Type
-    Exterior_Wall_+7.5in_EPS,    !- Construction Name
+    Brick Wall,               !- Construction Name
     Zone 1,                   !- Zone Name
     Outdoors,                 !- Outside Boundary Condition
     ,                         !- Outside Boundary Condition Object
@@ -1164,7 +1164,7 @@ BuildingSurface:Detailed,
 BuildingSurface:Detailed,
     Front Wall 2,             !- Name
     Wall,                     !- Surface Type
-    Exterior_Wall_+7.5in_EPS,    !- Construction Name
+    Brick Wall,               !- Construction Name
     Zone 1,                   !- Zone Name
     Outdoors,                 !- Outside Boundary Condition
     ,                         !- Outside Boundary Condition Object
@@ -1188,7 +1188,7 @@ BuildingSurface:Detailed,
 BuildingSurface:Detailed,
     Left Wall 2,              !- Name
     Wall,                     !- Surface Type
-    Exterior_Wall_+7.5in_EPS,    !- Construction Name
+    Brick Wall,               !- Construction Name
     Zone 1,                   !- Zone Name
     Outdoors,                 !- Outside Boundary Condition
     ,                         !- Outside Boundary Condition Object
@@ -1236,7 +1236,7 @@ BuildingSurface:Detailed,
 BuildingSurface:Detailed,
     Back Wall 2,              !- Name
     Wall,                     !- Surface Type
-    Exterior_Wall_+7.5in_EPS,    !- Construction Name
+    Brick Wall,               !- Construction Name
     Zone 1,                   !- Zone Name
     Outdoors,                 !- Outside Boundary Condition
     ,                         !- Outside Boundary Condition Object
