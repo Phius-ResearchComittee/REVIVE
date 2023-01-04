@@ -13,7 +13,7 @@ SIMULATIONCONTROL,
     25;                       !- Maximum Number of HVAC Sizing Simulation Passes
 
 BUILDING,
-    test3,                    !- Name
+    test5,                    !- Name
     0,                        !- North Axis
     City,                     !- Terrain
     0.04,                     !- Loads Convergence Tolerance Value
@@ -155,166 +155,6 @@ RUNPERIOD,
     Yes,                      !- Use Weather File Rain Indicators
     Yes,                      !- Use Weather File Snow Indicators
     No;                       !- Treat Weather as Actual
-
-SCHEDULETYPELIMITS,
-    Number,                   !- Name
-    ,                         !- Lower Limit Value
-    ,                         !- Upper Limit Value
-    ,                         !- Numeric Type
-    Dimensionless;            !- Unit Type
-
-SCHEDULETYPELIMITS,
-    Any Number,               !- Name
-    ,                         !- Lower Limit Value
-    ,                         !- Upper Limit Value
-    ,                         !- Numeric Type
-    Dimensionless;            !- Unit Type
-
-SCHEDULETYPELIMITS,
-    Fraction,                 !- Name
-    ,                         !- Lower Limit Value
-    ,                         !- Upper Limit Value
-    ,                         !- Numeric Type
-    Dimensionless;            !- Unit Type
-
-SCHEDULE:COMPACT,
-    Phius_Lighting,           !- Name
-    Fraction,                 !- Schedule Type Limits Name
-    Through: 12/31,           !- Field 1
-    For: SummerDesignDay,     !- Field 2
-    Until: 24:00,             !- Field 3
-    1,                        !- Field 4
-    For: AllOtherDays,        !- Field 5
-    Until: 24:00,             !- Field 6
-    0;                        !- Field 7
-
-SCHEDULE:COMPACT,
-    Phius_MELs,               !- Name
-    Fraction,                 !- Schedule Type Limits Name
-    Through: 12/31,           !- Field 1
-    For: SummerDesignDay,     !- Field 2
-    Until: 24:00,             !- Field 3
-    1,                        !- Field 4
-    For: AllOtherDays,        !- Field 5
-    Until: 24:00,             !- Field 6
-    0;                        !- Field 7
-
-SCHEDULE:COMPACT,
-    Occupant_Activity_Schedule,    !- Name
-    Any Number,               !- Schedule Type Limits Name
-    Through: 12/31,           !- Field 1
-    For: AllDays,             !- Field 2
-    Until: 24:00,             !- Field 3
-    120;                      !- Field 4
-
-SCHEDULE:COMPACT,
-    Occupant_Eff_Schedule,    !- Name
-    Any Number,               !- Schedule Type Limits Name
-    Through: 12/31,           !- Field 1
-    For: AllDays,             !- Field 2
-    Until: 24:00,             !- Field 3
-    0;                        !- Field 4
-
-SCHEDULE:COMPACT,
-    Occupant_Clothing_Schedule,    !- Name
-    Any Number,               !- Schedule Type Limits Name
-    Through: 04/30,           !- Field 1
-    For: AllDays,             !- Field 2
-    Until: 24:00,             !- Field 3
-    1,                        !- Field 4
-    Through: 09/30,           !- Field 5
-    For: AllDays,             !- Field 6
-    Until: 24:00,             !- Field 7
-    0.3,                      !- Field 8
-    Through: 12/31,           !- Field 9
-    For: AllDays,             !- Field 10
-    Until: 24:00,             !- Field 11
-    1;                        !- Field 12
-
-SCHEDULE:COMPACT,
-    CO2_Schedule,             !- Name
-    Fraction,                 !- Schedule Type Limits Name
-    Through: 12/31,           !- Field 1
-    For: AllDays,             !- Field 2
-    Until: 24:00,             !- Field 3
-    500;                      !- Field 4
-
-SCHEDULE:COMPACT,
-    OUTAGE:Occupant_Schedule,    !- Name
-    Fraction,                 !- Schedule Type Limits Name
-    Through: 12/31,           !- Field 1
-    For: AllDays,             !- Field 2
-    Until: 24:00,             !- Field 3
-    1;                        !- Field 4
-
-SCHEDULE:COMPACT,
-    PTHP_Avail,               !- Name
-    Fraction,                 !- Schedule Type Limits Name
-    Through: 01/23,           !- Field 1
-    For: AllDays,             !- Field 2
-    Until: 24:00,             !- Field 3
-    1,                        !- Field 4
-    Through: 02/05,           !- Field 5
-    For: AllDays,             !- Field 6
-    Until: 24:00,             !- Field 7
-    0,                        !- Field 8
-    Through: 07/23,           !- Field 9
-    For: AllDays,             !- Field 10
-    Until: 24:00,             !- Field 11
-    1,                        !- Field 12
-    Through: 08/05,           !- Field 13
-    For: AllDays,             !- Field 14
-    Until: 24:00,             !- Field 15
-    0,                        !- Field 16
-    Through: 12/31,           !- Field 17
-    For: AllDays,             !- Field 18
-    Until: 24:00,             !- Field 19
-    1;                        !- Field 20
-
-SCHEDULE:CONSTANT,
-    WindowFraction2,          !- Name
-    Any Number,               !- Schedule Type Limits Name
-    0;                        !- Hourly Value
-
-SCHEDULE:CONSTANT,
-    HVAC_ALWAYS_4,            !- Name
-    Any Number,               !- Schedule Type Limits Name
-    4;                        !- Hourly Value
-
-SCHEDULE:CONSTANT,
-    Phius_68F,                !- Name
-    Any Number,               !- Schedule Type Limits Name
-    20;                       !- Hourly Value
-
-SCHEDULE:CONSTANT,
-    Phius_77F,                !- Name
-    Any Number,               !- Schedule Type Limits Name
-    25;                       !- Hourly Value
-
-SCHEDULE:CONSTANT,
-    HUMIDITY_SETPOINT,        !- Name
-    Any Number,               !- Schedule Type Limits Name
-    60;                       !- Hourly Value
-
-SCHEDULE:CONSTANT,
-    AirVelocitySch,           !- Name
-    Any Number,               !- Schedule Type Limits Name
-    0.16;                     !- Hourly Value
-
-SCHEDULE:CONSTANT,
-    Always_On,                !- Name
-    Any Number,               !- Schedule Type Limits Name
-    1;                        !- Hourly Value
-
-SCHEDULE:CONSTANT,
-    Always Off,               !- Name
-    Any Number,               !- Schedule Type Limits Name
-    0;                        !- Hourly Value
-
-SCHEDULE:CONSTANT,
-    ERV_Avail,                !- Name
-    Any Number,               !- Schedule Type Limits Name
-    1;                        !- Hourly Value
 
 MATERIAL,
     M01_100mm_brick,          !- Name
@@ -744,8 +584,8 @@ MATERIAL:AIRGAP,
 
 WINDOWMATERIAL:SIMPLEGLAZINGSYSTEM,
     Ext_Window1_Base,         !- Name
-    4.5426106696,             !- UFactor
-    0.7;                      !- Solar Heat Gain Coefficient
+    2.8391316685,             !- UFactor
+    0.35;                     !- Solar Heat Gain Coefficient
 
 WINDOWMATERIAL:SHADE,
     HighReflect,              !- Name
@@ -996,7 +836,7 @@ Zone,
 BuildingSurface:Detailed,
     Slab,                     !- Name
     Floor,                    !- Surface Type
-    Exterior_Roof,            !- Construction Name
+    Ext_Floor1,               !- Construction Name
     Zone 1,                   !- Zone Name
     Foundation,               !- Outside Boundary Condition
     Slab Details,             !- Outside Boundary Condition Object
@@ -1020,7 +860,7 @@ BuildingSurface:Detailed,
 BuildingSurface:Detailed,
     Front Wall 1,             !- Name
     Wall,                     !- Surface Type
-    Exterior_Slab_+_2in_EPS,    !- Construction Name
+    Ext_Wall1,                !- Construction Name
     Zone 1,                   !- Zone Name
     Outdoors,                 !- Outside Boundary Condition
     ,                         !- Outside Boundary Condition Object
@@ -1044,7 +884,7 @@ BuildingSurface:Detailed,
 BuildingSurface:Detailed,
     Left Wall 1,              !- Name
     Wall,                     !- Surface Type
-    Exterior_Slab_+_2in_EPS,    !- Construction Name
+    Ext_Wall1,                !- Construction Name
     Zone 1,                   !- Zone Name
     Outdoors,                 !- Outside Boundary Condition
     ,                         !- Outside Boundary Condition Object
@@ -1068,7 +908,7 @@ BuildingSurface:Detailed,
 BuildingSurface:Detailed,
     Attic,                    !- Name
     Ceiling,                  !- Surface Type
-    Exterior_Wall,            !- Construction Name
+    Ext_Roof1,                !- Construction Name
     Zone 1,                   !- Zone Name
     Outdoors,                 !- Outside Boundary Condition
     ,                         !- Outside Boundary Condition Object
@@ -1092,7 +932,7 @@ BuildingSurface:Detailed,
 BuildingSurface:Detailed,
     Right Wall 2,             !- Name
     Wall,                     !- Surface Type
-    Exterior_Slab_+_2in_EPS,    !- Construction Name
+    Ext_Wall1,                !- Construction Name
     Zone 1,                   !- Zone Name
     Outdoors,                 !- Outside Boundary Condition
     ,                         !- Outside Boundary Condition Object
@@ -1116,7 +956,7 @@ BuildingSurface:Detailed,
 BuildingSurface:Detailed,
     Back Wall 1,              !- Name
     Wall,                     !- Surface Type
-    Exterior_Slab_+_2in_EPS,    !- Construction Name
+    Ext_Wall1,                !- Construction Name
     Zone 1,                   !- Zone Name
     Outdoors,                 !- Outside Boundary Condition
     ,                         !- Outside Boundary Condition Object
@@ -1140,7 +980,7 @@ BuildingSurface:Detailed,
 BuildingSurface:Detailed,
     Right Wall 1,             !- Name
     Wall,                     !- Surface Type
-    Exterior_Slab_+_2in_EPS,    !- Construction Name
+    Ext_Wall1,                !- Construction Name
     Zone 1,                   !- Zone Name
     Outdoors,                 !- Outside Boundary Condition
     ,                         !- Outside Boundary Condition Object
@@ -1164,7 +1004,7 @@ BuildingSurface:Detailed,
 BuildingSurface:Detailed,
     Front Wall 2,             !- Name
     Wall,                     !- Surface Type
-    Exterior_Slab_+_2in_EPS,    !- Construction Name
+    Ext_Wall1,                !- Construction Name
     Zone 1,                   !- Zone Name
     Outdoors,                 !- Outside Boundary Condition
     ,                         !- Outside Boundary Condition Object
@@ -1188,7 +1028,7 @@ BuildingSurface:Detailed,
 BuildingSurface:Detailed,
     Left Wall 2,              !- Name
     Wall,                     !- Surface Type
-    Exterior_Slab_+_2in_EPS,    !- Construction Name
+    Ext_Wall1,                !- Construction Name
     Zone 1,                   !- Zone Name
     Outdoors,                 !- Outside Boundary Condition
     ,                         !- Outside Boundary Condition Object
@@ -1212,7 +1052,7 @@ BuildingSurface:Detailed,
 BuildingSurface:Detailed,
     Inertstitail Floor,       !- Name
     Floor,                    !- Surface Type
-    Interior_Floor,           !- Construction Name
+    Int_Floor1,               !- Construction Name
     Zone 1,                   !- Zone Name
     Adiabatic,                !- Outside Boundary Condition
     ,                         !- Outside Boundary Condition Object
@@ -1236,7 +1076,7 @@ BuildingSurface:Detailed,
 BuildingSurface:Detailed,
     Back Wall 2,              !- Name
     Wall,                     !- Surface Type
-    Exterior_Slab_+_2in_EPS,    !- Construction Name
+    Ext_Wall1,                !- Construction Name
     Zone 1,                   !- Zone Name
     Outdoors,                 !- Outside Boundary Condition
     ,                         !- Outside Boundary Condition Object
@@ -1283,7 +1123,7 @@ FenestrationSurface:Detailed,
 FenestrationSurface:Detailed,
     F-WN-1,                   !- Name
     Window,                   !- Surface Type
-    Ext_Window1_Base,         !- Construction Name
+    Ext_Window1,              !- Construction Name
     Front Wall 1,             !- Building Surface Name
     ,                         !- Outside Boundary Condition Object
     ,                         !- View Factor to Ground
@@ -1306,7 +1146,7 @@ FenestrationSurface:Detailed,
 FenestrationSurface:Detailed,
     F-WN-2,                   !- Name
     Window,                   !- Surface Type
-    Ext_Window1_Base,         !- Construction Name
+    Ext_Window1,              !- Construction Name
     Front Wall 2,             !- Building Surface Name
     ,                         !- Outside Boundary Condition Object
     ,                         !- View Factor to Ground
@@ -1329,7 +1169,7 @@ FenestrationSurface:Detailed,
 FenestrationSurface:Detailed,
     R-WN-1,                   !- Name
     Window,                   !- Surface Type
-    Ext_Window1_Base,         !- Construction Name
+    Ext_Window1,              !- Construction Name
     Right Wall 1,             !- Building Surface Name
     ,                         !- Outside Boundary Condition Object
     ,                         !- View Factor to Ground
@@ -1352,7 +1192,7 @@ FenestrationSurface:Detailed,
 FenestrationSurface:Detailed,
     R-WN-2,                   !- Name
     Window,                   !- Surface Type
-    Ext_Window1_Base,         !- Construction Name
+    Ext_Window1,              !- Construction Name
     Right Wall 2,             !- Building Surface Name
     ,                         !- Outside Boundary Condition Object
     ,                         !- View Factor to Ground
@@ -1375,7 +1215,7 @@ FenestrationSurface:Detailed,
 FenestrationSurface:Detailed,
     B-WN-1,                   !- Name
     Window,                   !- Surface Type
-    Ext_Window1_Base,         !- Construction Name
+    Ext_Window1,              !- Construction Name
     Back Wall 1,              !- Building Surface Name
     ,                         !- Outside Boundary Condition Object
     ,                         !- View Factor to Ground
@@ -1398,7 +1238,7 @@ FenestrationSurface:Detailed,
 FenestrationSurface:Detailed,
     B-WN-2,                   !- Name
     Window,                   !- Surface Type
-    Ext_Window1_Base,         !- Construction Name
+    Ext_Window1,              !- Construction Name
     Back Wall 2,              !- Building Surface Name
     ,                         !- Outside Boundary Condition Object
     ,                         !- View Factor to Ground
@@ -1421,7 +1261,7 @@ FenestrationSurface:Detailed,
 FenestrationSurface:Detailed,
     L-WN-1,                   !- Name
     Window,                   !- Surface Type
-    Ext_Window1_Base,         !- Construction Name
+    Ext_Window1,              !- Construction Name
     Left Wall 1,              !- Building Surface Name
     ,                         !- Outside Boundary Condition Object
     ,                         !- View Factor to Ground
@@ -1444,7 +1284,7 @@ FenestrationSurface:Detailed,
 FenestrationSurface:Detailed,
     L-WN-2,                   !- Name
     Window,                   !- Surface Type
-    Ext_Window1_Base,         !- Construction Name
+    Ext_Window1,              !- Construction Name
     Left Wall 2,              !- Building Surface Name
     ,                         !- Outside Boundary Condition Object
     ,                         !- View Factor to Ground
@@ -1463,6 +1303,66 @@ FenestrationSurface:Detailed,
     5.9436,                   !- Vertex 4 Xcoordinate
     0,                        !- Vertex 4 Ycoordinate
     4.8768;                   !- Vertex 4 Zcoordinate
+
+WINDOWSHADINGCONTROL,
+    Shading Control,          !- Name
+    Zone 1,                   !- Zone Name
+    1,                        !- Shading Control Sequence Number
+    ExteriorShade,            !- Shading Type
+    ,                         !- Construction with Shading Name
+    OnIfHighSolarOnWindow,    !- Shading Control Type
+    Shading Availible,        !- Schedule Name
+    100,                      !- Setpoint
+    Yes,                      !- Shading Control Is Scheduled
+    No,                       !- Glare Control Is Active
+    HighReflect,              !- Shading Device Material Name
+    FixedSlatAngle,           !- Type of Slat Angle Control for Blinds
+    ,                         !- Slat Angle Schedule Name
+    ,                         !- Setpoint 2
+    ,                         !- Daylighting Control Object Name
+    Sequential,               !- Multiple Surface Control Type
+    F-WN-1,                   !- Fenestration Surface 1 Name
+    F-WN-2,                   !- Fenestration Surface 2 Name
+    R-WN-1,                   !- Fenestration Surface 3 Name
+    R-WN-2,                   !- Fenestration Surface 4 Name
+    B-WN-1,                   !- Fenestration Surface 5 Name
+    B-WN-2,                   !- Fenestration Surface 6 Name
+    L-WN-1,                   !- Fenestration Surface 7 Name
+    L-WN-2;                   !- Fenestration Surface 8 Name
+
+Shading:Building:Detailed,
+    R-Roof,                   !- Name
+    ,                         !- Transmittance Schedule Name
+    4,                        !- Number of Vertices
+    4.572,                    !- Vertex 1 Xcoordinate
+    -0.3048,                  !- Vertex 1 Ycoordinate
+    7.7724,                   !- Vertex 1 Zcoordinate
+    9.689242815634,           !- Vertex 2 Xcoordinate
+    -0.3048,                  !- Vertex 2 Ycoordinate
+    5.213778592183,           !- Vertex 2 Zcoordinate
+    9.689242815634,           !- Vertex 3 Xcoordinate
+    12.4968,                  !- Vertex 3 Ycoordinate
+    5.213778592183,           !- Vertex 3 Zcoordinate
+    4.572,                    !- Vertex 4 Xcoordinate
+    12.4968,                  !- Vertex 4 Ycoordinate
+    7.7724;                   !- Vertex 4 Zcoordinate
+
+Shading:Building:Detailed,
+    F-ROOF,                   !- Name
+    ,                         !- Transmittance Schedule Name
+    4,                        !- Number of Vertices
+    4.572,                    !- Vertex 1 Xcoordinate
+    12.4968,                  !- Vertex 1 Ycoordinate
+    7.7724,                   !- Vertex 1 Zcoordinate
+    -0.545242815634,          !- Vertex 2 Xcoordinate
+    12.4968,                  !- Vertex 2 Ycoordinate
+    5.213778592183,           !- Vertex 2 Zcoordinate
+    -0.545242815634,          !- Vertex 3 Xcoordinate
+    -0.3048,                  !- Vertex 3 Ycoordinate
+    5.213778592183,           !- Vertex 3 Zcoordinate
+    4.572,                    !- Vertex 4 Xcoordinate
+    -0.3048,                  !- Vertex 4 Ycoordinate
+    7.7724;                   !- Vertex 4 Zcoordinate
 
 Shading:Building:Detailed,
     R-Roof,                   !- Name
@@ -1568,7 +1468,7 @@ ELECTRICEQUIPMENT,
     Zone 1,                   !- Zone or ZoneList Name
     Always_On,                !- Schedule Name
     EquipmentLevel,           !- Design Level Calculation Method
-    0.05079909,               !- Design Level
+    5.079909e-02,             !- Design Level
     ,                         !- Watts per Zone Floor Area
     ,                         !- Watts per Person
     0,                        !- Fraction Latent
@@ -1593,7 +1493,7 @@ ZONEINFILTRATION:FLOWCOEFFICIENT,
     Zone_Infiltration,        !- Name
     Zone 1,                   !- Zone Name
     Always_On,                !- Schedule Name
-    0.1491353941999999,       !- Flow Coefficient
+    0.14,                     !- Flow Coefficient
     0.078,                    !- Stack Coefficient
     0.67,                     !- Pressure Exponent
     0.17,                     !- Wind Coefficient

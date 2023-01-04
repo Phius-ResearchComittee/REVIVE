@@ -138,28 +138,38 @@ st.set_page_config(
     )
     
 st.image(image) #, width=5)
-st.title('Phius REVIVE Pilot Tool')
+st.title('Phius REVIVE Pilot Tool v2')
 
-tab1, tab2, tab5, tab4, tab3 = st.tabs(['Linked Files','Envelope Inputs', 'Internal Gain Inputs', 'Mechanical Inputs', 'Results'])
+tab1, tab6, tab2, tab5, tab4, tab3 = st.tabs(['Linked Files', 'Simulation Control', 'Envelope Inputs', 'Internal Gain Inputs', 'Mechanical Inputs', 'Results'])
 
 with st.form('Model Inputs'):
     run = st.form_submit_button('Run Analysis')
     with tab1:
         st.header('Linked Files')
-        values['iddFile'] = st.text_input('IDD File Location', 'C:/EnergyPlusV22-1-0/Energy+.idd')
+        values['iddFile'] = st.text_input('IDD File Location', 'C:/EnergyPlusV9-5-0/Energy+.idd')
         values['StudyFolder'] = st.text_input('Study Folder Location', 'C:/Users/amitc_crl/OneDrive/Documents/GitHub/REVIVE/PhiusREVIVE/Testing/test1')
         values['GEO'] =  st.text_input('Select IDF With Building Geometry', 'C:/Users/amitc_crl/OneDrive/Documents/GitHub/REVIVE/PhiusREVIVE/Testing/PNNL_SF_Geometry.idf')
         values['DDY'] = st.text_input('Select DDY Location', 'C:/Users/amitc_crl/OneDrive/Documents/GitHub/REVIVE/PhiusREVIVE/Testing/USA_IL_Chicago-Midway.AP.725340_TMY3.ddy')
         values['EPW'] = st.text_input('Select EPW File Location','C:/Users/amitc_crl/OneDrive/Documents/GitHub/REVIVE/PhiusREVIVE/Testing/USA_IL_Chicago-Midway.AP.725340_TMY3.epw')
+    with tab6:
+        st.header('Simulation Control')
+        values['BaseFileName'] = st.text_input('Test File Name','test3')
+        controls1, controls2 = st.columns(2)
+        with controls1:
+            st.subheader('Outage 1')
+            outage1start = st.date_input('Outage 1 Start', value=dt.date(2022,1,23)).strftime('%m/%d')    
+            outage1end = st.date_input('Outage 1 End', value=dt.date(2022,2,5)).strftime('%m/%d')
+        with controls2:
+            st.subheader('Outage 2')
+            outage2start = st.date_input('Outage 2 Start', value=dt.date(2022,7,23)).strftime('%m/%d')
+            outage2end = st.date_input('Outage 2 End', value=dt.date(2022,8,5)).strftime('%m/%d')
     with tab2:
         st.header('Envelope Inputs')
-        values['BaseFileName'] = st.text_input('Test File Name','test3')
         values['Occupants'] = st.number_input('Number of Occupants (# of Bedrooms + 1)', value=4)
         values['ICFA'] = st.number_input('ICFA [sf]',min_value=1, value=2128)
         values['PartitionRatio'] = st.number_input('Parition to ICFA Ratio', value = 1.0)
         st.subheader('Envelope Details')
         
-
         envelope1, envelope2 = st.columns(2)
         with envelope1:
             st.subheader('Baseline Case')
@@ -169,7 +179,7 @@ with st.form('Model Inputs'):
             Ext_Door1_base = 'Ext_Door1'
             Ext_Window1_Base_Ufactor = (st.number_input('Set Baseline Ext Window 1 U-Factor', value=0.5))*5.678263337
             Ext_Window1_Base_SHGC = (st.number_input('Set Baseline Ext Window 1 SHGC', value=0.35))
-            flowCoefficient = st.number_input('Flow Coefficient Baseline', value=0.14, format= '%f')
+            flowCoefficient = (st.number_input('Flow Coefficient Baseline', value=88.075, format= '%f') / 2118.87997275968)
             Int_Floor1 = 'Interior_Floor'
         with envelope2:
             st.subheader('Proposed Case')
@@ -178,7 +188,7 @@ with st.form('Model Inputs'):
             Ext_Floor1_prop = st.selectbox('Set Proposed Ext Floor 1', envelopeOptions)
             Ext_Window1_prop_Ufactor = (st.number_input('Set Proposed Ext Window 1 U-Factor', value=0.5))*5.678263337
             Ext_Window1_prop_SHGC = (st.number_input('Set Proposed Ext Window 1 SHGC', value=0.35))
-            flowCoefficient_prop = st.number_input('Flow Coefficient Proposed', value=0.0104, format= '%f')
+            flowCoefficient_prop = (st.number_input('Flow Coefficient Proposed', value=20.125, format= '%f') / 2118.87997275968)
             Ext_Door1_prop = 'Brick Wall'
             Ext_Window1_prop = 'Brick Window'
     with tab5:
@@ -188,8 +198,6 @@ with st.form('Model Inputs'):
             fridge_base = st.number_input('Enter baseline refridgerator [kWh/yr]', value=445)
         with ihg2:
             fridge_prop = st.number_input('Enter proposed refridgerator [kWh/yr]', value=445)
-
-    
     with tab4:
         st.header('Mechanical Inputs')
         mech1, mech2 = st.columns(2)
@@ -208,16 +216,22 @@ with st.form('Model Inputs'):
     st.write('#### Simulation Progress:')
     prog_bar = st.progress(0)
 
-    
     if run:
         iddfile = str(values['iddFile'])
         IDF.setiddname(iddfile)
         #==============================================================================================================================
         # 5.i Testing inputs
         #==============================================================================================================================
+        BaseFileName = values['BaseFileName']
+        studyFolder = values['StudyFolder']
+        epwfile = str(values['EPW'])
+        idfgName = str(values['GEO'])
+        ddyName = values['DDY']
+        fname2 = str(studyFolder) + "/"  + str(BaseFileName) + ".idf"
+
+        os.chdir(str(studyFolder))
 
         icfa = values['ICFA']
-        #flowCoefficient = 0.004
         Nbr = (float(values['Occupants']) -1)
         operableArea_N = 1
         operableArea_S = 1
@@ -230,33 +244,19 @@ with st.form('Model Inputs'):
         fracHighEff = 1.0
         PhiusLights = ((2 + 0.8 * (4 - 3 * fracHighEff / 3.7)*(455 + 0.8 * icfa) * 0.8) / 365) #power per day W use Phius calc
         PhiusMELs = (413 + 69*Nbr + 0.91*icfa)/365 #consumption per day per phius calc
-
-        #==============================================================================================================================
-        # 6. Import Files
-        #==============================================================================================================================
-        BaseFileName = values['BaseFileName']
-        studyFolder = values['StudyFolder']
-        epwfile = str(values['EPW'])
-        idfgName = str(values['GEO'])
-        ddyName = values['DDY']
         occ = values['Occupants']
         icfa = (float(values['ICFA'])/10.76391)
         PartitionRatio = float(values['PartitionRatio'])
 
-        os.chdir(str(studyFolder))
         testingFile = str(studyFolder) + "/" + str(BaseFileName) + ".idf"
         testingFile_BA = str(studyFolder) + "/" + str(BaseFileName) + "_BA.idf"
         testingFile_BR = str(studyFolder) + "/" + str(BaseFileName) + "_BR.idf"
         testingFile_PA = str(studyFolder) + "/" + str(BaseFileName) + "_PA.idf"
         testingFile_PR = str(studyFolder) + "/" + str(BaseFileName) + "_PR.idf"
 
-        fname2 = str(studyFolder) + "/"  + str(BaseFileName) + ".idf"
-        idfg = IDF(idfgName)
-        ddy = IDF(ddyName)
-
         open(str(testingFile_BA), 'w')
-
-        #import the information needed from the orignal IDF file
+        idfg = IDF(str(idfgName))
+        ddy = IDF(ddyName)
         idf1 = IDF(str(testingFile_BA))
         windowNames = []
 
@@ -296,38 +296,11 @@ with st.form('Model Inputs'):
 
         idf1.saveas(str(testingFile))
 
-        # Add shading controls
-
-        runs = windowNames
-        params = [x for x in runs]
-        values = {}
-        for i,param in enumerate(params):
-            values['Fenestration_Surface_' + str(i+1) + '_Name'] = param
-        idf1.newidfobject('WindowShadingControl',
-        Name = 'Shading Control',
-        Zone_Name = 'Zone 1',
-        Shading_Control_Sequence_Number = 1,
-        Shading_Type = 'ExteriorShade',
-        Shading_Control_Type = 'OnIfHighSolarOnWindow',
-        Schedule_Name = 'Shading Availible',
-        Setpoint = 100,
-        Shading_Control_Is_Scheduled = 'Yes',
-        Glare_Control_Is_Active = 'No',
-        Shading_Device_Material_Name = 'HighReflect',
-        Type_of_Slat_Angle_Control_for_Blinds = 'FixedSlatAngle',
-        Multiple_Surface_Control_Type = 'Sequential',
-        **values)
-
-        for site in idfg.idfobjects['Shading:Site:Detailed']:
-            idf1.copyidfobject(site)
-
-        for bldg in idfg.idfobjects['Shading:Building:Detailed']:
-            idf1.copyidfobject(bldg)
-
         #==============================================================================================================================
         # 4. Build Base IDF
         #==============================================================================================================================
 
+        # High level model information 
         idf1.newidfobject('Version',
             Version_Identifier = 9.5
             )
@@ -385,7 +358,6 @@ with st.form('Model Inputs'):
             Vertex_Entry_Direction = 'Counterclockwise',
             Coordinate_System = 'Relative'
             )
-
 
         #IHG
 
@@ -460,6 +432,13 @@ with st.form('Model Inputs'):
         ##Constructions and materials
         ##Import from a library for future testing??
 
+        # Thermal mass
+        
+        # FurnitureMass = idf1.idfobjects['InternalMass'][0]
+        # FurnitureMass.Surface_Area = icfa
+        # PartitionMass = idf1.idfobjects['InternalMass'][1]
+        # PartitionMass.Surface_Area = (icfa * PartitionRatio)
+        
         #basic materials
         idf1.newidfobject('Material',
             Name = 'M01_100mm_brick',
@@ -839,8 +818,6 @@ with st.form('Model Inputs'):
             Name = 'Thermal_Mass',
             Outside_Layer = 'G05_25mm_wood'
             )
-
-
 
         constructionBuilder('Interior_Floor', ['Plywood_(Douglas_Fir)_-_12.7mm', 'F05_Ceiling_air_space_resistance', 'G01a_19mm_gypsum_board'])
         constructionBuilder('Exterior_Slab_UnIns', ['M15_200mm_heavyweight_concrete'])
@@ -1439,28 +1416,45 @@ with st.form('Model Inputs'):
             Key_Name = str(x),
             Reporting_Frequency = 'Monthly'
             )
-
-        # FurnitureMass = idf1.idfobjects['InternalMass'][0]
-        # FurnitureMass.Surface_Area = icfa
-        # PartitionMass = idf1.idfobjects['InternalMass'][1]
-        # PartitionMass.Surface_Area = (icfa * PartitionRatio)
         
+        # Change Constructions
+        count = -1
+        for srf in idf1.idfobjects['BuildingSurface:Detailed']:
+            count += 1
+            surface = idf1.idfobjects['BuildingSurface:Detailed'][count]
+            if surface.Construction_Name == 'Ext_Wall1':
+                surface.Construction_Name = str(Ext_Wall1_base)
+            if surface.Construction_Name == 'Ext_Roof1':
+                surface.Construction_Name = str(Ext_Roof1_base)
+            if surface.Construction_Name == 'Ext_Floor1':
+                surface.Construction_Name = str(Ext_Floor1_base)
+            if surface.Construction_Name == 'Ext_Door1':
+                surface.Construction_Name = str(Ext_Door1_base)
+            if surface.Construction_Name == 'Int_Floor1':
+                surface.Construction_Name = str(Int_Floor1)
+
+        count = -1
+        for fen in idf1.idfobjects['FenestrationSurface:Detailed']:
+            count += 1
+            window = idf1.idfobjects['FenestrationSurface:Detailed'][count]
+            if window.Construction_Name == 'Ext_Window1':
+                window.Construction_Name = 'Ext_Window1_Base'
+
+
         idf1.saveas(str(testingFile))
 
-        idf1 = IDF(str(testingFile))        
-        #Schedules
+        #==============================================================================================================================
+        # 4. Basline building annual simulation
+        #==============================================================================================================================
 
-        ##Hourly boiz
+        idf1 = IDF(str(testingFile)) 
+
+        #Schedules
         SchName_Lighting = 'Phius_Lighting'
         SchValues_Lighting = [0.008, 0.008, 0.008, 0.008, 0.024, 0.050, 0.056, 0.050, 0.022, 0.015, 0.015, 0.015, 0.015, 0.015, 0.026, 0.015, 0.056, 0.078, 0.105, 0.126, 0.128, 0.088, 0.049, 0.020]
 
         SchName_MELs = 'Phius_MELs'
         SchValues_MELs = [0.008, 0.008, 0.008, 0.008, 0.024, 0.050, 0.056, 0.050, 0.022, 0.015, 0.015, 0.015, 0.015, 0.015, 0.026, 0.015, 0.056, 0.078, 0.105, 0.126, 0.128, 0.088, 0.049, 0.020]
-
-
-
-
-
 
         hourSch(SchName_Lighting, SchValues_Lighting)
 
@@ -1588,42 +1582,18 @@ with st.form('Model Inputs'):
             Hourly_Value = 1
             )
 
-        ## Change Constructions
-        count = -1
-        for srf in idf1.idfobjects['BuildingSurface:Detailed']:
-            count += 1
-            surface = idf1.idfobjects['BuildingSurface:Detailed'][count]
-            if surface.Construction_Name == 'Ext_Wall1':
-                surface.Construction_Name = str(Ext_Wall1_base)
-            if surface.Construction_Name == 'Ext_Roof1':
-                surface.Construction_Name = str(Ext_Roof1_base)
-            if surface.Construction_Name == 'Ext_Floor1':
-                surface.Construction_Name = str(Ext_Floor1_base)
-            if surface.Construction_Name == 'Ext_Door1':
-                surface.Construction_Name = str(Ext_Door1_base)
-            if surface.Construction_Name == 'Int_Floor1':
-                surface.Construction_Name = str(Int_Floor1)
-
-        count = -1
-        for fen in idf1.idfobjects['FenestrationSurface:Detailed']:
-            count += 1
-            window = idf1.idfobjects['FenestrationSurface:Detailed'][count]
-            if window.Construction_Name == 'Ext_Window1':
-                window.Construction_Name = 'Ext_Window1_Base'
-        
         idf1.saveas(str(testingFile_BA))
-
+ 
         prog_bar.progress(25)
 
         idf = IDF(str(testingFile_BA), epwfile)
         idf.run(readvars=True)
-        prog_bar.progress(50)
+        prog_bar.progress(50)   
+
+        # ====================================================================================================================
+        # X.X Baseline building annual simulation ouptuts
+        # ====================================================================================================================
         
-#=======================================================================================================================================================================
-# OUPUTS
-# ======================================================================================================================================================================
-
-
         with tab3:
             st.header('Results')
             monthly = pd.read_csv(str(studyFolder) + '\eplusmtr.csv')
@@ -1650,27 +1620,19 @@ with st.form('Model Inputs'):
         for ltable in ltables:
             if 'Site and Source Energy' in '\n'.join(ltable[0]): #and 'For: Entire Facility' in '\n'.join(ltable[0]):
                 eui = float(ltable[1][1][2])
-        #################################################################################################
-        # BASELINE RESILIENCE
-        ############################################################################################
-        #########################################################################################
-        
+
+        # =======================================================================================================================================================
+        # X.X Baseline Thermal Resilience
+        # =======================================================================================================================================================
+
         idf1 = IDF(str(testingFile))
-        ##Hourly boiz
 
-        outage1start = '01/23'
-        outage1end = '02/05'
-        outage2start = '07/23'
-        outage2end = '08/05'
-
-
+        # Schedules for outage simulation
         SchName_Lighting = 'Phius_Lighting'
         SchValues_Lighting = [0.008, 0.008, 0.008, 0.008, 0.024, 0.050, 0.056, 0.050, 0.022, 0.015, 0.015, 0.015, 0.015, 0.015, 0.026, 0.015, 0.056, 0.078, 0.105, 0.126, 0.128, 0.088, 0.049, 0.020]
 
         SchName_MELs = 'Phius_MELs'
         SchValues_MELs = [0.008, 0.008, 0.008, 0.008, 0.024, 0.050, 0.056, 0.050, 0.022, 0.015, 0.015, 0.015, 0.015, 0.015, 0.026, 0.015, 0.056, 0.078, 0.105, 0.126, 0.128, 0.088, 0.049, 0.020]
-
-
 
         zeroSch(SchName_Lighting)
 
@@ -1817,12 +1779,6 @@ with st.form('Model Inputs'):
             Field_20 = 1.0
             )
 
-        # idf1.newidfobject('Schedule:Constant',
-        #     Name = 'PTHP_Avail',
-        #     Schedule_Type_Limits_Name = 'Any Number',
-        #     Hourly_Value = 0
-        #     )
-
         idf1.saveas(str(testingFile_BR))
         idf = IDF(str(testingFile_BR), epwfile)
         idf.run(readvars=True)
@@ -1833,7 +1789,6 @@ with st.form('Model Inputs'):
         fname = (str(studyFolder) + '/eplustbl.htm')
         filehandle = open(fname, 'r').read()
         ltables = readhtml.lines_table(filehandle) # reads the tables with their titles
-
 
         for ltable in ltables:
             if 'Site and Source Energy' in '\n'.join(ltable[0]): #and 'For: Entire Facility' in '\n'.join(ltable[0]):
@@ -1869,14 +1824,11 @@ with st.form('Model Inputs'):
             st.metric(label= 'Danger', value=Danger)
             st.metric(label= 'Extreme Danger', value=ExtremeDanger)
 
-
         filehandle = (str(studyFolder) + '\eplusout.csv')
         hourly = pd.read_csv(filehandle)
 
-
         outage1start = dt.datetime(2020, 1,23)
         outage1end = dt.datetime(2020, 2,8)
-
 
         hourly.rename(columns = {'Date/Time':'DateTime'}, inplace = True)
         hourly[['Date2','Time']] = hourly.DateTime.str.split(expand=True)
@@ -1888,7 +1840,6 @@ with st.form('Model Inputs'):
         endWarmup = int((hourly[hourly['DateTime'] == '2020-01-01 00:00:00'].index.values))
         dropWarmup = [*range(0, endWarmup,1)]
 
-        
         hourly = hourly.drop(index = dropWarmup)
         hourly = hourly.reset_index()
 
@@ -1901,3 +1852,4 @@ with st.form('Model Inputs'):
         st.line_chart(hourlyHeat, x='DateTime', y=['ZONE 1:Zone Air Temperature [C](Hourly)', 'Environment:Site Outdoor Air Drybulb Temperature [C](Hourly)'])
 
         prog_bar.progress(100)
+            

@@ -13,7 +13,7 @@ SIMULATIONCONTROL,
     25;                       !- Maximum Number of HVAC Sizing Simulation Passes
 
 BUILDING,
-    test3,                    !- Name
+    v2-testing,               !- Name
     0,                        !- North Axis
     City,                     !- Terrain
     0.04,                     !- Loads Convergence Tolerance Value
@@ -181,23 +181,109 @@ SCHEDULE:COMPACT,
     Phius_Lighting,           !- Name
     Fraction,                 !- Schedule Type Limits Name
     Through: 12/31,           !- Field 1
-    For: SummerDesignDay,     !- Field 2
-    Until: 24:00,             !- Field 3
-    1,                        !- Field 4
-    For: AllOtherDays,        !- Field 5
-    Until: 24:00,             !- Field 6
-    0;                        !- Field 7
+    For: AllDays,             !- Field 2
+    Until: 1:00,              !- Field 3
+    0.008,                    !- Field 4
+    Until: 2:00,              !- Field 5
+    0.008,                    !- Field 6
+    Until: 3:00,              !- Field 7
+    0.008,                    !- Field 8
+    Until: 4:00,              !- Field 9
+    0.008,                    !- Field 10
+    Until: 5:00,              !- Field 11
+    0.024,                    !- Field 12
+    Until: 6:00,              !- Field 13
+    0.05,                     !- Field 14
+    Until: 7:00,              !- Field 15
+    0.056,                    !- Field 16
+    Until: 8:00,              !- Field 17
+    0.05,                     !- Field 18
+    Until: 9:00,              !- Field 19
+    0.022,                    !- Field 20
+    Until: 10:00,             !- Field 21
+    0.015,                    !- Field 22
+    Until: 11:00,             !- Field 23
+    0.015,                    !- Field 24
+    Until: 12:00,             !- Field 25
+    0.015,                    !- Field 26
+    Until: 13:00,             !- Field 27
+    0.015,                    !- Field 28
+    Until: 14:00,             !- Field 29
+    0.015,                    !- Field 30
+    Until: 15:00,             !- Field 31
+    0.026,                    !- Field 32
+    Until: 16:00,             !- Field 33
+    0.015,                    !- Field 34
+    Until: 17:00,             !- Field 35
+    0.056,                    !- Field 36
+    Until: 18:00,             !- Field 37
+    0.078,                    !- Field 38
+    Until: 19:00,             !- Field 39
+    0.105,                    !- Field 40
+    Until: 20:00,             !- Field 41
+    0.126,                    !- Field 42
+    Until: 21:00,             !- Field 43
+    0.128,                    !- Field 44
+    Until: 22:00,             !- Field 45
+    0.088,                    !- Field 46
+    Until: 23:00,             !- Field 47
+    0.049,                    !- Field 48
+    Until: 24:00,             !- Field 49
+    0.02;                     !- Field 50
 
 SCHEDULE:COMPACT,
     Phius_MELs,               !- Name
     Fraction,                 !- Schedule Type Limits Name
     Through: 12/31,           !- Field 1
-    For: SummerDesignDay,     !- Field 2
-    Until: 24:00,             !- Field 3
-    1,                        !- Field 4
-    For: AllOtherDays,        !- Field 5
-    Until: 24:00,             !- Field 6
-    0;                        !- Field 7
+    For: AllDays,             !- Field 2
+    Until: 1:00,              !- Field 3
+    0.008,                    !- Field 4
+    Until: 2:00,              !- Field 5
+    0.008,                    !- Field 6
+    Until: 3:00,              !- Field 7
+    0.008,                    !- Field 8
+    Until: 4:00,              !- Field 9
+    0.008,                    !- Field 10
+    Until: 5:00,              !- Field 11
+    0.024,                    !- Field 12
+    Until: 6:00,              !- Field 13
+    0.05,                     !- Field 14
+    Until: 7:00,              !- Field 15
+    0.056,                    !- Field 16
+    Until: 8:00,              !- Field 17
+    0.05,                     !- Field 18
+    Until: 9:00,              !- Field 19
+    0.022,                    !- Field 20
+    Until: 10:00,             !- Field 21
+    0.015,                    !- Field 22
+    Until: 11:00,             !- Field 23
+    0.015,                    !- Field 24
+    Until: 12:00,             !- Field 25
+    0.015,                    !- Field 26
+    Until: 13:00,             !- Field 27
+    0.015,                    !- Field 28
+    Until: 14:00,             !- Field 29
+    0.015,                    !- Field 30
+    Until: 15:00,             !- Field 31
+    0.026,                    !- Field 32
+    Until: 16:00,             !- Field 33
+    0.015,                    !- Field 34
+    Until: 17:00,             !- Field 35
+    0.056,                    !- Field 36
+    Until: 18:00,             !- Field 37
+    0.078,                    !- Field 38
+    Until: 19:00,             !- Field 39
+    0.105,                    !- Field 40
+    Until: 20:00,             !- Field 41
+    0.126,                    !- Field 42
+    Until: 21:00,             !- Field 43
+    0.128,                    !- Field 44
+    Until: 22:00,             !- Field 45
+    0.088,                    !- Field 46
+    Until: 23:00,             !- Field 47
+    0.049,                    !- Field 48
+    Until: 24:00,             !- Field 49
+    0.02;                     !- Field 50
 
 SCHEDULE:COMPACT,
     Occupant_Activity_Schedule,    !- Name
@@ -247,30 +333,6 @@ SCHEDULE:COMPACT,
     Until: 24:00,             !- Field 3
     1;                        !- Field 4
 
-SCHEDULE:COMPACT,
-    PTHP_Avail,               !- Name
-    Fraction,                 !- Schedule Type Limits Name
-    Through: 01/23,           !- Field 1
-    For: AllDays,             !- Field 2
-    Until: 24:00,             !- Field 3
-    1,                        !- Field 4
-    Through: 02/05,           !- Field 5
-    For: AllDays,             !- Field 6
-    Until: 24:00,             !- Field 7
-    0,                        !- Field 8
-    Through: 07/23,           !- Field 9
-    For: AllDays,             !- Field 10
-    Until: 24:00,             !- Field 11
-    1,                        !- Field 12
-    Through: 08/05,           !- Field 13
-    For: AllDays,             !- Field 14
-    Until: 24:00,             !- Field 15
-    0,                        !- Field 16
-    Through: 12/31,           !- Field 17
-    For: AllDays,             !- Field 18
-    Until: 24:00,             !- Field 19
-    1;                        !- Field 20
-
 SCHEDULE:CONSTANT,
     WindowFraction2,          !- Name
     Any Number,               !- Schedule Type Limits Name
@@ -313,6 +375,11 @@ SCHEDULE:CONSTANT,
 
 SCHEDULE:CONSTANT,
     ERV_Avail,                !- Name
+    Any Number,               !- Schedule Type Limits Name
+    1;                        !- Hourly Value
+
+SCHEDULE:CONSTANT,
+    PTHP_Avail,               !- Name
     Any Number,               !- Schedule Type Limits Name
     1;                        !- Hourly Value
 
@@ -744,8 +811,8 @@ MATERIAL:AIRGAP,
 
 WINDOWMATERIAL:SIMPLEGLAZINGSYSTEM,
     Ext_Window1_Base,         !- Name
-    4.5426106696,             !- UFactor
-    0.7;                      !- Solar Heat Gain Coefficient
+    2.8391316685,             !- UFactor
+    0.35;                     !- Solar Heat Gain Coefficient
 
 WINDOWMATERIAL:SHADE,
     HighReflect,              !- Name
@@ -996,7 +1063,7 @@ Zone,
 BuildingSurface:Detailed,
     Slab,                     !- Name
     Floor,                    !- Surface Type
-    Exterior_Roof,            !- Construction Name
+    Brick Wall,               !- Construction Name
     Zone 1,                   !- Zone Name
     Foundation,               !- Outside Boundary Condition
     Slab Details,             !- Outside Boundary Condition Object
@@ -1020,7 +1087,7 @@ BuildingSurface:Detailed,
 BuildingSurface:Detailed,
     Front Wall 1,             !- Name
     Wall,                     !- Surface Type
-    Exterior_Slab_+_2in_EPS,    !- Construction Name
+    Brick Wall,               !- Construction Name
     Zone 1,                   !- Zone Name
     Outdoors,                 !- Outside Boundary Condition
     ,                         !- Outside Boundary Condition Object
@@ -1044,7 +1111,7 @@ BuildingSurface:Detailed,
 BuildingSurface:Detailed,
     Left Wall 1,              !- Name
     Wall,                     !- Surface Type
-    Exterior_Slab_+_2in_EPS,    !- Construction Name
+    Brick Wall,               !- Construction Name
     Zone 1,                   !- Zone Name
     Outdoors,                 !- Outside Boundary Condition
     ,                         !- Outside Boundary Condition Object
@@ -1068,7 +1135,7 @@ BuildingSurface:Detailed,
 BuildingSurface:Detailed,
     Attic,                    !- Name
     Ceiling,                  !- Surface Type
-    Exterior_Wall,            !- Construction Name
+    Brick Wall,               !- Construction Name
     Zone 1,                   !- Zone Name
     Outdoors,                 !- Outside Boundary Condition
     ,                         !- Outside Boundary Condition Object
@@ -1092,7 +1159,7 @@ BuildingSurface:Detailed,
 BuildingSurface:Detailed,
     Right Wall 2,             !- Name
     Wall,                     !- Surface Type
-    Exterior_Slab_+_2in_EPS,    !- Construction Name
+    Brick Wall,               !- Construction Name
     Zone 1,                   !- Zone Name
     Outdoors,                 !- Outside Boundary Condition
     ,                         !- Outside Boundary Condition Object
@@ -1116,7 +1183,7 @@ BuildingSurface:Detailed,
 BuildingSurface:Detailed,
     Back Wall 1,              !- Name
     Wall,                     !- Surface Type
-    Exterior_Slab_+_2in_EPS,    !- Construction Name
+    Brick Wall,               !- Construction Name
     Zone 1,                   !- Zone Name
     Outdoors,                 !- Outside Boundary Condition
     ,                         !- Outside Boundary Condition Object
@@ -1140,7 +1207,7 @@ BuildingSurface:Detailed,
 BuildingSurface:Detailed,
     Right Wall 1,             !- Name
     Wall,                     !- Surface Type
-    Exterior_Slab_+_2in_EPS,    !- Construction Name
+    Brick Wall,               !- Construction Name
     Zone 1,                   !- Zone Name
     Outdoors,                 !- Outside Boundary Condition
     ,                         !- Outside Boundary Condition Object
@@ -1164,7 +1231,7 @@ BuildingSurface:Detailed,
 BuildingSurface:Detailed,
     Front Wall 2,             !- Name
     Wall,                     !- Surface Type
-    Exterior_Slab_+_2in_EPS,    !- Construction Name
+    Brick Wall,               !- Construction Name
     Zone 1,                   !- Zone Name
     Outdoors,                 !- Outside Boundary Condition
     ,                         !- Outside Boundary Condition Object
@@ -1188,7 +1255,7 @@ BuildingSurface:Detailed,
 BuildingSurface:Detailed,
     Left Wall 2,              !- Name
     Wall,                     !- Surface Type
-    Exterior_Slab_+_2in_EPS,    !- Construction Name
+    Brick Wall,               !- Construction Name
     Zone 1,                   !- Zone Name
     Outdoors,                 !- Outside Boundary Condition
     ,                         !- Outside Boundary Condition Object
@@ -1236,7 +1303,7 @@ BuildingSurface:Detailed,
 BuildingSurface:Detailed,
     Back Wall 2,              !- Name
     Wall,                     !- Surface Type
-    Exterior_Slab_+_2in_EPS,    !- Construction Name
+    Brick Wall,               !- Construction Name
     Zone 1,                   !- Zone Name
     Outdoors,                 !- Outside Boundary Condition
     ,                         !- Outside Boundary Condition Object
@@ -1593,7 +1660,7 @@ ZONEINFILTRATION:FLOWCOEFFICIENT,
     Zone_Infiltration,        !- Name
     Zone 1,                   !- Zone Name
     Always_On,                !- Schedule Name
-    0.1491353941999999,       !- Flow Coefficient
+    0.14,                     !- Flow Coefficient
     0.078,                    !- Stack Coefficient
     0.67,                     !- Pressure Exponent
     0.17,                     !- Wind Coefficient
