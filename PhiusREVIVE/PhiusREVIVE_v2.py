@@ -1,6 +1,6 @@
 #=============================================================================================================================
 # PhiusREVIVE Program Tool
-# Updated 2022/12/13
+# Updated 2023/01/23
 # v22.1.2
 #
 #
@@ -196,8 +196,10 @@ with st.form('Model Inputs'):
         ihg1, ihg2 = st.columns(2)
         with ihg1:
             fridge_base = st.number_input('Enter baseline refridgerator [kWh/yr]', value=445)
+            clothesWasher_base = st.number_input('Enter baseline clothes washer [kWh/yr]', value=270)
         with ihg2:
-            fridge_prop = st.number_input('Enter proposed refridgerator [kWh/yr]', value=445)
+            fridge_prop = (st.number_input('Enter proposed refridgerator [kWh/yr]', value=445))/365
+            clothesWasher_prop = (st.number_input('Enter baseline clothes washer [kWh/yr]', value=270))/365
     with tab4:
         st.header('Mechanical Inputs')
         mech1, mech2 = st.columns(2)
@@ -405,6 +407,15 @@ with st.form('Model Inputs'):
 
         idf1.newidfobject('ElectricEquipment',
             Name = 'PhiusMELs',
+            Zone_or_ZoneList_Name = 'Zone 1',
+            Schedule_Name = 'Phius_MELs',
+            Design_Level_Calculation_Method = 'EquipmentLevel',
+            Design_Level = PhiusMELs,
+            Fraction_Radiant = 0.5,
+            )
+
+        idf1.newidfobject('ElectricEquipment',
+            Name = 'PhiusClothesWasher',
             Zone_or_ZoneList_Name = 'Zone 1',
             Schedule_Name = 'Always_On',
             Design_Level_Calculation_Method = 'EquipmentLevel',
@@ -1452,13 +1463,31 @@ with st.form('Model Inputs'):
         #Schedules
         SchName_Lighting = 'Phius_Lighting'
         SchValues_Lighting = [0.008, 0.008, 0.008, 0.008, 0.024, 0.050, 0.056, 0.050, 0.022, 0.015, 0.015, 0.015, 0.015, 0.015, 0.026, 0.015, 0.056, 0.078, 0.105, 0.126, 0.128, 0.088, 0.049, 0.020]
+        hourSch(SchName_Lighting, SchValues_Lighting)
 
         SchName_MELs = 'Phius_MELs'
         SchValues_MELs = [0.008, 0.008, 0.008, 0.008, 0.024, 0.050, 0.056, 0.050, 0.022, 0.015, 0.015, 0.015, 0.015, 0.015, 0.026, 0.015, 0.056, 0.078, 0.105, 0.126, 0.128, 0.088, 0.049, 0.020]
-
-        hourSch(SchName_Lighting, SchValues_Lighting)
-
         hourSch(SchName_MELs, SchValues_MELs)
+
+        SchName_Occ = 'Phius_Occ'
+        SchValues_Occ = [0.061, 0.061, 0.061, 0.061, 0.061, 0.061, 0.061, 0.053, 0.025, 0.015, 0.015, 0.015, 0.015, 0.015, 0.015, 0.015, 0.018, 0.033, 0.054, 0.054, 0.054, 0.061, 0.061, 0.061]
+        hourSch(SchName_Occ, SchValues_Occ)
+
+        SchName_CW = 'Phius_ClothesWasher'
+        SchValues_CW = [0.009, 0.007, 0.004, 0.004, 0.007, 0.011, 0.022, 0.049, 0.073, 0.086, 0.084, 0.075, 0.067, 0.060, 0.049, 0.052, 0.050, 0.049, 0.049, 0.049, 0.049, 0.047, 0.032, 0.017]
+        hourSch(SchName_CW, SchValues_CW)
+
+        SchName_CD = 'Phius_ClothesDryer'
+        SchValues_CD = [0.010, 0.006, 0.004, 0.002, 0.004, 0.006, 0.016, 0.032, 0.048, 0.068, 0.078, 0.081, 0.074, 0.067, 0.057, 0.061, 0.055, 0.054, 0.051, 0.051, 0.052, 0.054, 0.044, 0.024]
+        hourSch(SchName_CD, SchValues_CD)
+
+        SchName_DW = 'Phius_DishWasher'
+        SchValues_DW = [0.015, 0.007, 0.005, 0.003, 0.003, 0.010, 0.020, 0.031, 0.058, 0.065, 0.056, 0.048, 0.041, 0.046, 0.036, 0.038, 0.038, 0.049, 0.087, 0.111, 0.090, 0.067, 0.044, 0.031]
+        hourSch(SchName_DW, SchValues_DW)
+
+        SchName_Range = 'Phius_Range'
+        SchValues_Range = [0.007, 0.007, 0.004, 0.004, 0.007, 0.011, 0.025, 0.042, 0.046, 0.048, 0.042, 0.050, 0.057, 0.046, 0.057, 0.044, 0.092, 0.150, 0.117, 0.060, 0.035, 0.025, 0.016, 0.011]
+        hourSch(SchName_Range, SchValues_Range)
 
         idf1.newidfobject('ScheduleTypeLimits',
             Name = 'Number')
