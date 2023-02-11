@@ -95,7 +95,8 @@ tab2_layout =   [[sg.Text('File Name:', size =(20, 1)),sg.InputText('Name your f
                 [sg.Text('Outage 2 End Date:', size =(20, 1)),sg.InputText('2020-07-30 00:00:00', key='OE2')],
                 ]
 
-layout1 = [[sg.Image(r'C:\Users\amitc\Documents\GitHub\Phius-REVIVE\Project Program\4StepResilience\al_REVIVE_PILOT_logo.png')],
+layout1 = [
+    # [sg.Image(r'C:\Users\amitc\Documents\GitHub\Phius-REVIVE\Project Program\4StepResilience\al_REVIVE_PILOT_logo.png')],
                 [sg.TabGroup(
                 [[sg.Tab('Start', tab0_layout,),
                 sg.Tab('Project Settings', tab1_layout,),
@@ -647,19 +648,19 @@ while True:
         plt.savefig(str(studyFolder) + "/" + str(BaseFileName) + "_Results Graphs.png")
 
         """
-        #=================================================== constructions database
-        constructions = idf1.idfobjects["CONSTRUCTION"]
-        cdd = pd.DataFrame()
-        cdd['Constructions'] = [construction.Name for construction in constructions]
-        cdd['Outside Layer'] = [construction.Outside_Layer for construction in constructions]
-        cdd['Layer 2'] = [construction.Layer_2 for construction in constructions]
-        cdd['Layer 3'] = [construction.Layer_3 for construction in constructions]
-        cdd['Layer 4'] = [construction.Layer_4 for construction in constructions]
-        cdd['Layer 5'] = [construction.Layer_5 for construction in constructions]
-        cdd['Layer 6'] = [construction.Layer_6 for construction in constructions]
-        cdd['Layer 7'] = [construction.Layer_7 for construction in constructions]
+        # #=================================================== constructions database
+        # constructions = idf1.idfobjects["CONSTRUCTION"]
+        # cdd = pd.DataFrame()
+        # cdd['Constructions'] = [construction.Name for construction in constructions]
+        # cdd['Outside Layer'] = [construction.Outside_Layer for construction in constructions]
+        # cdd['Layer 2'] = [construction.Layer_2 for construction in constructions]
+        # cdd['Layer 3'] = [construction.Layer_3 for construction in constructions]
+        # cdd['Layer 4'] = [construction.Layer_4 for construction in constructions]
+        # cdd['Layer 5'] = [construction.Layer_5 for construction in constructions]
+        # cdd['Layer 6'] = [construction.Layer_6 for construction in constructions]
+        # cdd['Layer 7'] = [construction.Layer_7 for construction in constructions]
 
-        cdd.to_csv(str(studyFolder) + "/" + 'Construction_Data_Dictionary.csv')
+        # cdd.to_csv(str(studyFolder) + "/" + 'Construction_Data_Dictionary.csv')
 
         sg.popup('Finished Collect')
         #break
