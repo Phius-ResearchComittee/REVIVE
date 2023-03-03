@@ -210,6 +210,7 @@ while True:
         Multiple_Surface_Control_Type = 'Sequential',
         **values)
 
+
         for site in idfg.idfobjects['Shading:Site:Detailed']:
             idf1.copyidfobject(site)
 

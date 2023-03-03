@@ -1,6 +1,6 @@
 #=============================================================================================================================
 # PhiusREVIVE Research Tool
-# Updated 2023/02/14
+# Updated 2023/02/21
 # v23.0.0
 #
 #
@@ -35,7 +35,6 @@
 #==============================================================================================================================
 
 from pickle import TRUE
-from this import d
 import pandas as pd
 import numpy as np
 import matplotlib as mpl
@@ -43,13 +42,13 @@ import matplotlib.pyplot as plt
 import datetime as dt
 import email.utils as eutils
 import time
-import streamlit as st
+# import streamlit as st
 import eppy as eppy
 from eppy import modeleditor
 from eppy.modeleditor import IDF
 from eppy.runner.run_functions import runIDFs
-import PySimpleGUI as sg
-from PIL import Image, ImageTk
+# import PySimpleGUI as sg
+# from PIL import Image, ImageTk
 import os
 from eppy.results import readhtml # the eppy module with functions to read the html
 from eppy.results import fasthtml
@@ -81,7 +80,7 @@ def constructionBuilder(constructionName, constructionLayers):
 def hourSch(nameSch, hourlyValues):
     params = [x for x in hourlyValues]
     schValues = {}
-    count = 2
+    count = 5
     for i,param in enumerate(params):
         count = count + 1
         schValues['Field_' + str(count)] = ('Until: ' + str(i + 1) + ':00')
@@ -91,7 +90,10 @@ def hourSch(nameSch, hourlyValues):
     Name = str(nameSch),
     Schedule_Type_Limits_Name = 'Fraction',
     Field_1 = 'Through: 12/31',
-    Field_2 = 'For: AllDays',
+    Field_2 = 'For: SummerDesignDay WinterDesignDay',
+    Field_3 = 'Until: 24:00',
+    Field_4 = 0,
+    Field_5 = 'For: AllOtherDays',
     **schValues)
 
 # Not sure of the purposed of this one completely - AM to check 
@@ -112,16 +114,23 @@ def zeroSch(nameSch):
 # 3.0 File Management
 #==============================================================================================================================
 
-iddfile = str(input('Path to EnergyPlus IDD file: '))
+iddfile = 'C:\EnergyPlusV9-5-0\Energy+.idd' # str(input('Path to EnergyPlus IDD file: '))
 BaseFileName = str(input('Name for the files to be created: '))
-studyFolder = str(input('Path to folder for study inputs: '))
-epwfile = str(input('Path to EPW weather file: '))
-idfgName = str(input('Pathr to EnergyPlus IDF file with building geometry: '))
-ddyName = str(input('Path to EnergyPlus DDY file: '))
-fname2 = str(studyFolder) + "/"  + str(BaseFileName) + ".idf"
+studyFolder = 'C:/Users/amitc_crl/OneDrive/Documents/GitHub/REVIVE/PhiusREVIVE/Testing/test2' # str(input('Path to folder for study inputs: '))
+# epwfile = str(input('Path to EPW weather file: '))
+idfgName = 'C:/Users/amitc_crl/OneDrive/Documents/GitHub/REVIVE/PhiusREVIVE/Testing/PNNL_SF_Geometry.idf' # str(input('Path to EnergyPlus IDF file with building geometry: '))
+# ddyName = str(input('Path to EnergyPlus DDY file: '))
+runListPath = 'C:/Users/amitc_crl/OneDrive/Documents/GitHub/REVIVE/PhiusREVIVE/Testing/test2/runs.csv' # str(input('Select runs.csv'))
+
 
 os.chdir(str(studyFolder))
 IDF.setiddname(iddfile)
+
+# for x in y:   For loop goes here
+runCount = 0
+
+
+# fname2 = str(studyFolder) + "/"  + str(BaseFileName) + ".idf"
 
 testingFile = str(studyFolder) + "/" + str(BaseFileName) + ".idf"
 testingFile_BA = str(studyFolder) + "/" + str(BaseFileName) + "_BA.idf"
@@ -129,18 +138,75 @@ testingFile_BR = str(studyFolder) + "/" + str(BaseFileName) + "_BR.idf"
 testingFile_PA = str(studyFolder) + "/" + str(BaseFileName) + "_PA.idf"
 testingFile_PR = str(studyFolder) + "/" + str(BaseFileName) + "_PR.idf"
 
-open(str(testingFile), 'w')
-idfg = IDF(str(idfgName))
-ddy = IDF(ddyName)
-idf1 = IDF(str(testingFile))
-windowNames = []
-
 #==============================================================================================================================
 # 4.0 Variable Assignment
 #==============================================================================================================================
 
+runList = pd.read_csv(str(runListPath))
+runList.head()
+epwFile = runList['EPW'][runCount]
+ddyName = runList['DDY'][runCount]
 
+icfa = runList['ICFA'][runCount]
+Nbr = runList['BEDROOMS'][runCount]
+occ = (runList['BEDROOMS'][runCount] + 1)
+operableArea_N = 1
+operableArea_S = 1
+operableArea_W = 1
+operableArea_E = 1
+halfHeight = 1.524
+ervSense = 0.75
+ervLatent = 0.4
 
+#IHGs 
+
+fridge = (445/(8760)) # always on design load
+fracHighEff = 1.0
+PhiusLights = ((2 + 0.8 * (4 - 3 * fracHighEff / 3.7)*(455 + 0.8 * icfa) * 0.8) / 365) #power per day W use Phius calc
+PhiusMELs = (413 + 69*Nbr + 0.91*icfa)/365 #consumption per day per phius calc
+
+# Envelope
+
+flowCoefficient = runList['FLOW_COEFFICIENT [SI]'][runCount]
+Ext_Window1_Ufactor = runList['EXT_WINDOW_1_U-FACTOR'][runCount]
+Ext_Window1_SHGC = runList['EXT_WINDOW_1_SHGC'][runCount]
+
+Ext_Wall1 = runList['EXT_WALL_1_NAME'][runCount]
+Ext_Roof1 = runList['EXT_ROOF_1_NAME'][runCount]
+Ext_Floor1 = runList['EXT_FLOOR_1_NAME'][runCount]
+Ext_Door1 = runList['EXT_DOOR_1_NAME'][runCount]
+Int_Floor1 = runList['INT_FLOOR_1_NAME'][runCount]
+
+# Schedule Based Inputs 
+outage1start = runList['OUTAGE_1_START'][runCount]
+outage1end = runList['OUTAGE_1_END'][runCount]
+outage2start = runList['OUTAGE_2_START'][runCount]
+outage2end = runList['OUTAGE_2_END'][runCount]
+outage1type = runList['1ST_OUTAGE'][runCount]
+
+if outage1type == 'HEATING':
+    heatingOutageStart = outage1start
+    heatingOutageEnd = outage1end
+    coolingOutageStart = outage2start
+    coolingOutageEnd = outage2end
+else:
+    heatingOutageStart = outage2start
+    heatingOutageEnd = outage2end
+    coolingOutageStart = outage1start
+    coolingOutageEnd = outage1end 
+
+# Controls 
+NatVentType  = str(runList['NAT_VENT_TYPE'][runCount])
+NatVentAvail = runList['NAT_VENT_AVAIL'][runCount]
+shadingAvail = runList['SHADING_AVAIL'][runCount]
+demandCoolingAvail = runList['DEMAND_COOLING_AVAIL'][runCount]
+
+# print(outage1start.strftime('%m/%d'))
+
+open(str(testingFile), 'w')
+idfg = IDF(str(idfgName))
+ddy = IDF(ddyName)
+idf1 = IDF(str(testingFile))
 
 #==============================================================================================================================
 # 6. Importing from geometry file
@@ -267,16 +333,17 @@ idf1.newidfobject('People',
     Air_Velocity_Schedule_Name = 'AirVelocitySch',
     Thermal_Comfort_Model_1_Type = 'Pierce'
     )
+
 #Need Phius Calcs for next few objects
-idf1.newidfobject('Lights',
-    Name = 'PhiusLights',
-    Zone_or_ZoneList_Name = 'Zone 1',
-    Schedule_Name = 'Phius_Lighting',
-    Design_Level_Calculation_Method = 'LightingLevel',
-    Lighting_Level = PhiusLights,
-    Fraction_Radiant = 0.6,
-    Fraction_Visible = 0.2
-    )
+# idf1.newidfobject('Lights',
+#     Name = 'PhiusLights',
+#     Zone_or_ZoneList_Name = 'Zone 1',
+#     Schedule_Name = 'Phius_Lighting',
+#     Design_Level_Calculation_Method = 'LightingLevel',
+#     Lighting_Level = PhiusLights,
+#     Fraction_Radiant = 0.6,
+#     Fraction_Visible = 0.2
+#     )
 
 idf1.newidfobject('ElectricEquipment',
     Name = 'Fridge',
@@ -287,23 +354,25 @@ idf1.newidfobject('ElectricEquipment',
     Fraction_Radiant = 1,
     )
 
-idf1.newidfobject('ElectricEquipment',
-    Name = 'PhiusMELs',
-    Zone_or_ZoneList_Name = 'Zone 1',
-    Schedule_Name = 'Phius_MELs',
-    Design_Level_Calculation_Method = 'EquipmentLevel',
-    Design_Level = PhiusMELs,
-    Fraction_Radiant = 0.5,
-    )
 
-idf1.newidfobject('ElectricEquipment',
-    Name = 'PhiusClothesWasher',
-    Zone_or_ZoneList_Name = 'Zone 1',
-    Schedule_Name = 'Always_On',
-    Design_Level_Calculation_Method = 'EquipmentLevel',
-    Design_Level = 100,
-    Fraction_Radiant = 0.5,
-    )
+
+# idf1.newidfobject('ElectricEquipment',
+#     Name = 'PhiusMELs',
+#     Zone_or_ZoneList_Name = 'Zone 1',
+#     Schedule_Name = 'Phius_MELs',
+#     Design_Level_Calculation_Method = 'EquipmentLevel',
+#     Design_Level = PhiusMELs,
+#     Fraction_Radiant = 0.5,
+#     )
+
+# idf1.newidfobject('ElectricEquipment',
+#     Name = 'PhiusClothesWasher',
+#     Zone_or_ZoneList_Name = 'Zone 1',
+#     Schedule_Name = 'Always_On',
+#     Design_Level_Calculation_Method = 'EquipmentLevel',
+#     Design_Level = 100,
+#     Fraction_Radiant = 0.5,
+#     )
 
 idf1.newidfobject('ZoneInfiltration:FlowCoefficient',
     Name = 'Zone_Infiltration',
@@ -687,8 +756,8 @@ idf1.newidfobject('Material:AirGap',
 
 idf1.newidfobject('WindowMaterial:SimpleGlazingSystem',
     Name = 'Ext_Window1_Base',
-    UFactor = Ext_Window1_Base_Ufactor,
-    Solar_Heat_Gain_Coefficient = Ext_Window1_Base_SHGC
+    UFactor = Ext_Window1_Ufactor,
+    Solar_Heat_Gain_Coefficient = Ext_Window1_SHGC
     )
 
 idf1.newidfobject('Construction',
@@ -742,7 +811,7 @@ constructionBuilder('P+B_R-30', ['Plywood_(Douglas_Fir)_-_12.7mm', 'ccSF_R-30', 
 constructionBuilder('P+B_R-38', ['Plywood_(Douglas_Fir)_-_12.7mm', 'ccSF_R-38', 'Plywood_(Douglas_Fir)_-_12.7mm', 'G05_25mm_wood'])
 constructionBuilder('P+B_R-49', ['Plywood_(Douglas_Fir)_-_12.7mm', 'ccSF_R-49', 'Plywood_(Douglas_Fir)_-_12.7mm', 'G05_25mm_wood'])
 
-##Shade Materials
+# Shade Materials
 idf1.newidfobject('WindowMaterial:Shade',
     Name = 'HighReflect',
     Solar_Transmittance = 0.1,
@@ -760,6 +829,60 @@ idf1.newidfobject('WindowMaterial:Shade',
     RightSide_Opening_Multiplier = 0.5,
     Airflow_Permeability = 0
     )
+
+runs = windowNames
+params = [x for x in runs]
+values = {}
+for i,param in enumerate(params):
+    values['Fenestration_Surface_' + str(i+1) + '_Name'] = param
+idf1.newidfobject('WindowShadingControl',
+Name = 'Shading Control',
+Zone_Name = 'Zone 1',
+Shading_Control_Sequence_Number = 1,
+Shading_Type = 'ExteriorShade',
+Shading_Control_Type = 'OnIfHighSolarOnWindow',
+Schedule_Name = 'Shading Availible',
+Setpoint = 100,
+Shading_Control_Is_Scheduled = 'Yes',
+Glare_Control_Is_Active = 'No',
+Shading_Device_Material_Name = 'HIGH REFLECT - LOW TRANS SHADE',
+Type_of_Slat_Angle_Control_for_Blinds = 'FixedSlatAngle',
+Multiple_Surface_Control_Type = 'Sequential',
+**values)
+
+idf1.newidfobject('WindowMaterial:Shade',
+    Name = 'MEDIUM REFLECT - MEDIUM TRANS SHADE',
+    Solar_Transmittance = 0.4,
+    Solar_Reflectance = 0.5,
+    Visible_Transmittance = 0.4,
+    Visible_Reflectance = 0.5,
+    Infrared_Hemispherical_Emissivity = 0.9,
+    Infrared_Transmittance = 0,
+    Thickness = 0.005,
+    Conductivity = 0.1,
+    Shade_to_Glass_Distance = 0.05,
+    Top_Opening_Multiplier = 0.5,
+    Bottom_Opening_Multiplier = 0.5,
+    LeftSide_Opening_Multiplier = 0.5,
+    RightSide_Opening_Multiplier = 0.5,
+    Airflow_Permeability = 0)
+
+idf1.newidfobject('WindowMaterial:Shade',
+    Name = 'HIGH REFLECT - LOW TRANS SHADE',
+    Solar_Transmittance = 0.1,
+    Solar_Reflectance = 0.8,
+    Visible_Transmittance = 0.1,
+    Visible_Reflectance = 0.8,
+    Infrared_Hemispherical_Emissivity = 0.9,
+    Infrared_Transmittance = 0,
+    Thickness = 0.005,
+    Conductivity = 0.1,
+    Shade_to_Glass_Distance = 0.05,
+    Top_Opening_Multiplier = 0.5,
+    Bottom_Opening_Multiplier = 0.5,
+    LeftSide_Opening_Multiplier = 0.5,
+    RightSide_Opening_Multiplier = 0.5,
+    Airflow_Permeability = 0)
 
 #KIVA
 idf1.newidfobject('Foundation:Kiva',
@@ -798,6 +921,57 @@ idf1.newidfobject('ZoneVentilation:WindandStackOpenArea',
     Opening_Area_Fraction_Schedule_Name = 'WindowFraction2',
     Opening_Effectiveness = 'autocalculate',
     Effective_Angle = 0,
+    Height_Difference = halfHeight,
+    Discharge_Coefficient_for_Opening = 'autocalculate',
+    Minimum_Indoor_Temperature = 15,
+    Maximum_Indoor_Temperature = 100,
+    Delta_Temperature = -100,
+    Minimum_Outdoor_Temperature = -100,
+    Maximum_Outdoor_Temperature = 100,
+    Maximum_Wind_Speed = 10
+    )
+
+idf1.newidfobject('ZoneVentilation:WindandStackOpenArea',
+    Name = 'OperableWindows-E',
+    Zone_Name = 'Zone 1',
+    Opening_Area = operableArea_E,
+    Opening_Area_Fraction_Schedule_Name = 'WindowFraction2',
+    Opening_Effectiveness = 'autocalculate',
+    Effective_Angle = 90,
+    Height_Difference = halfHeight,
+    Discharge_Coefficient_for_Opening = 'autocalculate',
+    Minimum_Indoor_Temperature = 15,
+    Maximum_Indoor_Temperature = 100,
+    Delta_Temperature = -100,
+    Minimum_Outdoor_Temperature = -100,
+    Maximum_Outdoor_Temperature = 100,
+    Maximum_Wind_Speed = 10
+    )
+
+idf1.newidfobject('ZoneVentilation:WindandStackOpenArea',
+    Name = 'OperableWindows-S',
+    Zone_Name = 'Zone 1',
+    Opening_Area = operableArea_S,
+    Opening_Area_Fraction_Schedule_Name = 'WindowFraction2',
+    Opening_Effectiveness = 'autocalculate',
+    Effective_Angle = 180,
+    Height_Difference = halfHeight,
+    Discharge_Coefficient_for_Opening = 'autocalculate',
+    Minimum_Indoor_Temperature = 15,
+    Maximum_Indoor_Temperature = 100,
+    Delta_Temperature = -100,
+    Minimum_Outdoor_Temperature = -100,
+    Maximum_Outdoor_Temperature = 100,
+    Maximum_Wind_Speed = 10
+    )
+
+idf1.newidfobject('ZoneVentilation:WindandStackOpenArea',
+    Name = 'OperableWindows-W',
+    Zone_Name = 'Zone 1',
+    Opening_Area = operableArea_W,
+    Opening_Area_Fraction_Schedule_Name = 'WindowFraction2',
+    Opening_Effectiveness = 'autocalculate',
+    Effective_Angle = 270,
     Height_Difference = halfHeight,
     Discharge_Coefficient_for_Opening = 'autocalculate',
     Minimum_Indoor_Temperature = 15,
@@ -944,7 +1118,7 @@ idf1.newidfobject('NodeList',
     Node_2_Name = 'Zone1PTHPAirInletNode'
     )
 
-#### ERV
+# ERV
 
 idf1.newidfobject('ZoneHVAC:EnergyRecoveryVentilator',
     Name = 'ERV1',
@@ -1011,12 +1185,13 @@ idf1.newidfobject('OutdoorAir:Node',
     Name = 'OA_1',
     Height_Above_Ground = 3.048
     )
+
 idf1.newidfobject('OutdoorAir:Node',
     Name = 'OA_2',
     Height_Above_Ground = 3.048
     )
 
-##Heat Pump
+# Heat Pump
 idf1.newidfobject('ZoneHVAC:PackagedTerminalHeatPump',
     Name = 'Zone1PTHP',
     Availability_Schedule_Name = 'PTHP_Avail',
@@ -1116,6 +1291,119 @@ idf1.newidfobject('Coil:Heating:DX:SingleSpeed',
     Resistive_Defrost_Heater_Capacity = 'autosize'
     )
 
+# Renewables
+
+idf1.newidfobject('DemandManagerAssignmentList',
+    Name = 'Demand Limiting',
+    Meter_Name = 'ElectricityNet:Facility',
+    Demand_Limit_Schedule_Name = 'Always Off',
+    Demand_Limit_Safety_Fraction = 0.95,
+    # Billing_Period_Schedule_Name = ,
+    # Peak_Period_Schedule_Name = ,
+    Demand_Window_Length = 10,
+    Demand_Manager_Priority = 'All', 
+    DemandManager_1_Object_Type = 'DemandManager:Thermostats',
+    DemandManager_1_Name = 'Set backs') 
+
+idf1.newidfobject('DemandManager:Thermostats',
+    Name = 'Set Backs',
+    Availability_Schedule_Name = 'Demand Control Cooling', 
+    Reset_Control = 'Fixed',
+    Minimum_Reset_Duration = 30,
+    Maximum_Heating_Setpoint_Reset = 20,
+    Maximum_Cooling_Setpoint_Reset = 28.8888888888889,
+    # Reset_Step_Change = ,
+    Selection_Control = 'All',
+    # Rotation_Duration = ,
+    Thermostat_1_Name = 'Zone_1_Thermostat')
+
+idf1.newidfobject('Generator:PVWatts',
+    Name = '3 kW PV',
+    PVWatts_Version = 5,
+    DC_System_Capacity = 3000,
+    Module_Type = 'Standard',
+    Array_Type = 'FixedOpenRack',
+    System_Losses = 0.14,
+    Array_Geometry_Type = 'TiltAzimuth',
+    Tilt_Angle = 57,
+    Azimuth_Angle = 180,
+    # Surface_Name = ,
+    Ground_Coverage_Ratio = 0.4)
+
+idf1.newidfobject('ElectricLoadCenter:Inverter:PVWatts',
+    Name = 'PV Inverter',
+    DC_to_AC_Size_Ratio = 1.1,
+    Inverter_Efficiency = 0.96)
+
+idf1.newidfobject('ElectricLoadCenter:Generators',
+    Name = 'PV',
+    Generator_1_Name = '3 kW PV',
+    Generator_1_Object_Type = 'Generator:PVWatts',
+    Generator_1_Rated_Electric_Power_Output = 3000,
+    Generator_1_Availability_Schedule_Name = 'Always_On')
+    # Generator_1_Rated_Thermal_to_Electrical_Power_Ratio = )
+
+idf1.newidfobject('ElectricLoadCenter:Storage:Simple',
+    Name = 'Simple Battery',
+    Availability_Schedule_Name = 'Always_On',
+    Zone_Name = 'Zone 1',
+    Radiative_Fraction_for_Zone_Heat_Gains = 0.9,
+    Nominal_Energetic_Efficiency_for_Charging = 0.9,
+    Nominal_Discharging_Energetic_Efficiency = 0.9,
+    Maximum_Storage_Capacity = 10800000,
+    # Maximum_Power_for_Discharging = ,
+    # Maximum_Power_for_Charging = ,
+    Initial_State_of_Charge = 10800000)
+
+idf1.newidfobject('ElectricLoadCenter:Transformer',
+    Name = 'Transformer',
+    Availability_Schedule_Name = 'Always_On',
+    Transformer_Usage = 'LoadCenterPowerConditioning',
+    Zone_Name = 'Zone 1',
+    # Radiative_Fraction = ,
+    # Rated_Capacity = ,
+    Phase = 3,
+    Conductor_Material = 'Aluminum',
+    Full_Load_Temperature_Rise = 150,
+    Fraction_of_Eddy_Current_Losses = 0.1,
+    Performance_Input_Method = 'RatedLosses',
+    # Rated_No_Load_Loss = ,
+    # Rated_Load_Loss = ,
+    Nameplate_Efficiency = 0.98,
+    Per_Unit_Load_for_Nameplate_Efficiency = 0.35,
+    Reference_Temperature_for_Nameplate_Efficiency = 75,
+    # Per_Unit_Load_for_Maximum_Efficiency = ,
+    Consider_Transformer_Loss_for_Utility_Cost = 'Yes')
+
+idf1.newidfobject('ElectricLoadCenter:Distribution',
+    Name = 'ELC',
+    Generator_List_Name = 'PV',
+    Generator_Operation_Scheme_Type = 'Baseload',
+    Generator_Demand_Limit_Scheme_Purchased_Electric_Demand_Limit = 0,
+    # Generator_Track_Schedule_Name_Scheme_Schedule_Name = ,
+    # Generator_Track_Meter_Scheme_Meter_Name = ,
+    Electrical_Buss_Type = 'AlternatingCurrentWithStorage',
+    Inverter_Name = 'PV Inverter',
+    Electrical_Storage_Object_Name = 'Simple Battery',
+    # Transformer_Object_Name = ,
+    Storage_Operation_Scheme = 'FacilityDemandLeveling',
+    Storage_Control_Track_Meter_Name = 'ElectricityNet:Facility',
+    Storage_Converter_Object_Name = 'Converter',
+    Maximum_Storage_State_of_Charge_Fraction = 1,
+    Minimum_Storage_State_of_Charge_Fraction = 0.2,
+    # Design_Storage_Control_Charge_Power = ,
+    # Storage_Charge_Power_Fraction_Schedule_Name = ,
+    # Design_Storage_Control_Discharge_Power = ,
+    # Storage_Discharge_Power_Fraction_Schedule_Name = ,
+    Storage_Control_Utility_Demand_Target = 3500,
+    Storage_Control_Utility_Demand_Target_Fraction_Schedule_Name = 'OutageCooling')
+
+idf1.newidfobject('ElectricLoadCenter:Storage:Converter',
+    Name = 'Converter',
+    Availability_Schedule_Name = 'Always_On',
+    Power_Conversion_Efficiency_Method = 'SimpleFixed',
+    Simple_Fixed_Efficiency = 0.95)
+
 # Curves
 idf1.newidfobject('Curve:Cubic',
     Name = 'CombinedPowerAndFanEff',
@@ -1128,7 +1416,6 @@ idf1.newidfobject('Curve:Cubic',
     Minimum_Curve_Output = 0.01,
     Maximum_Curve_Output = 1.5
     )
-
 idf1.newidfobject('Curve:Quadratic',
     Name = 'HPACCoolCapFFF',
     Coefficient1_Constant = 0.8,
@@ -1137,7 +1424,6 @@ idf1.newidfobject('Curve:Quadratic',
     Minimum_Value_of_x = 0.5,
     Maximum_Value_of_x = 1.5
     )
-
 idf1.newidfobject('Curve:Quadratic',
     Name = 'HPACEIRFFF',
     Coefficient1_Constant = 1.1552,
@@ -1192,7 +1478,6 @@ idf1.newidfobject('Curve:Cubic',
     Minimum_Value_of_x = 0.5,
     Maximum_Value_of_x = 1.5
     )
-
 idf1.newidfobject('Curve:Cubic',
     Name = 'HPACHeatEIRFT',
     Coefficient1_Constant = 1.19248,
@@ -1206,7 +1491,6 @@ idf1.newidfobject('Curve:Cubic',
     Input_Unit_Type_for_X = 'Temperature',
     Output_Unit_Type = 'Dimensionless'
     )
-
 idf1.newidfobject('Curve:Cubic',
     Name = 'FanEffRatioCurve',
     Coefficient1_Constant = 0.33856828,
@@ -1218,7 +1502,6 @@ idf1.newidfobject('Curve:Cubic',
     Minimum_Curve_Output = 0.3,
     Maximum_Curve_Output = 1.0
     )
-
 idf1.newidfobject('Curve:Exponent',
     Name = 'FanPowerRatioCurve',
     Coefficient1_Constant = 0.0,
@@ -1229,7 +1512,6 @@ idf1.newidfobject('Curve:Exponent',
     Minimum_Curve_Output = 0.01,
     Maximum_Curve_Output = 1.5
     )
-
 idf1.newidfobject('Curve:Biquadratic',
     Name = 'HPACCoolCapFT',
     Coefficient1_Constant = 0.942587793,
@@ -1248,7 +1530,6 @@ idf1.newidfobject('Curve:Biquadratic',
     Input_Unit_Type_for_Y = 'Temperature',
     Output_Unit_Type = 'Dimensionless'
     )
-
 idf1.newidfobject('Curve:Biquadratic',
     Name = 'HPACEIRFT',
     Coefficient1_Constant = 0.342414409,
@@ -1268,7 +1549,7 @@ idf1.newidfobject('Curve:Biquadratic',
     Output_Unit_Type = 'Dimensionless'
     )
 
-### Outputs
+# Outputs
 
 idf1.newidfobject('Output:VariableDictionary',
     Key_Field = 'IDF')
@@ -1295,8 +1576,9 @@ idf1.newidfobject('Output:SQLite',
     Unit_Conversion_for_Tabular_Data = 'InchPound'
     )
 
-outputVars = ['Site Outdoor Air Drybulb Temperature', 'Zone Air Relative Humidity', 'Zone Air CO2 Concentration', 'Zone Air Temperature']
-meterVars = ['InteriorLights:Electricity', 'InteriorEquipment:Electricity', 'Fans:Electricity', 'Heating:Electricity', 'Cooling:Electricity']
+outputVars = ['Site Outdoor Air Drybulb Temperature', 'Zone Air Relative Humidity', 'Zone Air CO2 Concentration', 'Zone Air Temperature', 'Exterior Lights Electricity Energy', 
+              'Zone Ventilation Mass Flow Rate', 'Schedule Value']
+meterVars = ['InteriorLights:Electricity', 'InteriorEquipment:Electricity', 'Fans:Electricity', 'Heating:Electricity', 'Cooling:Electricity', 'ElectricityNet:Facility'] 
 for x in outputVars:
     idf1.newidfobject('Output:Variable',
     Key_Value = '*',
@@ -1352,6 +1634,9 @@ idf1.newidfobject('ScheduleTypeLimits',
 
 idf1.newidfobject('ScheduleTypeLimits',
     Name = 'Fraction')
+
+idf1.newidfobject('ScheduleTypeLimits',
+    Name = 'On/Off')
 
 idf1.newidfobject('Schedule:Constant',
     Name = 'WindowFraction2',
@@ -1485,12 +1770,188 @@ idf1.newidfobject('Schedule:Compact',
     Field_20 = 1.0
     )
 
+# Schedule:Compact,
+#     Shading Availible,        !- Name
+#     On/Off,                   !- Schedule Type Limits Name
+#     =$OutStartC,              !- Field 1
+#     For: AllDays,             !- Field 2
+#     Until: 24:00,             !- Field 3
+#     0,                        !- Field 4
+#     =$OutEndC,                !- Field 5
+#     For: AllDays,             !- Field 6
+#     Until: 24:00,             !- Field 7
+#     =$Shading,                !- Field 8
+#     Through: 12/31,           !- Field 9
+#     For: AllDays,             !- Field 10
+#     Until: 24:00,             !- Field 11
+#     0;                        !- Field 12
+
+idf1.newidfobject('Schedule:Compact',
+    Name = 'NatVent',
+    Schedule_Type_Limits_Name = 'On/Off',
+    Field_1 = ('Through: ' + str(coolingOutageStart)),
+    Field_2 = 'For: SummerDesignDay',
+    Field_3 = 'Until: 24:00',
+    Field_4 = 0,
+    Field_5 = 'For: AllOtherDays',
+    Field_6  ='Until: 24:00',
+    Field_7 = 0,
+    Field_8 = ('Through: ' + str(coolingOutageEnd)),
+    Field_9 = 'For: SummerDesignDay',
+    Field_10 = 'Until: 24:00',
+    Field_11 = 0,
+    Field_12 = 'For: AllOtherDays',
+    Field_13  ='Until: 24:00',
+    Field_14 = NatVentAvail,
+    Field_15 = 'Through: 12/31', 
+    Field_16 = 'For: AllDays',
+    Field_17 = 'Until: 24:00',
+    Field_18 = 0)
+
+idf1.newidfobject('Schedule:Compact',
+    Name = 'SchNatVent',
+    Schedule_Type_Limits_Name = 'On/Off',
+    Field_1 = ('Through: ' + str(coolingOutageStart)),
+    Field_2 = 'For: SummerDesignDay',
+    Field_3 = 'Until: 24:00',
+    Field_4 = 0,
+    Field_5 = 'For: AllOtherDays',
+    Field_6  ='Until: 24:00',
+    Field_7 = 0,
+    Field_8 = ('Through: ' + str(coolingOutageEnd)),
+    Field_9 = 'For: SummerDesignDay',
+    Field_10 = 'Until: 24:00',
+    Field_11 = 0,
+    Field_12 = 'For: AllOtherDays',
+    Field_13  ='Until: 24:00',
+    Field_14 = NatVentAvail,
+    Field_15 = 'Through: 12/31', 
+    Field_16 = 'For: AllDays',
+    Field_17 = 'Until: 24:00',
+    Field_18 = 0)
+
+idf1.newidfobject('Schedule:Compact',
+    Name = 'OutageCooling',
+    Schedule_Type_Limits_Name = 'On/Off',
+    Field_1 = ('Through: ' + str(coolingOutageStart)),
+    Field_2 = 'For: AllDays',
+    Field_3 = 'Until: 24:00',
+    Field_4 = 1,
+    Field_5 = ('Through: ' + str(coolingOutageEnd)),
+    Field_6 = 'For: AllDays',
+    Field_7 = 'Until: 24:00',
+    Field_8 = 0,
+    Field_9 = 'Through: 12/31',
+    Field_10 = 'For: AllDays',
+    Field_11 = 'Until: 24:00',
+    Field_12 = 1)
+
+idf1.newidfobject('Schedule:Compact',
+    Name = 'Demand Control Cooling',
+    Schedule_Type_Limits_Name = 'On/Off',
+    Field_1 = ('Through: ' + str(coolingOutageStart)),
+    Field_2 = 'For: AllDays',
+    Field_3 = 'Until: 24:00',
+    Field_4 = 0,
+    Field_5 = ('Through: ' + str(coolingOutageEnd)),
+    Field_6 = 'For: AllDays',
+    Field_7 = 'Until: 24:00',
+    Field_8 = demandCoolingAvail,
+    Field_9 = 'Through: 12/31',
+    Field_10 = 'For: AllDays',
+    Field_11 = 'Until: 24:00',
+    Field_12 = 0)
+
+idf1.newidfobject('Schedule:Compact',
+    Name = 'Shading Availible',
+    Schedule_Type_Limits_Name = 'On/Off',
+    Field_1 = ('Through: ' + str(coolingOutageStart)),
+    Field_2 = 'For: AllDays',
+    Field_3 = 'Until: 24:00',
+    Field_4 = 0,
+    Field_5 = ('Through: ' + str(coolingOutageEnd)),
+    Field_6 = 'For: AllDays',
+    Field_7 = 'Until: 24:00',
+    Field_8 = shadingAvail,
+    Field_9 = 'Through: 12/31',
+    Field_10 = 'For: AllDays',
+    Field_11 = 'Until: 24:00',
+    Field_12 = 0)
+
+# Resilience Controls
+
+idf1.newidfobject('EnergyManagementSystem:Sensor',
+    Name = 'IWB',
+    OutputVariable_or_OutputMeter_Index_Key_Name = 'Zone_1_Zone_Air_Node',
+    OutputVariable_or_OutputMeter_Name = 'System Node Wetbulb Temperature')
+
+idf1.newidfobject('EnergyManagementSystem:Sensor',
+    Name = 'OWB',
+    OutputVariable_or_OutputMeter_Index_Key_Name ='*',
+    OutputVariable_or_OutputMeter_Name = 'Site Outdoor Air Wetbulb Temperature')
+
+idf1.newidfobject('EnergyManagementSystem:Sensor',
+    Name = 'IDB',
+    OutputVariable_or_OutputMeter_Index_Key_Name = 'Zone 1',
+    OutputVariable_or_OutputMeter_Name = 'Zone Air Temperature')
+
+idf1.newidfobject('EnergyManagementSystem:Sensor',
+    Name = 'ODB',
+    OutputVariable_or_OutputMeter_Index_Key_Name ='*',
+    OutputVariable_or_OutputMeter_Name = 'Site Outdoor Air Drybulb Temperature')
+
+idf1.newidfobject('EnergyManagementSystem:Sensor',
+    Name = 'NatVentAvail',
+    OutputVariable_or_OutputMeter_Index_Key_Name = str(NatVentType),
+    OutputVariable_or_OutputMeter_Name = 'Schedule Value')
+
+idf1.newidfobject('EnergyManagementSystem:Sensor',
+    Name = 'Clock',
+    OutputVariable_or_OutputMeter_Index_Key_Name = 'PhiusExtLight',
+    OutputVariable_or_OutputMeter_Name = 'Exterior Lights Electricity Energy')
+
+idf1.newidfobject('EnergyManagementSystem:Sensor',
+    Name = 'PV',
+    OutputVariable_or_OutputMeter_Index_Key_Name = 'ELC',
+    OutputVariable_or_OutputMeter_Name = 'Electric Load Center Produced Electricity Energy')
+
+idf1.newidfobject('EnergyManagementSystem:Actuator',
+    Name = 'WindowEconomizer',
+    Actuated_Component_Unique_Name = 'WindowFraction2',
+    Actuated_Component_Type = 'Schedule:Constant',
+    Actuated_Component_Control_Type = 'Schedule Value')
+
+idf1.newidfobject('EnergyManagementSystem:ProgramCallingManager',
+    Name = 'CO2Caller',
+    EnergyPlus_Model_Calling_Point  ='BeginZoneTimestepBeforeSetCurrentWeather',
+    Program_Name_1 = 'SummerVentDB')
+
+idf1.newidfobject('EnergyManagementSystem:Program',
+    Name = 'SummerVentWB',
+    Program_Line_1 = 'IF IWB> 1+ OWB && NatVentAvail > 0 && Clock > 0',
+    Program_Line_2 = 'SET WindowEconomizer = 1',
+    Program_Line_3 = 'ELSE',
+    Program_Line_4 = 'SET WindowEconomizer = 0',
+    Program_Line_5 = 'ENDIF')
+
+idf1.newidfobject('EnergyManagementSystem:Program',
+    Name = 'SummerVentDB',
+    Program_Line_1 = 'IF IDB> 1+ ODB && NatVentAvail > 0 && Clock > 0',
+    Program_Line_2 = 'SET WindowEconomizer = 1',
+    Program_Line_3 = 'ELSE',
+    Program_Line_4 = 'SET WindowEconomizer = 0',
+    Program_Line_5 = 'ENDIF')
+
+# Program_Line_1 = 'IF IWB> 1+ OWB AND NatVentAvail > 0 AND Clock == 0',
+
 # ==================================================================================================================================
 # Run Resilience Simulation and Collect Results
 # ==================================================================================================================================
 
+# add the index in from the for loop for the number of runs to make this table happen faster
+
 idf1.saveas(str(testingFile_BR))
-idf = IDF(str(testingFile_BR), epwfile)
+idf = IDF(str(testingFile_BR), str(epwFile))
 idf.run(readvars=True)
 
 fname = (str(studyFolder) + '/eplustbl.htm')
@@ -1539,10 +2000,32 @@ mask = (hourly['DateTime'] >= outage1start) & (hourly['DateTime'] <= outage1end)
 
 hourlyHeat = hourly.loc[mask]
 
-print(outage1start.strftime('%m/%d'))
+
 # st.header('Outage 1 Hourly Plot')
 # st.line_chart(hourlyHeat, x='DateTime', y=['ZONE 1:Zone Air Temperature [C](Hourly)', 'Environment:Site Outdoor Air Drybulb Temperature [C](Hourly)'])
 
 # ============================================================================================================
 # Annual Simulation
 # ============================================================================================================
+
+
+
+
+
+
+# ===============================================================================================================
+# Final Result Collection
+# ===============================================================================================================
+
+ResultsTable = pd.DataFrame()
+ResultsTable["Run Name"] = runList['CASE_NAME']
+ResultsTable["SET ≤ 12.2°C Hours (F)"] = HeatingSET
+ResultsTable["Hours < 2°C [hr]"] = Below2C
+ResultsTable["Caution (> 26.7, ≤ 32.2°C) [hr]"] = Caution
+ResultsTable["Extreme Caution (> 32.2, ≤ 39.4°C) [hr]"] = ExtremeCaution
+ResultsTable["Danger (> 39.4, ≤ 51.7°C) [hr]"] = Danger
+ResultsTable["Extreme Danger (> 51.7°C) [hr]"] = ExtremeDanger
+# ResultsTable["Heating Battery [kWh]"] = heatingBattery
+# ResultsTable["Cooling Battery [kWh]"] = coolingBattery
+
+ResultsTable.to_csv(str(studyFolder) + "/" + str(BaseFileName) + "_ResultsTable.csv")

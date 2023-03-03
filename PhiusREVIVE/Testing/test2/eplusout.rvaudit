@@ -1,0 +1,16 @@
+ ReadVarsESO
+ processing:C:\Users\amitc_crl\OneDrive\Documents\GitHub\REVIVE\PhiusREVIVE\Testing\test2\in.rvi
+ input file:C:\Users\amitc_crl\OneDrive\Documents\GitHub\REVIVE\PhiusREVIVE\Testing\test2\eplusout.eso
+ output file:C:\Users\amitc_crl\OneDrive\Documents\GitHub\REVIVE\PhiusREVIVE\Testing\test2\eplusout.csv
+ getting all vars from:C:\Users\amitc_crl\OneDrive\Documents\GitHub\REVIVE\PhiusREVIVE\Testing\test2\eplusout.eso
+  number variables requested for output=          28
+ ReadVars Run Time=00hr 00min  0.55sec
+ ReadVarsESO program completed successfully.
+ ReadVarsESO
+ processing:C:\Users\amitc_crl\OneDrive\Documents\GitHub\REVIVE\PhiusREVIVE\Testing\test2\in.mvi
+ input file:C:\Users\amitc_crl\OneDrive\Documents\GitHub\REVIVE\PhiusREVIVE\Testing\test2\eplusout.mtr
+ output file:C:\Users\amitc_crl\OneDrive\Documents\GitHub\REVIVE\PhiusREVIVE\Testing\test2\eplusmtr.csv
+ getting all vars from:C:\Users\amitc_crl\OneDrive\Documents\GitHub\REVIVE\PhiusREVIVE\Testing\test2\eplusout.mtr
+  number variables requested for output=           5
+ ReadVars Run Time=00hr 00min  0.00sec
+ ReadVarsESO program completed successfully.
