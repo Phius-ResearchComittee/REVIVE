@@ -148,6 +148,7 @@ epwFile = runList['EPW'][runCount]
 ddyName = runList['DDY'][runCount]
 
 icfa = runList['ICFA'][runCount]
+icfa_M  =icfa*0.09290304
 Nbr = runList['BEDROOMS'][runCount]
 occ = (runList['BEDROOMS'][runCount] + 1)
 operableArea_N = 1
@@ -164,6 +165,18 @@ fridge = (445/(8760)) # always on design load
 fracHighEff = 1.0
 PhiusLights = ((2 + 0.8 * (4 - 3 * fracHighEff / 3.7)*(455 + 0.8 * icfa) * 0.8) / 365) #power per day W use Phius calc
 PhiusMELs = (413 + 69*Nbr + 0.91*icfa)/365 #consumption per day per phius calc
+
+# Sizing loads from ASHRAE 1199-RP
+
+G_0s = 136  #in W
+G_0l = 20  #in W
+G_cfs = 2.2  #in W
+G_cfl = 0.22  #in W
+G_ocs = 22  #in W
+G_ocl = 12  #in W
+
+sizingLoadSensible = G_0s + G_cfs*icfa_M + G_ocs*occ
+sizingLoadLatent = G_0l + G_cfl*icfa_M + G_ocl*occ
 
 # Envelope
 
@@ -241,7 +254,7 @@ for bldg in ddy.idfobjects['SizingPeriod:DesignDay']:
     idf1.copyidfobject(bldg)
 
 zone = idf1.idfobjects['Zone'][0]
-zone.Floor_Area = (icfa) # * 0.09290304)
+zone.Floor_Area = (icfa_M)
 
 idf1.saveas(str(testingFile))
 
@@ -354,7 +367,20 @@ idf1.newidfobject('ElectricEquipment',
     Fraction_Radiant = 1,
     )
 
+idf1.newidfobject('ElectricEquipment',
+    Name = 'SizingSensible',
+    Zone_or_ZoneList_Name = 'Zone 1',
+    Schedule_Name = 'SizingLoads',
+    Design_Level_Calculation_Method = 'EquipmentLevel',
+    Design_Level = sizingLoadSensible)
 
+idf1.newidfobject('ElectricEquipment',
+    Name = 'SizingLatent',
+    Zone_or_ZoneList_Name = 'Zone 1',
+    Schedule_Name = 'SizingLoads',
+    Design_Level_Calculation_Method = 'EquipmentLevel',
+    Design_Level = sizingLoadLatent,
+    Fraction_Latent = 1.0)
 
 # idf1.newidfobject('ElectricEquipment',
 #     Name = 'PhiusMELs',
@@ -1577,7 +1603,7 @@ idf1.newidfobject('Output:SQLite',
     )
 
 outputVars = ['Site Outdoor Air Drybulb Temperature', 'Zone Air Relative Humidity', 'Zone Air CO2 Concentration', 'Zone Air Temperature', 'Exterior Lights Electricity Energy', 
-              'Zone Ventilation Mass Flow Rate', 'Schedule Value']
+              'Zone Ventilation Mass Flow Rate', 'Schedule Value', 'Electric Equipment Electricity Energy']
 meterVars = ['InteriorLights:Electricity', 'InteriorEquipment:Electricity', 'Fans:Electricity', 'Heating:Electricity', 'Cooling:Electricity', 'ElectricityNet:Facility'] 
 for x in outputVars:
     idf1.newidfobject('Output:Variable',
@@ -1770,22 +1796,6 @@ idf1.newidfobject('Schedule:Compact',
     Field_20 = 1.0
     )
 
-# Schedule:Compact,
-#     Shading Availible,        !- Name
-#     On/Off,                   !- Schedule Type Limits Name
-#     =$OutStartC,              !- Field 1
-#     For: AllDays,             !- Field 2
-#     Until: 24:00,             !- Field 3
-#     0,                        !- Field 4
-#     =$OutEndC,                !- Field 5
-#     For: AllDays,             !- Field 6
-#     Until: 24:00,             !- Field 7
-#     =$Shading,                !- Field 8
-#     Through: 12/31,           !- Field 9
-#     For: AllDays,             !- Field 10
-#     Until: 24:00,             !- Field 11
-#     0;                        !- Field 12
-
 idf1.newidfobject('Schedule:Compact',
     Name = 'NatVent',
     Schedule_Type_Limits_Name = 'On/Off',
@@ -1878,6 +1888,17 @@ idf1.newidfobject('Schedule:Compact',
     Field_11 = 'Until: 24:00',
     Field_12 = 0)
 
+idf1.newidfobject('Schedule:Compact',
+    Name = 'SizingLoads',
+    Schedule_Type_Limits_Name = 'On/Off',
+    Field_1 = 'Through: 12/31',
+    Field_2 = 'For: SummerDesignDay',
+    Field_3 = 'Until: 24:00',
+    Field_4 = 1,
+    Field_5 = 'For: AllOtherDays',
+    Field_6  ='Until: 24:00',
+    Field_7 = 0)
+
 # Resilience Controls
 
 idf1.newidfobject('EnergyManagementSystem:Sensor',
@@ -1921,6 +1942,12 @@ idf1.newidfobject('EnergyManagementSystem:Actuator',
     Actuated_Component_Type = 'Schedule:Constant',
     Actuated_Component_Control_Type = 'Schedule Value')
 
+idf1.newidfobject('EnergyManagementSystem:Actuator',
+    Name = 'DC_Coolings',
+    Actuated_Component_Unique_Name = 'Demand Control Cooling',
+    Actuated_Component_Type = 'Schedule:Compact',
+    Actuated_Component_Control_Type = 'Schedule Value')
+
 idf1.newidfobject('EnergyManagementSystem:ProgramCallingManager',
     Name = 'CO2Caller',
     EnergyPlus_Model_Calling_Point  ='BeginZoneTimestepBeforeSetCurrentWeather',
@@ -1930,17 +1957,19 @@ idf1.newidfobject('EnergyManagementSystem:Program',
     Name = 'SummerVentWB',
     Program_Line_1 = 'IF IWB> 1+ OWB && NatVentAvail > 0 && Clock > 0',
     Program_Line_2 = 'SET WindowEconomizer = 1',
-    Program_Line_3 = 'ELSE',
-    Program_Line_4 = 'SET WindowEconomizer = 0',
-    Program_Line_5 = 'ENDIF')
+    Program_Line_3 = 'SET DC_Coolings = 0',
+    Program_Line_4 = 'ELSE',
+    Program_Line_5 = 'SET WindowEconomizer = 0',
+    Program_Line_6 = 'ENDIF')
 
 idf1.newidfobject('EnergyManagementSystem:Program',
     Name = 'SummerVentDB',
     Program_Line_1 = 'IF IDB> 1+ ODB && NatVentAvail > 0 && Clock > 0',
     Program_Line_2 = 'SET WindowEconomizer = 1',
-    Program_Line_3 = 'ELSE',
-    Program_Line_4 = 'SET WindowEconomizer = 0',
-    Program_Line_5 = 'ENDIF')
+    Program_Line_3 = 'SET DC_Coolings = 0',
+    Program_Line_4 = 'ELSE',
+    Program_Line_5 = 'SET WindowEconomizer = 0',
+    Program_Line_6 = 'ENDIF')
 
 # Program_Line_1 = 'IF IWB> 1+ OWB AND NatVentAvail > 0 AND Clock == 0',
 

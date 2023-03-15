@@ -7,7 +7,23 @@
   OnMeter=InteriorEquipment:Electricity:Zone:ZONE 1 [J]
   OnMeter=General:InteriorEquipment:Electricity [J]
 
- Meters for 83,ZONE 1:Zone Ventilation Fan Electricity Energy [J]
+ Meters for 82,SIZINGSENSIBLE:Electric Equipment Electricity Energy [J]
+  OnMeter=Electricity:Facility [J]
+  OnMeter=Electricity:Building [J]
+  OnMeter=Electricity:Zone:ZONE 1 [J]
+  OnMeter=InteriorEquipment:Electricity [J]
+  OnMeter=InteriorEquipment:Electricity:Zone:ZONE 1 [J]
+  OnMeter=General:InteriorEquipment:Electricity [J]
+
+ Meters for 83,SIZINGLATENT:Electric Equipment Electricity Energy [J]
+  OnMeter=Electricity:Facility [J]
+  OnMeter=Electricity:Building [J]
+  OnMeter=Electricity:Zone:ZONE 1 [J]
+  OnMeter=InteriorEquipment:Electricity [J]
+  OnMeter=InteriorEquipment:Electricity:Zone:ZONE 1 [J]
+  OnMeter=General:InteriorEquipment:Electricity [J]
+
+ Meters for 85,ZONE 1:Zone Ventilation Fan Electricity Energy [J]
   OnMeter=Electricity:Facility [J]
   OnMeter=Electricity:Building [J]
   OnMeter=Electricity:Zone:ZONE 1 [J]
@@ -15,7 +31,7 @@
   OnMeter=Fans:Electricity:Zone:ZONE 1 [J]
   OnMeter=Ventilation (simple):Fans:Electricity [J]
 
- Meters for 120,ZONE 1:Zone Air System Sensible Heating Energy [J]
+ Meters for 122,ZONE 1:Zone Air System Sensible Heating Energy [J]
   OnMeter=EnergyTransfer:Facility [J]
   OnMeter=EnergyTransfer:Building [J]
   OnMeter=EnergyTransfer:Zone:ZONE 1 [J]
@@ -23,7 +39,7 @@
   OnMeter=Heating:EnergyTransfer:Zone:ZONE 1 [J]
   OnMeter=General:Heating:EnergyTransfer [J]
 
- Meters for 193,ZONE 1:Zone Air System Sensible Cooling Energy [J]
+ Meters for 195,ZONE 1:Zone Air System Sensible Cooling Energy [J]
   OnMeter=EnergyTransfer:Facility [J]
   OnMeter=EnergyTransfer:Building [J]
   OnMeter=EnergyTransfer:Zone:ZONE 1 [J]
@@ -31,148 +47,150 @@
   OnMeter=Cooling:EnergyTransfer:Zone:ZONE 1 [J]
   OnMeter=General:Cooling:EnergyTransfer [J]
 
- Meters for 233,SIMPLE BATTERY:Electric Storage Production Decrement Energy [J]
+ Meters for 235,SIMPLE BATTERY:Electric Storage Production Decrement Energy [J]
   OnMeter=ElectricityProduced:Facility [J]
   OnMeter=ElectricityProduced:Plant [J]
   OnMeter=ElectricStorage:ElectricityProduced [J]
 
- Meters for 270,SIMPLE BATTERY:Electric Storage Discharge Energy [J]
+ Meters for 272,SIMPLE BATTERY:Electric Storage Discharge Energy [J]
   OnMeter=ElectricityProduced:Facility [J]
   OnMeter=ElectricityProduced:Plant [J]
   OnMeter=ElectricStorage:ElectricityProduced [J]
 
- Meters for 271,CONVERTER:Converter Electricity Loss Decrement Energy [J]
+ Meters for 273,CONVERTER:Converter Electricity Loss Decrement Energy [J]
   OnMeter=ElectricityProduced:Facility [J]
   OnMeter=ElectricityProduced:Plant [J]
   OnMeter=PowerConversion:ElectricityProduced [J]
 
- Meters for 284,CONVERTER:Converter Ancillary AC Electricity Energy [J]
+ Meters for 286,CONVERTER:Converter Ancillary AC Electricity Energy [J]
   OnMeter=Electricity:Facility [J]
   OnMeter=Electricity:Plant [J]
   OnMeter=Cogeneration:Electricity [J]
   OnMeter=ACtoDCConverter Ancillary:Cogeneration:Electricity [J]
 
- Meters for 322,Whole Building:Facility Total Purchased Electricity Energy [J]
+ Meters for 324,Whole Building:Facility Total Purchased Electricity Energy [J]
   OnMeter=ElectricityPurchased:Facility [J]
   OnMeter=ElectricityPurchased:Plant [J]
   OnMeter=Cogeneration:ElectricityPurchased [J]
   OnMeter=General:Cogeneration:ElectricityPurchased [J]
 
- Meters for 371,Whole Building:Facility Total Surplus Electricity Energy [J]
+ Meters for 373,Whole Building:Facility Total Surplus Electricity Energy [J]
   OnMeter=ElectricitySurplusSold:Facility [J]
   OnMeter=ElectricitySurplusSold:Plant [J]
   OnMeter=Cogeneration:ElectricitySurplusSold [J]
   OnMeter=General:Cogeneration:ElectricitySurplusSold [J]
 
- Meters for 420,Whole Building:Facility Net Purchased Electricity Energy [J]
+ Meters for 422,Whole Building:Facility Net Purchased Electricity Energy [J]
   OnMeter=ElectricityNet:Facility [J]
   OnMeter=ElectricityNet:Plant [J]
   OnMeter=Cogeneration:ElectricityNet [J]
   OnMeter=General:Cogeneration:ElectricityNet [J]
 
- Meters for 469,3 KW PV:Generator Produced DC Electricity Energy [J]
+ Meters for 471,3 KW PV:Generator Produced DC Electricity Energy [J]
   OnMeter=ElectricityProduced:Facility [J]
   OnMeter=ElectricityProduced:Plant [J]
   OnMeter=Photovoltaic:ElectricityProduced [J]
 
- Meters for 504,ZONE1PTHPFAN:Fan Electricity Energy [J]
+ Meters for 507,ZONE1PTHPFAN:Fan Electricity Energy [J]
   OnMeter=Electricity:Facility [J]
   OnMeter=Electricity:HVAC [J]
   OnMeter=Fans:Electricity [J]
   OnMeter=General:Fans:Electricity [J]
 
- Meters for 529,ZONE1PTHPDXCOOLCOIL:Cooling Coil Total Cooling Energy [J]
+ Meters for 532,ZONE1PTHPDXCOOLCOIL:Cooling Coil Total Cooling Energy [J]
   OnMeter=EnergyTransfer:Facility [J]
   OnMeter=EnergyTransfer:HVAC [J]
   OnMeter=CoolingCoils:EnergyTransfer [J]
 
- Meters for 554,ZONE1PTHPDXCOOLCOIL:Cooling Coil Electricity Energy [J]
+ Meters for 557,ZONE1PTHPDXCOOLCOIL:Cooling Coil Electricity Energy [J]
   OnMeter=Electricity:Facility [J]
   OnMeter=Electricity:HVAC [J]
   OnMeter=Cooling:Electricity [J]
   OnMeter=General:Cooling:Electricity [J]
 
- Meters for 579,ZONE1PTHPDXHEATCOIL:Heating Coil Heating Energy [J]
+ Meters for 582,ZONE1PTHPDXHEATCOIL:Heating Coil Heating Energy [J]
   OnMeter=EnergyTransfer:Facility [J]
   OnMeter=EnergyTransfer:HVAC [J]
   OnMeter=HeatingCoils:EnergyTransfer [J]
 
- Meters for 592,ZONE1PTHPDXHEATCOIL:Heating Coil Electricity Energy [J]
+ Meters for 595,ZONE1PTHPDXHEATCOIL:Heating Coil Electricity Energy [J]
   OnMeter=Electricity:Facility [J]
   OnMeter=Electricity:HVAC [J]
   OnMeter=Heating:Electricity [J]
   OnMeter=General:Heating:Electricity [J]
 
- Meters for 617,ZONE1PTHPDXHEATCOIL:Heating Coil Defrost Electricity Energy [J]
+ Meters for 620,ZONE1PTHPDXHEATCOIL:Heating Coil Defrost Electricity Energy [J]
   OnMeter=Electricity:Facility [J]
   OnMeter=Electricity:HVAC [J]
   OnMeter=Heating:Electricity [J]
   OnMeter=General:Heating:Electricity [J]
 
- Meters for 618,ZONE1PTHPDXHEATCOIL:Heating Coil Crankcase Heater Electricity Energy [J]
+ Meters for 621,ZONE1PTHPDXHEATCOIL:Heating Coil Crankcase Heater Electricity Energy [J]
   OnMeter=Electricity:Facility [J]
   OnMeter=Electricity:HVAC [J]
   OnMeter=Heating:Electricity [J]
   OnMeter=General:Heating:Electricity [J]
 
- Meters for 619,ZONE1PTHPSUPHEATER:Heating Coil Heating Energy [J]
+ Meters for 622,ZONE1PTHPSUPHEATER:Heating Coil Heating Energy [J]
   OnMeter=EnergyTransfer:Facility [J]
   OnMeter=EnergyTransfer:HVAC [J]
   OnMeter=HeatingCoils:EnergyTransfer [J]
 
- Meters for 620,ZONE1PTHPSUPHEATER:Heating Coil Electricity Energy [J]
+ Meters for 623,ZONE1PTHPSUPHEATER:Heating Coil Electricity Energy [J]
   OnMeter=Electricity:Facility [J]
   OnMeter=Electricity:HVAC [J]
   OnMeter=Heating:Electricity [J]
   OnMeter=General:Heating:Electricity [J]
 
- Meters for 621,ERV_CORE:Heat Exchanger Total Heating Energy [J]
+ Meters for 624,ERV_CORE:Heat Exchanger Total Heating Energy [J]
   OnMeter=EnergyTransfer:Facility [J]
   OnMeter=EnergyTransfer:HVAC [J]
   OnMeter=HeatRecoveryForHeating:EnergyTransfer [J]
 
- Meters for 634,ERV_CORE:Heat Exchanger Total Cooling Energy [J]
+ Meters for 637,ERV_CORE:Heat Exchanger Total Cooling Energy [J]
   OnMeter=EnergyTransfer:Facility [J]
   OnMeter=EnergyTransfer:HVAC [J]
   OnMeter=HeatRecoveryForCooling:EnergyTransfer [J]
 
- Meters for 647,ERV_CORE:Heat Exchanger Electricity Energy [J]
+ Meters for 650,ERV_CORE:Heat Exchanger Electricity Energy [J]
   OnMeter=Electricity:Facility [J]
   OnMeter=Electricity:HVAC [J]
   OnMeter=HeatRecovery:Electricity [J]
   OnMeter=General:HeatRecovery:Electricity [J]
 
- Meters for 672,ERV_SUPPLY_FAN:Fan Electricity Energy [J]
+ Meters for 675,ERV_SUPPLY_FAN:Fan Electricity Energy [J]
   OnMeter=Electricity:Facility [J]
   OnMeter=Electricity:HVAC [J]
   OnMeter=Fans:Electricity [J]
   OnMeter=ERV_Fan:Fans:Electricity [J]
 
- Meters for 685,ERV_EXHAUST_FAN:Fan Electricity Energy [J]
+ Meters for 688,ERV_EXHAUST_FAN:Fan Electricity Energy [J]
   OnMeter=Electricity:Facility [J]
   OnMeter=Electricity:HVAC [J]
   OnMeter=Fans:Electricity [J]
   OnMeter=ERV_Fan:Fans:Electricity [J]
 
- Meters for 686,PHIUSEXTLIGHT:Exterior Lights Electricity Energy [J]
+ Meters for 689,PHIUSEXTLIGHT:Exterior Lights Electricity Energy [J]
   OnMeter=Electricity:Facility [J]
   OnMeter=ExteriorLights:Electricity [J]
   OnMeter=General:ExteriorLights:Electricity [J]
 
- Meters for 712,Site:Environmental Impact Total N2O Emissions Carbon Equivalent Mass [kg]
+ Meters for 715,Site:Environmental Impact Total N2O Emissions Carbon Equivalent Mass [kg]
   OnMeter=Carbon Equivalent:Facility [kg]
   OnMeter=CarbonEquivalentEmissions:Carbon Equivalent [kg]
 
- Meters for 737,Site:Environmental Impact Total CH4 Emissions Carbon Equivalent Mass [kg]
+ Meters for 740,Site:Environmental Impact Total CH4 Emissions Carbon Equivalent Mass [kg]
   OnMeter=Carbon Equivalent:Facility [kg]
   OnMeter=CarbonEquivalentEmissions:Carbon Equivalent [kg]
 
- Meters for 738,Site:Environmental Impact Total CO2 Emissions Carbon Equivalent Mass [kg]
+ Meters for 741,Site:Environmental Impact Total CO2 Emissions Carbon Equivalent Mass [kg]
   OnMeter=Carbon Equivalent:Facility [kg]
   OnMeter=CarbonEquivalentEmissions:Carbon Equivalent [kg]
 
  For Meter=Electricity:Facility [J], ResourceType=Electricity, contents are:
   FRIDGE:Electric Equipment Electricity Energy
+  SIZINGSENSIBLE:Electric Equipment Electricity Energy
+  SIZINGLATENT:Electric Equipment Electricity Energy
   ZONE 1:Zone Ventilation Fan Electricity Energy
   CONVERTER:Converter Ancillary AC Electricity Energy
   ZONE1PTHPFAN:Fan Electricity Energy
@@ -188,20 +206,30 @@
 
  For Meter=Electricity:Building [J], ResourceType=Electricity, Group=Building, contents are:
   FRIDGE:Electric Equipment Electricity Energy
+  SIZINGSENSIBLE:Electric Equipment Electricity Energy
+  SIZINGLATENT:Electric Equipment Electricity Energy
   ZONE 1:Zone Ventilation Fan Electricity Energy
 
  For Meter=Electricity:Zone:ZONE 1 [J], ResourceType=Electricity, Group=Zone, contents are:
   FRIDGE:Electric Equipment Electricity Energy
+  SIZINGSENSIBLE:Electric Equipment Electricity Energy
+  SIZINGLATENT:Electric Equipment Electricity Energy
   ZONE 1:Zone Ventilation Fan Electricity Energy
 
  For Meter=InteriorEquipment:Electricity [J], ResourceType=Electricity, EndUse=InteriorEquipment, contents are:
   FRIDGE:Electric Equipment Electricity Energy
+  SIZINGSENSIBLE:Electric Equipment Electricity Energy
+  SIZINGLATENT:Electric Equipment Electricity Energy
 
  For Meter=InteriorEquipment:Electricity:Zone:ZONE 1 [J], ResourceType=Electricity, EndUse=InteriorEquipment, Group=Zone, contents are:
   FRIDGE:Electric Equipment Electricity Energy
+  SIZINGSENSIBLE:Electric Equipment Electricity Energy
+  SIZINGLATENT:Electric Equipment Electricity Energy
 
  For Meter=General:InteriorEquipment:Electricity [J], ResourceType=Electricity, EndUse=InteriorEquipment, contents are:
   FRIDGE:Electric Equipment Electricity Energy
+  SIZINGSENSIBLE:Electric Equipment Electricity Energy
+  SIZINGLATENT:Electric Equipment Electricity Energy
 
  For Meter=Fans:Electricity [J], ResourceType=Electricity, EndUse=Fans, contents are:
   ZONE 1:Zone Ventilation Fan Electricity Energy
