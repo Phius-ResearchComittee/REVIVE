@@ -13,7 +13,7 @@ SIMULATIONCONTROL,
     25;                       !- Maximum Number of HVAC Sizing Simulation Passes
 
 BUILDING,
-    5,                        !- Name
+    TestBatch1_Test 3,        !- Name
     0,                        !- North Axis
     City,                     !- Terrain
     0.04,                     !- Loads Convergence Tolerance Value
@@ -854,7 +854,7 @@ MATERIAL:AIRGAP,
 
 WINDOWMATERIAL:SIMPLEGLAZINGSYSTEM,
     Ext_Window1_Base,         !- Name
-    0.15,                     !- UFactor
+    0.2,                      !- UFactor
     0.35;                     !- Solar Heat Gain Coefficient
 
 WINDOWMATERIAL:SHADE,
@@ -1164,7 +1164,7 @@ BuildingSurface:Detailed,
 BuildingSurface:Detailed,
     Front Wall 1,             !- Name
     Wall,                     !- Surface Type
-    Exterior_Wall_+1in_EPS,    !- Construction Name
+    Exterior_Wall_+4in_EPS,    !- Construction Name
     Zone 1,                   !- Zone Name
     Outdoors,                 !- Outside Boundary Condition
     ,                         !- Outside Boundary Condition Object
@@ -1188,7 +1188,7 @@ BuildingSurface:Detailed,
 BuildingSurface:Detailed,
     Left Wall 1,              !- Name
     Wall,                     !- Surface Type
-    Exterior_Wall_+1in_EPS,    !- Construction Name
+    Exterior_Wall_+4in_EPS,    !- Construction Name
     Zone 1,                   !- Zone Name
     Outdoors,                 !- Outside Boundary Condition
     ,                         !- Outside Boundary Condition Object
@@ -1212,7 +1212,7 @@ BuildingSurface:Detailed,
 BuildingSurface:Detailed,
     Attic,                    !- Name
     Ceiling,                  !- Surface Type
-    Exterior_Roof_R-30,       !- Construction Name
+    Exterior_Roof_R-60,       !- Construction Name
     Zone 1,                   !- Zone Name
     Outdoors,                 !- Outside Boundary Condition
     ,                         !- Outside Boundary Condition Object
@@ -1236,7 +1236,7 @@ BuildingSurface:Detailed,
 BuildingSurface:Detailed,
     Right Wall 2,             !- Name
     Wall,                     !- Surface Type
-    Exterior_Wall_+1in_EPS,    !- Construction Name
+    Exterior_Wall_+4in_EPS,    !- Construction Name
     Zone 1,                   !- Zone Name
     Outdoors,                 !- Outside Boundary Condition
     ,                         !- Outside Boundary Condition Object
@@ -1260,7 +1260,7 @@ BuildingSurface:Detailed,
 BuildingSurface:Detailed,
     Back Wall 1,              !- Name
     Wall,                     !- Surface Type
-    Exterior_Wall_+1in_EPS,    !- Construction Name
+    Exterior_Wall_+4in_EPS,    !- Construction Name
     Zone 1,                   !- Zone Name
     Outdoors,                 !- Outside Boundary Condition
     ,                         !- Outside Boundary Condition Object
@@ -1284,7 +1284,7 @@ BuildingSurface:Detailed,
 BuildingSurface:Detailed,
     Right Wall 1,             !- Name
     Wall,                     !- Surface Type
-    Exterior_Wall_+1in_EPS,    !- Construction Name
+    Exterior_Wall_+4in_EPS,    !- Construction Name
     Zone 1,                   !- Zone Name
     Outdoors,                 !- Outside Boundary Condition
     ,                         !- Outside Boundary Condition Object
@@ -1308,7 +1308,7 @@ BuildingSurface:Detailed,
 BuildingSurface:Detailed,
     Front Wall 2,             !- Name
     Wall,                     !- Surface Type
-    Exterior_Wall_+1in_EPS,    !- Construction Name
+    Exterior_Wall_+4in_EPS,    !- Construction Name
     Zone 1,                   !- Zone Name
     Outdoors,                 !- Outside Boundary Condition
     ,                         !- Outside Boundary Condition Object
@@ -1332,7 +1332,7 @@ BuildingSurface:Detailed,
 BuildingSurface:Detailed,
     Left Wall 2,              !- Name
     Wall,                     !- Surface Type
-    Exterior_Wall_+1in_EPS,    !- Construction Name
+    Exterior_Wall_+4in_EPS,    !- Construction Name
     Zone 1,                   !- Zone Name
     Outdoors,                 !- Outside Boundary Condition
     ,                         !- Outside Boundary Condition Object
@@ -1380,7 +1380,7 @@ BuildingSurface:Detailed,
 BuildingSurface:Detailed,
     Back Wall 2,              !- Name
     Wall,                     !- Surface Type
-    Exterior_Wall_+1in_EPS,    !- Construction Name
+    Exterior_Wall_+4in_EPS,    !- Construction Name
     Zone 1,                   !- Zone Name
     Outdoors,                 !- Outside Boundary Condition
     ,                         !- Outside Boundary Condition Object
@@ -1699,7 +1699,7 @@ PEOPLE,
     Zone 1,                   !- Zone or ZoneList Name
     OUTAGE:Occupant_Schedule,    !- Number of People Schedule Name
     People,                   !- Number of People Calculation Method
-    6,                        !- Number of People
+    4,                        !- Number of People
     ,                         !- People per Zone Floor Area
     ,                         !- Zone Floor Area per Person
     0.3,                      !- Fraction Radiant
@@ -1734,7 +1734,7 @@ ELECTRICEQUIPMENT,
     Zone 1,                   !- Zone or ZoneList Name
     SizingLoads,              !- Schedule Name
     EquipmentLevel,           !- Design Level Calculation Method
-    717.6507136,              !- Design Level
+    673.6507136,              !- Design Level
     ,                         !- Watts per Zone Floor Area
     ,                         !- Watts per Person
     0,                        !- Fraction Latent
@@ -1747,7 +1747,7 @@ ELECTRICEQUIPMENT,
     Zone 1,                   !- Zone or ZoneList Name
     SizingLoads,              !- Schedule Name
     EquipmentLevel,           !- Design Level Calculation Method
-    136.96507136,             !- Design Level
+    112.96507136,             !- Design Level
     ,                         !- Watts per Zone Floor Area
     ,                         !- Watts per Person
     1,                        !- Fraction Latent
@@ -2198,7 +2198,7 @@ ENERGYMANAGEMENTSYSTEM:SENSOR,
 
 ENERGYMANAGEMENTSYSTEM:SENSOR,
     NatVentAvail,             !- Name
-    SchNatVent,               !- OutputVariable or OutputMeter Index Key Name
+    NatVent,                  !- OutputVariable or OutputMeter Index Key Name
     Schedule Value;           !- OutputVariable or OutputMeter Name
 
 ENERGYMANAGEMENTSYSTEM:SENSOR,
@@ -2217,6 +2217,12 @@ ENERGYMANAGEMENTSYSTEM:ACTUATOR,
     Schedule:Constant,        !- Actuated Component Type
     Schedule Value;           !- Actuated Component Control Type
 
+ENERGYMANAGEMENTSYSTEM:ACTUATOR,
+    DC_Coolings,              !- Name
+    Demand Control Cooling,    !- Actuated Component Unique Name
+    Schedule:Compact,         !- Actuated Component Type
+    Schedule Value;           !- Actuated Component Control Type
+
 ENERGYMANAGEMENTSYSTEM:PROGRAMCALLINGMANAGER,
     CO2Caller,                !- Name
     BeginZoneTimestepBeforeSetCurrentWeather,    !- EnergyPlus Model Calling Point
@@ -2226,17 +2232,19 @@ ENERGYMANAGEMENTSYSTEM:PROGRAM,
     SummerVentWB,             !- Name
     IF IWB> 1+ OWB && NatVentAvail > 0 && Clock > 0,    !- Program Line 1
     SET WindowEconomizer = 1,    !- Program Line 2
-    ELSE,                     !- Program Line 3
-    SET WindowEconomizer = 0,    !- Program Line 4
-    ENDIF;                    !- Program Line 5
+    SET DC_Coolings = 0,      !- Program Line 3
+    ELSE,                     !- Program Line 4
+    SET WindowEconomizer = 0,    !- Program Line 5
+    ENDIF;                    !- Program Line 6
 
 ENERGYMANAGEMENTSYSTEM:PROGRAM,
     SummerVentDB,             !- Name
     IF IDB> 1+ ODB && NatVentAvail > 0 && Clock > 0,    !- Program Line 1
     SET WindowEconomizer = 1,    !- Program Line 2
-    ELSE,                     !- Program Line 3
-    SET WindowEconomizer = 0,    !- Program Line 4
-    ENDIF;                    !- Program Line 5
+    SET DC_Coolings = 0,      !- Program Line 3
+    ELSE,                     !- Program Line 4
+    SET WindowEconomizer = 0,    !- Program Line 5
+    ENDIF;                    !- Program Line 6
 
 DEMANDMANAGERASSIGNMENTLIST,
     Demand Limiting,          !- Name

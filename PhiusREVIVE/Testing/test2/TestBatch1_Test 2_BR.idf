@@ -13,7 +13,7 @@ SIMULATIONCONTROL,
     25;                       !- Maximum Number of HVAC Sizing Simulation Passes
 
 BUILDING,
-    1,                        !- Name
+    TestBatch1_Test 2,        !- Name
     0,                        !- North Axis
     City,                     !- Terrain
     0.04,                     !- Loads Convergence Tolerance Value
@@ -348,11 +348,38 @@ SCHEDULE:COMPACT,
     Through: 30-Jul,          !- Field 5
     For: AllDays,             !- Field 6
     Until: 24:00,             !- Field 7
-    1,                        !- Field 8
+    0,                        !- Field 8
     Through: 12/31,           !- Field 9
     For: AllDays,             !- Field 10
     Until: 24:00,             !- Field 11
     0;                        !- Field 12
+
+SCHEDULE:COMPACT,
+    Shading Availible,        !- Name
+    On/Off,                   !- Schedule Type Limits Name
+    Through: 19-Jul,          !- Field 1
+    For: AllDays,             !- Field 2
+    Until: 24:00,             !- Field 3
+    0,                        !- Field 4
+    Through: 30-Jul,          !- Field 5
+    For: AllDays,             !- Field 6
+    Until: 24:00,             !- Field 7
+    0,                        !- Field 8
+    Through: 12/31,           !- Field 9
+    For: AllDays,             !- Field 10
+    Until: 24:00,             !- Field 11
+    0;                        !- Field 12
+
+SCHEDULE:COMPACT,
+    SizingLoads,              !- Name
+    On/Off,                   !- Schedule Type Limits Name
+    Through: 12/31,           !- Field 1
+    For: SummerDesignDay,     !- Field 2
+    Until: 24:00,             !- Field 3
+    1,                        !- Field 4
+    For: AllOtherDays,        !- Field 5
+    Until: 24:00,             !- Field 6
+    0;                        !- Field 7
 
 SCHEDULE:CONSTANT,
     WindowFraction2,          !- Name
@@ -847,6 +874,40 @@ WINDOWMATERIAL:SHADE,
     0.5,                      !- RightSide Opening Multiplier
     0;                        !- Airflow Permeability
 
+WINDOWMATERIAL:SHADE,
+    MEDIUM REFLECT - MEDIUM TRANS SHADE,    !- Name
+    0.4,                      !- Solar Transmittance
+    0.5,                      !- Solar Reflectance
+    0.4,                      !- Visible Transmittance
+    0.5,                      !- Visible Reflectance
+    0.9,                      !- Infrared Hemispherical Emissivity
+    0,                        !- Infrared Transmittance
+    0.005,                    !- Thickness
+    0.1,                      !- Conductivity
+    0.05,                     !- Shade to Glass Distance
+    0.5,                      !- Top Opening Multiplier
+    0.5,                      !- Bottom Opening Multiplier
+    0.5,                      !- LeftSide Opening Multiplier
+    0.5,                      !- RightSide Opening Multiplier
+    0;                        !- Airflow Permeability
+
+WINDOWMATERIAL:SHADE,
+    HIGH REFLECT - LOW TRANS SHADE,    !- Name
+    0.1,                      !- Solar Transmittance
+    0.8,                      !- Solar Reflectance
+    0.1,                      !- Visible Transmittance
+    0.8,                      !- Visible Reflectance
+    0.9,                      !- Infrared Hemispherical Emissivity
+    0,                        !- Infrared Transmittance
+    0.005,                    !- Thickness
+    0.1,                      !- Conductivity
+    0.05,                     !- Shade to Glass Distance
+    0.5,                      !- Top Opening Multiplier
+    0.5,                      !- Bottom Opening Multiplier
+    0.5,                      !- LeftSide Opening Multiplier
+    0.5,                      !- RightSide Opening Multiplier
+    0;                        !- Airflow Permeability
+
 CONSTRUCTION,
     Ext_Window1_Base,         !- Name
     Ext_Window1_Base;         !- Outside Layer
@@ -1071,7 +1132,7 @@ Zone,
     1,                        !- Multiplier
     ,                         !- Ceiling Height
     482.065996382208,         !- Volume
-    2200,                     !- Floor Area
+    204.38668800000002,       !- Floor Area
     ,                         !- Zone Inside Convection Algorithm
     ,                         !- Zone Outside Convection Algorithm
     Yes;                      !- Part of Total Floor Area
@@ -1547,6 +1608,32 @@ FenestrationSurface:Detailed,
     0,                        !- Vertex 4 Ycoordinate
     4.8768;                   !- Vertex 4 Zcoordinate
 
+WINDOWSHADINGCONTROL,
+    Shading Control,          !- Name
+    Zone 1,                   !- Zone Name
+    1,                        !- Shading Control Sequence Number
+    ExteriorShade,            !- Shading Type
+    ,                         !- Construction with Shading Name
+    OnIfHighSolarOnWindow,    !- Shading Control Type
+    Shading Availible,        !- Schedule Name
+    100,                      !- Setpoint
+    Yes,                      !- Shading Control Is Scheduled
+    No,                       !- Glare Control Is Active
+    HIGH REFLECT - LOW TRANS SHADE,    !- Shading Device Material Name
+    FixedSlatAngle,           !- Type of Slat Angle Control for Blinds
+    ,                         !- Slat Angle Schedule Name
+    ,                         !- Setpoint 2
+    ,                         !- Daylighting Control Object Name
+    Sequential,               !- Multiple Surface Control Type
+    F-WN-1,                   !- Fenestration Surface 1 Name
+    F-WN-2,                   !- Fenestration Surface 2 Name
+    R-WN-1,                   !- Fenestration Surface 3 Name
+    R-WN-2,                   !- Fenestration Surface 4 Name
+    B-WN-1,                   !- Fenestration Surface 5 Name
+    B-WN-2,                   !- Fenestration Surface 6 Name
+    L-WN-1,                   !- Fenestration Surface 7 Name
+    L-WN-2;                   !- Fenestration Surface 8 Name
+
 Shading:Building:Detailed,
     R-Roof,                   !- Name
     ,                         !- Transmittance Schedule Name
@@ -1612,7 +1699,7 @@ PEOPLE,
     Zone 1,                   !- Zone or ZoneList Name
     OUTAGE:Occupant_Schedule,    !- Number of People Schedule Name
     People,                   !- Number of People Calculation Method
-    6,                        !- Number of People
+    4,                        !- Number of People
     ,                         !- People per Zone Floor Area
     ,                         !- Zone Floor Area per Person
     0.3,                      !- Fraction Radiant
@@ -1639,6 +1726,32 @@ ELECTRICEQUIPMENT,
     ,                         !- Watts per Person
     0,                        !- Fraction Latent
     1,                        !- Fraction Radiant
+    0,                        !- Fraction Lost
+    General;                  !- EndUse Subcategory
+
+ELECTRICEQUIPMENT,
+    SizingSensible,           !- Name
+    Zone 1,                   !- Zone or ZoneList Name
+    SizingLoads,              !- Schedule Name
+    EquipmentLevel,           !- Design Level Calculation Method
+    673.6507136,              !- Design Level
+    ,                         !- Watts per Zone Floor Area
+    ,                         !- Watts per Person
+    0,                        !- Fraction Latent
+    0,                        !- Fraction Radiant
+    0,                        !- Fraction Lost
+    General;                  !- EndUse Subcategory
+
+ELECTRICEQUIPMENT,
+    SizingLatent,             !- Name
+    Zone 1,                   !- Zone or ZoneList Name
+    SizingLoads,              !- Schedule Name
+    EquipmentLevel,           !- Design Level Calculation Method
+    112.96507136,             !- Design Level
+    ,                         !- Watts per Zone Floor Area
+    ,                         !- Watts per Person
+    1,                        !- Fraction Latent
+    0,                        !- Fraction Radiant
     0,                        !- Fraction Lost
     General;                  !- EndUse Subcategory
 
@@ -2085,7 +2198,7 @@ ENERGYMANAGEMENTSYSTEM:SENSOR,
 
 ENERGYMANAGEMENTSYSTEM:SENSOR,
     NatVentAvail,             !- Name
-    SchNatVent,               !- OutputVariable or OutputMeter Index Key Name
+    NatVent,                  !- OutputVariable or OutputMeter Index Key Name
     Schedule Value;           !- OutputVariable or OutputMeter Name
 
 ENERGYMANAGEMENTSYSTEM:SENSOR,
@@ -2104,26 +2217,34 @@ ENERGYMANAGEMENTSYSTEM:ACTUATOR,
     Schedule:Constant,        !- Actuated Component Type
     Schedule Value;           !- Actuated Component Control Type
 
+ENERGYMANAGEMENTSYSTEM:ACTUATOR,
+    DC_Coolings,              !- Name
+    Demand Control Cooling,    !- Actuated Component Unique Name
+    Schedule:Compact,         !- Actuated Component Type
+    Schedule Value;           !- Actuated Component Control Type
+
 ENERGYMANAGEMENTSYSTEM:PROGRAMCALLINGMANAGER,
     CO2Caller,                !- Name
     BeginZoneTimestepBeforeSetCurrentWeather,    !- EnergyPlus Model Calling Point
-    SummerVentWB;             !- Program Name 1
+    SummerVentDB;             !- Program Name 1
 
 ENERGYMANAGEMENTSYSTEM:PROGRAM,
     SummerVentWB,             !- Name
     IF IWB> 1+ OWB && NatVentAvail > 0 && Clock > 0,    !- Program Line 1
     SET WindowEconomizer = 1,    !- Program Line 2
-    ELSE,                     !- Program Line 3
-    SET WindowEconomizer = 0,    !- Program Line 4
-    ENDIF;                    !- Program Line 5
+    SET DC_Coolings = 0,      !- Program Line 3
+    ELSE,                     !- Program Line 4
+    SET WindowEconomizer = 0,    !- Program Line 5
+    ENDIF;                    !- Program Line 6
 
 ENERGYMANAGEMENTSYSTEM:PROGRAM,
     SummerVentDB,             !- Name
     IF IDB> 1+ ODB && NatVentAvail > 0 && Clock > 0,    !- Program Line 1
     SET WindowEconomizer = 1,    !- Program Line 2
-    ELSE,                     !- Program Line 3
-    SET WindowEconomizer = 0,    !- Program Line 4
-    ENDIF;                    !- Program Line 5
+    SET DC_Coolings = 0,      !- Program Line 3
+    ELSE,                     !- Program Line 4
+    SET WindowEconomizer = 0,    !- Program Line 5
+    ENDIF;                    !- Program Line 6
 
 DEMANDMANAGERASSIGNMENTLIST,
     Demand Limiting,          !- Name
@@ -2460,6 +2581,11 @@ OUTPUT:VARIABLE,
 OUTPUT:VARIABLE,
     *,                        !- Key Value
     Schedule Value,           !- Variable Name
+    hourly;                   !- Reporting Frequency
+
+OUTPUT:VARIABLE,
+    *,                        !- Key Value
+    Electric Equipment Electricity Energy,    !- Variable Name
     hourly;                   !- Reporting Frequency
 
 OUTPUT:METER:METERFILEONLY,

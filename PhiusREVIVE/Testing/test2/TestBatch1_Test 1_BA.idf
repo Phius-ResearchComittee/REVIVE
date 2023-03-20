@@ -13,7 +13,7 @@ SIMULATIONCONTROL,
     25;                       !- Maximum Number of HVAC Sizing Simulation Passes
 
 BUILDING,
-    test1,                    !- Name
+    TestBatch1_Test 1,        !- Name
     0,                        !- North Axis
     City,                     !- Terrain
     0.04,                     !- Loads Convergence Tolerance Value
@@ -177,6 +177,13 @@ SCHEDULETYPELIMITS,
     ,                         !- Numeric Type
     Dimensionless;            !- Unit Type
 
+SCHEDULETYPELIMITS,
+    On/Off,                   !- Name
+    ,                         !- Lower Limit Value
+    ,                         !- Upper Limit Value
+    ,                         !- Numeric Type
+    Dimensionless;            !- Unit Type
+
 SCHEDULE:COMPACT,
     Phius_Lighting,           !- Name
     Fraction,                 !- Schedule Type Limits Name
@@ -250,26 +257,113 @@ SCHEDULE:COMPACT,
 SCHEDULE:COMPACT,
     PTHP_Avail,               !- Name
     Fraction,                 !- Schedule Type Limits Name
-    Through: 26-Jan,          !- Field 1
+    Through: 12/31,           !- Field 1
+    For: AllDays,             !- Field 2
+    Until: 24:00,             !- Field 3
+    1;                        !- Field 4
+
+SCHEDULE:COMPACT,
+    NatVent,                  !- Name
+    On/Off,                   !- Schedule Type Limits Name
+    Through: 19-Jul,          !- Field 1
+    For: SummerDesignDay,     !- Field 2
+    Until: 24:00,             !- Field 3
+    0,                        !- Field 4
+    For: AllOtherDays,        !- Field 5
+    Until: 24:00,             !- Field 6
+    0,                        !- Field 7
+    Through: 30-Jul,          !- Field 8
+    For: SummerDesignDay,     !- Field 9
+    Until: 24:00,             !- Field 10
+    0,                        !- Field 11
+    For: AllOtherDays,        !- Field 12
+    Until: 24:00,             !- Field 13
+    1,                        !- Field 14
+    Through: 12/31,           !- Field 15
+    For: AllDays,             !- Field 16
+    Until: 24:00,             !- Field 17
+    0;                        !- Field 18
+
+SCHEDULE:COMPACT,
+    SchNatVent,               !- Name
+    On/Off,                   !- Schedule Type Limits Name
+    Through: 19-Jul,          !- Field 1
+    For: SummerDesignDay,     !- Field 2
+    Until: 24:00,             !- Field 3
+    0,                        !- Field 4
+    For: AllOtherDays,        !- Field 5
+    Until: 24:00,             !- Field 6
+    0,                        !- Field 7
+    Through: 30-Jul,          !- Field 8
+    For: SummerDesignDay,     !- Field 9
+    Until: 24:00,             !- Field 10
+    0,                        !- Field 11
+    For: AllOtherDays,        !- Field 12
+    Until: 24:00,             !- Field 13
+    1,                        !- Field 14
+    Through: 12/31,           !- Field 15
+    For: AllDays,             !- Field 16
+    Until: 24:00,             !- Field 17
+    0;                        !- Field 18
+
+SCHEDULE:COMPACT,
+    OutageCooling,            !- Name
+    On/Off,                   !- Schedule Type Limits Name
+    Through: 19-Jul,          !- Field 1
     For: AllDays,             !- Field 2
     Until: 24:00,             !- Field 3
     1,                        !- Field 4
-    Through: 10-Feb,          !- Field 5
+    Through: 30-Jul,          !- Field 5
     For: AllDays,             !- Field 6
     Until: 24:00,             !- Field 7
     0,                        !- Field 8
-    Through: 19-Jul,          !- Field 9
+    Through: 12/31,           !- Field 9
     For: AllDays,             !- Field 10
     Until: 24:00,             !- Field 11
-    1,                        !- Field 12
-    Through: 30-Jul,          !- Field 13
-    For: AllDays,             !- Field 14
-    Until: 24:00,             !- Field 15
-    0,                        !- Field 16
-    Through: 12/31,           !- Field 17
-    For: AllDays,             !- Field 18
-    Until: 24:00,             !- Field 19
-    1;                        !- Field 20
+    1;                        !- Field 12
+
+SCHEDULE:COMPACT,
+    Demand Control Cooling,    !- Name
+    On/Off,                   !- Schedule Type Limits Name
+    Through: 19-Jul,          !- Field 1
+    For: AllDays,             !- Field 2
+    Until: 24:00,             !- Field 3
+    0,                        !- Field 4
+    Through: 30-Jul,          !- Field 5
+    For: AllDays,             !- Field 6
+    Until: 24:00,             !- Field 7
+    0,                        !- Field 8
+    Through: 12/31,           !- Field 9
+    For: AllDays,             !- Field 10
+    Until: 24:00,             !- Field 11
+    0;                        !- Field 12
+
+SCHEDULE:COMPACT,
+    Shading Availible,        !- Name
+    On/Off,                   !- Schedule Type Limits Name
+    Through: 19-Jul,          !- Field 1
+    For: AllDays,             !- Field 2
+    Until: 24:00,             !- Field 3
+    0,                        !- Field 4
+    Through: 30-Jul,          !- Field 5
+    For: AllDays,             !- Field 6
+    Until: 24:00,             !- Field 7
+    1,                        !- Field 8
+    Through: 12/31,           !- Field 9
+    For: AllDays,             !- Field 10
+    Until: 24:00,             !- Field 11
+    0;                        !- Field 12
+
+SCHEDULE:COMPACT,
+    SizingLoads,              !- Name
+    On/Off,                   !- Schedule Type Limits Name
+    Through: 12/31,           !- Field 1
+    For: SummerDesignDay,     !- Field 2
+    Until: 24:00,             !- Field 3
+    1,                        !- Field 4
+    For: AllOtherDays,        !- Field 5
+    Until: 24:00,             !- Field 6
+    0;                        !- Field 7
 
 SCHEDULE:CONSTANT,
     WindowFraction2,          !- Name
@@ -764,6 +858,40 @@ WINDOWMATERIAL:SHADE,
     0.5,                      !- RightSide Opening Multiplier
     0;                        !- Airflow Permeability
 
+WINDOWMATERIAL:SHADE,
+    MEDIUM REFLECT - MEDIUM TRANS SHADE,    !- Name
+    0.4,                      !- Solar Transmittance
+    0.5,                      !- Solar Reflectance
+    0.4,                      !- Visible Transmittance
+    0.5,                      !- Visible Reflectance
+    0.9,                      !- Infrared Hemispherical Emissivity
+    0,                        !- Infrared Transmittance
+    0.005,                    !- Thickness
+    0.1,                      !- Conductivity
+    0.05,                     !- Shade to Glass Distance
+    0.5,                      !- Top Opening Multiplier
+    0.5,                      !- Bottom Opening Multiplier
+    0.5,                      !- LeftSide Opening Multiplier
+    0.5,                      !- RightSide Opening Multiplier
+    0;                        !- Airflow Permeability
+
+WINDOWMATERIAL:SHADE,
+    HIGH REFLECT - LOW TRANS SHADE,    !- Name
+    0.1,                      !- Solar Transmittance
+    0.8,                      !- Solar Reflectance
+    0.1,                      !- Visible Transmittance
+    0.8,                      !- Visible Reflectance
+    0.9,                      !- Infrared Hemispherical Emissivity
+    0,                        !- Infrared Transmittance
+    0.005,                    !- Thickness
+    0.1,                      !- Conductivity
+    0.05,                     !- Shade to Glass Distance
+    0.5,                      !- Top Opening Multiplier
+    0.5,                      !- Bottom Opening Multiplier
+    0.5,                      !- LeftSide Opening Multiplier
+    0.5,                      !- RightSide Opening Multiplier
+    0;                        !- Airflow Permeability
+
 CONSTRUCTION,
     Ext_Window1_Base,         !- Name
     Ext_Window1_Base;         !- Outside Layer
@@ -988,7 +1116,7 @@ Zone,
     1,                        !- Multiplier
     ,                         !- Ceiling Height
     482.065996382208,         !- Volume
-    2200,                     !- Floor Area
+    204.38668800000002,       !- Floor Area
     ,                         !- Zone Inside Convection Algorithm
     ,                         !- Zone Outside Convection Algorithm
     Yes;                      !- Part of Total Floor Area
@@ -1464,6 +1592,32 @@ FenestrationSurface:Detailed,
     0,                        !- Vertex 4 Ycoordinate
     4.8768;                   !- Vertex 4 Zcoordinate
 
+WINDOWSHADINGCONTROL,
+    Shading Control,          !- Name
+    Zone 1,                   !- Zone Name
+    1,                        !- Shading Control Sequence Number
+    ExteriorShade,            !- Shading Type
+    ,                         !- Construction with Shading Name
+    OnIfHighSolarOnWindow,    !- Shading Control Type
+    Shading Availible,        !- Schedule Name
+    100,                      !- Setpoint
+    Yes,                      !- Shading Control Is Scheduled
+    No,                       !- Glare Control Is Active
+    HIGH REFLECT - LOW TRANS SHADE,    !- Shading Device Material Name
+    FixedSlatAngle,           !- Type of Slat Angle Control for Blinds
+    ,                         !- Slat Angle Schedule Name
+    ,                         !- Setpoint 2
+    ,                         !- Daylighting Control Object Name
+    Sequential,               !- Multiple Surface Control Type
+    F-WN-1,                   !- Fenestration Surface 1 Name
+    F-WN-2,                   !- Fenestration Surface 2 Name
+    R-WN-1,                   !- Fenestration Surface 3 Name
+    R-WN-2,                   !- Fenestration Surface 4 Name
+    B-WN-1,                   !- Fenestration Surface 5 Name
+    B-WN-2,                   !- Fenestration Surface 6 Name
+    L-WN-1,                   !- Fenestration Surface 7 Name
+    L-WN-2;                   !- Fenestration Surface 8 Name
+
 Shading:Building:Detailed,
     R-Roof,                   !- Name
     ,                         !- Transmittance Schedule Name
@@ -1529,7 +1683,7 @@ PEOPLE,
     Zone 1,                   !- Zone or ZoneList Name
     OUTAGE:Occupant_Schedule,    !- Number of People Schedule Name
     People,                   !- Number of People Calculation Method
-    6,                        !- Number of People
+    4,                        !- Number of People
     ,                         !- People per Zone Floor Area
     ,                         !- Zone Floor Area per Person
     0.3,                      !- Fraction Radiant
@@ -1559,11 +1713,37 @@ ELECTRICEQUIPMENT,
     0,                        !- Fraction Lost
     General;                  !- EndUse Subcategory
 
+ELECTRICEQUIPMENT,
+    SizingSensible,           !- Name
+    Zone 1,                   !- Zone or ZoneList Name
+    SizingLoads,              !- Schedule Name
+    EquipmentLevel,           !- Design Level Calculation Method
+    673.6507136,              !- Design Level
+    ,                         !- Watts per Zone Floor Area
+    ,                         !- Watts per Person
+    0,                        !- Fraction Latent
+    0,                        !- Fraction Radiant
+    0,                        !- Fraction Lost
+    General;                  !- EndUse Subcategory
+
+ELECTRICEQUIPMENT,
+    SizingLatent,             !- Name
+    Zone 1,                   !- Zone or ZoneList Name
+    SizingLoads,              !- Schedule Name
+    EquipmentLevel,           !- Design Level Calculation Method
+    112.96507136,             !- Design Level
+    ,                         !- Watts per Zone Floor Area
+    ,                         !- Watts per Person
+    1,                        !- Fraction Latent
+    0,                        !- Fraction Radiant
+    0,                        !- Fraction Lost
+    General;                  !- EndUse Subcategory
+
 ZONEINFILTRATION:FLOWCOEFFICIENT,
     Zone_Infiltration,        !- Name
     Zone 1,                   !- Zone Name
     Always_On,                !- Schedule Name
-    0.05,                     !- Flow Coefficient
+    0.1,                      !- Flow Coefficient
     0.078,                    !- Stack Coefficient
     0.67,                     !- Pressure Exponent
     0.17,                     !- Wind Coefficient
@@ -1980,6 +2160,116 @@ OUTDOORAIR:NODE,
     No,                       !- Symmetric Wind Pressure Coefficient Curve
     Absolute;                 !- Wind Angle Type
 
+DEMANDMANAGERASSIGNMENTLIST,
+    Demand Limiting,          !- Name
+    ElectricityNet:Facility,    !- Meter Name
+    Always Off,               !- Demand Limit Schedule Name
+    0.95,                     !- Demand Limit Safety Fraction
+    ,                         !- Billing Period Schedule Name
+    ,                         !- Peak Period Schedule Name
+    10,                       !- Demand Window Length
+    All,                      !- Demand Manager Priority
+    DemandManager:Thermostats,    !- DemandManager 1 Object Type
+    Set backs;                !- DemandManager 1 Name
+
+DEMANDMANAGER:THERMOSTATS,
+    Set Backs,                !- Name
+    Demand Control Cooling,    !- Availability Schedule Name
+    Fixed,                    !- Reset Control
+    30,                       !- Minimum Reset Duration
+    20,                       !- Maximum Heating Setpoint Reset
+    28.8888888888889,         !- Maximum Cooling Setpoint Reset
+    ,                         !- Reset Step Change
+    All,                      !- Selection Control
+    ,                         !- Rotation Duration
+    Zone_1_Thermostat;        !- Thermostat 1 Name
+
+GENERATOR:PVWATTS,
+    3 kW PV,                  !- Name
+    5,                        !- PVWatts Version
+    3000,                     !- DC System Capacity
+    Standard,                 !- Module Type
+    FixedOpenRack,            !- Array Type
+    0.14,                     !- System Losses
+    TiltAzimuth,              !- Array Geometry Type
+    57,                       !- Tilt Angle
+    180,                      !- Azimuth Angle
+    ,                         !- Surface Name
+    0.4;                      !- Ground Coverage Ratio
+
+ELECTRICLOADCENTER:INVERTER:PVWATTS,
+    PV Inverter,              !- Name
+    1.1,                      !- DC to AC Size Ratio
+    0.96;                     !- Inverter Efficiency
+
+ELECTRICLOADCENTER:GENERATORS,
+    PV,                       !- Name
+    3 kW PV,                  !- Generator 1 Name
+    Generator:PVWatts,        !- Generator 1 Object Type
+    3000,                     !- Generator 1 Rated Electric Power Output
+    Always_On;                !- Generator 1 Availability Schedule Name
+
+ELECTRICLOADCENTER:STORAGE:SIMPLE,
+    Simple Battery,           !- Name
+    Always_On,                !- Availability Schedule Name
+    Zone 1,                   !- Zone Name
+    0.9,                      !- Radiative Fraction for Zone Heat Gains
+    0.9,                      !- Nominal Energetic Efficiency for Charging
+    0.9,                      !- Nominal Discharging Energetic Efficiency
+    10800000,                 !- Maximum Storage Capacity
+    ,                         !- Maximum Power for Discharging
+    ,                         !- Maximum Power for Charging
+    10800000;                 !- Initial State of Charge
+
+ELECTRICLOADCENTER:TRANSFORMER,
+    Transformer,              !- Name
+    Always_On,                !- Availability Schedule Name
+    LoadCenterPowerConditioning,    !- Transformer Usage
+    Zone 1,                   !- Zone Name
+    0,                        !- Radiative Fraction
+    ,                         !- Rated Capacity
+    3,                        !- Phase
+    Aluminum,                 !- Conductor Material
+    150,                      !- Full Load Temperature Rise
+    0.1,                      !- Fraction of Eddy Current Losses
+    RatedLosses,              !- Performance Input Method
+    ,                         !- Rated No Load Loss
+    ,                         !- Rated Load Loss
+    0.98,                     !- Nameplate Efficiency
+    0.35,                     !- Per Unit Load for Nameplate Efficiency
+    75,                       !- Reference Temperature for Nameplate Efficiency
+    ,                         !- Per Unit Load for Maximum Efficiency
+    Yes;                      !- Consider Transformer Loss for Utility Cost
+
+ELECTRICLOADCENTER:DISTRIBUTION,
+    ELC,                      !- Name
+    PV,                       !- Generator List Name
+    Baseload,                 !- Generator Operation Scheme Type
+    0,                        !- Generator Demand Limit Scheme Purchased Electric Demand Limit
+    ,                         !- Generator Track Schedule Name Scheme Schedule Name
+    ,                         !- Generator Track Meter Scheme Meter Name
+    AlternatingCurrentWithStorage,    !- Electrical Buss Type
+    PV Inverter,              !- Inverter Name
+    Simple Battery,           !- Electrical Storage Object Name
+    ,                         !- Transformer Object Name
+    FacilityDemandLeveling,    !- Storage Operation Scheme
+    ElectricityNet:Facility,    !- Storage Control Track Meter Name
+    Converter,                !- Storage Converter Object Name
+    1,                        !- Maximum Storage State of Charge Fraction
+    0.2,                      !- Minimum Storage State of Charge Fraction
+    ,                         !- Design Storage Control Charge Power
+    ,                         !- Storage Charge Power Fraction Schedule Name
+    ,                         !- Design Storage Control Discharge Power
+    ,                         !- Storage Discharge Power Fraction Schedule Name
+    3500,                     !- Storage Control Utility Demand Target
+    OutageCooling;            !- Storage Control Utility Demand Target Fraction Schedule Name
+
+ELECTRICLOADCENTER:STORAGE:CONVERTER,
+    Converter,                !- Name
+    Always_On,                !- Availability Schedule Name
+    SimpleFixed,              !- Power Conversion Efficiency Method
+    0.95;                     !- Simple Fixed Efficiency
+
 CURVE:QUADRATIC,
     HPACCoolCapFFF,           !- Name
     0.8,                      !- Coefficient1 Constant
@@ -2192,6 +2482,26 @@ OUTPUT:VARIABLE,
     Zone Air Temperature,     !- Variable Name
     hourly;                   !- Reporting Frequency
 
+OUTPUT:VARIABLE,
+    *,                        !- Key Value
+    Exterior Lights Electricity Energy,    !- Variable Name
+    hourly;                   !- Reporting Frequency
+
+OUTPUT:VARIABLE,
+    *,                        !- Key Value
+    Zone Ventilation Mass Flow Rate,    !- Variable Name
+    hourly;                   !- Reporting Frequency
+
+OUTPUT:VARIABLE,
+    *,                        !- Key Value
+    Schedule Value,           !- Variable Name
+    hourly;                   !- Reporting Frequency
+
+OUTPUT:VARIABLE,
+    *,                        !- Key Value
+    Electric Equipment Electricity Energy,    !- Variable Name
+    hourly;                   !- Reporting Frequency
+
 OUTPUT:METER:METERFILEONLY,
     InteriorLights:Electricity,    !- Key Name
     Monthly;                  !- Reporting Frequency
@@ -2210,6 +2520,10 @@ OUTPUT:METER:METERFILEONLY,
 
 OUTPUT:METER:METERFILEONLY,
     Cooling:Electricity,      !- Key Name
+    Monthly;                  !- Reporting Frequency
+
+OUTPUT:METER:METERFILEONLY,
+    ElectricityNet:Facility,    !- Key Name
     Monthly;                  !- Reporting Frequency
 
 OUTPUT:SQLITE,

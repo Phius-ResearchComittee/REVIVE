@@ -120,7 +120,7 @@ Zone,
     1,                        !- Multiplier
     ,                         !- Ceiling Height
     482.065996382208,         !- Volume
-    2200,                     !- Floor Area
+    204.38668800000002,       !- Floor Area
     ,                         !- Zone Inside Convection Algorithm
     ,                         !- Zone Outside Convection Algorithm
     Yes;                      !- Part of Total Floor Area
