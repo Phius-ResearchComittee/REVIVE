@@ -1,4 +1,4 @@
-Program Version,EnergyPlus, Version 9.5.0-de239b2e5f, YMD=2023.03.15 17:54
+Program Version,EnergyPlus, Version 9.5.0-de239b2e5f, YMD=2023.03.21 23:39
 ! This file shows details about the branches, nodes, and other
 ! elements of the flow connections.
 ! This file is intended for use in "debugging" potential problems
@@ -15,9 +15,9 @@ Program Version,EnergyPlus, Version 9.5.0-de239b2e5f, YMD=2023.03.15 17:54
  Node,3,ZONE_1_RETURN,Air,1
  Node,4,ZONE_1_ERV_EXHAUST,Air,5
  Node,5,ZONE1PTHPAIRINLETNODE,Air,3
- Node,6,OA_1,Air,2
- Node,7,OA_2,Air,0
- Node,8,ZONE_1_ZONE_AIR_NODE,Air,0
+ Node,6,ZONE_1_ZONE_AIR_NODE,Air,0
+ Node,7,OA_1,Air,2
+ Node,8,OA_2,Air,0
  Node,9,ZONE1PTHPFANOUTLETNODE,Air,1
  Node,10,ZONE1PTHPDXCOOLCOILOUTLETNODE,Air,1
  Node,11,ZONE1PTHPDXHEATCOILOUTLETNODE,Air,1
@@ -27,8 +27,8 @@ Program Version,EnergyPlus, Version 9.5.0-de239b2e5f, YMD=2023.03.15 17:54
 ! Suspicious nodes have 0 references.  It is normal for some nodes, however.
 ! Listing nodes with 0 references (culled from previous list):
 ! <Suspicious Node>,<NodeNumber>,<Node Name>,<Node Fluid Type>,<# Times Node Referenced After Definition>
- Suspicious Node,7,OA_2,Air,0
- Suspicious Node,8,ZONE_1_ZONE_AIR_NODE,Air,0
+ Suspicious Node,6,ZONE_1_ZONE_AIR_NODE,Air,0
+ Suspicious Node,8,OA_2,Air,0
 ! ===============================================================
 ! <#Branch Lists>,<Number of Branch Lists>
  #Branch Lists,0
@@ -54,8 +54,8 @@ Program Version,EnergyPlus, Version 9.5.0-de239b2e5f, YMD=2023.03.15 17:54
 ! #Outdoor Air Nodes,<Number of Outdoor Air Nodes>
  #Outdoor Air Nodes,2
 ! <Outdoor Air Node>,<NodeNumber>,<Node Name>
- Outdoor Air Node,6,OA_1
- Outdoor Air Node,7,OA_2
+ Outdoor Air Node,7,OA_1
+ Outdoor Air Node,8,OA_2
 ! ===============================================================
 ! <#Component Sets>,<Number of Component Sets>
  #Component Sets,7
@@ -131,14 +131,14 @@ Program Version,EnergyPlus, Version 9.5.0-de239b2e5f, YMD=2023.03.15 17:54
 ! <#Non-Parent Node Connections>,<Number of Non-Parent Node Connections>
  #Non-Parent Node Connections,24
 ! <Non-Parent Node Connection>,<Node Name>,<Node ObjectType>,<Node ObjectName>,<Node ConnectionType>,<Node FluidStream>
- Non-Parent Node Connection,OA_1,OUTDOORAIR:NODE,OutdoorAir:Node,OutdoorAir,1
- Non-Parent Node Connection,OA_2,OUTDOORAIR:NODE,OutdoorAir:Node,OutdoorAir,2
  Non-Parent Node Connection,ZONE_1_ZONE_AIR_NODE,ZONEHVAC:EQUIPMENTCONNECTIONS,ZONE 1,ZoneNode,1
  Non-Parent Node Connection,ZONE_1_ERV_SUPPLY,ZONEHVAC:EQUIPMENTCONNECTIONS,ZONE 1,ZoneInlet,1
  Non-Parent Node Connection,ZONE1PTHPAIROUTLETNODE,ZONEHVAC:EQUIPMENTCONNECTIONS,ZONE 1,ZoneInlet,1
  Non-Parent Node Connection,ZONE_1_ERV_EXHAUST,ZONEHVAC:EQUIPMENTCONNECTIONS,ZONE 1,ZoneExhaust,1
  Non-Parent Node Connection,ZONE1PTHPAIRINLETNODE,ZONEHVAC:EQUIPMENTCONNECTIONS,ZONE 1,ZoneExhaust,1
  Non-Parent Node Connection,ZONE_1_RETURN,ZONEHVAC:EQUIPMENTCONNECTIONS,ZONE 1,ZoneReturn,1
+ Non-Parent Node Connection,OA_1,OUTDOORAIR:NODE,OutdoorAir:Node,OutdoorAir,1
+ Non-Parent Node Connection,OA_2,OUTDOORAIR:NODE,OutdoorAir:Node,OutdoorAir,2
  Non-Parent Node Connection,ZONE1PTHPAIRINLETNODE,FAN:SYSTEMMODEL,ZONE1PTHPFAN,Inlet,1
  Non-Parent Node Connection,ZONE1PTHPFANOUTLETNODE,FAN:SYSTEMMODEL,ZONE1PTHPFAN,Outlet,1
  Non-Parent Node Connection,ZONE1PTHPFANOUTLETNODE,COIL:COOLING:DX:SINGLESPEED,ZONE1PTHPDXCOOLCOIL,Inlet,1
