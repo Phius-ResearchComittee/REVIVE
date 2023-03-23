@@ -242,9 +242,16 @@ def adorb(analysisPeriod, annualElec, annualGas, annualCO2, dirMR, emCO2, eTrans
     df2['pv_eTrans'] = df['pv_eTrans'].cumsum()
 
     # df2.plot(kind='area', xlabel='Years', ylabel='Cummulative Present Value [$]', title='ADORB COST', figsize=(6.5,8.5))
-    fig = df2.plot(kind='area', xlabel='Years', ylabel='Cummulative Present Value [$]', ylim=225000, title='ADORB COST', figsize=(16,9)).get_figure()
+    fig = df2.plot(kind='area', xlabel='Years', ylabel='Cummulative Present Value [$]', ylim=[0,225000], title=(str(BaseFileName) + '_ADORB COST'), figsize=(16,9)).get_figure()
     fig.savefig(str(studyFolder) + "/" + str(BaseFileName) + '_ADORB.png')
-    return sum(pv)
+
+    pv_dirEn_tot = df['pv_dirEn'].sum()
+    pv_dirMR_tot = df['pv_dirMR'].sum()
+    pv_opCO2_tot = df['pv_opCO2'].sum()
+    pv_emCO2_tot = df['pv_emCO2'].sum()
+    pv_eTrans_tot = df['pv_eTrans'].sum()
+
+    return sum(pv), pv_dirEn_tot, pv_dirMR_tot, pv_opCO2_tot, pv_emCO2_tot,pv_eTrans_tot
 
         # PV_i = sum over y from 1 to N of C_i_y / (1+k_i^y) , where
         # C_i  is the Cost, of cost component i [$].
@@ -273,8 +280,11 @@ IDF.setiddname(iddfile)
 
 ResultsTable = pd.DataFrame(columns=["Run Name","SET ≤ 12.2°C Hours (F)","Hours < 2°C [hr]","Caution (> 26.7, ≤ 32.2°C) [hr]","Extreme Caution (> 32.2, ≤ 39.4°C) [hr]",
                                          "Danger (> 39.4, ≤ 51.7°C) [hr]","Extreme Danger (> 51.7°C) [hr]", 'EUI','Peak Electric Demand [W]',
-                                         'Heating Battery Size [kWh]', 'Cooling Battery Size [kWh]', 'Total ADORB Cost [$]','Annual Electric Cost [$]',
-                                         'Annual Gas Cost [$]','First Cost [$]'])
+                                         'Heating Battery Size [kWh]', 'Cooling Battery Size [kWh]', 'Total ADORB Cost [$]','First Year Electric Cost [$]',
+                                         'First Year Gas Cost [$]','First Cost [$]','pv_dirEn_tot','pv_dirMR_tot','pv_opCO2_tot','pv_emCO2_tot',
+                                         'pv_eTrans_tot'])
+
+# sum(pv), pv_dirEn_tot, pv_dirMR_tot, pv_opCO2_tot, pv_emCO2_tot,pv_eTrans_tot
 
 for case in range(totalRuns):
     runCount = case
@@ -379,6 +389,8 @@ for case in range(totalRuns):
     natGasPresent = runList['NATURAL_GAS'][runCount]
     dhwFuel = runList['WATER_HEATER_FUEL'][runCount]
     mechSystemType = runList['MECH_SYSTEM_TYPE'][runCount]
+
+    gridRegion = runList['GRID_REGION'][runCount]
 
     #==============================================================================================================================
     # 4. Base IDF
@@ -2499,11 +2511,11 @@ for case in range(totalRuns):
             peakElec = float(ltable[1][1][4])
 
     if 'BASE' in str(BaseFileName):
+        firstCost = 0
+    else:
         for ltable in ltables:
             if 'Construction Cost Estimate Summary' in '\n'.join(ltable[0]): #and 'For: Entire Facility' in '\n'.join(ltable[0]):
-                firstCost = float(ltable[1][9][2])
-    else:
-        firstCost = 0
+                firstCost = (float(ltable[1][9][2])*1.8)
 
     # Save HTML and CSV outputs
     reportHTML = (str(studyFolder) +'\eplustbl.htm')
@@ -2531,19 +2543,19 @@ for case in range(totalRuns):
     # ===============================================================================================================
     # Inputs
     laborFraction = 0.4
-    emCO2_firstCost = firstCost*laborFraction*0.234
+    emCO2_firstCost = firstCost*laborFraction*0.3
 
     MWH = hourly['Whole Building:Facility Total Purchased Electricity Energy [J](Hourly)']*0.0000000002778
     hourlyEmissions = pd.read_csv(emissionsDatabase)
-    emissions = hourlyEmissions['RFCWc']
-
+    emissions = hourlyEmissions[str(gridRegion)]
+    
     CO2_Elec = sum(MWH*emissions)
 
     gasPrice = 0.64 #$/therm
 
     if natGasPresent == 1:
         monthlyMTR = monthlyMTR.drop(index=[0,1,2,3,4,5,6,7])
-        annualGas = (((sum(monthlyMTR['NaturalGas:Facility [J](Monthly) ']*9.478169879E-9))*gasPrice)+144)
+        annualGas = (((sum(monthlyMTR['NaturalGas:Facility [J](Monthly) ']*9.478169879E-9))*gasPrice)+(40*12))
         CO2_gas = (sum(monthlyMTR['NaturalGas:Facility [J](Monthly) ']*9.478169879E-9))*12.7
     else:
         CO2_gas = 0
@@ -2555,14 +2567,20 @@ for case in range(totalRuns):
     elecPrice = 0.1324 #$/kWh
     annualElec = ((hourly['Whole Building:Facility Total Purchased Electricity Energy [J](Hourly)'].sum()*0.0000002778*elecPrice)+144)
     
-    annualCO2 = CO2_Elec = CO2_gas
-    dirMR = [(firstCost,0)]
-    emCO2 = [(emCO2_firstCost,0)] 
+    annualCO2 = CO2_Elec + CO2_gas
+    dirMR = [(firstCost,1),(8500,20),(8500,40),(8500,60)]
+    emCO2 = [(emCO2_firstCost,1),(8500,20),(8500,40),(8500,60)] 
     eTrans = peakElec
 
+    
     final = adorb(duration, annualElec, annualGas, annualCO2, dirMR, emCO2, eTrans)
 
-    adorbCost = final
+    adorbCost = final[0]
+    pv_dirEn_tot = final[1]
+    pv_dirMR_tot = final[2]
+    pv_opCO2_tot = final[3]
+    pv_emCO2_tot = final[4]
+    pv_eTrans_tot = final[5]
 
     # ===============================================================================================================
     # Final Result Collection
@@ -2579,11 +2597,19 @@ for case in range(totalRuns):
                                         'Peak Electric Demand [W]':peakElec,
                                         'Heating Battery Size [kWh]':heatingBattery, 
                                         'Cooling Battery Size [kWh]':coolingBattery,
-                                        'Annual Electric Cost [$]':annualElec,
-                                        'Annual Gas Cost [$]':annualGas,
+                                        'First Year Electric Cost [$]':annualElec,
+                                        'First Year Gas Cost [$]':annualGas,
                                         'First Cost [$]':firstCost,
-                                        'Total ADORB Cost [$]':adorbCost}, ignore_index=True)
+                                        'Total ADORB Cost [$]':adorbCost,
+                                        'pv_dirEn_tot':pv_dirEn_tot,
+                                        'pv_dirMR_tot':pv_dirMR_tot,
+                                        'pv_opCO2_tot':pv_opCO2_tot,
+                                        'pv_emCO2_tot':pv_emCO2_tot,
+                                        'pv_eTrans_tot':pv_eTrans_tot}, ignore_index=True)
 
+
+
+# sum(pv), pv_dirEn_tot, pv_dirMR_tot, pv_opCO2_tot, pv_emCO2_tot,pv_eTrans_tot
 
 
 ResultsTable.to_csv(str(studyFolder) + "/" + str(batchName) + "_ResultsTable.csv")
