@@ -1,4 +1,4 @@
-Program Version,EnergyPlus, Version 9.5.0-de239b2e5f, YMD=2023.03.21 23:39
+Program Version,EnergyPlus, Version 9.5.0-de239b2e5f, YMD=2023.03.23 08:30
 ! <Version>, Version ID
  Version, 9.5
 ! <Timesteps per Hour>, #TimeSteps, Minutes per TimeStep {minutes}
@@ -34,7 +34,7 @@ Site:Location,Chicago Midway Ap IL USA TMY3 WMO#=725340,41.78,-87.75,-6.00,186.0
 ! <Site Water Mains Temperature Information>,Calculation Method{},Water Mains Temperature Schedule Name{},Annual Average Outdoor Air Temperature{C},Maximum Difference In Monthly Average Outdoor Air Temperatures{deltaC},Fixed Default Water Mains Temperature{C}
 Site Water Mains Temperature Information,FixedDefault,NA,NA,NA,10.0
 ! <Building Information>, Building Name,North Axis {deg},Terrain,  Loads Convergence Tolerance Value,Temperature Convergence Tolerance Value,  Solar Distribution,Maximum Number of Warmup Days,Minimum Number of Warmup Days
- Building Information,noCrankCase_Package_4_Phius Retrofit,0.000,City,4.00000E-002,0.40000,FullInteriorAndExterior,25,6
+ Building Information,baseTesting_Package_3_IECC+Phius Airsel,0.000,City,4.00000E-002,0.40000,FullInteriorAndExterior,25,6
 ! <Inside Convection Algorithm>, Algorithm {Simple | TARP | CeilingDiffuser | AdaptiveConvectionAlgorithm}
 Inside Convection Algorithm,TARP
 ! <Outside Convection Algorithm>, Algorithm {SimpleCombined | TARP | MoWitt | DOE-2 | AdaptiveConvectionAlgorithm}
@@ -65,7 +65,7 @@ Surface Heat Transfer Algorithm, KivaFoundation - TwoDimensionalFiniteDifference
 ! <Shading Summary>, Number of Fixed Detached Shades, Number of Building Detached Shades, Number of Attached Shades
  Shading Summary,0,4,0
 ! <Zone Summary>, Number of Zones, Number of Zone Surfaces, Number of SubSurfaces
- Zone Summary,1,20,9
+ Zone Summary,1,22,9
 ! <Zone Information>,Zone Name,North Axis {deg},Origin X-Coordinate {m},Origin Y-Coordinate {m},Origin Z-Coordinate {m},Centroid X-Coordinate {m},Centroid Y-Coordinate {m},Centroid Z-Coordinate {m},Type,Zone Multiplier,Zone List Multiplier,Minimum X {m},Maximum X {m},Minimum Y {m},Maximum Y {m},Minimum Z {m},Maximum Z {m},Ceiling Height {m},Volume {m3},Zone Inside Convection Algorithm {Simple-Detailed-CeilingDiffuser-TrombeWall},Zone Outside Convection Algorithm {Simple-Detailed-Tarp-MoWitt-DOE-2-BLAST}, Floor Area {m2},Exterior Gross Wall Area {m2},Exterior Net Wall Area {m2},Exterior Window Area {m2}, Number of Surfaces, Number of SubSurfaces, Number of Shading SubSurfaces,  Part of Total Building Area
  Zone Information, ZONE 1,0.0,0.00,0.00,0.00,4.57,6.10,2.62,1,1,1,0.00,9.14,0.00,12.19,-0.30,5.49,4.11,482.07,TARP,DOE-2,197.70,247.12,211.73,33.45,11,9,0,Yes
 ! <Zone Internal Gains Nominal>,Zone Name, Floor Area {m2},# Occupants,Area per Occupant {m2/person},Occupant per Area {person/m2},Interior Lighting {W/m2},Electric Load {W/m2},Gas Load {W/m2},Other Load {W/m2},Hot Water Eq {W/m2},Steam Equipment {W/m2},Sum Loads per Area {W/m2},Outdoor Controlled Baseboard Heat
@@ -108,29 +108,25 @@ AirflowNetwork Model:Control,NoMultizoneOrDistribution
  Cooling Sizing Factor Information, Global,   1.0000    
  Cooling Sizing Factor Information, Zone ZONE 1,   1.5000    
 ! <Zone Sizing Information>, Zone Name, Load Type, Calc Des Load {W}, User Des Load {W}, Calc Des Air Flow Rate {m3/s}, User Des Air Flow Rate {m3/s}, Design Day Name, Date/Time of Peak, Temperature at Peak {C}, Humidity Ratio at Peak {kgWater/kgDryAir}, Floor Area {m2}, # Occupants, Calc Outdoor Air Flow Rate {m3/s}, Calc DOAS Heat Addition Rate {W}
- Zone Sizing Information, ZONE 1, Cooling, 917.48321, 1376.22481, 6.26117E-002, 9.39175E-002, CHICAGO MIDWAY AP ANN CLG .4% CONDNS DB=>MWB, 7/21 17:45:00, 31.50800, 1.50643E-002, 197.69767, 4.00000, 2.83200E-002, 0.00000
- Zone Sizing Information, ZONE 1, Heating, 1414.34982, 2828.69963, 3.92459E-002, 7.84918E-002, CHICAGO MIDWAY AP ANN HTG 99.6% CONDNS DB, 1/21 24:00:00, -18.70000, 7.34530E-004, 197.69767, 4.00000, 2.83200E-002, 0.00000
+ Zone Sizing Information, ZONE 1, Cooling, 1483.11606, 2224.67410, 0.10121, 0.15182, CHICAGO MIDWAY AP ANN CLG .4% CONDNS DB=>MWB, 7/21 17:45:00, 31.50800, 1.50643E-002, 197.69767, 4.00000, 2.83200E-002, 0.00000
+ Zone Sizing Information, ZONE 1, Heating, 3901.63431, 7803.26862, 0.10827, 0.21653, CHICAGO MIDWAY AP ANN HTG 99.6% CONDNS DB, 1/21 24:00:00, -18.70000, 7.34530E-004, 197.69767, 4.00000, 2.83200E-002, 0.00000
 ! <Component Sizing Information>, Component Type, Component Name, Input Field Description, Value
- Component Sizing Information, Fan:SystemModel, ZONE1PTHPFAN, Design Size Design Maximum Air Flow Rate [m3/s], 9.39175E-002
- Component Sizing Information, Fan:SystemModel, ZONE1PTHPFAN, Design Electric Power Consumption [W], 0.14088
- Component Sizing Information, ZoneHVAC:PackagedTerminalHeatPump, ZONE1PTHP, Design Size Cooling Supply Air Flow Rate [m3/s], 9.39175E-002
- Component Sizing Information, ZoneHVAC:PackagedTerminalHeatPump, ZONE1PTHP, Design Size Heating Supply Air Flow Rate [m3/s], 9.39175E-002
- Component Sizing Information, ZoneHVAC:PackagedTerminalHeatPump, ZONE1PTHP, User-Specified No Load Supply Air Flow Rate [m3/s], 0.00000
- Component Sizing Information, ZoneHVAC:PackagedTerminalHeatPump, ZONE1PTHP, Design Size Outdoor Air Flow Rate During Cooling Operation [m3/s], 2.83200E-002
- Component Sizing Information, ZoneHVAC:PackagedTerminalHeatPump, ZONE1PTHP, Design Size Outdoor Air Flow Rate During Heating Operation [m3/s], 2.83200E-002
- Component Sizing Information, ZoneHVAC:PackagedTerminalHeatPump, ZONE1PTHP, Design Size Maximum Supply Air Temperature from Supplemental Heater [C], 50.00000
- Component Sizing Information, ZoneHVAC:PackagedTerminalHeatPump, ZONE1PTHP, User-Specified Maximum Supply Air Temperature from Supplemental Heater [C], 50.00000
- Component Sizing Information, Coil:Cooling:DX:SingleSpeed, ZONE1PTHPDXCOOLCOIL, Design Size Rated Air Flow Rate [m3/s], 9.39175E-002
- Component Sizing Information, Coil:Cooling:DX:SingleSpeed, ZONE1PTHPDXCOOLCOIL, Design Size Gross Rated Total Cooling Capacity [W], 2240.39066
- Component Sizing Information, Coil:Cooling:DX:SingleSpeed, ZONE1PTHPDXCOOLCOIL, User-Specified Gross Rated Sensible Heat Ratio, 0.75000
+ Component Sizing Information, AirLoopHVAC:UnitarySystem, GASHEATDXACFURNACE, Design Size Supply Air Flow Rate [m3/s], 0.21653
+ Component Sizing Information, AirLoopHVAC:UnitarySystem, GASHEATDXACFURNACE, User-Specified Supply Air Flow Rate [m3/s], 2.00000
+ Component Sizing Information, AirLoopHVAC:UnitarySystem, GASHEATDXACFURNACE, Design Size Heating Supply Air Flow Rate [m3/s], 0.21653
+ Component Sizing Information, AirLoopHVAC:UnitarySystem, GASHEATDXACFURNACE, Design Size Cooling Supply Air Flow Rate [m3/s], 0.21653
+ Component Sizing Information, AirLoopHVAC:UnitarySystem, GASHEATDXACFURNACE, User-Specified No Load Supply Air Flow Rate [m3/s], 0.00000
+ Component Sizing Information, AirLoopHVAC:UnitarySystem, GASHEATDXACFURNACE, Design Size Nominal Cooling Capacity [W], 4694.38704
+ Component Sizing Information, AirLoopHVAC:UnitarySystem, GASHEATDXACFURNACE, Design Size Nominal Heating Capacity [W], 7803.26847
+ Component Sizing Information, AirLoopHVAC:UnitarySystem, GASHEATDXACFURNACE, User-Specified Maximum Supply Air Temperature [C], 50.00000
+ Component Sizing Information, Fan:OnOff, FURNACEBLOWER, Design Size Maximum Flow Rate [m3/s], 0.21653
+ Component Sizing Information, Fan:OnOff, FURNACEBLOWER, User-Specified Maximum Flow Rate [m3/s], 2.00000
+ Component Sizing Information, Coil:Cooling:DX:SingleSpeed, FURNACE ACDXCOIL 1, Design Size Rated Air Flow Rate [m3/s], 0.21653
+ Component Sizing Information, Coil:Cooling:DX:SingleSpeed, FURNACE ACDXCOIL 1, Design Size Gross Rated Total Cooling Capacity [W], 4694.38704
+ Component Sizing Information, Coil:Cooling:DX:SingleSpeed, FURNACE ACDXCOIL 1, User-Specified Gross Rated Sensible Heat Ratio, 0.75000
 ! <DX Cooling Coil Standard Rating Information>, Component Type, Component Name, Standard Rating (Net) Cooling Capacity {W}, Standard Rated Net COP {W/W}, EER {Btu/W-h}, SEER User {Btu/W-h}, SEER Standard {Btu/W-h}, IEER {Btu/W-h}
- DX Cooling Coil Standard Rating Information, Coil:Cooling:DX:SingleSpeed, ZONE1PTHPDXCOOLCOIL, 2167.4, 2.64, 9.02, 9.59, 9.07, 9.45
- Component Sizing Information, Coil:Heating:DX:SingleSpeed, ZONE1PTHPDXHEATCOIL, Design Size Rated Air Flow Rate [m3/s], 9.39175E-002
- Component Sizing Information, Coil:Heating:DX:SingleSpeed, ZONE1PTHPDXHEATCOIL, Design Size Gross Rated Heating Capacity [W], 2240.39066
- Component Sizing Information, Coil:Heating:DX:SingleSpeed, ZONE1PTHPDXHEATCOIL, Design Size Resistive Defrost Heater Capacity [W], 2240.39066
-! <DX Heating Coil Standard Rating Information>, Component Type, Component Name, High Temperature Heating (net) Rating Capacity {W}, Low Temperature Heating (net) Rating Capacity {W}, HSPF {Btu/W-h}, Region Number
- DX Heating Coil Standard Rating Information, Coil:Heating:DX:SingleSpeed, ZONE1PTHPDXHEATCOIL, 2315.7, 1275.5, 6.59, 4
- Component Sizing Information, Coil:Heating:Electric, ZONE1PTHPSUPHEATER, Design Size Nominal Capacity [W], 4145.14852
+ DX Cooling Coil Standard Rating Information, Coil:Cooling:DX:SingleSpeed, FURNACE ACDXCOIL 1, 4526.2, 2.61, 8.92, 9.47, 8.95, 9.27
+ Component Sizing Information, Coil:Heating:Fuel, FURNACE HEATING COIL 1, Design Size Nominal Capacity [W], 7803.26847
  Component Sizing Information, ZoneHVAC:EnergyRecoveryVentilator, ERV1, User-Specified Supply Air Flow Rate [m3/s], 2.83168E-002
  Component Sizing Information, ZoneHVAC:EnergyRecoveryVentilator, ERV1, User-Specified Exhaust Air Flow Rate [m3/s], 2.83168E-002
  Component Sizing Information, Fan:OnOff, ERV_SUPPLY_FAN, Design Size Maximum Flow Rate [m3/s], 2.83168E-002
@@ -162,25 +158,25 @@ Environment:WarmupDays,  6
 ! <Tabular Report>,Style,Unit Conversion
 Tabular Report,HTML,INCHPOUND
 ! <Warmup Convergence Information>,Zone Name,Environment Type/Name,Average Warmup Temperature Difference {deltaC},Std Dev Warmup Temperature Difference {deltaC},Max Temperature Pass/Fail Convergence,Min Temperature Pass/Fail Convergence,Average Warmup Load Difference {W},Std Dev Warmup Load Difference {W},Heating Load Pass/Fail Convergence,Cooling Load Pass/Fail Convergence
- Warmup Convergence Information,ZONE 1,SizingPeriod: CHICAGO MIDWAY AP ANN HTG 99.6% CONDNS DB HVAC Sizing Pass 1,1.4822931110E-003,4.6990523392E-003,Pass,Pass,0.2772635759,1.8390332780,Pass,Pass
+ Warmup Convergence Information,ZONE 1,SizingPeriod: CHICAGO MIDWAY AP ANN HTG 99.6% CONDNS DB HVAC Sizing Pass 1,5.6889101242E-004,2.1086179276E-003,Pass,Pass,7.7142201994E-003,1.3543948399E-002,Pass,Pass
 Environment,CHICAGO MIDWAY AP ANN HTG 99% CONDNS DB HVAC Sizing Pass 1,SizingPeriod:DesignDay,01/21,01/21,WinterDesignDay,1,N/A,N/A,N/A,N/A,N/A,N/A,Clark and Allen
 Environment:Daylight Saving,No,SizingPeriod:DesignDay
 Environment:Design Day Data,-15.40,0.00,DefaultMultipliers,Wetbulb,-15.40,{C},99110,300,5.3,0.00,No,No
 Environment:Design Day Misc, 21,1229.0,0.1415,5.7310E-002,1.0,-11.15,-20.1,ASHRAEClearSky
 Environment:WarmupDays,  6
- Warmup Convergence Information,ZONE 1,SizingPeriod: CHICAGO MIDWAY AP ANN HTG 99% CONDNS DB HVAC Sizing Pass 1,1.7107718791E-003,5.1465070797E-003,Pass,Pass,0.2043350252,1.1515185079,Pass,Pass
+ Warmup Convergence Information,ZONE 1,SizingPeriod: CHICAGO MIDWAY AP ANN HTG 99% CONDNS DB HVAC Sizing Pass 1,5.6165279830E-004,2.0167205366E-003,Pass,Pass,8.7886468826E-003,1.6264610746E-002,Pass,Pass
 Environment,CHICAGO MIDWAY AP ANN CLG .4% CONDNS DB=>MWB HVAC Sizing Pass 1,SizingPeriod:DesignDay,07/21,07/21,SummerDesignDay,1,N/A,N/A,N/A,N/A,N/A,N/A,Clark and Allen
 Environment:Daylight Saving,No,SizingPeriod:DesignDay
 Environment:Design Day Data,33.40,8.80,DefaultMultipliers,Wetbulb,23.80,{C},99110,220,5.6,0.00,No,No
 Environment:Design Day Misc,202,1084.4,0.2082,0.1365,1.0,-6.23,20.6,ASHRAETau
 Environment:WarmupDays,  6
- Warmup Convergence Information,ZONE 1,SizingPeriod: CHICAGO MIDWAY AP ANN CLG .4% CONDNS DB=>MWB HVAC Sizing Pass 1,3.5169873744E-003,2.2274593359E-003,Pass,Pass,1.7930825706E-002,1.6190672960E-002,Pass,Pass
+ Warmup Convergence Information,ZONE 1,SizingPeriod: CHICAGO MIDWAY AP ANN CLG .4% CONDNS DB=>MWB HVAC Sizing Pass 1,2.6869746670E-003,1.9464063484E-003,Pass,Pass,3.4536616577E-002,1.9486511644E-002,Pass,Pass
 Environment,CHICAGO MIDWAY AP ANN CLG 1% CONDNS DB=>MWB HVAC Sizing Pass 1,SizingPeriod:DesignDay,07/21,07/21,SummerDesignDay,1,N/A,N/A,N/A,N/A,N/A,N/A,Clark and Allen
 Environment:Daylight Saving,No,SizingPeriod:DesignDay
 Environment:Design Day Data,32.00,8.80,DefaultMultipliers,Wetbulb,23.00,{C},99110,220,5.6,0.00,No,No
 Environment:Design Day Misc,202,1084.4,0.2082,0.1365,1.0,-6.23,20.6,ASHRAETau
 Environment:WarmupDays,  6
- Warmup Convergence Information,ZONE 1,SizingPeriod: CHICAGO MIDWAY AP ANN CLG 1% CONDNS DB=>MWB HVAC Sizing Pass 1,3.4851698801E-003,2.1516442459E-003,Pass,Pass,1.8853439000E-002,1.7092239819E-002,Pass,Pass
+ Warmup Convergence Information,ZONE 1,SizingPeriod: CHICAGO MIDWAY AP ANN CLG 1% CONDNS DB=>MWB HVAC Sizing Pass 1,2.7860393326E-003,1.9097028726E-003,Pass,Pass,4.3994410030E-002,3.1446357047E-002,Pass,Pass
 Environment,CHICAGO MIDWAY AP ANN HTG 99.6% CONDNS DB,SizingPeriod:DesignDay,01/21,01/21,WinterDesignDay,1,N/A,N/A,N/A,N/A,N/A,N/A,Clark and Allen
 Environment:Daylight Saving,No,SizingPeriod:DesignDay
 Environment:Design Day Data,-18.70,0.00,DefaultMultipliers,Wetbulb,-18.70,{C},99110,300,5.3,0.00,No,No
@@ -219,37 +215,4 @@ Environment:Daylight Saving,No,SizingPeriod:DesignDay
 Environment:Design Day Data,-18.70,0.00,DefaultMultipliers,Wetbulb,-18.70,{C},99110,300,5.3,0.00,No,No
 Environment:Design Day Misc, 21,1229.0,0.1415,5.7310E-002,1.0,-11.15,-20.1,ASHRAEClearSky
 Environment:WarmupDays,  6
- Warmup Convergence Information,ZONE 1,SizingPeriod: CHICAGO MIDWAY AP ANN HTG 99.6% CONDNS DB,1.4754362468E-003,4.6792177120E-003,Pass,Pass,0.3661630400,2.7687206327,Pass,Pass
-Environment,CHICAGO MIDWAY AP ANN HTG 99% CONDNS DB,SizingPeriod:DesignDay,01/21,01/21,WinterDesignDay,1,N/A,N/A,N/A,N/A,N/A,N/A,Clark and Allen
-Environment:Daylight Saving,No,SizingPeriod:DesignDay
-Environment:Design Day Data,-15.40,0.00,DefaultMultipliers,Wetbulb,-15.40,{C},99110,300,5.3,0.00,No,No
-Environment:Design Day Misc, 21,1229.0,0.1415,5.7310E-002,1.0,-11.15,-20.1,ASHRAEClearSky
-Environment:WarmupDays,  6
- Warmup Convergence Information,ZONE 1,SizingPeriod: CHICAGO MIDWAY AP ANN HTG 99% CONDNS DB,1.7107524035E-003,5.1464443880E-003,Pass,Pass,0.2044553917,1.1526193895,Pass,Pass
-Environment,CHICAGO MIDWAY AP ANN CLG .4% CONDNS DB=>MWB,SizingPeriod:DesignDay,07/21,07/21,SummerDesignDay,1,N/A,N/A,N/A,N/A,N/A,N/A,Clark and Allen
-Environment:Daylight Saving,No,SizingPeriod:DesignDay
-Environment:Design Day Data,33.40,8.80,DefaultMultipliers,Wetbulb,23.80,{C},99110,220,5.6,0.00,No,No
-Environment:Design Day Misc,202,1084.4,0.2082,0.1365,1.0,-6.23,20.6,ASHRAETau
-Environment:WarmupDays,  6
- Warmup Convergence Information,ZONE 1,SizingPeriod: CHICAGO MIDWAY AP ANN CLG .4% CONDNS DB=>MWB,3.5169873930E-003,2.2274593914E-003,Pass,Pass,1.7930826966E-002,1.6190673953E-002,Pass,Pass
-Environment,CHICAGO MIDWAY AP ANN CLG 1% CONDNS DB=>MWB,SizingPeriod:DesignDay,07/21,07/21,SummerDesignDay,1,N/A,N/A,N/A,N/A,N/A,N/A,Clark and Allen
-Environment:Daylight Saving,No,SizingPeriod:DesignDay
-Environment:Design Day Data,32.00,8.80,DefaultMultipliers,Wetbulb,23.00,{C},99110,220,5.6,0.00,No,No
-Environment:Design Day Misc,202,1084.4,0.2082,0.1365,1.0,-6.23,20.6,ASHRAETau
-Environment:WarmupDays,  6
- Warmup Convergence Information,ZONE 1,SizingPeriod: CHICAGO MIDWAY AP ANN CLG 1% CONDNS DB=>MWB,3.4851698800E-003,2.1516442464E-003,Pass,Pass,1.8853438999E-002,1.7092239820E-002,Pass,Pass
-Environment,ANNUAL,WeatherFileRunPeriod,01/01/2017,12/31/2017,Sunday,365,Use RunPeriod Specified Day,Yes,Yes,No,Yes,Yes,Clark and Allen
-Environment:Daylight Saving,No,
-Environment:WarmupDays,  6
- Warmup Convergence Information,ZONE 1,RunPeriod: ANNUAL,4.9916741198E-002,4.2338335684E-002,Pass,Pass,1.3614562404E-002,2.3986384871E-002,Pass,Pass
-Environment,CHICAGO MIDWAY AP ANN HTG 99.6% CONDNS DB HVAC Sizing Pass 1,SizingPeriod:DesignDay,01/21,01/21,WinterDesignDay,1,N/A,N/A,N/A,N/A,N/A,N/A,Clark and Allen
-Environment:Daylight Saving,No,SizingPeriod:DesignDay
-Environment,CHICAGO MIDWAY AP ANN HTG 99% CONDNS DB HVAC Sizing Pass 1,SizingPeriod:DesignDay,01/21,01/21,WinterDesignDay,1,N/A,N/A,N/A,N/A,N/A,N/A,Clark and Allen
-Environment:Daylight Saving,No,SizingPeriod:DesignDay
-Environment,CHICAGO MIDWAY AP ANN CLG .4% CONDNS DB=>MWB HVAC Sizing Pass 1,SizingPeriod:DesignDay,07/21,07/21,SummerDesignDay,1,N/A,N/A,N/A,N/A,N/A,N/A,Clark and Allen
-Environment:Daylight Saving,No,SizingPeriod:DesignDay
-Environment,CHICAGO MIDWAY AP ANN CLG 1% CONDNS DB=>MWB HVAC Sizing Pass 1,SizingPeriod:DesignDay,07/21,07/21,SummerDesignDay,1,N/A,N/A,N/A,N/A,N/A,N/A,Clark and Allen
-Environment:Daylight Saving,No,SizingPeriod:DesignDay
-! <Program Control Information:Threads/Parallel Sims>, Threading Supported,Maximum Number of Threads, Env Set Threads (OMP_NUM_THREADS), EP Env Set Threads (EP_OMP_NUM_THREADS), IDF Set Threads, Number of Threads Used (Interior Radiant Exchange), Number Nominal Surfaces, Number Parallel Sims
-Program Control:Threads/Parallel Sims, No,1, N/A, N/A, N/A, N/A, N/A, N/A
-End of Data
+ Warmup Convergence Information,ZONE 1,SizingPeriod: CHI

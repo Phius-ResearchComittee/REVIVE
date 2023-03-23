@@ -1,5 +1,0 @@
-,Run Name,SET ≤ 12.2°C Hours (F),Hours < 2°C [hr],"Caution (> 26.7, ≤ 32.2°C) [hr]","Extreme Caution (> 32.2, ≤ 39.4°C) [hr]","Danger (> 39.4, ≤ 51.7°C) [hr]",Extreme Danger (> 51.7°C) [hr],EUI,Peak Electric Demand [W]
-0,Package_0_Base House,1716.63,182.88,102.0,42.0,0.0,0.0,33.91,17914.84
-1,Package_2_Base House,1229.36,133.0,94.25,75.0,0.0,0.0,25.31,11925.49
-2,Package_2_Base House ,1184.99,129.12,94.75,74.5,0.0,0.0,24.94,11712.94
-3,Package_4_Phius Retrofit  ,58.42,0.0,92.5,80.25,0.0,0.0,15.62,4523.62

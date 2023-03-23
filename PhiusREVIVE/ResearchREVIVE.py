@@ -1,6 +1,6 @@
 #=============================================================================================================================
 # PhiusREVIVE Research Tool
-# Updated 2023/03/15
+# Updated 2023/03/23
 # v23.0.0
 #
 #
@@ -42,6 +42,7 @@ import matplotlib.pyplot as plt
 import datetime
 import email.utils as eutils
 import time
+import math
 # import streamlit as st
 import eppy as eppy
 from eppy import modeleditor
@@ -121,6 +122,18 @@ def zeroSch(nameSch):
         Field_7 = 0
     ) 
 
+# This function creates line item costs
+def costBuilder(name, type, lineItemType, itemName, objEndUse, costEach, costArea):
+    idf1.newidfobject('ComponentCost:LineItem',
+        Name = name,
+        Type = type,
+        Line_Item_Type = lineItemType,
+        Item_Name = itemName,
+        Object_EndUse_Key = objEndUse,
+        Cost_per_Each = costEach,
+        Cost_per_Area = costArea
+        )
+
 #ADORB
 def adorb(analysisPeriod, annualElec, annualGas, annualCO2, dirMR, emCO2, eTrans):
     results = pd.DataFrame(columns=['pv_dirEn', 'pv_opCO2', 'pv_dirMR', 'pv_emCO2', 'pv_eTrans'])
@@ -129,11 +142,7 @@ def adorb(analysisPeriod, annualElec, annualGas, annualCO2, dirMR, emCO2, eTrans
     r2 = []
     pc= 0.25
     # Dependencies and databasing
-    NatEmiss = pd.read_csv('NatlEmission.csv')
-
-    
-
-
+    # NatEmiss = pd.read_csv('NatlEmission.csv')
 
     k_dirEn = 0.02
     k_opCarb = 0.075
@@ -141,14 +150,13 @@ def adorb(analysisPeriod, annualElec, annualGas, annualCO2, dirMR, emCO2, eTrans
     k_emCarb = 0
     k_sysTran = 0.02
 
-
     # annual sum of all high level sub routines, run those first then run 
     for i in years:
         c_dirMR = []
         year = i+1
         
         # Direct energy costs
-        pv_dirEn = ((annualElec * 0.15) + (annualGas * 1.26))/((1+k_dirEn)**year)
+        pv_dirEn = (annualElec+ annualGas)/((1+k_dirEn)**year)
 
         # Cost of operational carbon
         c_opCarb = annualCO2 * pc
@@ -201,24 +209,41 @@ def adorb(analysisPeriod, annualElec, annualGas, annualCO2, dirMR, emCO2, eTrans
             else:
                 c_dirMR.append(0)
         pv_dirMR = sum(c_dirMR)
-            
-
 
         # Cost of energy transition
-        pv_eTrans = (eTrans)/((1+k_sysTran)**year)
+        
+        # TCF_y is the transition cost factor for year y. [$/Watt.yr]
+        ytt = 30
+        NTC = 4.5e12 # for US
+        NNCI = 1600 # for US
+        NTCF = NTC / (NNCI * 1e9)
 
+        if year > ytt:
+            TCF_y = 0 
+        else:
+            TCF_y = NTCF / ytt 	#linear transition
+
+        C_eTran_y = TCF_y * eTrans
+
+        pv_eTrans = (C_eTran_y)/((1+k_sysTran)**year)
 
         pv.append((pv_dirEn + pv_opCO2 + pv_dirMR + pv_emCO2 + pv_eTrans))
         newRow = {'pv_dirEn':pv_dirEn, 'pv_opCO2':pv_opCO2, 'pv_dirMR':pv_dirMR, 'pv_emCO2':pv_emCO2, 'pv_eTrans':pv_eTrans}
         results = results.append(newRow, ignore_index=True)
-        # test = pd.DataFrame(newRow, columns = ['pv_dirEn', 'pv_opCO2', 'pv_dirMR', 'emCO2', 'eTrans'])
-        # test.head()
-        # results.append(pd.DataFrame(newRow, columns=['pv_dirEn', 'pv_opCO2', 'pv_dirMR', 'emCO2', 'eTrans']), ignore_index=True)
+    results.to_csv(str(BaseFileName) + '_ADORBresults.csv')
 
-    #print(pv)
-    # results.head()
-    results.to_csv('results.csv')
+    df = results
 
+    df2 = pd.DataFrame()
+    df2['pv_dirEn'] = df['pv_dirEn'].cumsum()
+    df2['pv_dirMR'] = df['pv_dirMR'].cumsum()
+    df2['pv_opCO2'] = df['pv_opCO2'].cumsum()
+    df2['pv_emCO2'] = df['pv_emCO2'].cumsum()
+    df2['pv_eTrans'] = df['pv_eTrans'].cumsum()
+
+    # df2.plot(kind='area', xlabel='Years', ylabel='Cummulative Present Value [$]', title='ADORB COST', figsize=(6.5,8.5))
+    fig = df2.plot(kind='area', xlabel='Years', ylabel='Cummulative Present Value [$]', ylim=225000, title='ADORB COST', figsize=(16,9)).get_figure()
+    fig.savefig(str(studyFolder) + "/" + str(BaseFileName) + '_ADORB.png')
     return sum(pv)
 
         # PV_i = sum over y from 1 to N of C_i_y / (1+k_i^y) , where
@@ -238,6 +263,7 @@ iddfile = 'C:\EnergyPlusV9-5-0\Energy+.idd' # str(input('Path to EnergyPlus IDD 
 runListPath = 'C:/Users/amitc_crl/OneDrive/Documents/GitHub/REVIVE/PhiusREVIVE/Testing/test2/runs.csv' # str(input('Select runs.csv'))
 studyFolder = 'C:/Users/amitc_crl/OneDrive/Documents/GitHub/REVIVE/PhiusREVIVE/Testing/test2' # str(input('Path to folder for study inputs: '))
 idfgName = 'C:/Users/amitc_crl/OneDrive/Documents/GitHub/REVIVE/PhiusREVIVE/Testing/PNNL_SF_Geometry.idf' # str(input('Path to EnergyPlus IDF file with building geometry: '))
+emissionsDatabase = ('C:/Users/amitc_crl/OneDrive/Documents/GitHub/REVIVE/PhiusREVIVE/Testing/test2/Hourly Emission Rates.csv')
 runList = pd.read_csv(str(runListPath))
 totalRuns = runList.shape[0]
 batchName = str(input('Name for the batch of files to be created: '))
@@ -247,12 +273,15 @@ IDF.setiddname(iddfile)
 
 ResultsTable = pd.DataFrame(columns=["Run Name","SET ≤ 12.2°C Hours (F)","Hours < 2°C [hr]","Caution (> 26.7, ≤ 32.2°C) [hr]","Extreme Caution (> 32.2, ≤ 39.4°C) [hr]",
                                          "Danger (> 39.4, ≤ 51.7°C) [hr]","Extreme Danger (> 51.7°C) [hr]", 'EUI','Peak Electric Demand [W]',
-                                         'Heating Battery Size [kWh]', 'Cooling Battery Size [kWh]', 'Total ADORB Cost [$]'])
+                                         'Heating Battery Size [kWh]', 'Cooling Battery Size [kWh]', 'Total ADORB Cost [$]','Annual Electric Cost [$]',
+                                         'Annual Gas Cost [$]','First Cost [$]'])
 
 for case in range(totalRuns):
     runCount = case
     BaseFileName = (batchName + '_' + runList['CASE_NAME'][runCount])
     caseName = runList['CASE_NAME'][runCount]
+
+    print('Running: ' + str(BaseFileName))
 
     # testingFile = str(studyFolder) + "/" + str(BaseFileName) + ".idf"
     testingFile_BA = str(studyFolder) + "/" + str(BaseFileName) + "_BA.idf"
@@ -297,7 +326,6 @@ for case in range(totalRuns):
     DHW_Bath = 0.83*(3.5+1.17*Nbr)
     DHW_Sinks = 0.83*(12.5+4.16*Nbr)
     DHW_CombinedGPM = (DHW_ClothesWasher + DHW_Dishwasher + DHW_Shower + DHW_Bath + DHW_Sinks)*4.381E-8
-
 
     # Sizing loads from ASHRAE 1199-RP
 
@@ -347,7 +375,10 @@ for case in range(totalRuns):
     shadingAvail = runList['SHADING_AVAIL'][runCount]
     demandCoolingAvail = runList['DEMAND_COOLING_AVAIL'][runCount]
 
-    
+    # Mechanical Inputs
+    natGasPresent = runList['NATURAL_GAS'][runCount]
+    dhwFuel = runList['WATER_HEATER_FUEL'][runCount]
+    mechSystemType = runList['MECH_SYSTEM_TYPE'][runCount]
 
     #==============================================================================================================================
     # 4. Base IDF
@@ -583,18 +614,22 @@ for case in range(totalRuns):
         Design_Level = 1,
         Control_Option = 'AstronomicalClock')
 
-    ##Constructions and materials
-    ##Import from a library for future testing??
-
-    # Thermal mass
-
-    # FurnitureMass = idf1.idfobjects['InternalMass'][0]
-    # FurnitureMass.Surface_Area = icfa
-    # PartitionMass = idf1.idfobjects['InternalMass'][1]
-    # PartitionMass.Surface_Area = (icfa * PartitionRatio)
+    # Thermal Mass
+    idf1.newidfobject('InternalMass',
+        Name = 'Zone1 TM',
+        Construction_Name = 'Thermal Mass', 
+        Zone_or_ZoneList_Name = 'Zone 1',
+        Surface_Area = icfa_M
+        )
+    
+    idf1.newidfobject('InternalMass',
+        Name = 'Partitions',
+        Construction_Name = 'Interior Wall', 
+        Zone_or_ZoneList_Name = 'Zone 1',
+        Surface_Area = icfa_M
+        )
 
     # Base materials 
-
     materialBuilder('M01 100mm brick', 'MediumRough', 0.1016, 0.89, 1920, 790)
     materialBuilder('G05 25mm wood', 'MediumSmooth', 0.0254, 0.15, 608, 1630)
     materialBuilder('F08 Metal surface', 'Smooth', 0.0008, 45.28, 7824, 500)
@@ -647,14 +682,14 @@ for case in range(totalRuns):
         )
 
     idf1.newidfobject('WindowMaterial:SimpleGlazingSystem',
-        Name = ' ExteriorWindow1',
-        UFactor = Ext_Window1_Ufactor,
+        Name = 'ExteriorWindow1',
+        UFactor = (Ext_Window1_Ufactor*5.678),
         Solar_Heat_Gain_Coefficient = Ext_Window1_SHGC
         )
 
     idf1.newidfobject('Construction',
-        Name = ' ExteriorWindow1',
-        Outside_Layer = ' ExteriorWindow1')
+        Name = 'ExteriorWindow1',
+        Outside_Layer = 'ExteriorWindow1')
     
     # Shade Materials:
 
@@ -859,7 +894,7 @@ for case in range(totalRuns):
         count += 1
         window = idf1.idfobjects['FenestrationSurface:Detailed'][count]
         if window.Construction_Name == 'Ext_Window1':
-            window.Construction_Name = ' ExteriorWindow1'
+            window.Construction_Name = 'ExteriorWindow1'
 
     # KIVA foundation inteface:
 
@@ -948,21 +983,6 @@ for case in range(totalRuns):
 
     # Mechanical Zone Connections
 
-    idf1.newidfobject('ZoneHVAC:EquipmentList',
-        Name = 'Zone_1_Equipment',
-        Load_Distribution_Scheme = 'SequentialLoad',
-        Zone_Equipment_1_Object_Type = 'ZoneHVAC:EnergyRecoveryVentilator',
-        Zone_Equipment_1_Name = 'ERV1',
-        Zone_Equipment_1_Cooling_Sequence = 2,
-        Zone_Equipment_1_Heating_or_NoLoad_Sequence = 2,
-        Zone_Equipment_2_Object_Type = 'ZoneHVAC:PackagedTerminalHeatPump',
-        Zone_Equipment_2_Name = 'Zone1PTHP',
-        Zone_Equipment_2_Cooling_Sequence = 1,
-        Zone_Equipment_2_Heating_or_NoLoad_Sequence = 1
-        #Zone_Equipment_1_Sequential_Cooling_Fraction_Schedule_Name = 
-        #Zone_Equipment_1_Sequential_Heating_Fraction_Schedule_Name = 
-        )
-
     idf1.newidfobject('ZoneHVAC:EquipmentConnections',
         Zone_Name = 'Zone 1',
         Zone_Conditioning_Equipment_List_Name = 'Zone_1_Equipment',
@@ -975,7 +995,7 @@ for case in range(totalRuns):
     idf1.newidfobject('NodeList',
         Name = 'Zone_1_Inlets',
         Node_1_Name = 'Zone_1_ERV_Supply',
-        Node_2_Name = 'Zone1PTHPAirOutletNode'
+        Node_2_Name = 'Zone1MECHAirOutletNode'
         )
 
     idf1.newidfobject('NodeList',
@@ -986,110 +1006,210 @@ for case in range(totalRuns):
     idf1.newidfobject('NodeList',
         Name = 'Zone_1_Exhausts',
         Node_1_Name = 'Zone_1_ERV_Exhaust',
-        Node_2_Name = 'Zone1PTHPAirInletNode'
+        Node_2_Name = 'Zone1MECHAirInletNode'
         )
 
     # Heat Pump:
+    if mechSystemType == 'PTHP':
 
-    idf1.newidfobject('ZoneHVAC:PackagedTerminalHeatPump',
-        Name = 'Zone1PTHP',
-        Availability_Schedule_Name = 'MechAvailable',
-        Air_Inlet_Node_Name = 'Zone1PTHPAirInletNode',
-        Air_Outlet_Node_Name = 'Zone1PTHPAirOutletNode',
-        # OutdoorAir:Mixer,________!-_Outdoor_Air_Mixer_Object_Type
-        # Zone1PTHPOAMixer,________!-_Outdoor_Air_Mixer_Name
-        Cooling_Supply_Air_Flow_Rate = 'autosize',
-        Heating_Supply_Air_Flow_Rate = 'autosize',
-        # No_Load_Supply_Air_Flow_Rate_{m3/s}
-        Cooling_Outdoor_Air_Flow_Rate = 'autosize',
-        Heating_Outdoor_Air_Flow_Rate = 'autosize',
-        # No_Load_Outdoor_Air_Flow_Rate_{m3/s}
-        Supply_Air_Fan_Object_Type = 'Fan:SystemModel',
-        Supply_Air_Fan_Name = 'Zone1PTHPFan',
-        Heating_Coil_Object_Type = 'Coil:Heating:DX:SingleSpeed',
-        Heating_Coil_Name = 'Zone1PTHPDXHeatCoil',
-        #Heating_Convergence_Tolerance_{dimensionless}
-        Cooling_Coil_Object_Type = 'Coil:Cooling:DX:SingleSpeed',
-        Cooling_Coil_Name = 'Zone1PTHPDXCoolCoil',
-        #Cooling_Convergence_Tolerance_{dimensionless}
-        Supplemental_Heating_Coil_Object_Type = 'Coil:Heating:Electric',
-        Supplemental_Heating_Coil_Name = 'Zone1PTHPSupHeater',
-        Maximum_Supply_Air_Temperature_from_Supplemental_Heater = 50,
-        Maximum_Outdoor_DryBulb_Temperature_for_Supplemental_Heater_Operation = 10,
-        Fan_Placement = 'BlowThrough'
-        #ConstantFanSch;__________!-_Supply_Air_Fan_Operating_Mode_Schedule_Name')
-        )
+        idf1.newidfobject('ZoneHVAC:EquipmentList',
+            Name = 'Zone_1_Equipment',
+            Load_Distribution_Scheme = 'SequentialLoad',
+            Zone_Equipment_1_Object_Type = 'ZoneHVAC:EnergyRecoveryVentilator',
+            Zone_Equipment_1_Name = 'ERV1',
+            Zone_Equipment_1_Cooling_Sequence = 2,
+            Zone_Equipment_1_Heating_or_NoLoad_Sequence = 2,
+            Zone_Equipment_2_Object_Type = 'ZoneHVAC:PackagedTerminalHeatPump',
+            Zone_Equipment_2_Name = 'Zone1PTHP',
+            Zone_Equipment_2_Cooling_Sequence = 1,
+            Zone_Equipment_2_Heating_or_NoLoad_Sequence = 1
+            #Zone_Equipment_1_Sequential_Cooling_Fraction_Schedule_Name = 
+            #Zone_Equipment_1_Sequential_Heating_Fraction_Schedule_Name = 
+            )
 
-    idf1.newidfobject('Fan:SystemModel',
-        Name = 'Zone1PTHPFan',
-        Availability_Schedule_Name = 'MechAvailable',
-        Air_Inlet_Node_Name = 'Zone1PTHPAirInletNode',
-        Air_Outlet_Node_Name = 'Zone1PTHPFanOutletNode',
-        Design_Maximum_Air_Flow_Rate = 'autosize',
-        Speed_Control_Method = 'Continuous',
-        Electric_Power_Minimum_Flow_Rate_Fraction = 0.0,
-        Design_Pressure_Rise = 0.75,
-        Motor_Efficiency = 0.9,
-        Motor_In_Air_Stream_Fraction = 1.0,
-        Design_Electric_Power_Consumption = 'autosize',
-        Design_Power_Sizing_Method = 'TotalEfficiencyAndPressure',
-        # Electric_Power_Per_Unit_Flow_Rate_{W/(m3/s)}
-        # Electric_Power_Per_Unit_Flow_Rate_Per_Unit_Pressure_{W/((m3/s)-Pa)}
-        Fan_Total_Efficiency = 0.5,
-        Electric_Power_Function_of_Flow_Fraction_Curve_Name = 'CombinedPowerAndFanEff'
-        )
+        idf1.newidfobject('ZoneHVAC:PackagedTerminalHeatPump',
+            Name = 'Zone1PTHP',
+            Availability_Schedule_Name = 'MechAvailable',
+            Air_Inlet_Node_Name = 'Zone1MECHAirInletNode',
+            Air_Outlet_Node_Name = 'Zone1MECHAirOutletNode',
+            # OutdoorAir:Mixer,________!-_Outdoor_Air_Mixer_Object_Type
+            # Zone1PTHPOAMixer,________!-_Outdoor_Air_Mixer_Name
+            Cooling_Supply_Air_Flow_Rate = 'autosize',
+            Heating_Supply_Air_Flow_Rate = 'autosize',
+            # No_Load_Supply_Air_Flow_Rate_{m3/s}
+            Cooling_Outdoor_Air_Flow_Rate = 'autosize',
+            Heating_Outdoor_Air_Flow_Rate = 'autosize',
+            # No_Load_Outdoor_Air_Flow_Rate_{m3/s}
+            Supply_Air_Fan_Object_Type = 'Fan:SystemModel',
+            Supply_Air_Fan_Name = 'Zone1PTHPFan',
+            Heating_Coil_Object_Type = 'Coil:Heating:DX:SingleSpeed',
+            Heating_Coil_Name = 'Zone1PTHPDXHeatCoil',
+            #Heating_Convergence_Tolerance_{dimensionless}
+            Cooling_Coil_Object_Type = 'Coil:Cooling:DX:SingleSpeed',
+            Cooling_Coil_Name = 'Zone1PTHPDXCoolCoil',
+            #Cooling_Convergence_Tolerance_{dimensionless}
+            Supplemental_Heating_Coil_Object_Type = 'Coil:Heating:Electric',
+            Supplemental_Heating_Coil_Name = 'Zone1PTHPSupHeater',
+            Maximum_Supply_Air_Temperature_from_Supplemental_Heater = 50,
+            Maximum_Outdoor_DryBulb_Temperature_for_Supplemental_Heater_Operation = 10,
+            Fan_Placement = 'BlowThrough'
+            #ConstantFanSch;__________!-_Supply_Air_Fan_Operating_Mode_Schedule_Name')
+            )
 
-    idf1.newidfobject('Coil:Heating:Electric',
-        Name = 'Zone1PTHPSupHeater',
-        Availability_Schedule_Name = 'MechAvailable',
-        Efficiency = 1.0,
-        Nominal_Capacity = 'autosize',
-        Air_Inlet_Node_Name = 'Zone1PTHPDXHeatCoilOutletNode',
-        Air_Outlet_Node_Name = 'Zone1PTHPAirOutletNode'
-        )
+        idf1.newidfobject('Fan:SystemModel',
+            Name = 'Zone1PTHPFan',
+            Availability_Schedule_Name = 'MechAvailable',
+            Air_Inlet_Node_Name = 'Zone1MECHAirInletNode',
+            Air_Outlet_Node_Name = 'Zone1PTHPFanOutletNode',
+            Design_Maximum_Air_Flow_Rate = 'autosize',
+            Speed_Control_Method = 'Continuous',
+            Electric_Power_Minimum_Flow_Rate_Fraction = 0.0,
+            Design_Pressure_Rise = 0.75,
+            Motor_Efficiency = 0.9,
+            Motor_In_Air_Stream_Fraction = 1.0,
+            Design_Electric_Power_Consumption = 'autosize',
+            Design_Power_Sizing_Method = 'TotalEfficiencyAndPressure',
+            # Electric_Power_Per_Unit_Flow_Rate_{W/(m3/s)}
+            # Electric_Power_Per_Unit_Flow_Rate_Per_Unit_Pressure_{W/((m3/s)-Pa)}
+            Fan_Total_Efficiency = 0.5,
+            Electric_Power_Function_of_Flow_Fraction_Curve_Name = 'CombinedPowerAndFanEff'
+            )
 
-    idf1.newidfobject('Coil:Cooling:DX:SingleSpeed',
-        Name = 'Zone1PTHPDXCoolCoil',
-        Availability_Schedule_Name = 'MechAvailable',
-        Gross_Rated_Total_Cooling_Capacity = 'autosize',
-        Gross_Rated_Sensible_Heat_Ratio = 0.75,
-        Gross_Rated_Cooling_COP = 3.0,  # Change to var for future shit
-        Rated_Air_Flow_Rate = 'autosize',
-        Air_Inlet_Node_Name = 'Zone1PTHPFanOutletNode',
-        Air_Outlet_Node_Name  = 'Zone1PTHPDXCoolCoilOutletNode',
-        Total_Cooling_Capacity_Function_of_Temperature_Curve_Name = 'HPACCoolCapFT',
-        Total_Cooling_Capacity_Function_of_Flow_Fraction_Curve_Name = 'HPACCoolCapFFF',
-        Energy_Input_Ratio_Function_of_Temperature_Curve_Name = 'HPACEIRFT',
-        Energy_Input_Ratio_Function_of_Flow_Fraction_Curve_Name = 'HPACEIRFFF',
-        Part_Load_Fraction_Correlation_Curve_Name = 'HPACPLFFPLR'
-        )
+        idf1.newidfobject('Coil:Cooling:DX:SingleSpeed',
+            Name = 'Zone1PTHPDXCoolCoil',
+            Availability_Schedule_Name = 'MechAvailable',
+            Gross_Rated_Total_Cooling_Capacity = 'autosize',
+            Gross_Rated_Sensible_Heat_Ratio = 0.75,
+            Gross_Rated_Cooling_COP = 3.0,  # Change to var for future shit
+            Rated_Air_Flow_Rate = 'autosize',
+            Air_Inlet_Node_Name = 'Zone1PTHPFanOutletNode',
+            Air_Outlet_Node_Name  = 'Zone1PTHPDXCoolCoilOutletNode',
+            Total_Cooling_Capacity_Function_of_Temperature_Curve_Name = 'HPACCoolCapFT',
+            Total_Cooling_Capacity_Function_of_Flow_Fraction_Curve_Name = 'HPACCoolCapFFF',
+            Energy_Input_Ratio_Function_of_Temperature_Curve_Name = 'HPACEIRFT',
+            Energy_Input_Ratio_Function_of_Flow_Fraction_Curve_Name = 'HPACEIRFFF',
+            Part_Load_Fraction_Correlation_Curve_Name = 'HPACPLFFPLR'
+            )
 
-    idf1.newidfobject('Coil:Heating:DX:SingleSpeed',
-        Name = 'Zone1PTHPDXHeatCoil',
-        Availability_Schedule_Name = 'MechAvailable',
-        Gross_Rated_Heating_Capacity = 'autosize',
-        Gross_Rated_Heating_COP = 3.0, #change to var for future
-        Rated_Air_Flow_Rate  ='autosize',
-        # Rated_Supply_Fa,n_Power_Per_Volume_Flow_Rate_{W/(m3/s)}
-        Air_Inlet_Node_Name = 'Zone1PTHPDXCoolCoilOutletNode',
-        Air_Outlet_Node_Name = 'Zone1PTHPDXHeatCoilOutletNode',
-        Heating_Capacity_Function_of_Temperature_Curve_Name = 'HPACHeatCapFT',
-        Heating_Capacity_Function_of_Flow_Fraction_Curve_Name = 'HPACHeatCapFFF',
-        Energy_Input_Ratio_Function_of_Temperature_Curve_Name = 'HPACHeatEIRFT',
-        Energy_Input_Ratio_Function_of_Flow_Fraction_Curve_Name = 'HPACHeatEIRFFF',
-        Part_Load_Fraction_Correlation_Curve_Name = 'HPACCOOLPLFFPLR',
-        # Defrost_Energy_Input_Ratio_Function_of_Temperature_Curve_Name
-        Minimum_Outdoor_DryBulb_Temperature_for_Compressor_Operation = 0.0, #future var
-        #Outdoor_Dry-Bulb_Temperature_to_Turn_On_Compressor_{C}
-        Maximum_Outdoor_DryBulb_Temperature_for_Defrost_Operation = 5.0,
-        Crankcase_Heater_Capacity = 0,
-        Maximum_Outdoor_DryBulb_Temperature_for_Crankcase_Heater_Operation = 10.0,
-        Defrost_Strategy = 'Resistive',
-        Defrost_Control = 'TIMED',
-        Defrost_Time_Period_Fraction = 0.166667,
-        Resistive_Defrost_Heater_Capacity = 'autosize'
-        )
-    
+        idf1.newidfobject('Coil:Heating:DX:SingleSpeed',
+            Name = 'Zone1PTHPDXHeatCoil',
+            Availability_Schedule_Name = 'MechAvailable',
+            Gross_Rated_Heating_Capacity = 'autosize',
+            Gross_Rated_Heating_COP = 3.0, #change to var for future
+            Rated_Air_Flow_Rate  ='autosize',
+            # Rated_Supply_Fa,n_Power_Per_Volume_Flow_Rate_{W/(m3/s)}
+            Air_Inlet_Node_Name = 'Zone1PTHPDXCoolCoilOutletNode',
+            Air_Outlet_Node_Name = 'Zone1PTHPDXHeatCoilOutletNode',
+            Heating_Capacity_Function_of_Temperature_Curve_Name = 'HPACHeatCapFT',
+            Heating_Capacity_Function_of_Flow_Fraction_Curve_Name = 'HPACHeatCapFFF',
+            Energy_Input_Ratio_Function_of_Temperature_Curve_Name = 'HPACHeatEIRFT',
+            Energy_Input_Ratio_Function_of_Flow_Fraction_Curve_Name = 'HPACHeatEIRFFF',
+            Part_Load_Fraction_Correlation_Curve_Name = 'HPACCOOLPLFFPLR',
+            # Defrost_Energy_Input_Ratio_Function_of_Temperature_Curve_Name
+            Minimum_Outdoor_DryBulb_Temperature_for_Compressor_Operation = 0.0, #future var
+            #Outdoor_Dry-Bulb_Temperature_to_Turn_On_Compressor_{C}
+            Maximum_Outdoor_DryBulb_Temperature_for_Defrost_Operation = 5.0,
+            Crankcase_Heater_Capacity = 0,
+            Maximum_Outdoor_DryBulb_Temperature_for_Crankcase_Heater_Operation = 10.0,
+            Defrost_Strategy = 'Resistive',
+            Defrost_Control = 'TIMED',
+            Defrost_Time_Period_Fraction = 0.166667,
+            Resistive_Defrost_Heater_Capacity = 'autosize'
+            )
+
+        idf1.newidfobject('Coil:Heating:Electric',
+            Name = 'Zone1PTHPSupHeater',
+            Availability_Schedule_Name = 'MechAvailable',
+            Efficiency = 1.0,
+            Nominal_Capacity = 'autosize',
+            Air_Inlet_Node_Name = 'Zone1PTHPDXHeatCoilOutletNode',
+            Air_Outlet_Node_Name = 'Zone1MECHAirOutletNode'
+            )
+        
+    if mechSystemType == 'GasFurnaceDXAC':
+
+        idf1.newidfobject('ZoneHVAC:EquipmentList',
+            Name = 'Zone_1_Equipment',
+            Load_Distribution_Scheme = 'SequentialLoad',
+            Zone_Equipment_1_Object_Type = 'ZoneHVAC:EnergyRecoveryVentilator',
+            Zone_Equipment_1_Name = 'ERV1',
+            Zone_Equipment_1_Cooling_Sequence = 2,
+            Zone_Equipment_1_Heating_or_NoLoad_Sequence = 2,
+            Zone_Equipment_2_Object_Type = 'AirLoopHVAC:UnitarySystem',
+            Zone_Equipment_2_Name = 'GasHeatDXACFurnace',
+            Zone_Equipment_2_Cooling_Sequence = 1,
+            Zone_Equipment_2_Heating_or_NoLoad_Sequence = 1
+            #Zone_Equipment_1_Sequential_Cooling_Fraction_Schedule_Name = 
+            #Zone_Equipment_1_Sequential_Heating_Fraction_Schedule_Name = 
+            )
+           
+        idf1.newidfobject('AirLoopHVAC:UnitarySystem',
+            Name = 'GasHeatDXACFurnace',
+            Control_Type = 'Load',
+            Controlling_Zone_or_Thermostat_Location  ='Zone 1',
+            Dehumidification_Control_Type = 'None',
+            Availability_Schedule_Name = 'MechAvailable',
+            Air_Inlet_Node_Name = 'Zone1MECHAirInletNode',
+            Air_Outlet_Node_Name = 'Zone1MECHAirOutletNode',
+            Supply_Fan_Object_Type = 'Fan:OnOff',
+            Supply_Fan_Name = 'FurnaceBlower',
+            Fan_Placement = 'BlowThrough',
+            Heating_Coil_Object_Type = 'Coil:Heating:Fuel',
+            Heating_Coil_Name = 'Furnace Heating Coil 1',
+            Cooling_Coil_Object_Type = 'Coil:Cooling:DX:SingleSpeed',
+            Cooling_Coil_Name = 'Furnace ACDXCoil 1',
+            Cooling_Supply_Air_Flow_Rate = 'autosize',
+            Heating_Supply_Air_Flow_Rate = 'autosize',
+            No_Load_Supply_Air_Flow_Rate = 0,
+            Maximum_Supply_Air_Temperature = 50,
+            )
+
+        idf1.newidfobject('Coil:Heating:Fuel',
+            Name = 'Furnace Heating Coil 1',
+            Availability_Schedule_Name = 'MechAvailable',
+            Fuel_Type = 'NaturalGas',
+            Burner_Efficiency = 0.8,
+            Nominal_Capacity = 'autosize',
+            Air_Inlet_Node_Name = 'Heating Coil Air Inlet Node',
+            Air_Outlet_Node_Name = 'Zone1MECHAirOutletNode',
+            )
+        
+        idf1.newidfobject('Coil:Cooling:DX:SingleSpeed',
+            Name = 'Furnace ACDXCoil 1',
+            Availability_Schedule_Name = 'MechAvailable',
+            Gross_Rated_Total_Cooling_Capacity = 'autosize',
+            Gross_Rated_Sensible_Heat_Ratio = 0.75,
+            Gross_Rated_Cooling_COP = 3.0,  # Change to var for future shit
+            Rated_Air_Flow_Rate = 'autosize',
+            Air_Inlet_Node_Name = 'DX Cooling Coil Air Inlet Node',
+            Air_Outlet_Node_Name  = 'Heating Coil Air Inlet Node',
+            Total_Cooling_Capacity_Function_of_Temperature_Curve_Name = 'HPACCoolCapFT',
+            Total_Cooling_Capacity_Function_of_Flow_Fraction_Curve_Name = 'HPACCoolCapFFF',
+            Energy_Input_Ratio_Function_of_Temperature_Curve_Name = 'HPACEIRFT',
+            Energy_Input_Ratio_Function_of_Flow_Fraction_Curve_Name = 'HPACEIRFFF',
+            Part_Load_Fraction_Correlation_Curve_Name = 'HPACPLFFPLR'
+            )
+
+        idf1.newidfobject('Fan:OnOff',
+            Name = 'FurnaceBlower',
+            Availability_Schedule_Name = 'MechAvailable',
+            Fan_Total_Efficiency = 0.7,
+            Pressure_Rise = 600.0,
+            Maximum_Flow_Rate = 2,
+            Motor_Efficiency = 0.9,
+            Motor_In_Airstream_Fraction = 1.0,
+            Air_Inlet_Node_Name = 'Zone1MECHAirInletNode',
+            Air_Outlet_Node_Name = 'DX Cooling Coil Air Inlet Node'
+            )
+
+        # idf1.newidfobject('AirTerminal:SingleDuct:ConstantVolume:NoReheat',
+        #     Name = 'Zone1DirectAir',
+        #     Availability_Schedule_Name = 'MechAvailable',
+        #     Air_Inlet_Node_Name = 'Air Loop Outlet Node',
+        #     Air_Outlet_Node_Name = 'Zone1MECHAirOutletNode',
+        #     Maximum_Air_Flow_Rate = 2
+        #     )
+
     # DHW
     
     idf1.newidfobject('WaterHeater:Mixed',
@@ -1103,7 +1223,7 @@ for case in range(totalRuns):
         Heater_Minimum_Capacity = 0,
         # Heater Ignition Minimum Flow Rate {m3/s}
         # Heater Ignition Delay {s}
-        Heater_Fuel_Type = 'ELECTRICITY',
+        Heater_Fuel_Type = str(dhwFuel),
         Heater_Thermal_Efficiency = 0.95,
         # Part Load Factor Curve Name
         Off_Cycle_Parasitic_Fuel_Consumption_Rate = 10,
@@ -1384,6 +1504,26 @@ for case in range(totalRuns):
         Output_Unit_Type = 'Dimensionless'
         )
 
+    # Costs
+    costBuilder('Wall 1', '','Construction', 'Exterior Wall +1in EPS','','',13.77915008)
+    costBuilder('Wall 2', '','Construction', 'Exterior Wall +1.625in EPS','','',16.79333916)
+    costBuilder('Wall 3', '','Construction', 'Exterior Wall +2in EPS','','',18.62338253)
+    costBuilder('Wall 4', '','Construction', 'Exterior Wall +4in EPS','','',25.40530796)
+    costBuilder('Wall 5', '','Construction', 'Exterior Wall +6in EPS','','',34.55552481)
+    costBuilder('Wall 6', '','Construction', 'Exterior Wall +9in EPS','','',46.93522996)
+    costBuilder('Wall 7', '','Construction', 'Exterior Wall +14in EPS','','',63.6209195100001)
+
+    costBuilder('Roof 1', '','Construction', 'Exterior Roof R-30','','',7.96607114000001)
+    costBuilder('Roof 2', '','Construction', 'Exterior Roof R-49','','',8.39666958000001)
+    costBuilder('Roof 3', '','Construction', 'Exterior Roof R-60','','',21.529922)
+    costBuilder('Roof 4', '','Construction', 'Exterior Roof R-75','','',39.39975726)
+    costBuilder('Roof 5', '','Construction', 'Exterior Roof R-100','','',69.3263488400001)
+
+    # costBuilder('Roof 5', '','Construction', 'Exterior Roof R-100','','',69.3263488400001)
+
+    costBuilder('Window 1', '','Construction', 'ExteriorWindow1','','',(147*math.exp(0.23*Ext_Window1_Ufactor)))
+
+
     # ============================================================================
     # Pass IDF 
     # ============================================================================
@@ -1500,7 +1640,8 @@ for case in range(totalRuns):
     outputVars = ['Site Outdoor Air Drybulb Temperature', 'Zone Air Relative Humidity', 'Zone Air CO2 Concentration', 'Zone Air Temperature', 'Exterior Lights Electricity Energy', 
                 'Zone Ventilation Mass Flow Rate', 'Schedule Value', 'Electric Equipment Electricity Energy',
                 'Facility Total Purchased Electricity Energy']
-    meterVars = ['InteriorLights:Electricity', 'InteriorEquipment:Electricity', 'Fans:Electricity', 'Heating:Electricity', 'Cooling:Electricity', 'ElectricityNet:Facility'] 
+    meterVars = ['InteriorLights:Electricity', 'InteriorEquipment:Electricity', 'Fans:Electricity', 'Heating:Electricity', 'Cooling:Electricity', 'ElectricityNet:Facility',
+                 'NaturalGas:Facility'] 
     for x in outputVars:
         idf1.newidfobject('Output:Variable',
         Key_Value = '*',
@@ -1921,9 +2062,9 @@ for case in range(totalRuns):
     fig.suptitle((str(caseName) + '_Heating Outage Resilience'), fontsize='x-large')
     ax1.plot(x,hourlyHeat["Environment:Site Outdoor Air Drybulb Temperature [C](Hourly)"], label="Site Dry Bulb [C]", linestyle='dashed')
     ax1.plot(x,hourlyHeat["ZONE 1:Zone Air Temperature [C](Hourly)"], label="Zone Dry Bulb [C]")
-    ax2.plot(x,hourlyHeat['ZONE 1:Zone Air Relative Humidity [%](Hourly)'], label=("_Zone RH"))
+    ax2.plot(x,hourlyHeat['ZONE 1:Zone Air Relative Humidity [%](Hourly)'], label=("Zone RH"))
     ax1.grid(True)
-    ax1.set_ylabel('Temperature [F]')
+    ax1.set_ylabel('Temperature [C]')
     ax1.legend(ncol=2, loc='lower left', borderaxespad=0, fontsize='x-small')
     ax2.legend(ncol=2, loc='lower left', borderaxespad=0, fontsize='x-small')
     ax2.grid(True)
@@ -1938,9 +2079,9 @@ for case in range(totalRuns):
     fig.suptitle((str(caseName) + '_Cooling Outage Resilience'), fontsize='x-large')
     ax1.plot(x,hourlyCool["Environment:Site Outdoor Air Drybulb Temperature [C](Hourly)"], label="Site Dry Bulb [C]", linestyle='dashed')
     ax1.plot(x,hourlyCool["ZONE 1:Zone Air Temperature [C](Hourly)"], label="Zone Dry Bulb [C]")
-    ax2.plot(x,hourlyCool['ZONE 1:Zone Air Relative Humidity [%](Hourly)'], label=("_Zone RH"))
+    ax2.plot(x,hourlyCool['ZONE 1:Zone Air Relative Humidity [%](Hourly)'], label=("Zone RH"))
     ax1.grid(True)
-    ax1.set_ylabel('Temperature [F]')
+    ax1.set_ylabel('Temperature [C]')
     ax1.legend(ncol=2, loc='lower left', borderaxespad=0, fontsize='x-small')
     ax2.legend(ncol=2, loc='lower left', borderaxespad=0, fontsize='x-small')
     ax2.grid(True)
@@ -1953,8 +2094,8 @@ for case in range(totalRuns):
     heatingBattery = (hourlyHeat['Whole Building:Facility Total Purchased Electricity Energy [J](Hourly)'].sum())*0.0000002778
     coolingBattery = (hourlyCool['Whole Building:Facility Total Purchased Electricity Energy [J](Hourly)'].sum())*0.0000002778
 
-    hourlyHeat.to_csv(str(studyFolder) + "/" + str(BaseFileName) + "_hourlyHeat.csv")
-    hourlyCool.to_csv(str(studyFolder) + "/" + str(BaseFileName) + "_hourlyCool.csv")
+    # hourlyHeat.to_csv(str(studyFolder) + "/" + str(BaseFileName) + "_hourlyHeat.csv")
+    # hourlyCool.to_csv(str(studyFolder) + "/" + str(BaseFileName) + "_hourlyCool.csv")
 
     # Save HTML and CSV outputs
     reportHTML = (str(studyFolder) +'\eplustbl.htm')
@@ -1963,6 +2104,16 @@ for case in range(totalRuns):
     reportHTML2 = (str(studyFolder) + "/" + str(BaseFileName)  + '_BR_eplustbl.htm')
     reportCSV2 = (str(studyFolder) + "/" + str(BaseFileName)  + '_BR_eplusout.csv')
     reportSQL2= (str(studyFolder) + "/" + str(BaseFileName)  + '_BR_eplusout.sql')
+
+
+    if os.path.exists(reportCSV2):
+        os.remove(reportCSV2)
+    
+    if os.path.exists(reportHTML2):
+        os.remove(reportHTML2)
+
+    if os.path.exists(reportSQL2):
+        os.remove(reportSQL2)
 
     os.rename(reportHTML,reportHTML2)
     os.rename(reportCSV,reportCSV2)
@@ -2077,7 +2228,8 @@ for case in range(totalRuns):
     outputVars = ['Site Outdoor Air Drybulb Temperature', 'Zone Air Relative Humidity', 'Zone Air CO2 Concentration', 'Zone Air Temperature', 'Exterior Lights Electricity Energy', 
                 'Zone Ventilation Mass Flow Rate', 'Schedule Value', 'Electric Equipment Electricity Energy',
                 'Facility Total Purchased Electricity Energy']
-    meterVars = ['InteriorLights:Electricity', 'InteriorEquipment:Electricity', 'Fans:Electricity', 'Heating:Electricity', 'Cooling:Electricity', 'ElectricityNet:Facility'] 
+    meterVars = ['InteriorLights:Electricity', 'InteriorEquipment:Electricity', 'Fans:Electricity', 'Heating:Electricity', 'Cooling:Electricity', 'ElectricityNet:Facility',
+                 'NaturalGas:Facility']  
     for x in outputVars:
         idf1.newidfobject('Output:Variable',
         Key_Value = '*',
@@ -2317,7 +2469,9 @@ for case in range(totalRuns):
     idf.run(readvars=True)
 
     filehandle = (str(studyFolder) + '\eplusout.csv')
+    filehandleMTR = (str(studyFolder) + '\eplusmtr.csv')
     hourly = pd.read_csv(filehandle)
+    monthlyMTR= pd.read_csv(filehandleMTR)
 
     hourly.rename(columns = {'Date/Time':'DateTime'}, inplace = True)
     hourly[['Date2','Time']] = hourly.DateTime.str.split(expand=True)
@@ -2344,6 +2498,13 @@ for case in range(totalRuns):
         if 'Annual and Peak Values - Electricity' in '\n'.join(ltable[0]): #and 'For: Entire Facility' in '\n'.join(ltable[0]):
             peakElec = float(ltable[1][1][4])
 
+    if 'BASE' in str(BaseFileName):
+        for ltable in ltables:
+            if 'Construction Cost Estimate Summary' in '\n'.join(ltable[0]): #and 'For: Entire Facility' in '\n'.join(ltable[0]):
+                firstCost = float(ltable[1][9][2])
+    else:
+        firstCost = 0
+
     # Save HTML and CSV outputs
     reportHTML = (str(studyFolder) +'\eplustbl.htm')
     reportCSV = (str(studyFolder) + '\eplusout.csv')
@@ -2351,6 +2512,15 @@ for case in range(totalRuns):
     reportHTML2 = (str(studyFolder) + "/" + str(BaseFileName)  + '_BA_eplustbl.htm')
     reportCSV2 = (str(studyFolder) + "/" + str(BaseFileName)  + '_BA_eplusout.csv')
     reportSQL2= (str(studyFolder) + "/" + str(BaseFileName)  + '_BA_eplusout.sql')
+
+    if os.path.exists(reportCSV2):
+        os.remove(reportCSV2)
+    
+    if os.path.exists(reportHTML2):
+        os.remove(reportHTML2)
+
+    if os.path.exists(reportSQL2):
+        os.remove(reportSQL2)
 
     os.rename(reportHTML,reportHTML2)
     os.rename(reportCSV,reportCSV2)
@@ -2360,34 +2530,39 @@ for case in range(totalRuns):
     # ADORB
     # ===============================================================================================================
     # Inputs
+    laborFraction = 0.4
+    emCO2_firstCost = firstCost*laborFraction*0.234
+
+    MWH = hourly['Whole Building:Facility Total Purchased Electricity Energy [J](Hourly)']*0.0000000002778
+    hourlyEmissions = pd.read_csv(emissionsDatabase)
+    emissions = hourlyEmissions['RFCWc']
+
+    CO2_Elec = sum(MWH*emissions)
+
+    gasPrice = 0.64 #$/therm
+
+    if natGasPresent == 1:
+        monthlyMTR = monthlyMTR.drop(index=[0,1,2,3,4,5,6,7])
+        annualGas = (((sum(monthlyMTR['NaturalGas:Facility [J](Monthly) ']*9.478169879E-9))*gasPrice)+144)
+        CO2_gas = (sum(monthlyMTR['NaturalGas:Facility [J](Monthly) ']*9.478169879E-9))*12.7
+    else:
+        CO2_gas = 0
+        annualGas = 0
+
+    # Future above to be better integrated
+
     duration = 70
-    annualElec = 1000
-    annualGas = 1500
-    annualCO2 = 150000
-    dirMR = [(17500,0),(7500,15),(7500,30),(7500,45),(10000,60)]
-    emCO2 = [(17500,0),(7500,15),(7500,30),(7500,45),(10000,60)] 
-    eTrans = 150
+    elecPrice = 0.1324 #$/kWh
+    annualElec = ((hourly['Whole Building:Facility Total Purchased Electricity Energy [J](Hourly)'].sum()*0.0000002778*elecPrice)+144)
+    
+    annualCO2 = CO2_Elec = CO2_gas
+    dirMR = [(firstCost,0)]
+    emCO2 = [(emCO2_firstCost,0)] 
+    eTrans = peakElec
 
-    # Dependencies and databasing
-    NatEmiss = pd.read_csv('NatlEmission.csv')
-
-    # testing the function
     final = adorb(duration, annualElec, annualGas, annualCO2, dirMR, emCO2, eTrans)
 
-    df = pd.read_csv('results.csv')
-
-    df2 = pd.DataFrame()
-    df2['pv_dirEn'] = df['pv_dirEn'].cumsum()
-    df2['pv_dirMR'] = df['pv_dirMR'].cumsum()
-    df2['pv_opCO2'] = df['pv_opCO2'].cumsum()
-    df2['pv_emCO2'] = df['pv_emCO2'].cumsum()
-    df2['pv_eTrans'] = df['pv_eTrans'].cumsum()
-
-    df2.plot(kind='area', xlabel='Years', ylabel='Cummulative Present Value [$]', title='ADORB COST', figsize=(11,8.5))
-
-    adorbCost = (final)
-
-
+    adorbCost = final
 
     # ===============================================================================================================
     # Final Result Collection
@@ -2404,6 +2579,9 @@ for case in range(totalRuns):
                                         'Peak Electric Demand [W]':peakElec,
                                         'Heating Battery Size [kWh]':heatingBattery, 
                                         'Cooling Battery Size [kWh]':coolingBattery,
+                                        'Annual Electric Cost [$]':annualElec,
+                                        'Annual Gas Cost [$]':annualGas,
+                                        'First Cost [$]':firstCost,
                                         'Total ADORB Cost [$]':adorbCost}, ignore_index=True)
 
 
