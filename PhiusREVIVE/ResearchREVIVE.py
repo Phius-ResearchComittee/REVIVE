@@ -2569,7 +2569,7 @@ for case in range(totalRuns):
     
     annualCO2 = CO2_Elec + CO2_gas
     dirMR = [(firstCost,1),(8500,20),(8500,40),(8500,60)]
-    emCO2 = [(emCO2_firstCost,1),(8500,20),(8500,40),(8500,60)] 
+    emCO2 = [(emCO2_firstCost,1),((8500*laborFraction*0.3),20),((8500*laborFraction*0.3),40),((8500*laborFraction*0.3),60)] 
     eTrans = peakElec
 
     
