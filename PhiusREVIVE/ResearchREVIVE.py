@@ -314,8 +314,8 @@ for case in range(totalRuns):
     operableArea_W = ((runList['Operable_Area_W'][runCount])*0.09290304)
     operableArea_E = ((runList['Operable_Area_E'][runCount])*0.09290304)
     halfHeight = 1.524
-    ervSense = 0.75
-    ervLatent = 0.4
+    ervSense = 0
+    ervLatent = 0
 
     # IHG Calc 
 
@@ -1076,7 +1076,7 @@ for case in range(totalRuns):
             Design_Maximum_Air_Flow_Rate = 'autosize',
             Speed_Control_Method = 'Continuous',
             Electric_Power_Minimum_Flow_Rate_Fraction = 0.0,
-            Design_Pressure_Rise = 0.75,
+            Design_Pressure_Rise = 160,
             Motor_Efficiency = 0.9,
             Motor_In_Air_Stream_Fraction = 1.0,
             Design_Electric_Power_Consumption = 'autosize',
@@ -1206,7 +1206,7 @@ for case in range(totalRuns):
             Name = 'FurnaceBlower',
             Availability_Schedule_Name = 'MechAvailable',
             Fan_Total_Efficiency = 0.7,
-            Pressure_Rise = 600.0,
+            Pressure_Rise = 225,
             Maximum_Flow_Rate = 2,
             Motor_Efficiency = 0.9,
             Motor_In_Airstream_Fraction = 1.0,
@@ -1564,7 +1564,7 @@ for case in range(totalRuns):
         Name = 'ERV_Supply_Fan',
         Availability_Schedule_Name = 'ERVAvailable',
         Fan_Total_Efficiency = 0.6,
-        Pressure_Rise = 249.088957139263,
+        Pressure_Rise = 200,
         Maximum_Flow_Rate = 'autosize',
         Motor_Efficiency = 0.8,
         Motor_In_Airstream_Fraction = 1,
@@ -1577,7 +1577,7 @@ for case in range(totalRuns):
         Name = 'ERV_Exhaust_Fan',
         Availability_Schedule_Name = 'ERVAvailable',
         Fan_Total_Efficiency = 0.6,
-        Pressure_Rise = 249.088957139263,
+        Pressure_Rise = 200,
         Maximum_Flow_Rate = 'autosize',
         Motor_Efficiency = 0.8,
         Motor_In_Airstream_Fraction = 1,
@@ -2153,7 +2153,7 @@ for case in range(totalRuns):
         Name = 'ERV_Supply_Fan',
         Availability_Schedule_Name = 'ERVAvailable',
         Fan_Total_Efficiency = 0.6,
-        Pressure_Rise = 249.088957139263,
+        Pressure_Rise = 200,
         Maximum_Flow_Rate = 'autosize',
         Motor_Efficiency = 0.8,
         Motor_In_Airstream_Fraction = 1,
@@ -2166,7 +2166,7 @@ for case in range(totalRuns):
         Name = 'ERV_Exhaust_Fan',
         Availability_Schedule_Name = 'ERVAvailable',
         Fan_Total_Efficiency = 0.6,
-        Pressure_Rise = 249.088957139263,
+        Pressure_Rise = 200,
         Maximum_Flow_Rate = 'autosize',
         Motor_Efficiency = 0.8,
         Motor_In_Airstream_Fraction = 1,
@@ -2405,6 +2405,18 @@ for case in range(totalRuns):
         Schedule_Type_Limits_Name = 'Any Number',
         Hourly_Value = 1
         )
+    
+    # idf1.newidfobject('Schedule:Compact',
+    #     Name = 'ERVAvailable',
+    #     Schedule_Type_Limits_Name = 'Fraction',
+    #     Field_1 = 'Through 12/31',
+    #     Field_2 = 'For: AllDays',
+    #     Field_3 = 'Until: 18:00',
+    #     Field_4 = 0.0,
+    #     Field_5 = 'Until: 19:30',
+    #     Field_6 = 1.0,
+    #     Field_7 = 'Until: 24:00',
+    #     Field_8 = 0.0)
 
     idf1.newidfobject('Schedule:Compact',
         Name = 'MechAvailable',
