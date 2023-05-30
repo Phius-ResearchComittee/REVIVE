@@ -1574,7 +1574,7 @@ BuildingSurface:Detailed,
     Exterior Wall,           !- Construction Name
     CRAWL,                   !- Zone Name
     Foundation,              !- Outside Boundary Condition
-    Crawlspace Details,      !- Outside Boundary Condition Object
+    Slab Details,            !- Outside Boundary Condition Object
     NoSun,                   !- Sun Exposure
     NoWind,                  !- Wind Exposure
     0.0,                     !- View Factor to Ground
@@ -1598,7 +1598,7 @@ BuildingSurface:Detailed,
     Exterior Slab UnIns,     !- Construction Name
     CRAWL,                   !- Zone Name
     Foundation,              !- Outside Boundary Condition
-    Crawlspace Details,      !- Outside Boundary Condition Object
+    Slab Details,            !- Outside Boundary Condition Object
     NoSun,                   !- Sun Exposure
     NoWind,                  !- Wind Exposure
     ,                        !- View Factor to Ground
@@ -1622,7 +1622,7 @@ BuildingSurface:Detailed,
     Interior Floor,          !- Construction Name
     CRAWL,                   !- Zone Name
     Surface,                 !- Outside Boundary Condition
-    1B5D16,                  !- Outside Boundary Condition Object
+    Slab Details,            !- Outside Boundary Condition Object
     NoSun,                   !- Sun Exposure
     NoWind,                  !- Wind Exposure
     0.0,                     !- View Factor to Ground
@@ -1646,7 +1646,7 @@ BuildingSurface:Detailed,
     Exterior Wall,           !- Construction Name
     CRAWL,                   !- Zone Name
     Foundation,              !- Outside Boundary Condition
-    Crawlspace Details,      !- Outside Boundary Condition Object
+    Slab Details,            !- Outside Boundary Condition Object
     NoSun,                   !- Sun Exposure
     NoWind,                  !- Wind Exposure
     0.0,                     !- View Factor to Ground
@@ -1670,7 +1670,7 @@ BuildingSurface:Detailed,
     Exterior Wall,           !- Construction Name
     CRAWL,                   !- Zone Name
     Foundation,              !- Outside Boundary Condition
-    Crawlspace Details,      !- Outside Boundary Condition Object
+    Slab Details,            !- Outside Boundary Condition Object
     NoSun,                   !- Sun Exposure
     NoWind,                  !- Wind Exposure
     0.0,                     !- View Factor to Ground
