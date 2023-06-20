@@ -267,10 +267,10 @@ def adorb(analysisPeriod, annualElec, annualGas, annualCO2, dirMR, emCO2, eTrans
 #==============================================================================================================================
 
 iddfile = 'C:\EnergyPlusV9-5-0\Energy+.idd' # str(input('Path to EnergyPlus IDD file: '))
-runListPath = 'C:/Users/amitc_crl/OneDrive/Documents/GitHub/REVIVE/PhiusREVIVE/Testing/test2/runs.csv' # str(input('Select runs.csv'))
-studyFolder = 'C:/Users/amitc_crl/OneDrive/Documents/GitHub/REVIVE/PhiusREVIVE/Testing/test2' # str(input('Path to folder for study inputs: '))
+runListPath = 'C:/Users/amitc_crl/OneDrive/Documents/GitHub/REVIVE/PhiusREVIVE/Testing/test3/runs.csv' # str(input('Select runs.csv'))
+studyFolder = 'C:/Users/amitc_crl/OneDrive/Documents/GitHub/REVIVE/PhiusREVIVE/Testing/test3' # str(input('Path to folder for study inputs: '))
 idfgName = 'C:/Users/amitc_crl/OneDrive/Documents/GitHub/REVIVE/PhiusREVIVE/Testing/PNNL_SF_Geometry.idf' # str(input('Path to EnergyPlus IDF file with building geometry: '))
-emissionsDatabase = ('C:/Users/amitc_crl/OneDrive/Documents/GitHub/REVIVE/PhiusREVIVE/Testing/test2/Hourly Emission Rates.csv')
+emissionsDatabase = ('C:/Users/amitc_crl/OneDrive/Documents/GitHub/REVIVE/PhiusREVIVE/Testing/test3/Hourly Emission Rates.csv')
 runList = pd.read_csv(str(runListPath))
 totalRuns = runList.shape[0]
 batchName = str(input('Name for the batch of files to be created: '))
