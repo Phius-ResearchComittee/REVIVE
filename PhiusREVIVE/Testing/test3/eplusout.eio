@@ -1,4 +1,4 @@
-Program Version,EnergyPlus, Version 9.5.0-de239b2e5f, YMD=2023.06.02 14:37
+Program Version,EnergyPlus, Version 9.5.0-de239b2e5f, YMD=2023.07.14 09:27
 ! <Version>, Version ID
  Version, 9.5
 ! <Timesteps per Hour>, #TimeSteps, Minutes per TimeStep {minutes}
@@ -34,7 +34,7 @@ Site:Location,Montreal Int'l PQ CAN WYEC2-B-94792 WMO#=716270,45.47,-73.75,-5.00
 ! <Site Water Mains Temperature Information>,Calculation Method{},Water Mains Temperature Schedule Name{},Annual Average Outdoor Air Temperature{C},Maximum Difference In Monthly Average Outdoor Air Temperatures{deltaC},Fixed Default Water Mains Temperature{C}
 Site Water Mains Temperature Information,FixedDefault,NA,NA,NA,10.0
 ! <Building Information>, Building Name,North Axis {deg},Terrain,  Loads Convergence Tolerance Value,Temperature Convergence Tolerance Value,  Solar Distribution,Maximum Number of Warmup Days,Minimum Number of Warmup Days
- Building Information,Montreal Test_Montreal_Package_4_Phius Retrofit_Gas,0.000,City,4.00000E-002,0.40000,FullInteriorAndExterior,25,6
+ Building Information,pre-batch_Montreal_Package_4_Phius Retrofit_Gas,0.000,City,4.00000E-002,0.40000,FullInteriorAndExterior,25,6
 ! <Inside Convection Algorithm>, Algorithm {Simple | TARP | CeilingDiffuser | AdaptiveConvectionAlgorithm}
 Inside Convection Algorithm,TARP
 ! <Outside Convection Algorithm>, Algorithm {SimpleCombined | TARP | MoWitt | DOE-2 | AdaptiveConvectionAlgorithm}

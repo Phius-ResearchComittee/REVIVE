@@ -1,0 +1,60 @@
+Program Version,EnergyPlus, Version 9.5.0-de239b2e5f, YMD=2023.07.14 10:00,
+   ************* Beginning Zone Sizing Calculations
+   ** Warning ** Foundation:Kiva="SLAB DETAILS", no Interior Horizontal Insulation Material Name defined
+   **   ~~~   ** Interior Horizontal Insulation Depth will not be used.
+   ** Warning ** Foundation:Kiva="SLAB DETAILS", no Exterior Horizontal Insulation Material Name defined
+   **   ~~~   ** Exterior Horizontal Insulation Width will not be used.
+   ** Warning ** Foundation:Kiva="SLAB DETAILS", no Footing Material Name defined
+   **   ~~~   ** Footing Depth will not be used.
+   ** Warning ** GetSurfaceData: Entered Zone Floor Areas differ from calculated Zone Floor Area(s).
+   **   ~~~   ** ...use Output:Diagnostics,DisplayExtraWarnings; to show more details on individual zones.
+   ************* Note that the following warning(s) may/will occur if you have not enclosed your zone completely.
+   ** Warning ** Entered Zone Volumes differ from calculated zone volume(s).
+   **   ~~~   ** ...use Output:Diagnostics,DisplayExtraWarnings; to show more details on individual zones.
+   ** Warning ** CalculateZoneVolume: 1 zone is not fully enclosed. For more details use:  Output:Diagnostics,DisplayExtrawarnings; 
+   ** Warning ** CheckUsedConstructions: There are 25 nominally unused constructions in input.
+   **   ~~~   ** For explicit details on each unused construction, use Output:Diagnostics,DisplayExtraWarnings;
+   ** Warning ** GeneratorController constructor ElectricLoadCenter:Generators, Availability Schedule for Generator:PVWatts '3 KW PV' will be be ignored (runs all the time).
+   ** Warning ** Output:Meter:MeterFileOnly: invalid Key Name="NATURALGAS:FACILITY" - not found.
+   ************* Testing Individual Branch Integrity
+   ************* All Branches passed integrity testing
+   ************* Testing Individual Supply Air Path Integrity
+   ************* All Supply Air Paths passed integrity testing
+   ************* Testing Individual Return Air Path Integrity
+   ************* All Return Air Paths passed integrity testing
+   ************* No node connection errors were found.
+   ** Warning ** For ZoneHVAC:EnergyRecoveryVentilator "ERV1" there is unbalanced exhaust air flow.
+   **   ~~~   ** ... The exhaust air mass flow rate = 3.395692E-002
+   **   ~~~   ** ... The  supply air mass flow rate = 2.351446E-002
+   **   ~~~   **  Environment=MONTREAL INT'L ANN HTG 99.6% CONDNS DB HVAC Sizing Pass 1, at Simulation time=01/21 00:00 - 00:15
+   **   ~~~   ** ... Unless there is balancing infiltration / ventilation air flow, this will result in
+   **   ~~~   ** ... load due to induced outside air being neglected in the simulation.
+   ************* Beginning Simulation
+   ** Warning ** ZoneHVAC:PackagedTerminalHeatPump "ZONE1PTHP"
+   **   ~~~   **  Iteration limit exceeded calculating packaged terminal unit part-load ratio, maximum iterations = 500
+   **   ~~~   **  Part-load ratio returned = 1.811E-003 Environment=ANNUAL, at Simulation time=03/07 16:00 - 16:15
+   **   ~~~   **  Load requested = 13.35531, Load delivered = 5.71921
+   ************* Simulation Error Summary *************
+   ************* There are 1 unused objects in input.
+   ************* Use Output:Diagnostics,DisplayUnusedObjects; to see them.
+   *************
+   ************* ===== Recurring Error Summary =====
+   ************* The following recurring error messages occurred.
+   *************
+   *************  ** Warning ** ZoneHVAC:PackagedTerminalHeatPump "ZONE1PTHP" - Iteration limit exceeded error continues...
+   *************  **   ~~~   **   This error occurred 16 total times;
+   *************  **   ~~~   **   during Warmup 0 times;
+   *************  **   ~~~   **   during Sizing 0 times.
+   *************  **   ~~~   **   Max=19.506574 {W}  Min=5.719213 {W}
+   *************
+   *************
+   ************* ===== Final Error Summary =====
+   ************* The following error categories occurred.  Consider correcting or noting.
+   ************* Nominally Unused Constructions
+   ************* ..The nominally unused constructions warning is provided to alert you to potential conditions that can cause
+   ************* ..extra time during simulation. Each construction is calculated by the algorithm indicated in the HeatBalanceAlgorithm
+   ************* ..object. You may remove the constructions indicated (when you use the DisplayExtraWarnings option).
+   *************
+   ************* EnergyPlus Warmup Error Summary. During Warmup: 0 Warning; 0 Severe Errors.
+   ************* EnergyPlus Sizing Error Summary. During Sizing: 8 Warning; 0 Severe Errors.
+   ************* EnergyPlus Completed Successfully-- 27 Warning; 0 Severe Errors; Elapsed Time=00hr 00min 29.88sec
