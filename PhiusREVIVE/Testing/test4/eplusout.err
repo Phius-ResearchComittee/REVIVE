@@ -1,4 +1,4 @@
-Program Version,EnergyPlus, Version 9.5.0-de239b2e5f, YMD=2023.07.14 10:00,
+Program Version,EnergyPlus, Version 9.5.0-de239b2e5f, YMD=2023.08.02 11:53,
    ************* Beginning Zone Sizing Calculations
    ** Warning ** Foundation:Kiva="SLAB DETAILS", no Interior Horizontal Insulation Material Name defined
    **   ~~~   ** Interior Horizontal Insulation Depth will not be used.
@@ -57,4 +57,4 @@ Program Version,EnergyPlus, Version 9.5.0-de239b2e5f, YMD=2023.07.14 10:00,
    *************
    ************* EnergyPlus Warmup Error Summary. During Warmup: 0 Warning; 0 Severe Errors.
    ************* EnergyPlus Sizing Error Summary. During Sizing: 8 Warning; 0 Severe Errors.
-   ************* EnergyPlus Completed Successfully-- 27 Warning; 0 Severe Errors; Elapsed Time=00hr 00min 29.88sec
+   ************* EnergyPlus Completed Successfully-- 27 Warning; 0 Severe Errors; Elapsed Time=00hr 00min 40.84sec

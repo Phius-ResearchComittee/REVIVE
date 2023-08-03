@@ -228,8 +228,8 @@ def adorb(analysisPeriod, annualElec, annualGas, annualCO2, dirMR, emCO2, eTrans
         pv_eTrans = (C_eTran_y)/((1+k_sysTran)**year)
 
         pv.append((pv_dirEn + pv_opCO2 + pv_dirMR + pv_emCO2 + pv_eTrans))
-        newRow = {'pv_dirEn':pv_dirEn, 'pv_opCO2':pv_opCO2, 'pv_dirMR':pv_dirMR, 'pv_emCO2':pv_emCO2, 'pv_eTrans':pv_eTrans}
-        results = results.append(newRow, ignore_index=True)
+        newRow = pd.Series({'pv_dirEn':pv_dirEn, 'pv_opCO2':pv_opCO2, 'pv_dirMR':pv_dirMR, 'pv_emCO2':pv_emCO2, 'pv_eTrans':pv_eTrans})
+        results = pd.concat([results, newRow.to_frame().T], ignore_index=True)
     results.to_csv(str(BaseFileName) + '_ADORBresults.csv')
 
     df = results
@@ -315,6 +315,11 @@ while True:
 
     # sum(pv), pv_dirEn_tot, pv_dirMR_tot, pv_opCO2_tot, pv_emCO2_tot,pv_eTrans_tot
     if event == 'RUN ANALYSIS':
+        ResultsTable = pd.DataFrame(columns=["Run Name","SET ≤ 12.2°C Hours (F)","Hours < 2°C [hr]","Caution (> 26.7, ≤ 32.2°C) [hr]","Extreme Caution (> 32.2, ≤ 39.4°C) [hr]",
+                                                    "Danger (> 39.4, ≤ 51.7°C) [hr]","Extreme Danger (> 51.7°C) [hr]", 'EUI','Peak Electric Demand [W]',
+                                                    'Heating Battery Size [kWh]', 'Cooling Battery Size [kWh]', 'Total ADORB Cost [$]','First Year Electric Cost [$]',
+                                                    'First Year Gas Cost [$]','First Cost [$]','pv_dirEn_tot','pv_dirMR_tot','pv_opCO2_tot','pv_emCO2_tot',
+                                                    'pv_eTrans_tot'])
         for case in range(totalRuns):
             iddfile = str(inputValues['iddFile'])
             runListPath = inputValues['runList']
@@ -327,12 +332,6 @@ while True:
 
             os.chdir(str(studyFolder))
             IDF.setiddname(iddfile)
-
-            ResultsTable = pd.DataFrame(columns=["Run Name","SET ≤ 12.2°C Hours (F)","Hours < 2°C [hr]","Caution (> 26.7, ≤ 32.2°C) [hr]","Extreme Caution (> 32.2, ≤ 39.4°C) [hr]",
-                                                    "Danger (> 39.4, ≤ 51.7°C) [hr]","Extreme Danger (> 51.7°C) [hr]", 'EUI','Peak Electric Demand [W]',
-                                                    'Heating Battery Size [kWh]', 'Cooling Battery Size [kWh]', 'Total ADORB Cost [$]','First Year Electric Cost [$]',
-                                                    'First Year Gas Cost [$]','First Cost [$]','pv_dirEn_tot','pv_dirMR_tot','pv_opCO2_tot','pv_emCO2_tot',
-                                                    'pv_eTrans_tot'])
 
             runCount = case
             BaseFileName = (batchName + '_' + runList['CASE_NAME'][runCount])
@@ -2646,8 +2645,7 @@ while True:
             # ===============================================================================================================
             # Final Result Collection
             # ===============================================================================================================
-
-            ResultsTable = ResultsTable.append({'Run Name':runList['CASE_NAME'][runCount],
+            newResultRow = pd.DataFrame([{'Run Name':runList['CASE_NAME'][runCount],
                                                 'SET ≤ 12.2°C Hours (F)':HeatingSET,
                                                 "Hours < 2°C [hr]":Below2C,
                                                 "Caution (> 26.7, ≤ 32.2°C) [hr]":Caution,
@@ -2666,13 +2664,12 @@ while True:
                                                 'pv_dirMR_tot':pv_dirMR_tot,
                                                 'pv_opCO2_tot':pv_opCO2_tot,
                                                 'pv_emCO2_tot':pv_emCO2_tot,
-                                                'pv_eTrans_tot':pv_eTrans_tot}, ignore_index=True)
-
-
-
-        # sum(pv), pv_dirEn_tot, pv_dirMR_tot, pv_opCO2_tot, pv_emCO2_tot,pv_eTrans_tot
-
-
+                                                'pv_eTrans_tot':pv_eTrans_tot}])
+        
+            newResultRow.to_csv(str(studyFolder) + "/" + str(caseName) + "_Test_ResultsTable.csv")
+            
+            ResultsTable = pd.concat([ResultsTable, newResultRow], axis=0, ignore_index=True)#, ignore_index=True)
+            
         ResultsTable.to_csv(str(studyFolder) + "/" + str(batchName) + "_ResultsTable.csv")
-        sg.popup('Analysis Complete')
 
+        sg.popup('Analysis Complete')
