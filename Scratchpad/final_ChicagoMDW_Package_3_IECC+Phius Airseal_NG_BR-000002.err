@@ -1,4 +1,4 @@
-Program Version,EnergyPlus, Version 9.5.0-de239b2e5f, YMD=2023.07.06 14:34,
+Program Version,EnergyPlus, Version 9.5.0-de239b2e5f, YMD=2023.09.06 16:43,
    ************* Beginning Zone Sizing Calculations
    ** Warning ** ProcessScheduleInput: Schedule:Constant="COUNT", Schedule Type Limits Name="ANYNUMBER" not found -- will not be validated
    ** Warning ** Foundation:Kiva="SLAB DETAILS", no Interior Horizontal Insulation Material Name defined
@@ -61,6 +61,11 @@ Program Version,EnergyPlus, Version 9.5.0-de239b2e5f, YMD=2023.07.06 14:34,
    **   ~~~   **  Input Humidity Ratio= 7.090843E-004
    **   ~~~   **  Input Pressure = 99800.00
    **   ~~~   **  Resultant Temperature= 0.20
+   ** Warning ** checkForUnusedActuatorsAtEnd: Unused EMS Actuator detected, suggesting possible unintended programming error or spelling mistake.
+   **   ~~~   ** Check Erl programs related to EMS actuator variable name = ODP2
+   **   ~~~   ** EMS Actuator type name = WEATHER DATA
+   **   ~~~   ** EMS Actuator unique component name = ENVIRONMENT
+   **   ~~~   ** EMS Actuator control type = OUTDOOR DEW POINT
    ************* Simulation Error Summary *************
    ************* There are 1 unused objects in input.
    ************* Use Output:Diagnostics,DisplayUnusedObjects; to see them.
@@ -71,7 +76,7 @@ Program Version,EnergyPlus, Version 9.5.0-de239b2e5f, YMD=2023.07.06 14:34,
    ************* The following recurring error messages occurred.
    *************
    *************  ** Warning ** HeatExchanger:AirToAir:SensibleAndLatent "ERV_CORE":  Average air volume flow rate is <50% or >130% warning continues. Air flow rate ratio statistics follow.
-   *************  **   ~~~   **   This error occurred 36342 total times;
+   *************  **   ~~~   **   This error occurred 37096 total times;
    *************  **   ~~~   **   during Warmup 0 times;
    *************  **   ~~~   **   during Sizing 0 times.
    *************  **   ~~~   **   Max=0.206475  Min=0.195523
@@ -91,4 +96,4 @@ Program Version,EnergyPlus, Version 9.5.0-de239b2e5f, YMD=2023.07.06 14:34,
    *************
    ************* EnergyPlus Warmup Error Summary. During Warmup: 0 Warning; 0 Severe Errors.
    ************* EnergyPlus Sizing Error Summary. During Sizing: 11 Warning; 0 Severe Errors.
-   ************* EnergyPlus Completed Successfully-- 36357 Warning; 0 Severe Errors; Elapsed Time=00hr 00min 18.29sec
+   ************* EnergyPlus Completed Successfully-- 37112 Warning; 0 Severe Errors; Elapsed Time=00hr 00min 18.72sec

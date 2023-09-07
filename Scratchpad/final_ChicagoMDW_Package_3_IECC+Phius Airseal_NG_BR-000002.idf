@@ -473,7 +473,7 @@ Schedule:Compact,
     Through: 01/26,          !- Field 1
     For: AllDays,            !- Field 2
     Until: 24:00,            !- Field 3
-     0,                      !- Field 4
+    0,                       !- Field 4
     Through: 02/02,          !- Field 5
     For: SummerDesignDay Winter Design Day,  !- Field 6
     Until: 24:00,            !- Field 7
@@ -491,7 +491,7 @@ Schedule:Compact,
     0,                       !- Field 19
     For: AllOtherDays,       !- Field 20
     Until: 24:00,            !- Field 21
-    2,                !- Field 22
+    1,                !- Field 22
     Through: 12/31,          !- Field 23
     For: AllDays,            !- Field 24
     Until: 24:00,            !- Field 25
@@ -2630,7 +2630,8 @@ EnergyManagementSystem:ProgramCallingManager,
 EnergyManagementSystem:ProgramCallingManager,
     WeatherMorph,            !- Name
     BeginZoneTimestepBeforeSetCurrentWeather,  !- EnergyPlus Model Calling Point
-    DBMorph;                 !- Program Name 1
+    DBMorph,                 !- Program Name 1
+    DPMorph;                 !- Program Name 2
 
 
 !-   ===========  ALL OBJECTS IN CLASS: ENERGYMANAGEMENTSYSTEM:PROGRAM ===========
@@ -2670,13 +2671,13 @@ EnergyManagementSystem:Program,
 EnergyManagementSystem:Program,
     DPMorph,                 !- Name
     IF MorphOnOff == 1,      !- Program Line 1
-    SET ODP2 = (@TodayOutDewPointTempTemp Hour TimeStepNum) + (1.28)*(@Sin (PI*Count/168)),  !- Program Line 2
+    SET ODP2 = (@TodayOutDewPointTemp Hour TimeStepNum) + (1.28)*(@Sin (PI*Count/168)),  !- Program Line 2
     SET Count2 = Count + 0.25,  !- A4
     ELSEIF MorphOnOff == 2,  !- A5
     SET ODP2 = (@TodayOutDewPointTemp TimeStepNum) + (5.98)*(@Sin (PI*Count/168)),  !- A6
     SET Count2 = Count + 0.25,  !- A7
     ELSE,                    !- A8
-    SET ODB2 = @TodayOutDewPointTemp TimeStepNum,  !- A9
+    SET ODP2 = @TodayOutDewPointTemp TimeStepNum,  !- A9
     SET Count2 = 0,          !- A10
     ENDIF,                   !- A11
     RETURN;                  !- A12

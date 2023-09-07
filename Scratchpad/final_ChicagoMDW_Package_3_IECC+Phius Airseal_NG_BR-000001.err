@@ -1,4 +1,4 @@
-Program Version,EnergyPlus, Version 9.5.0-de239b2e5f, YMD=2023.07.06 14:34,
+Program Version,EnergyPlus, Version 9.5.0-de239b2e5f, YMD=2023.09.06 16:43,
    ************* Beginning Zone Sizing Calculations
    ** Warning ** ProcessScheduleInput: Schedule:Constant="COUNT", Schedule Type Limits Name="ANYNUMBER" not found -- will not be validated
    ** Warning ** Foundation:Kiva="SLAB DETAILS", no Interior Horizontal Insulation Material Name defined
@@ -55,6 +55,11 @@ Program Version,EnergyPlus, Version 9.5.0-de239b2e5f, YMD=2023.07.06 14:34,
    **   ~~~   ** Average air volume flow rate is <50% or >130% of the nominal HX supply air volume flow rate.
    **   ~~~   ** Air volume flow rate ratio = 0.201. Environment=CHICAGO MIDWAY AP ANN HTG 99.6% CONDNS DB HVAC Sizing Pass 1, at Simulation time=01/21 00:00 - 00:15
    ************* Beginning Simulation
+   ** Warning ** checkForUnusedActuatorsAtEnd: Unused EMS Actuator detected, suggesting possible unintended programming error or spelling mistake.
+   **   ~~~   ** Check Erl programs related to EMS actuator variable name = ODP2
+   **   ~~~   ** EMS Actuator type name = WEATHER DATA
+   **   ~~~   ** EMS Actuator unique component name = ENVIRONMENT
+   **   ~~~   ** EMS Actuator control type = OUTDOOR DEW POINT
    ************* Simulation Error Summary *************
    ************* There are 1 unused objects in input.
    ************* Use Output:Diagnostics,DisplayUnusedObjects; to see them.
@@ -80,4 +85,4 @@ Program Version,EnergyPlus, Version 9.5.0-de239b2e5f, YMD=2023.07.06 14:34,
    *************
    ************* EnergyPlus Warmup Error Summary. During Warmup: 0 Warning; 0 Severe Errors.
    ************* EnergyPlus Sizing Error Summary. During Sizing: 11 Warning; 0 Severe Errors.
-   ************* EnergyPlus Completed Successfully-- 36528 Warning; 0 Severe Errors; Elapsed Time=00hr 00min 18.27sec
+   ************* EnergyPlus Completed Successfully-- 36529 Warning; 0 Severe Errors; Elapsed Time=00hr 00min 18.81sec
