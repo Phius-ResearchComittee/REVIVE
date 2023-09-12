@@ -97,7 +97,7 @@ def WindowMaterials(idf, Ext_Window1_Ufactor,Ext_Window1_SHGC):
         )
 
     idf.newidfobject('Construction',
-        Name = 'ExteriorWindow1',
+        Name = 'Ext_Window1',
         Outside_Layer = 'ExteriorWindow1')
     
 def ShadeMaterials(idf):
@@ -283,7 +283,7 @@ def AssignContructions(idf, Ext_Wall1,Ext_Wall2,Ext_Wall3,
         count = 1
         window = idf.idfobjects['FenestrationSurface:Detailed'][count]
         if window.Construction_Name == 'Ext_Window1':
-            window.Construction_Name = 'ExteriorWindow1'
+            window.Construction_Name = 'Ext_Window1'
 
 def FoundationInterface(idf,foundationList):
 
@@ -295,6 +295,7 @@ def FoundationInterface(idf,foundationList):
         fndPerim = row[3]*0.3048
         
         idf.newidfobject('Foundation:Kiva',
+            # Name = ('Slab Details'),
             Name = (str(fndType) + ' Details'),
             # ,_________________________!-_Initial_Indoor_Air_Temperature
             # ,_________________________!-_Interior_Horizontal_Insulation_Material_Name

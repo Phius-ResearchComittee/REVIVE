@@ -210,6 +210,13 @@ while True:
             Ext_Door1 = runList['EXT_DOOR_1_NAME'][runCount]
             Int_Floor1 = runList['INT_FLOOR_1_NAME'][runCount]
 
+            Ext_Wall2 = 0
+            Ext_Wall3 = 0
+            Ext_Roof2 = 0
+            Ext_Roof3 = 0
+            Ext_Floor2 = 0
+            Ext_Floor3 = 0
+
             # Foundation interfaces
             fnd1 = runList['FOUNDATION_INTERFACE_1'][runCount]
             fnd1i = runList['FOUNDATION_INSUINSULATION_1'][runCount]
@@ -409,13 +416,20 @@ while True:
             # Envelope inputs
             Infiltration(idf1, flowCoefficient)
             SpecialMaterials(idf1)
-            WindowMaterials(idf1, Ext_Window1_Ufactor,Ext_Window1_SHGC)
+            FoundationInterface(idf1,foundationList)
+
+
             ShadeMaterials(idf1)
 
             # Window inputs and shading controls
-            WindowVentilation(idf, halfHeight, operableArea_N, operableArea_W, 
+            WindowVentilation(idf1, halfHeight, operableArea_N, operableArea_W, 
                       operableArea_S, operableArea_E)
+            WindowMaterials(idf1, Ext_Window1_Ufactor,Ext_Window1_SHGC)
 
+            AssignContructions(idf1, Ext_Wall1,Ext_Wall2,Ext_Wall3,
+                       Ext_Roof1,Ext_Roof2,Ext_Roof3,
+                       Ext_Floor1,Ext_Floor2,Ext_Floor3,
+                       Ext_Door1, Int_Floor1)
 
             # Sizing settings:
             SizingSettings(idf1, ZoneName)
@@ -425,35 +439,9 @@ while True:
             WaterHeater(idf1, ZoneName, dhwFuel, DHW_CombinedGPM)
             Curves(idf1)
 
-            
-            #HVAC System Controls
+            Renewables(idf1, ZoneName)
 
-
-
-            # Mechanical Zone Connections
-
-
-
-            # Heat Pump:
-
-
-                # idf1.newidfobject('AirTerminal:SingleDuct:ConstantVolume:NoReheat',
-                #     Name = 'Zone1DirectAir',
-                #     Availability_Schedule_Name = 'MechAvailable',
-                #     Air_Inlet_Node_Name = 'Air Loop Outlet Node',
-                #     Air_Outlet_Node_Name = 'Zone1MECHAirOutletNode',
-                #     Maximum_Air_Flow_Rate = 2
-                #     )
-
-            # DHW
-            
-
-            # Renewables
-
-
-
-            # Curves: 
-
+            SimulationOutputs(idf1)
             # ============================================================================
             # Pass IDF 
             # ============================================================================
@@ -477,9 +465,13 @@ while True:
                         coolingOutageStart,coolingOutageEnd,NatVentAvail,
                         demandCoolingAvail,shadingAvail)
             
-            ResilienceControls(idf, NatVentType)
+            ResilienceControls(idf1, NatVentType)
 
             ReslienceERV(idf1, occ, ervSense, ervLatent)
+
+            # WeatherMorphSine(idf1, outage1start, outage1end, outage2start, outage2end,
+                    #  MorphFactorDB1, MorphFactorDP1, MorphFactorDB2, MorphFactorDP2)
+
 
             # ==================================================================================================================================
             # Run Resilience Simulation and Collect Results
@@ -621,14 +613,6 @@ while True:
 
 
 
-
-
-
-
-
-
-
-
             # Annual Result Collection
 
             idf1.saveas(str(testingFile_BA))
@@ -724,9 +708,8 @@ while True:
             dirMR = [(firstCost,1),(8500,20),(8500,40),(8500,60)]
             emCO2 = [(emCO2_firstCost,1),((8500*laborFraction*0.3),20),((8500*laborFraction*0.3),40),((8500*laborFraction*0.3),60)] 
             eTrans = peakElec
-
             
-            final = adorb(duration, annualElec, annualGas, annualCO2, dirMR, emCO2, eTrans)
+            final = adorb(BaseFileName, studyFolder, duration, annualElec, annualGas, annualCO2, dirMR, emCO2, eTrans)
 
             adorbCost = final[0]
             pv_dirEn_tot = final[1]

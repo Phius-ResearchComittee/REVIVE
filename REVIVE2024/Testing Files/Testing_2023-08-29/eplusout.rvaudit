@@ -1,0 +1,16 @@
+ ReadVarsESO
+ processing:C:\Users\amitc_crl\OneDrive\Documents\GitHub\REVIVE\REVIVE2024\Testing Files\Testing_2023-08-29\Name your batch of files_Montreal_Package_0_BASE House_Elec_BR_debc26.rvi
+ input file:C:\Users\amitc_crl\OneDrive\Documents\GitHub\REVIVE\REVIVE2024\Testing Files\Testing_2023-08-29\eplusout.eso
+ output file:C:\Users\amitc_crl\OneDrive\Documents\GitHub\REVIVE\REVIVE2024\Testing Files\Testing_2023-08-29\eplusout.csv
+ getting all vars from:C:\Users\amitc_crl\OneDrive\Documents\GitHub\REVIVE\REVIVE2024\Testing Files\Testing_2023-08-29\eplusout.eso
+  number variables requested for output=          44
+ ReadVars Run Time=00hr 00min  1.02sec
+ ReadVarsESO program completed successfully.
+ ReadVarsESO
+ processing:C:\Users\amitc_crl\OneDrive\Documents\GitHub\REVIVE\REVIVE2024\Testing Files\Testing_2023-08-29\Name your batch of files_Montreal_Package_0_BASE House_Elec_BR_debc26.mvi
+ input file:C:\Users\amitc_crl\OneDrive\Documents\GitHub\REVIVE\REVIVE2024\Testing Files\Testing_2023-08-29\eplusout.mtr
+ output file:C:\Users\amitc_crl\OneDrive\Documents\GitHub\REVIVE\REVIVE2024\Testing Files\Testing_2023-08-29\eplusmtr.csv
+ getting all vars from:C:\Users\amitc_crl\OneDrive\Documents\GitHub\REVIVE\REVIVE2024\Testing Files\Testing_2023-08-29\eplusout.mtr
+  number variables requested for output=           6
+ ReadVars Run Time=00hr 00min  0.02sec
+ ReadVarsESO program completed successfully.

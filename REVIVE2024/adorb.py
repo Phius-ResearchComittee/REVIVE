@@ -24,7 +24,7 @@ import subprocess
 import os
 from os import system
 
-def adorb(analysisPeriod, annualElec, annualGas, annualCO2, dirMR, emCO2, eTrans):
+def adorb(BaseFileName, studyFolder, analysisPeriod, annualElec, annualGas, annualCO2, dirMR, emCO2, eTrans):
     results = pd.DataFrame(columns=['pv_dirEn', 'pv_opCO2', 'pv_dirMR', 'pv_emCO2', 'pv_eTrans'])
     years = range(analysisPeriod)
     pv = []
