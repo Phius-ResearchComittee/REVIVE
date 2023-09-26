@@ -23,6 +23,10 @@ from eppy.results import fasthtml
 import subprocess
 import os
 from os import system
+import os
+import shutil
+import fnmatch
+import glob
 
 def adorb(BaseFileName, studyFolder, analysisPeriod, annualElec, annualGas, annualCO2, dirMR, emCO2, eTrans):
     results = pd.DataFrame(columns=['pv_dirEn', 'pv_opCO2', 'pv_dirMR', 'pv_emCO2', 'pv_eTrans'])
@@ -131,14 +135,57 @@ def adorb(BaseFileName, studyFolder, analysisPeriod, annualElec, annualGas, annu
     df2['pv_eTrans'] = df['pv_eTrans'].cumsum()
 
     # df2.plot(kind='area', xlabel='Years', ylabel='Cummulative Present Value [$]', title='ADORB COST', figsize=(6.5,8.5))
-    fig = df2.plot(kind='area', xlabel='Years', ylabel='Cummulative Present Value [$]', ylim=[0,225000], title=(str(BaseFileName) + '_ADORB COST'), figsize=(16,9)).get_figure()
-    fig.savefig(str(studyFolder) + "/" + str(BaseFileName) + '_ADORB.png')
+    fig = df2.plot(kind='area', xlabel='Years', ylabel='Cummulative Present Value [$]', title=(str(BaseFileName) + '_ADORB COST'), figsize=(10,6)).get_figure()
+    
+    adorb.adorbWedgeGraph = (str(studyFolder) + "/" + str(BaseFileName) + '_ADORB_Wedge.png')
+    adorb.adorbBarGraph = (str(studyFolder) + "/" + str(BaseFileName) + '_ADORB_Bar.png')
+    fig.savefig(str(adorb.adorbWedgeGraph))
+
 
     pv_dirEn_tot = df['pv_dirEn'].sum()
     pv_dirMR_tot = df['pv_dirMR'].sum()
     pv_opCO2_tot = df['pv_opCO2'].sum()
     pv_emCO2_tot = df['pv_emCO2'].sum()
     pv_eTrans_tot = df['pv_eTrans'].sum()
+
+    if 'BASE' not in BaseFileName:
+        for filename in os.listdir(studyFolder):
+            if filename.endswith('.csv'):
+                if 'BASE' in str(filename):
+                    if 'ADORB' in str(filename):
+                        basedf = pd.read_csv(filename)
+
+                        pv_dirEn_tot_base = basedf['pv_dirEn'].sum()
+                        pv_dirMR_tot_base = basedf['pv_dirMR'].sum()
+                        pv_opCO2_tot_base = basedf['pv_opCO2'].sum()
+                        pv_emCO2_tot_base = basedf['pv_emCO2'].sum()
+                        pv_eTrans_tot_base = basedf['pv_eTrans'].sum()
+
+                        case = ('Base Case','Proposed')
+                        case_data = {
+                            "Direct Energy": np.array([pv_dirEn_tot_base,pv_dirEn_tot]),
+                            "Direct Maintenance": np.array([pv_dirMR_tot_base,pv_dirMR_tot]),
+                            "Operational CO2": np.array([pv_opCO2_tot_base,pv_opCO2_tot]),
+                            "Embodied CO2": np.array([pv_emCO2_tot_base,pv_emCO2_tot]),
+                            "Energy Transition": np.array([pv_eTrans_tot_base,pv_eTrans_tot]),
+                        }
+                        width = 0.3  # the width of the bars: can also be len(x) sequence
+
+
+                        fig, ax = plt.subplots(figsize=(10,6))
+                        left = np.zeros(2)
+
+                        for sex, sex_count in case_data.items():
+                            # p = ax.bar(case, sex_count, width, label=sex, bottom=bottom)
+                            y = ax.barh(case,sex_count,width,label=sex,left=left)
+                            left += sex_count
+
+                            ax.bar_label(y, label_type='center',rotation=-45)
+
+                        ax.set_title('Total Lifecycle ADORB Cost')
+                        ax.legend(loc="upper right")
+                        ax.set_xlabel('Cost [$]')
+                        plt.savefig(str(adorb.adorbBarGraph),dpi=300)
 
     return sum(pv), pv_dirEn_tot, pv_dirMR_tot, pv_opCO2_tot, pv_emCO2_tot,pv_eTrans_tot
 

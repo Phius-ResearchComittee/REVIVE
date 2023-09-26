@@ -34,9 +34,9 @@ def WeatherMorphSine(idf, outage1start, outage1end, outage2start, outage2end,
         Morph1 = 0
 
     if MorphFactorDB2 != 0:
-        Morph2 = 1
+        Morph2 = 2
     else:
-        Morph1 = 0
+        Morph2 = 0
 
 
     idf.newidfobject('Schedule:Compact',
@@ -135,7 +135,7 @@ def WeatherMorphSine(idf, outage1start, outage1end, outage2start, outage2end,
         Program_Line_2 = 'SET ODP2 = (@TodayOutDewPointTemp Hour TimeStepNum) + ' + str(MorphFactorDP1) + '*(@Sin (PI*Count/168))',
         Program_Line_3 = 'SET Count2 = Count + 0.25',
         Program_Line_4 = 'ELSEIF MorphOnOff == 2',
-        Program_Line_5 = 'SET ODB2 = (@TodayOutDryBulbTemp Hour TimeStepNum) +' + str(MorphFactorDP2) + '*(@Sin (PI*Count/168))',
+        Program_Line_5 = 'SET ODP2 = (@TodayOutDewPointTemp Hour TimeStepNum) +' + str(MorphFactorDP2) + '*(@Sin (PI*Count/168))',
         Program_Line_6 = 'SET Count2 = Count + 0.25',
         Program_Line_7 = 'ELSE',
         Program_Line_8 = 'SET ODP2 = @TodayOutDewPointTemp TimeStepNum',

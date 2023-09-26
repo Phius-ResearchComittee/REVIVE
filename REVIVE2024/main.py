@@ -1,6 +1,6 @@
 #=============================================================================================================================
 # PhiusREVIVE Research Tool
-# Updated 2023/03/23
+# Updated 2023/09/19
 # v23.0.0
 #
 #
@@ -39,7 +39,8 @@ import pandas as pd
 import numpy as np
 import matplotlib as mpl
 import matplotlib.pyplot as plt
-import datetime
+import datetime as dt
+from datetime import datetime
 import email.utils as eutils
 import time
 import math
@@ -56,6 +57,14 @@ from eppy.results import fasthtml
 import subprocess
 import os
 from os import system
+import pylatex
+
+from pylatex import Document, PageStyle, Head, MiniPage, Foot, LargeText, \
+    MediumText, LineBreak, simple_page_number
+from pylatex.utils import bold
+from pylatex import Section, Subsection, Tabular, Math, TikZ, Axis, \
+    Plot, Figure, Matrix, Alignat
+from pylatex.utils import italic
 
 #==============================================================================================================================
 # 2.0 Custom modules
@@ -77,7 +86,17 @@ from weatherMorph import *
 sg.theme('LightBlue2')
 
 tab0_layout =  [[sg.Text('Welcome')],
-                [sg.Text('Please follow the steps below to test thermal resilience of the house')],
+                [sg.Text('Please follow the steps below to test thermal resilience of the building:')],
+                [sg.Text('1. Assigned EnergPlus IDD File Location')],
+                [sg.Text('2. Assign a Study Folder Path. This tool will generate many files in this directory, including models and results')],
+                [sg.Text('3. Assign IDF file path for geometry inputs. Please reference full guide for naming conventions')],
+                [sg.Text('4. Assign run list path. Please reference full guide for naming conventions')],
+                [sg.Text('5. Assign Database folder path')],
+                [sg.Text('6. Assign a batch name. This will be on all files so it will be easily searchable')],
+                [sg.Text('7. Check Generate PDF if you PDF summaries are needed. This feature is currently not fully tested')],
+                [sg.Text('8. Check Delete Unecessary Files to clean up the study folder after runs are completed')],
+                [sg.Text('9. Press LOAD. Confirm the number of cases matches the run list')],
+                [sg.Text('10. Press RUN ANALYSIS to start. A popup will show progress, and a second popup will appear to confirm completition')],
                 ]
 
 tab1_layout =   [[sg.Text('IDD File Location:', size =(15, 1)),sg.InputText("C:\EnergyPlusV9-5-0\Energy+.idd", key='iddFile'), sg.FileBrowse()],
@@ -87,18 +106,19 @@ tab1_layout =   [[sg.Text('IDD File Location:', size =(15, 1)),sg.InputText("C:\
                 [sg.Text('Database Folder Location:', size =(15, 1)),sg.InputText('C:/Users/amitc_crl/OneDrive/Documents/GitHub/REVIVE/REVIVE2024/Databases/', key='dataBases'), sg.FileBrowse()]
                 ]
 
-tab2_layout =   [[sg.Text('Batch Name:', size =(20, 1)),sg.InputText('Name your batch of files', key='batchName')]
+tab2_layout =   [[sg.Text('Batch Name:', size =(20, 1)),sg.InputText('Name your batch of files', key='batchName')],
+                 [sg.Checkbox('Generate PDF?', size=(25, 1), default=True,key='genPDF')],
+                 [sg.Checkbox('Delete Unecessary Files?', size=(25, 1), default=True,key='DeleteFiles')]
                 ]
 
-layout1 = [
-    # [sg.Image(r'C:\Users\amitc\Documents\GitHub\Phius-REVIVE\Project Program\4StepResilience\al_REVIVE_PILOT_logo.png')],
-                [sg.TabGroup(
-                [[sg.Tab('Start', tab0_layout,),
-                sg.Tab('Project Settings', tab1_layout,),
-                sg.Tab('Basic Input Data', tab2_layout,),]])],
-                [sg.Button('LOAD'), sg.Button('RUN ANALYSIS'), sg.Button('EXIT')]]  
+layout1 = [[sg.Image(r'C:\Users\amitc_crl\OneDrive\Documents\GitHub\REVIVE\REVIVE2024\al_REVIVE_PILOT_logo.png')],
+            [sg.TabGroup(
+            [[sg.Tab('Start', tab0_layout,),
+            sg.Tab('Project Settings', tab1_layout,),
+            sg.Tab('Basic Input Data', tab2_layout,),]])],
+            [sg.Button('LOAD'), sg.Button('RUN ANALYSIS'), sg.Button('EXIT')]]  
 
-window = sg.Window('Phius REVIVE 2024 Analysis Tool v0.2',layout1, default_element_size=(125, 125), grab_anywhere=True)
+window = sg.Window('Phius REVIVE 2024 Analysis Tool v23.0.0',layout1, default_element_size=(125, 125), grab_anywhere=True)
 
 #==============================================================================================================================
 # 3.0 File Management
@@ -123,11 +143,17 @@ while True:
             iddfile = str(inputValues['iddFile'])
             runListPath = inputValues['runList']
             studyFolder = inputValues['studyFolder']
+            database = inputValues['dataBases']
+
             idfgName = inputValues['GEO']
             emissionsDatabase = (str(inputValues['dataBases']) + 'Hourly Emission Rates.csv')
             runList = pd.read_csv(str(runListPath))
             totalRuns = runList.shape[0]
             batchName = str(inputValues['batchName'])
+
+            pdfReport = inputValues['genPDF']
+            cleanFolder = inputValues['DeleteFiles']
+
 
             os.chdir(str(studyFolder))
             IDF.setiddname(iddfile)
@@ -243,6 +269,12 @@ while True:
             outage2start = runList['OUTAGE_2_START'][runCount]
             outage2end = runList['OUTAGE_2_END'][runCount]
             outage1type = runList['1ST_OUTAGE'][runCount]
+
+            # Weather Morph inputs
+            MorphFactorDB1 = runList['MorphFactorDB1'][runCount]
+            MorphFactorDP1 = runList['MorphFactorDP1'][runCount]
+            MorphFactorDB2 = runList['MorphFactorDB2'][runCount]
+            MorphFactorDP2 = runList['MorphFactorDP2'][runCount]
 
             if outage1type == 'HEATING':
                 heatingOutageStart = outage1start
@@ -469,8 +501,8 @@ while True:
 
             ReslienceERV(idf1, occ, ervSense, ervLatent)
 
-            # WeatherMorphSine(idf1, outage1start, outage1end, outage2start, outage2end,
-                    #  MorphFactorDB1, MorphFactorDP1, MorphFactorDB2, MorphFactorDP2)
+            WeatherMorphSine(idf1, outage1start, outage1end, outage2start, outage2end,
+                     MorphFactorDB1, MorphFactorDP1, MorphFactorDB2, MorphFactorDP2)
 
 
             # ==================================================================================================================================
@@ -538,28 +570,36 @@ while True:
 
             x = hourlyHeat['DateTime']
 
-            fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(16, 9), sharex=True, sharey=True,constrained_layout=False)
+            fig, (ax1, ax2, ax3) = plt.subplots(3, 1, figsize=(10, 10), sharex=True, sharey=True,constrained_layout=False)
             fig.suptitle((str(caseName) + '_Heating Outage Resilience'), fontsize='x-large')
             ax1.plot(x,hourlyHeat["Environment:Site Outdoor Air Drybulb Temperature [C](Hourly)"], label="Site Dry Bulb [C]", linestyle='dashed')
             ax1.plot(x,hourlyHeat["ZONE 1:Zone Air Temperature [C](Hourly)"], label="Zone Dry Bulb [C]")
             ax2.plot(x,hourlyHeat['ZONE 1:Zone Air Relative Humidity [%](Hourly)'], label=("Zone RH"))
+            ax3.plot(x,hourlyHeat['ZONE OCCUPANTS:Zone Thermal Comfort Pierce Model Standard Effective Temperature [C](Hourly)'], label=("Zone SET"))
             ax1.grid(True)
             ax1.set_ylabel('Temperature [C]')
             ax1.legend(ncol=2, loc='lower left', borderaxespad=0, fontsize='x-small')
             ax2.legend(ncol=2, loc='lower left', borderaxespad=0, fontsize='x-small')
             ax2.grid(True)
-            ax2.set_xlabel('Date')
             ax2.set_ylabel('Relative Humidity [%]')
+            ax3.legend(ncol=2, loc='lower left', borderaxespad=0, fontsize='x-small')
+            ax3.grid(True)
+            ax3.set_xlabel('Date')
+            ax3.set_ylabel('Standard Effective Temperature [°C]')
 
-            plt.savefig(str(studyFolder) + "/" + str(BaseFileName) + "_Heating Outage Resilience Graphs.png", dpi=300)
+
+            heatingGraphFile = (str(studyFolder) + "/" + str(BaseFileName) + "_Heating Outage Resilience Graphs.png")
+
+            plt.savefig(str(heatingGraphFile), dpi=300)
 
             x = hourlyCool['DateTime']
 
-            fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(16, 9), sharex=True, sharey=True,constrained_layout=False)
+            fig, (ax1, ax2, ax3) = plt.subplots(3, 1, figsize=(10, 10), sharex=True, sharey=True,constrained_layout=False)
             fig.suptitle((str(caseName) + '_Cooling Outage Resilience'), fontsize='x-large')
             ax1.plot(x,hourlyCool["Environment:Site Outdoor Air Drybulb Temperature [C](Hourly)"], label="Site Dry Bulb [C]", linestyle='dashed')
             ax1.plot(x,hourlyCool["ZONE 1:Zone Air Temperature [C](Hourly)"], label="Zone Dry Bulb [C]")
             ax2.plot(x,hourlyCool['ZONE 1:Zone Air Relative Humidity [%](Hourly)'], label=("Zone RH"))
+            ax3.plot(x,hourlyCool['ZONE 1:Zone Heat Index [C](Hourly)'], label=("Zone HI"))
             ax1.grid(True)
             ax1.set_ylabel('Temperature [C]')
             ax1.legend(ncol=2, loc='lower left', borderaxespad=0, fontsize='x-small')
@@ -567,8 +607,14 @@ while True:
             ax2.grid(True)
             ax2.set_xlabel('Date')
             ax2.set_ylabel('Relative Humidity [%]')
+            ax3.legend(ncol=2, loc='lower left', borderaxespad=0, fontsize='x-small')
+            ax3.grid(True)
+            ax3.set_xlabel('Date')
+            ax3.set_ylabel('Heat Index [°C]')
 
-            plt.savefig(str(studyFolder) + "/" + str(BaseFileName) + "_Cooling Outage Resilience Graphs.png", dpi=300)
+            coolingGraphFile = (str(studyFolder) + "/" + str(BaseFileName) + "_Cooling Outage Resilience Graphs.png")
+
+            plt.savefig(str(coolingGraphFile), dpi=300)
 
             # Battery Sizing
             heatingBattery = (hourlyHeat['Whole Building:Facility Total Purchased Electricity Energy [J](Hourly)'].sum())*0.0000002778
@@ -677,7 +723,7 @@ while True:
             os.rename(reportCSV,reportCSV2)
             os.rename(reportSQL,reportSQL2)
 
-##################ADORB
+##################ADORB 436253 RED QUEEN PIN
 
             laborFraction = 0.4
             emCO2_firstCost = firstCost*laborFraction*0.3
@@ -745,7 +791,59 @@ while True:
             newResultRow.to_csv(str(studyFolder) + "/" + str(caseName) + "_Test_ResultsTable.csv")
             
             ResultsTable = pd.concat([ResultsTable, newResultRow], axis=0, ignore_index=True)#, ignore_index=True)
+
+            if pdfReport == True:
+
+                PDF_Report(caseName, studyFolder, HeatingSET, Below2C, Caution, ExtremeCaution, Danger, ExtremeDanger, 
+                        heatingBattery, coolingBattery, eui, peakElec, annualElec, annualGas,
+                        firstCost, adorbCost, heatingGraphFile, coolingGraphFile, adorb.adorbWedgeGraph,
+                        adorb.adorbBarGraph)
+
             
         ResultsTable.to_csv(str(studyFolder) + "/" + str(batchName) + "_ResultsTable.csv")
+
+        if cleanFolder == True:
+            os.listdir(studyFolder)
+            for filename in os.listdir(studyFolder):
+                if filename.endswith('.idf'):
+                        if 'PASS' in filename:
+                            os.remove(filename)
+                if filename.endswith('.sql'):
+                    os.remove(filename)
+                if filename.endswith('.rdd'):
+                    os.remove(filename)
+                if filename.endswith('.shd'):
+                    os.remove(filename)
+                if filename.endswith('.rvaudit'):
+                    os.remove(filename)
+                if filename.endswith('.mtr'):
+                    os.remove(filename)
+                if filename.endswith('.mtd'):
+                    os.remove(filename)
+                if filename.endswith('.mdd'):
+                    os.remove(filename)
+                if filename.endswith('.eso'):
+                    os.remove(filename)
+                if filename.endswith('.err'):
+                    os.remove(filename)
+                if filename.endswith('.eio'):
+                    os.remove(filename)
+                if filename.endswith('.end'):
+                    os.remove(filename)
+                if filename.endswith('.bnd'):
+                    os.remove(filename)
+                if filename.endswith('.audit'):
+                    os.remove(filename)
+                # Latex
+                if filename.endswith('.tex'):
+                    os.remove(filename)
+                if filename.endswith('.log'):
+                    os.remove(filename)
+                if filename.endswith('.fls'):
+                    os.remove(filename)
+                if filename.endswith('.fdb_latexmk'):
+                    os.remove(filename)
+                if filename.endswith('.aux'):
+                    os.remove(filename)
 
         sg.popup('Analysis Complete')
