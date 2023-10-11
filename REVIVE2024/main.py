@@ -143,7 +143,7 @@ while True:
             iddfile = str(inputValues['iddFile'])
             runListPath = inputValues['runList']
             studyFolder = inputValues['studyFolder']
-            database = inputValues['dataBases']
+            databases = inputValues['dataBases']
 
             idfgName = inputValues['GEO']
             emissionsDatabase = (str(inputValues['dataBases']) + 'Hourly Emission Rates.csv')
@@ -540,9 +540,9 @@ while True:
 
 
             # Resilience Graphs
-
             filehandle = (str(studyFolder) + '\eplusout.csv')
             hourly = pd.read_csv(filehandle)
+            hourlyBA = pd.read_csv(filehandle)
 
             hourly.rename(columns = {'Date/Time':'DateTime'}, inplace = True)
             hourly[['Date2','Time']] = hourly.DateTime.str.split(expand=True)
@@ -570,23 +570,29 @@ while True:
 
             x = hourlyHeat['DateTime']
 
-            fig, (ax1, ax2, ax3) = plt.subplots(3, 1, figsize=(10, 10), sharex=True, sharey=True,constrained_layout=False)
+            fig = plt.figure(layout='constrained', figsize=(10, 10))
             fig.suptitle((str(caseName) + '_Heating Outage Resilience'), fontsize='x-large')
-            ax1.plot(x,hourlyHeat["Environment:Site Outdoor Air Drybulb Temperature [C](Hourly)"], label="Site Dry Bulb [C]", linestyle='dashed')
-            ax1.plot(x,hourlyHeat["ZONE 1:Zone Air Temperature [C](Hourly)"], label="Zone Dry Bulb [C]")
-            ax2.plot(x,hourlyHeat['ZONE 1:Zone Air Relative Humidity [%](Hourly)'], label=("Zone RH"))
-            ax3.plot(x,hourlyHeat['ZONE OCCUPANTS:Zone Thermal Comfort Pierce Model Standard Effective Temperature [C](Hourly)'], label=("Zone SET"))
-            ax1.grid(True)
-            ax1.set_ylabel('Temperature [C]')
-            ax1.legend(ncol=2, loc='lower left', borderaxespad=0, fontsize='x-small')
-            ax2.legend(ncol=2, loc='lower left', borderaxespad=0, fontsize='x-small')
-            ax2.grid(True)
-            ax2.set_ylabel('Relative Humidity [%]')
-            ax3.legend(ncol=2, loc='lower left', borderaxespad=0, fontsize='x-small')
-            ax3.grid(True)
-            ax3.set_xlabel('Date')
-            ax3.set_ylabel('Standard Effective Temperature [°C]')
+            ax = fig.subplot_mosaic([['temperature'],['rh'],['SET']])
+            ax['temperature'].plot(x,hourlyHeat["Environment:Site Outdoor Air Drybulb Temperature [C](Hourly)"], label="Site Dry Bulb [C]", linestyle='dashed')
+            ax['temperature'].plot(x,hourlyHeat["ZONE 1:Zone Air Temperature [C](Hourly)"], label="Zone Dry Bulb [C]",color='black',linewidth=2)
+            ax['temperature'].set_ylim(((min(min(hourlyHeat["Environment:Site Outdoor Air Drybulb Temperature [C](Hourly)"]), min(hourlyHeat["ZONE 1:Zone Air Temperature [C](Hourly)"])))-5),((max(max(hourlyHeat["Environment:Site Outdoor Air Drybulb Temperature [C](Hourly)"]), max(hourlyHeat["ZONE 1:Zone Air Temperature [C](Hourly)"])))+5))
+            ax['temperature'].set_ylabel('Temperature [C]')
+            ax['temperature'].legend(ncol=2, loc='lower left', borderaxespad=0, fontsize='x-small')
+            ax['temperature'].grid(True)
 
+            ax['rh'].plot(x,hourlyHeat['ZONE 1:Zone Air Relative Humidity [%](Hourly)'], label=("Zone RH"),color='black',linewidth=2)
+            ax['rh'].set_ylabel('Relative Humidity [%]')
+            ax['rh'].set_ylim(0,100)
+            ax['rh'].legend(ncol=2, loc='lower left', borderaxespad=0, fontsize='x-small')
+            ax['rh'].grid(True)
+
+            ax['SET'].plot(x,hourlyHeat['ZONE OCCUPANTS:Zone Thermal Comfort Pierce Model Standard Effective Temperature [C](Hourly)'], label=("Zone SET"),color='black',linewidth=2)
+            ax['SET'].grid(True)
+            ax['SET'].legend(ncol=2, loc='lower left', borderaxespad=0, fontsize='x-small')
+            ax['SET'].set_ylim((min(hourlyHeat['ZONE OCCUPANTS:Zone Thermal Comfort Pierce Model Standard Effective Temperature [C](Hourly)'])-5),(max(hourlyHeat['ZONE OCCUPANTS:Zone Thermal Comfort Pierce Model Standard Effective Temperature [C](Hourly)'])+5))
+            ax['SET'].set_xlabel('Date')
+            ax['SET'].set_ylabel('Standard Effective Temperature [°C]')
+            ax['SET'].axhline(12.2, color='crimson', linestyle='dashed')
 
             heatingGraphFile = (str(studyFolder) + "/" + str(BaseFileName) + "_Heating Outage Resilience Graphs.png")
 
@@ -594,27 +600,37 @@ while True:
 
             x = hourlyCool['DateTime']
 
-            fig, (ax1, ax2, ax3) = plt.subplots(3, 1, figsize=(10, 10), sharex=True, sharey=True,constrained_layout=False)
+            fig = plt.figure(layout='constrained', figsize=(10, 10))
             fig.suptitle((str(caseName) + '_Cooling Outage Resilience'), fontsize='x-large')
-            ax1.plot(x,hourlyCool["Environment:Site Outdoor Air Drybulb Temperature [C](Hourly)"], label="Site Dry Bulb [C]", linestyle='dashed')
-            ax1.plot(x,hourlyCool["ZONE 1:Zone Air Temperature [C](Hourly)"], label="Zone Dry Bulb [C]")
-            ax2.plot(x,hourlyCool['ZONE 1:Zone Air Relative Humidity [%](Hourly)'], label=("Zone RH"))
-            ax3.plot(x,hourlyCool['ZONE 1:Zone Heat Index [C](Hourly)'], label=("Zone HI"))
-            ax1.grid(True)
-            ax1.set_ylabel('Temperature [C]')
-            ax1.legend(ncol=2, loc='lower left', borderaxespad=0, fontsize='x-small')
-            ax2.legend(ncol=2, loc='lower left', borderaxespad=0, fontsize='x-small')
-            ax2.grid(True)
-            ax2.set_xlabel('Date')
-            ax2.set_ylabel('Relative Humidity [%]')
-            ax3.legend(ncol=2, loc='lower left', borderaxespad=0, fontsize='x-small')
-            ax3.grid(True)
-            ax3.set_xlabel('Date')
-            ax3.set_ylabel('Heat Index [°C]')
+            ax = fig.subplot_mosaic([['temperature'],['rh'],['HI']])
+            ax['temperature'].plot(x,hourlyCool["Environment:Site Outdoor Air Drybulb Temperature [C](Hourly)"], label="Site Dry Bulb [C]", linestyle='dashed')
+            ax['temperature'].plot(x,hourlyCool["ZONE 1:Zone Air Temperature [C](Hourly)"], label="Zone Dry Bulb [C]",color='black',linewidth=2)
+            ax['temperature'].set_ylim(((min(min(hourlyCool["Environment:Site Outdoor Air Drybulb Temperature [C](Hourly)"]), min(hourlyCool["ZONE 1:Zone Air Temperature [C](Hourly)"])))-5),((max(max(hourlyCool["Environment:Site Outdoor Air Drybulb Temperature [C](Hourly)"]), max(hourlyCool["ZONE 1:Zone Air Temperature [C](Hourly)"])))+5))
+            ax['temperature'].set_ylabel('Temperature [C]')
+            ax['temperature'].legend(ncol=2, loc='lower left', borderaxespad=0, fontsize='x-small')
+            ax['temperature'].grid(True)
+
+            ax['rh'].plot(x,hourlyCool['ZONE 1:Zone Air Relative Humidity [%](Hourly)'], label=("Zone RH"),color='black',linewidth=2)
+            ax['rh'].set_ylabel('Relative Humidity [%]')
+            ax['rh'].set_ylim(0,100)
+            ax['rh'].legend(ncol=2, loc='lower left', borderaxespad=0, fontsize='x-small')
+            ax['rh'].grid(True)
+
+            ax['HI'].plot(x,hourlyCool['ZONE 1:Zone Heat Index [C](Hourly)'], label=("Zone HI"),color='black',linewidth=2)
+            ax['HI'].grid(True)
+            ax['HI'].legend(ncol=2, loc='lower left', borderaxespad=0, fontsize='x-small')
+            ax['HI'].set_ylim((min(hourlyCool['ZONE 1:Zone Heat Index [C](Hourly)'])-5),(max(hourlyCool['ZONE 1:Zone Heat Index [C](Hourly)'])+5))
+            ax['HI'].set_xlabel('Date')
+            ax['HI'].set_ylabel('Heat Index [°C]')
+            ax['HI'].axhline(26.7, color='seagreen', linestyle='dashed')
+            ax['HI'].axhline(32.2, color='orange', linestyle='dashed')
+            ax['HI'].axhline(39.4, color='crimson', linestyle='dashed')
+            ax['HI'].axhline(51.7, color='darkmagenta', linestyle='dashed')
 
             coolingGraphFile = (str(studyFolder) + "/" + str(BaseFileName) + "_Cooling Outage Resilience Graphs.png")
 
             plt.savefig(str(coolingGraphFile), dpi=300)
+
 
             # Battery Sizing
             heatingBattery = (hourlyHeat['Whole Building:Facility Total Purchased Electricity Energy [J](Hourly)'].sum())*0.0000002778
@@ -725,23 +741,52 @@ while True:
 
 ##################ADORB 436253 RED QUEEN PIN
 
+            hourlyBA.rename(columns = {'Date/Time':'DateTime'}, inplace = True)
+            hourlyBA[['Date2','Time']] = hourlyBA.DateTime.str.split(expand=True)
+            hourlyBA['Date'] = hourlyBA['Date2'].map(str) + '/' + str(2020)
+            hourlyBA['Time'] = (pd.to_numeric(hourlyBA['Time'].str.split(':').str[0])-1).astype(str).apply(lambda x: f'0{x}' if len(x)==1 else x) + hourlyBA['Time'].str[2:]
+            hourlyBA['DateTime'] = hourlyBA['Date'] + ' ' + hourlyBA['Time']
+            hourlyBA['DateTime'] = pd.to_datetime(hourlyBA['DateTime'])
+
+            endWarmup = int((hourlyBA[hourlyBA['DateTime'] == '2020-01-01 00:00:00'].index.values))
+            dropWarmup = [*range(0, endWarmup,1)]
+
+            hourlyBA = hourlyBA.drop(index = dropWarmup)
+            hourlyBA = hourlyBA.reset_index()
+
+            MWH = hourlyBA['Whole Building:Facility Total Purchased Electricity Energy [J](Hourly)']*0.0000000002778
+
             laborFraction = 0.4
             emCO2_firstCost = firstCost*laborFraction*0.3
 
-            MWH = hourly['Whole Building:Facility Total Purchased Electricity Energy [J](Hourly)']*0.0000000002778
-            hourlyEmissions = pd.read_csv(emissionsDatabase)
-            emissions = hourlyEmissions[str(gridRegion)]
+            # hourlyEmissions = pd.read_csv(emissionsDatabase)
+            # emissions = hourlyEmissions[str(gridRegion)]
             
-            CO2_Elec = sum(MWH*emissions)
+            CO2_Elec_List = []
+            count = 0
+            os.listdir(str(databases) + 'CambiumFactors')
+            for filename in os.listdir(str(databases) + 'CambiumFactors'):
+                if filename.endswith('.csv'):
+                    hourlyBAEmissions = pd.read_csv(str(databases) + 'CambiumFactors/' + str(filename))
+                    emissions = hourlyBAEmissions[str(gridRegion)]
+                    CO2_Elec = sum(MWH*emissions)
+                    count = count + 1
+                    CO2_Elec_List.append((CO2_Elec))
+
+            annualCO2Elec = CO2_Elec_List
+
+
+            # CO2_Elec = sum(MWH*emissions)
 
             gasPrice = 0.64 #$/therm
 
             if natGasPresent == 1:
                 monthlyMTR = monthlyMTR.drop(index=[0,1,2,3,4,5,6,7])
                 annualGas = (((sum(monthlyMTR['NaturalGas:Facility [J](Monthly) ']*9.478169879E-9))*gasPrice)+(40*12))
-                CO2_gas = (sum(monthlyMTR['NaturalGas:Facility [J](Monthly) ']*9.478169879E-9))*12.7
+                annualCO2Gas = (sum(monthlyMTR['NaturalGas:Facility [J](Monthly) ']*9.478169879E-9))*12.7
             else:
                 CO2_gas = 0
+                annualCO2Gas = 0
                 annualGas = 0
 
             # Future above to be better integrated
@@ -755,7 +800,7 @@ while True:
             emCO2 = [(emCO2_firstCost,1),((8500*laborFraction*0.3),20),((8500*laborFraction*0.3),40),((8500*laborFraction*0.3),60)] 
             eTrans = peakElec
             
-            final = adorb(BaseFileName, studyFolder, duration, annualElec, annualGas, annualCO2, dirMR, emCO2, eTrans)
+            final = adorb(BaseFileName, studyFolder, duration, annualElec, annualGas, annualCO2Elec, annualCO2Gas, dirMR, emCO2, eTrans)
 
             adorbCost = final[0]
             pv_dirEn_tot = final[1]

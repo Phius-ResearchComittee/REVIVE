@@ -28,9 +28,9 @@ import shutil
 import fnmatch
 import glob
 
-def adorb(BaseFileName, studyFolder, analysisPeriod, annualElec, annualGas, annualCO2, dirMR, emCO2, eTrans):
+def adorb(BaseFileName, studyFolder, duration, annualElec, annualGas, annualCO2Elec, annualCO2Gas, dirMR, emCO2, eTrans):
     results = pd.DataFrame(columns=['pv_dirEn', 'pv_opCO2', 'pv_dirMR', 'pv_emCO2', 'pv_eTrans'])
-    years = range(analysisPeriod)
+    years = range(duration)
     pv = []
     r2 = []
     pc= 0.25
@@ -52,7 +52,7 @@ def adorb(BaseFileName, studyFolder, analysisPeriod, annualElec, annualGas, annu
         pv_dirEn = (annualElec+ annualGas)/((1+k_dirEn)**year)
 
         # Cost of operational carbon
-        c_opCarb = annualCO2 * pc
+        c_opCarb = (annualCO2Elec[i] + annualCO2Gas) * pc
         pv_opCO2 = c_opCarb/((1+k_opCarb)**year)
 
         # Cost of embodied carbon
