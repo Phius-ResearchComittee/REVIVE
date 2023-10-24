@@ -1,7 +1,7 @@
 #=============================================================================================================================
 # PhiusREVIVE Research Tool
-# Updated 2023/09/19
-# v23.0.0
+# Updated 2023/10/12
+# v23.0.4
 #
 #
 
@@ -103,7 +103,7 @@ tab1_layout =   [[sg.Text('IDD File Location:', size =(15, 1)),sg.InputText("C:\
                 [sg.Text('Study Folder:', size =(15, 1)),sg.InputText('C:/Users/amitc_crl/OneDrive/Documents/GitHub/REVIVE/REVIVE2024/Testing Files/Testing_2023-08-29', key='studyFolder'), sg.FolderBrowse()],
                 [sg.Text('Geometry IDF:', size =(15, 1)),sg.InputText('C:/Users/amitc_crl/OneDrive/Documents/GitHub/REVIVE/PhiusREVIVE/Testing/PNNL_SF_Geometry.idf', key='GEO'), sg.FileBrowse()],
                 [sg.Text('Run List Location:', size =(15, 1)),sg.InputText('C:/Users/amitc_crl/OneDrive/Documents/GitHub/REVIVE/REVIVE2024/Testing Files/Testing_2023-08-29/testRuns.csv', key='runList'), sg.FileBrowse()],
-                [sg.Text('Database Folder Location:', size =(15, 1)),sg.InputText('C:/Users/amitc_crl/OneDrive/Documents/GitHub/REVIVE/REVIVE2024/Databases/', key='dataBases'), sg.FileBrowse()]
+                [sg.Text('Database Folder Location:', size =(15, 1)),sg.InputText('C:/Users/amitc_crl/OneDrive/Documents/GitHub/REVIVE/REVIVE2024/Databases/', key='dataBases'), sg.FolderBrowse()]
                 ]
 
 tab2_layout =   [[sg.Text('Batch Name:', size =(20, 1)),sg.InputText('Name your batch of files', key='batchName')],
@@ -111,14 +111,15 @@ tab2_layout =   [[sg.Text('Batch Name:', size =(20, 1)),sg.InputText('Name your 
                  [sg.Checkbox('Delete Unecessary Files?', size=(25, 1), default=True,key='DeleteFiles')]
                 ]
 
-layout1 = [[sg.Image(r'C:\Users\amitc_crl\OneDrive\Documents\GitHub\REVIVE\REVIVE2024\al_REVIVE_PILOT_logo.png')],
+layout1 = [
+    # [sg.Image(r'C:\Users\amitc_crl\OneDrive\Documents\GitHub\REVIVE\REVIVE2024\al_REVIVE_PILOT_logo.png')],
             [sg.TabGroup(
             [[sg.Tab('Start', tab0_layout,),
             sg.Tab('Project Settings', tab1_layout,),
             sg.Tab('Basic Input Data', tab2_layout,),]])],
             [sg.Button('LOAD'), sg.Button('RUN ANALYSIS'), sg.Button('EXIT')]]  
 
-window = sg.Window('Phius REVIVE 2024 Analysis Tool v23.0.0',layout1, default_element_size=(125, 125), grab_anywhere=True)
+window = sg.Window('Phius REVIVE 2024 Analysis Tool v23.0.4',layout1, default_element_size=(125, 125), grab_anywhere=True)
 
 #==============================================================================================================================
 # 3.0 File Management
@@ -764,10 +765,10 @@ while True:
             
             CO2_Elec_List = []
             count = 0
-            os.listdir(str(databases) + 'CambiumFactors')
-            for filename in os.listdir(str(databases) + 'CambiumFactors'):
+            os.listdir(str(databases) + '/CambiumFactors')
+            for filename in os.listdir(str(databases) + '/CambiumFactors'):
                 if filename.endswith('.csv'):
-                    hourlyBAEmissions = pd.read_csv(str(databases) + 'CambiumFactors/' + str(filename))
+                    hourlyBAEmissions = pd.read_csv(str(databases) + '/CambiumFactors/' + str(filename))
                     emissions = hourlyBAEmissions[str(gridRegion)]
                     CO2_Elec = sum(MWH*emissions)
                     count = count + 1
@@ -795,7 +796,7 @@ while True:
             elecPrice = 0.1324 #$/kWh
             annualElec = ((hourly['Whole Building:Facility Total Purchased Electricity Energy [J](Hourly)'].sum()*0.0000002778*elecPrice)+144)
             
-            annualCO2 = CO2_Elec + CO2_gas
+            # annualCO2 = CO2_Elec + CO2_gas
             dirMR = [(firstCost,1),(8500,20),(8500,40),(8500,60)]
             emCO2 = [(emCO2_firstCost,1),((8500*laborFraction*0.3),20),((8500*laborFraction*0.3),40),((8500*laborFraction*0.3),60)] 
             eTrans = peakElec

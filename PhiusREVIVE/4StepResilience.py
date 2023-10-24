@@ -96,7 +96,7 @@ tab2_layout =   [[sg.Text('File Name:', size =(20, 1)),sg.InputText('Name your f
                 ]
 
 layout1 = [
-    # [sg.Image(r'C:\Users\amitc\Documents\GitHub\Phius-REVIVE\Project Program\4StepResilience\al_REVIVE_PILOT_logo.png')],
+    [sg.Image(r'C:\Users\amitc\Documents\GitHub\Phius-REVIVE\Project Program\4StepResilience\al_REVIVE_PILOT_logo.png')],
                 [sg.TabGroup(
                 [[sg.Tab('Start', tab0_layout,),
                 sg.Tab('Project Settings', tab1_layout,),
