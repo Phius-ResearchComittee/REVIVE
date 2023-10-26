@@ -411,7 +411,7 @@ def AnnualSchedules(idf, outage1start, outage1end, outage2start, outage2end,
     SchValues_Dishwasher = [0.015,0.007,0.005,0.003,0.003,0.01,0.02,0.031,0.058,0.065,0.056,0.048,0.041,0.046,0.036,0.038,0.038,0.049,0.087,0.111,0.09,0.067,0.044,0.031]
 
     SchName_Occupant = 'OccupantSchedule'
-    SchValues_Occupant = [0.015,0.007,0.005,0.003,0.003,0.01,0.02,0.031,0.058,0.065,0.056,0.048,0.041,0.046,0.036,0.038,0.038,0.049,0.087,0.111,0.09,0.067,0.044,0.031]
+    SchValues_Occupant = [1,1,1,1,1,1,1,0.9,0.4,0.25,0.25,0.25,0.25,0.25,0.25,0.25,0.55,0.9,0.9,0.9,1,1,1]
 
     hourSch(idf, SchName_Lighting, SchValues_Lighting)
     hourSch(idf, SchName_MELs, SchValues_MELs)
