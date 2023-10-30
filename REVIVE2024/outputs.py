@@ -139,8 +139,8 @@ def PDF_Report(caseName, studyFolder, HeatingSET, Below2C, Caution, ExtremeCauti
                 table.add_row(['Danger (> 39.4, < 51.7°C)', Danger, 'hr'])
                 table.add_row(['Extreme Danger (> 51.7°C)', ExtremeDanger, 'hr'])
                 table.add_hline()
-                table.add_row(['Heating Battery Size', heatingBattery, 'kWh'])
-                table.add_row(['Cooling Battery Size', coolingBattery, 'kWh'])
+                table.add_row(['Heating Battery Size', round(heatingBattery,2), 'kWh'])
+                table.add_row(['Cooling Battery Size', round(coolingBattery,2), 'kWh'])
                 table.add_hline()
 
     with doc.create(Subsection('Adorb Single Point Metrics')): 
@@ -148,12 +148,12 @@ def PDF_Report(caseName, studyFolder, HeatingSET, Below2C, Caution, ExtremeCauti
                 table.add_hline()
                 table.add_row(['Metric','Result','Unit'])
                 table.add_hline()
-                table.add_row(['Energy Use Intensity', eui,'kBtu/ sf yr'])
-                table.add_row(['Peak Electrical Load', peakElec,'W'])
+                table.add_row(['Energy Use Intensity', round(eui,2),'kBtu/ sf yr'])
+                table.add_row(['Peak Electrical Load', round(peakElec),'W'])
                 table.add_hline()
-                table.add_row(['First Year Electric Cost', annualElec,'$'])
-                table.add_row(['First Cost', firstCost,'$'])
-                table.add_row(['Total ADORB Cost', adorbCost,'$'])
+                table.add_row(['First Year Electric Cost', round(annualElec),'$'])
+                table.add_row(['First Cost', round(firstCost),'$'])
+                table.add_row(['Total ADORB Cost', round(adorbCost),'$'])
                 table.add_hline()
     
     with doc.create(Section('Graph Results')):

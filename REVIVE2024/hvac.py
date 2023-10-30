@@ -298,6 +298,98 @@ def HVACBuilder(idf, ZoneName, mechSystemType):
             Air_Outlet_Node_Name = 'DX Cooling Coil Air Inlet Node'
             )
         
+
+    if mechSystemType == 'SplitHeatPump':
+
+        idf.newidfobject('ZoneHVAC:EquipmentList',
+            Name = 'Zone_1_Equipment',
+            Load_Distribution_Scheme = 'SequentialLoad',
+            Zone_Equipment_1_Object_Type = 'ZoneHVAC:EnergyRecoveryVentilator',
+            Zone_Equipment_1_Name = 'ERV1',
+            Zone_Equipment_1_Cooling_Sequence = 2,
+            Zone_Equipment_1_Heating_or_NoLoad_Sequence = 2,
+            Zone_Equipment_2_Object_Type = 'AirLoopHVAC:UnitarySystem',
+            Zone_Equipment_2_Name = 'SplitHeatPump',
+            Zone_Equipment_2_Cooling_Sequence = 1,
+            Zone_Equipment_2_Heating_or_NoLoad_Sequence = 1
+            #Zone_Equipment_1_Sequential_Cooling_Fraction_Schedule_Name = 
+            #Zone_Equipment_1_Sequential_Heating_Fraction_Schedule_Name = 
+            )
+        
+        idf.newidfobject('AirLoopHVAC:UnitarySystem',
+            Name = 'SplitHeatPump',
+            Control_Type = 'Load',
+            Controlling_Zone_or_Thermostat_Location  =str(ZoneName),
+            Dehumidification_Control_Type = 'None',
+            Availability_Schedule_Name = 'MechAvailable',
+            Air_Inlet_Node_Name = 'Zone1MECHAirInletNode',
+            Air_Outlet_Node_Name = 'Zone1MECHAirOutletNode',
+            Supply_Fan_Object_Type = 'Fan:OnOff',
+            Supply_Fan_Name = 'FurnaceBlower',
+            Fan_Placement = 'BlowThrough',
+            Heating_Coil_Object_Type = 'Coil:Heating:DX:SingleSpeed',
+            Heating_Coil_Name = 'Zone1SplitDXHeatCoil',
+            Cooling_Coil_Object_Type = 'Coil:Cooling:DX:SingleSpeed',
+            Cooling_Coil_Name = 'Furnace ACDXCoil 1',
+            Cooling_Supply_Air_Flow_Rate = 'autosize',
+            Heating_Supply_Air_Flow_Rate = 'autosize',
+            No_Load_Supply_Air_Flow_Rate = 0,
+            Maximum_Supply_Air_Temperature = 50,
+            )
+
+        idf.newidfobject('Coil:Heating:DX:SingleSpeed',
+            Name = 'Zone1SplitDXHeatCoil',
+            Availability_Schedule_Name = 'MechAvailable',
+            Gross_Rated_Heating_Capacity = 'autosize',
+            Gross_Rated_Heating_COP = 4.5, #change to var for future
+            Rated_Air_Flow_Rate  ='autosize',
+            # Rated_Supply_Fa,n_Power_Per_Volume_Flow_Rate_{W/(m3/s)}
+            Air_Inlet_Node_Name = 'Zone1PTHPDXCoolCoilOutletNode',
+            Air_Outlet_Node_Name = 'Zone1PTHPDXHeatCoilOutletNode',
+            Heating_Capacity_Function_of_Temperature_Curve_Name = 'HPACHeatCapFT',
+            Heating_Capacity_Function_of_Flow_Fraction_Curve_Name = 'HPACHeatCapFFF',
+            Energy_Input_Ratio_Function_of_Temperature_Curve_Name = 'HPACHeatEIRFT',
+            Energy_Input_Ratio_Function_of_Flow_Fraction_Curve_Name = 'HPACHeatEIRFFF',
+            Part_Load_Fraction_Correlation_Curve_Name = 'HPACCOOLPLFFPLR',
+            # Defrost_Energy_Input_Ratio_Function_of_Temperature_Curve_Name
+            Minimum_Outdoor_DryBulb_Temperature_for_Compressor_Operation = 0.0, #future var
+            #Outdoor_Dry-Bulb_Temperature_to_Turn_On_Compressor_{C}
+            Maximum_Outdoor_DryBulb_Temperature_for_Defrost_Operation = 5.0,
+            Crankcase_Heater_Capacity = 0,
+            Maximum_Outdoor_DryBulb_Temperature_for_Crankcase_Heater_Operation = 10.0,
+            Defrost_Strategy = 'Resistive',
+            Defrost_Control = 'TIMED',
+            Defrost_Time_Period_Fraction = 0.166667,
+            Resistive_Defrost_Heater_Capacity = 'autosize'
+            )
+        idf.newidfobject('Coil:Cooling:DX:SingleSpeed',
+            Name = 'Furnace ACDXCoil 1',
+            Availability_Schedule_Name = 'MechAvailable',
+            Gross_Rated_Total_Cooling_Capacity = 'autosize',
+            Gross_Rated_Sensible_Heat_Ratio = 0.75,
+            Gross_Rated_Cooling_COP = 4.5,  # Change to var for future shit
+            Rated_Air_Flow_Rate = 'autosize',
+            Air_Inlet_Node_Name = 'DX Cooling Coil Air Inlet Node',
+            Air_Outlet_Node_Name  = 'Heating Coil Air Inlet Node',
+            Total_Cooling_Capacity_Function_of_Temperature_Curve_Name = 'HPACCoolCapFT',
+            Total_Cooling_Capacity_Function_of_Flow_Fraction_Curve_Name = 'HPACCoolCapFFF',
+            Energy_Input_Ratio_Function_of_Temperature_Curve_Name = 'HPACEIRFT',
+            Energy_Input_Ratio_Function_of_Flow_Fraction_Curve_Name = 'HPACEIRFFF',
+            Part_Load_Fraction_Correlation_Curve_Name = 'HPACPLFFPLR'
+            )
+
+        idf.newidfobject('Fan:OnOff',
+            Name = 'FurnaceBlower',
+            Availability_Schedule_Name = 'MechAvailable',
+            Fan_Total_Efficiency = 0.7,
+            Pressure_Rise = 225,
+            Maximum_Flow_Rate = 2,
+            Motor_Efficiency = 0.9,
+            Motor_In_Airstream_Fraction = 1.0,
+            Air_Inlet_Node_Name = 'Zone1MECHAirInletNode',
+            Air_Outlet_Node_Name = 'DX Cooling Coil Air Inlet Node'
+            )
+        
 def WaterHeater(idf, ZoneName, dhwFuel, DHW_CombinedGPM):
 
     idf.newidfobject('WaterHeater:Mixed',
