@@ -1,0 +1,39 @@
+,Name,Roughness,Thickness,Conductivity,Density,Specific_Heat
+0,M01 100mm brick,MediumRough,0.1016,0.89,1920.0,790.0
+1,G05 25mm wood,MediumSmooth,0.0254,0.15,608.0,1630.0
+2,F08 Metal surface,Smooth,0.0008,45.28,7824.0,500.0
+3,I01 25mm insulation board,MediumRough,0.0254,0.03,43.0,1210.0
+4,I02 50mm insulation board,MediumRough,0.0508,0.03,43.0,1210.0
+5,G01a 19mm gypsum board,MediumSmooth,0.019,0.16,800.0,1090.0
+6,M11 100mm lightweight concrete,MediumRough,0.1016,0.53,1280.0,840.0
+7,F16 Acoustic tile,MediumSmooth,0.0191,0.06,368.0,590.0
+8,M15 200mm heavyweight concrete,MediumRough,0.2032,1.95,2240.0,900.0
+9,M05 200mm concrete block,MediumRough,0.1016,1.11,800.0,920.0
+10,Mass wood,MediumSmooth,0.065532,0.15,608.701223809829,1630.0
+11,Foundation EPS,MediumSmooth,0.0508,0.02884,29.0,1210.0
+12,EPS,MediumSmooth,0.0508,0.02884,29.0,1210.0
+13,F11 Wood siding,MediumSmooth,0.0127,0.09,592.0,1170.0
+14,R-11 3.5in Wood Stud,VeryRough,0.0889,0.05426246,19.0,960.0
+15,Plywood (Douglas Fir) - 12.7mm,Smooth,0.0127,0.12,540.0,1210.0
+16,EPS 1in,MediumSmooth,0.0254,0.02884,29.0,1210.0
+17,EPS 1.625in,MediumSmooth,0.041275,0.02884,29.0,1210.0
+18,EPS 2in,MediumSmooth,0.0508,0.02884,29.0,1210.0
+19,EPS 4in,MediumSmooth,0.1016,0.02884,29.0,1210.0
+20,EPS 6in,MediumSmooth,0.1524,0.02884,29.0,1210.0
+21,EPS 7.5in,MediumSmooth,0.1905,0.02884,29.0,1210.0
+22,EPS 9in,MediumSmooth,0.1524,0.02884,29.0,1210.0
+23,EPS 14in,MediumSmooth,0.3556,0.02884,29.0,1210.0
+24,FG Attic R-19,MediumRough,0.13716,0.04119794,64.0,960.0
+25,FG Attic R-30,MediumRough,0.21844,0.04119794,64.0,960.0
+26,FG Attic R-38,MediumRough,0.275844,0.04119794,64.0,960.0
+27,FG Attic R-49,MediumRough,0.3556,0.04119794,64.0,960.0
+28,FG Attic R-55,MediumRough,0.3991229,0.04119794,64.0,960.0
+29,FG Attic R-60,MediumRough,0.3556,0.04119794,64.0,960.0
+30,FG Attic R-75,MediumRough,0.54356,0.04119794,64.0,960.0
+31,FG Attic R-100,MediumRough,0.72644,0.04119794,64.0,960.0
+32,ccSF R-13,Rough,0.05503418,0.024033814,32.0,920.0
+33,ccSF R-19,Rough,0.080433418,0.024033814,32.0,920.0
+34,ccSF R-30,Rough,0.127,0.024033814,32.0,920.0
+35,ccSF R-38,Rough,0.160866582,0.024033814,32.0,920.0
+36,ccSF R-49,Rough,0.207433418,0.024033814,32.0,920.0
+37,StemWall UnIns,MediumRough,0.003175,0.53,1280.0,840.0

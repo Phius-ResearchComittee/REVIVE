@@ -13,7 +13,7 @@ SIMULATIONCONTROL,
     25;                       !- Maximum Number of HVAC Sizing Simulation Passes
 
 BUILDING,
-    Name your batch of files_Chicago-MDW_BASE,    !- Name
+    Name your batch of files_Chicago-MDW_IECC+0.04_Elec,    !- Name
     0,                        !- North Axis
     City,                     !- Terrain
     0.04,                     !- Loads Convergence Tolerance Value
@@ -567,81 +567,460 @@ SCHEDULETYPELIMITS,
     Dimensionless;            !- Unit Type
 
 SCHEDULE:COMPACT,
-    BARangeSchedule,          !- Name
-    Fraction,                 !- Schedule Type Limits Name
-    Through: 12/31,           !- Field 1
-    For: SummerDesignDay,     !- Field 2
-    Until: 24:00,             !- Field 3
-    0,                        !- Field 4
-    For: AllOtherDays,        !- Field 5
-    Until: 24:00,             !- Field 6
-    0;                        !- Field 7
-
-SCHEDULE:COMPACT,
     Phius_Lighting,           !- Name
     Fraction,                 !- Schedule Type Limits Name
     Through: 12/31,           !- Field 1
-    For: SummerDesignDay,     !- Field 2
+    For: SummerDesignDay WinterDesignDay,    !- Field 2
     Until: 24:00,             !- Field 3
     0,                        !- Field 4
     For: AllOtherDays,        !- Field 5
-    Until: 24:00,             !- Field 6
-    0;                        !- Field 7
+    Until: 1:00,              !- Field 6
+    0.008,                    !- Field 7
+    Until: 2:00,              !- Field 8
+    0.008,                    !- Field 9
+    Until: 3:00,              !- Field 10
+    0.008,                    !- Field 11
+    Until: 4:00,              !- Field 12
+    0.008,                    !- Field 13
+    Until: 5:00,              !- Field 14
+    0.024,                    !- Field 15
+    Until: 6:00,              !- Field 16
+    0.05,                     !- Field 17
+    Until: 7:00,              !- Field 18
+    0.056,                    !- Field 19
+    Until: 8:00,              !- Field 20
+    0.05,                     !- Field 21
+    Until: 9:00,              !- Field 22
+    0.022,                    !- Field 23
+    Until: 10:00,             !- Field 24
+    0.015,                    !- Field 25
+    Until: 11:00,             !- Field 26
+    0.015,                    !- Field 27
+    Until: 12:00,             !- Field 28
+    0.015,                    !- Field 29
+    Until: 13:00,             !- Field 30
+    0.015,                    !- Field 31
+    Until: 14:00,             !- Field 32
+    0.015,                    !- Field 33
+    Until: 15:00,             !- Field 34
+    0.026,                    !- Field 35
+    Until: 16:00,             !- Field 36
+    0.015,                    !- Field 37
+    Until: 17:00,             !- Field 38
+    0.056,                    !- Field 39
+    Until: 18:00,             !- Field 40
+    0.078,                    !- Field 41
+    Until: 19:00,             !- Field 42
+    0.105,                    !- Field 43
+    Until: 20:00,             !- Field 44
+    0.126,                    !- Field 45
+    Until: 21:00,             !- Field 46
+    0.128,                    !- Field 47
+    Until: 22:00,             !- Field 48
+    0.088,                    !- Field 49
+    Until: 23:00,             !- Field 50
+    0.049,                    !- Field 51
+    Until: 24:00,             !- Field 52
+    0.02;                     !- Field 53
 
 SCHEDULE:COMPACT,
     Phius_MELs,               !- Name
     Fraction,                 !- Schedule Type Limits Name
     Through: 12/31,           !- Field 1
-    For: SummerDesignDay,     !- Field 2
+    For: SummerDesignDay WinterDesignDay,    !- Field 2
     Until: 24:00,             !- Field 3
     0,                        !- Field 4
     For: AllOtherDays,        !- Field 5
-    Until: 24:00,             !- Field 6
-    0;                        !- Field 7
+    Until: 1:00,              !- Field 6
+    0.008,                    !- Field 7
+    Until: 2:00,              !- Field 8
+    0.008,                    !- Field 9
+    Until: 3:00,              !- Field 10
+    0.008,                    !- Field 11
+    Until: 4:00,              !- Field 12
+    0.008,                    !- Field 13
+    Until: 5:00,              !- Field 14
+    0.024,                    !- Field 15
+    Until: 6:00,              !- Field 16
+    0.05,                     !- Field 17
+    Until: 7:00,              !- Field 18
+    0.056,                    !- Field 19
+    Until: 8:00,              !- Field 20
+    0.05,                     !- Field 21
+    Until: 9:00,              !- Field 22
+    0.022,                    !- Field 23
+    Until: 10:00,             !- Field 24
+    0.015,                    !- Field 25
+    Until: 11:00,             !- Field 26
+    0.015,                    !- Field 27
+    Until: 12:00,             !- Field 28
+    0.015,                    !- Field 29
+    Until: 13:00,             !- Field 30
+    0.015,                    !- Field 31
+    Until: 14:00,             !- Field 32
+    0.015,                    !- Field 33
+    Until: 15:00,             !- Field 34
+    0.026,                    !- Field 35
+    Until: 16:00,             !- Field 36
+    0.015,                    !- Field 37
+    Until: 17:00,             !- Field 38
+    0.056,                    !- Field 39
+    Until: 18:00,             !- Field 40
+    0.078,                    !- Field 41
+    Until: 19:00,             !- Field 42
+    0.105,                    !- Field 43
+    Until: 20:00,             !- Field 44
+    0.126,                    !- Field 45
+    Until: 21:00,             !- Field 46
+    0.128,                    !- Field 47
+    Until: 22:00,             !- Field 48
+    0.088,                    !- Field 49
+    Until: 23:00,             !- Field 50
+    0.049,                    !- Field 51
+    Until: 24:00,             !- Field 52
+    0.02;                     !- Field 53
 
 SCHEDULE:COMPACT,
     CombinedDHWSchedule,      !- Name
     Fraction,                 !- Schedule Type Limits Name
     Through: 12/31,           !- Field 1
-    For: SummerDesignDay,     !- Field 2
+    For: SummerDesignDay WinterDesignDay,    !- Field 2
     Until: 24:00,             !- Field 3
     0,                        !- Field 4
     For: AllOtherDays,        !- Field 5
-    Until: 24:00,             !- Field 6
-    0;                        !- Field 7
+    Until: 1:00,              !- Field 6
+    0.006,                    !- Field 7
+    Until: 2:00,              !- Field 8
+    0.003,                    !- Field 9
+    Until: 3:00,              !- Field 10
+    0.001,                    !- Field 11
+    Until: 4:00,              !- Field 12
+    0.001,                    !- Field 13
+    Until: 5:00,              !- Field 14
+    0.003,                    !- Field 15
+    Until: 6:00,              !- Field 16
+    0.022,                    !- Field 17
+    Until: 7:00,              !- Field 18
+    0.075,                    !- Field 19
+    Until: 8:00,              !- Field 20
+    0.079,                    !- Field 21
+    Until: 9:00,              !- Field 22
+    0.076,                    !- Field 23
+    Until: 10:00,             !- Field 24
+    0.067,                    !- Field 25
+    Until: 11:00,             !- Field 26
+    0.061,                    !- Field 27
+    Until: 12:00,             !- Field 28
+    0.048,                    !- Field 29
+    Until: 13:00,             !- Field 30
+    0.042,                    !- Field 31
+    Until: 14:00,             !- Field 32
+    0.037,                    !- Field 33
+    Until: 15:00,             !- Field 34
+    0.037,                    !- Field 35
+    Until: 16:00,             !- Field 36
+    0.033,                    !- Field 37
+    Until: 17:00,             !- Field 38
+    0.044,                    !- Field 39
+    Until: 18:00,             !- Field 40
+    0.058,                    !- Field 41
+    Until: 19:00,             !- Field 42
+    0.069,                    !- Field 43
+    Until: 20:00,             !- Field 44
+    0.065,                    !- Field 45
+    Until: 21:00,             !- Field 46
+    0.059,                    !- Field 47
+    Until: 22:00,             !- Field 48
+    0.048,                    !- Field 49
+    Until: 23:00,             !- Field 50
+    0.042,                    !- Field 51
+    Until: 24:00,             !- Field 52
+    0.023;                    !- Field 53
+
+SCHEDULE:COMPACT,
+    BARangeSchedule,          !- Name
+    Fraction,                 !- Schedule Type Limits Name
+    Through: 12/31,           !- Field 1
+    For: SummerDesignDay WinterDesignDay,    !- Field 2
+    Until: 24:00,             !- Field 3
+    0,                        !- Field 4
+    For: AllOtherDays,        !- Field 5
+    Until: 1:00,              !- Field 6
+    0.007,                    !- Field 7
+    Until: 2:00,              !- Field 8
+    0.007,                    !- Field 9
+    Until: 3:00,              !- Field 10
+    0.004,                    !- Field 11
+    Until: 4:00,              !- Field 12
+    0.004,                    !- Field 13
+    Until: 5:00,              !- Field 14
+    0.007,                    !- Field 15
+    Until: 6:00,              !- Field 16
+    0.011,                    !- Field 17
+    Until: 7:00,              !- Field 18
+    0.025,                    !- Field 19
+    Until: 8:00,              !- Field 20
+    0.042,                    !- Field 21
+    Until: 9:00,              !- Field 22
+    0.046,                    !- Field 23
+    Until: 10:00,             !- Field 24
+    0.048,                    !- Field 25
+    Until: 11:00,             !- Field 26
+    0.042,                    !- Field 27
+    Until: 12:00,             !- Field 28
+    0.05,                     !- Field 29
+    Until: 13:00,             !- Field 30
+    0.057,                    !- Field 31
+    Until: 14:00,             !- Field 32
+    0.046,                    !- Field 33
+    Until: 15:00,             !- Field 34
+    0.057,                    !- Field 35
+    Until: 16:00,             !- Field 36
+    0.044,                    !- Field 37
+    Until: 17:00,             !- Field 38
+    0.092,                    !- Field 39
+    Until: 18:00,             !- Field 40
+    0.15,                     !- Field 41
+    Until: 19:00,             !- Field 42
+    0.117,                    !- Field 43
+    Until: 20:00,             !- Field 44
+    0.06,                     !- Field 45
+    Until: 21:00,             !- Field 46
+    0.035,                    !- Field 47
+    Until: 22:00,             !- Field 48
+    0.025,                    !- Field 49
+    Until: 23:00,             !- Field 50
+    0.016,                    !- Field 51
+    Until: 24:00,             !- Field 52
+    0.011;                    !- Field 53
 
 SCHEDULE:COMPACT,
     BAClothesDryerSchedule,    !- Name
     Fraction,                 !- Schedule Type Limits Name
     Through: 12/31,           !- Field 1
-    For: SummerDesignDay,     !- Field 2
+    For: SummerDesignDay WinterDesignDay,    !- Field 2
     Until: 24:00,             !- Field 3
     0,                        !- Field 4
     For: AllOtherDays,        !- Field 5
-    Until: 24:00,             !- Field 6
-    0;                        !- Field 7
+    Until: 1:00,              !- Field 6
+    0.01,                     !- Field 7
+    Until: 2:00,              !- Field 8
+    0.006,                    !- Field 9
+    Until: 3:00,              !- Field 10
+    0.004,                    !- Field 11
+    Until: 4:00,              !- Field 12
+    0.002,                    !- Field 13
+    Until: 5:00,              !- Field 14
+    0.004,                    !- Field 15
+    Until: 6:00,              !- Field 16
+    0.006,                    !- Field 17
+    Until: 7:00,              !- Field 18
+    0.016,                    !- Field 19
+    Until: 8:00,              !- Field 20
+    0.032,                    !- Field 21
+    Until: 9:00,              !- Field 22
+    0.048,                    !- Field 23
+    Until: 10:00,             !- Field 24
+    0.068,                    !- Field 25
+    Until: 11:00,             !- Field 26
+    0.078,                    !- Field 27
+    Until: 12:00,             !- Field 28
+    0.081,                    !- Field 29
+    Until: 13:00,             !- Field 30
+    0.074,                    !- Field 31
+    Until: 14:00,             !- Field 32
+    0.067,                    !- Field 33
+    Until: 15:00,             !- Field 34
+    0.057,                    !- Field 35
+    Until: 16:00,             !- Field 36
+    0.061,                    !- Field 37
+    Until: 17:00,             !- Field 38
+    0.055,                    !- Field 39
+    Until: 18:00,             !- Field 40
+    0.054,                    !- Field 41
+    Until: 19:00,             !- Field 42
+    0.051,                    !- Field 43
+    Until: 20:00,             !- Field 44
+    0.051,                    !- Field 45
+    Until: 21:00,             !- Field 46
+    0.052,                    !- Field 47
+    Until: 22:00,             !- Field 48
+    0.054,                    !- Field 49
+    Until: 23:00,             !- Field 50
+    0.044,                    !- Field 51
+    Until: 24:00,             !- Field 52
+    0.024;                    !- Field 53
 
 SCHEDULE:COMPACT,
     BAClothesWasherSchedule,    !- Name
     Fraction,                 !- Schedule Type Limits Name
     Through: 12/31,           !- Field 1
-    For: SummerDesignDay,     !- Field 2
+    For: SummerDesignDay WinterDesignDay,    !- Field 2
     Until: 24:00,             !- Field 3
     0,                        !- Field 4
     For: AllOtherDays,        !- Field 5
-    Until: 24:00,             !- Field 6
-    0;                        !- Field 7
+    Until: 1:00,              !- Field 6
+    0.009,                    !- Field 7
+    Until: 2:00,              !- Field 8
+    0.007,                    !- Field 9
+    Until: 3:00,              !- Field 10
+    0.004,                    !- Field 11
+    Until: 4:00,              !- Field 12
+    0.004,                    !- Field 13
+    Until: 5:00,              !- Field 14
+    0.007,                    !- Field 15
+    Until: 6:00,              !- Field 16
+    0.011,                    !- Field 17
+    Until: 7:00,              !- Field 18
+    0.022,                    !- Field 19
+    Until: 8:00,              !- Field 20
+    0.049,                    !- Field 21
+    Until: 9:00,              !- Field 22
+    0.073,                    !- Field 23
+    Until: 10:00,             !- Field 24
+    0.086,                    !- Field 25
+    Until: 11:00,             !- Field 26
+    0.084,                    !- Field 27
+    Until: 12:00,             !- Field 28
+    0.075,                    !- Field 29
+    Until: 13:00,             !- Field 30
+    0.067,                    !- Field 31
+    Until: 14:00,             !- Field 32
+    0.06,                     !- Field 33
+    Until: 15:00,             !- Field 34
+    0.049,                    !- Field 35
+    Until: 16:00,             !- Field 36
+    0.052,                    !- Field 37
+    Until: 17:00,             !- Field 38
+    0.05,                     !- Field 39
+    Until: 18:00,             !- Field 40
+    0.049,                    !- Field 41
+    Until: 19:00,             !- Field 42
+    0.049,                    !- Field 43
+    Until: 20:00,             !- Field 44
+    0.049,                    !- Field 45
+    Until: 21:00,             !- Field 46
+    0.049,                    !- Field 47
+    Until: 22:00,             !- Field 48
+    0.047,                    !- Field 49
+    Until: 23:00,             !- Field 50
+    0.032,                    !- Field 51
+    Until: 24:00,             !- Field 52
+    0.017;                    !- Field 53
 
 SCHEDULE:COMPACT,
     BADishwasherSchedule,     !- Name
     Fraction,                 !- Schedule Type Limits Name
     Through: 12/31,           !- Field 1
-    For: SummerDesignDay,     !- Field 2
+    For: SummerDesignDay WinterDesignDay,    !- Field 2
     Until: 24:00,             !- Field 3
     0,                        !- Field 4
     For: AllOtherDays,        !- Field 5
-    Until: 24:00,             !- Field 6
-    0;                        !- Field 7
+    Until: 1:00,              !- Field 6
+    0.015,                    !- Field 7
+    Until: 2:00,              !- Field 8
+    0.007,                    !- Field 9
+    Until: 3:00,              !- Field 10
+    0.005,                    !- Field 11
+    Until: 4:00,              !- Field 12
+    0.003,                    !- Field 13
+    Until: 5:00,              !- Field 14
+    0.003,                    !- Field 15
+    Until: 6:00,              !- Field 16
+    0.01,                     !- Field 17
+    Until: 7:00,              !- Field 18
+    0.02,                     !- Field 19
+    Until: 8:00,              !- Field 20
+    0.031,                    !- Field 21
+    Until: 9:00,              !- Field 22
+    0.058,                    !- Field 23
+    Until: 10:00,             !- Field 24
+    0.065,                    !- Field 25
+    Until: 11:00,             !- Field 26
+    0.056,                    !- Field 27
+    Until: 12:00,             !- Field 28
+    0.048,                    !- Field 29
+    Until: 13:00,             !- Field 30
+    0.041,                    !- Field 31
+    Until: 14:00,             !- Field 32
+    0.046,                    !- Field 33
+    Until: 15:00,             !- Field 34
+    0.036,                    !- Field 35
+    Until: 16:00,             !- Field 36
+    0.038,                    !- Field 37
+    Until: 17:00,             !- Field 38
+    0.038,                    !- Field 39
+    Until: 18:00,             !- Field 40
+    0.049,                    !- Field 41
+    Until: 19:00,             !- Field 42
+    0.087,                    !- Field 43
+    Until: 20:00,             !- Field 44
+    0.111,                    !- Field 45
+    Until: 21:00,             !- Field 46
+    0.09,                     !- Field 47
+    Until: 22:00,             !- Field 48
+    0.067,                    !- Field 49
+    Until: 23:00,             !- Field 50
+    0.044,                    !- Field 51
+    Until: 24:00,             !- Field 52
+    0.031;                    !- Field 53
+
+SCHEDULE:COMPACT,
+    OccupantSchedule,         !- Name
+    Fraction,                 !- Schedule Type Limits Name
+    Through: 12/31,           !- Field 1
+    For: SummerDesignDay WinterDesignDay,    !- Field 2
+    Until: 24:00,             !- Field 3
+    0,                        !- Field 4
+    For: AllOtherDays,        !- Field 5
+    Until: 1:00,              !- Field 6
+    1,                        !- Field 7
+    Until: 2:00,              !- Field 8
+    1,                        !- Field 9
+    Until: 3:00,              !- Field 10
+    1,                        !- Field 11
+    Until: 4:00,              !- Field 12
+    1,                        !- Field 13
+    Until: 5:00,              !- Field 14
+    1,                        !- Field 15
+    Until: 6:00,              !- Field 16
+    1,                        !- Field 17
+    Until: 7:00,              !- Field 18
+    1,                        !- Field 19
+    Until: 8:00,              !- Field 20
+    1,                        !- Field 21
+    Until: 9:00,              !- Field 22
+    0.9,                      !- Field 23
+    Until: 10:00,             !- Field 24
+    0.4,                      !- Field 25
+    Until: 11:00,             !- Field 26
+    0.25,                     !- Field 27
+    Until: 12:00,             !- Field 28
+    0.25,                     !- Field 29
+    Until: 13:00,             !- Field 30
+    0.25,                     !- Field 31
+    Until: 14:00,             !- Field 32
+    0.25,                     !- Field 33
+    Until: 15:00,             !- Field 34
+    0.25,                     !- Field 35
+    Until: 16:00,             !- Field 36
+    0.25,                     !- Field 37
+    Until: 17:00,             !- Field 38
+    0.25,                     !- Field 39
+    Until: 18:00,             !- Field 40
+    0.55,                     !- Field 41
+    Until: 19:00,             !- Field 42
+    0.9,                      !- Field 43
+    Until: 20:00,             !- Field 44
+    0.9,                      !- Field 45
+    Until: 21:00,             !- Field 46
+    0.9,                      !- Field 47
+    Until: 22:00,             !- Field 48
+    1,                        !- Field 49
+    Until: 23:00,             !- Field 50
+    1,                        !- Field 51
+    Until: 24:00,             !- Field 52
+    1;                        !- Field 53
 
 SCHEDULE:COMPACT,
     Occupant_Activity_Schedule,    !- Name
@@ -684,80 +1063,12 @@ SCHEDULE:COMPACT,
     500;                      !- Field 4
 
 SCHEDULE:COMPACT,
-    OccupantSchedule,         !- Name
+    MechAvailable,            !- Name
     Fraction,                 !- Schedule Type Limits Name
     Through: 12/31,           !- Field 1
     For: AllDays,             !- Field 2
     Until: 24:00,             !- Field 3
     1;                        !- Field 4
-
-SCHEDULE:COMPACT,
-    MechAvailable,            !- Name
-    Fraction,                 !- Schedule Type Limits Name
-    Through: 01/26,           !- Field 1
-    For: AllDays,             !- Field 2
-    Until: 24:00,             !- Field 3
-    1,                        !- Field 4
-    Through: 02/02,           !- Field 5
-    For: AllDays,             !- Field 6
-    Until: 24:00,             !- Field 7
-    0,                        !- Field 8
-    Through: 07/19,           !- Field 9
-    For: AllDays,             !- Field 10
-    Until: 24:00,             !- Field 11
-    1,                        !- Field 12
-    Through: 07/26,           !- Field 13
-    For: AllDays,             !- Field 14
-    Until: 24:00,             !- Field 15
-    0,                        !- Field 16
-    Through: 12/31,           !- Field 17
-    For: AllDays,             !- Field 18
-    Until: 24:00,             !- Field 19
-    1;                        !- Field 20
-
-SCHEDULE:COMPACT,
-    NatVent,                  !- Name
-    On/Off,                   !- Schedule Type Limits Name
-    Through: 07/19,           !- Field 1
-    For: SummerDesignDay,     !- Field 2
-    Until: 24:00,             !- Field 3
-    0,                        !- Field 4
-    For: AllOtherDays,        !- Field 5
-    Until: 24:00,             !- Field 6
-    0,                        !- Field 7
-    Through: 07/26,           !- Field 8
-    For: SummerDesignDay,     !- Field 9
-    Until: 24:00,             !- Field 10
-    0,                        !- Field 11
-    For: AllOtherDays,        !- Field 12
-    Until: 24:00,             !- Field 13
-    1,                        !- Field 14
-    Through: 12/31,           !- Field 15
-    For: AllDays,             !- Field 16
-    Until: 24:00,             !- Field 17
-    0;                        !- Field 18
-
-SCHEDULE:COMPACT,
-    SchNatVent,               !- Name
-    On/Off,                   !- Schedule Type Limits Name
-    Through: 07/19,           !- Field 1
-    For: SummerDesignDay,     !- Field 2
-    Until: 24:00,             !- Field 3
-    0,                        !- Field 4
-    For: AllOtherDays,        !- Field 5
-    Until: 24:00,             !- Field 6
-    0,                        !- Field 7
-    Through: 07/26,           !- Field 8
-    For: SummerDesignDay,     !- Field 9
-    Until: 24:00,             !- Field 10
-    0,                        !- Field 11
-    For: AllOtherDays,        !- Field 12
-    Until: 24:00,             !- Field 13
-    1,                        !- Field 14
-    Through: 12/31,           !- Field 15
-    For: AllDays,             !- Field 16
-    Until: 24:00,             !- Field 17
-    0;                        !- Field 18
 
 SCHEDULE:COMPACT,
     OutageCooling,            !- Name
@@ -769,7 +1080,7 @@ SCHEDULE:COMPACT,
     Through: 07/26,           !- Field 5
     For: AllDays,             !- Field 6
     Until: 24:00,             !- Field 7
-    0,                        !- Field 8
+    1,                        !- Field 8
     Through: 12/31,           !- Field 9
     For: AllDays,             !- Field 10
     Until: 24:00,             !- Field 11
@@ -818,36 +1129,6 @@ SCHEDULE:COMPACT,
     Until: 24:00,             !- Field 6
     0;                        !- Field 7
 
-SCHEDULE:COMPACT,
-    Weather Morph,            !- Name
-    Fraction,                 !- Schedule Type Limits Name
-    Through: 01/26,           !- Field 1
-    For: AllDays,             !- Field 2
-    Until: 24:00,             !- Field 3
-    0,                        !- Field 4
-    Through: 02/02,           !- Field 5
-    For: SummerDesignDay WinterDesignDay,    !- Field 6
-    Until: 24:00,             !- Field 7
-    0,                        !- Field 8
-    For: AllOtherDays,        !- Field 9
-    Until: 24:00,             !- Field 10
-    0,                        !- Field 11
-    Through: 07/19,           !- Field 12
-    For: AllDays,             !- Field 13
-    Until: 24:00,             !- Field 14
-    0,                        !- Field 15
-    Through: 07/26,           !- Field 16
-    For: SummerDesignDay WinterDesignDay,    !- Field 17
-    Until: 24:00,             !- Field 18
-    0,                        !- Field 19
-    For: AllOtherDays,        !- Field 20
-    Until: 24:00,             !- Field 21
-    0,                        !- Field 22
-    Through: 12/31,           !- Field 23
-    For: AllDays,             !- Field 24
-    Until: 24:00,             !- Field 25
-    0;                        !- Field 26
-
 SCHEDULE:CONSTANT,
     WindowFraction2,          !- Name
     Any Number,               !- Schedule Type Limits Name
@@ -864,14 +1145,14 @@ SCHEDULE:CONSTANT,
     20;                       !- Hourly Value
 
 SCHEDULE:CONSTANT,
-    DHW_122F,                 !- Name
-    Any Number,               !- Schedule Type Limits Name
-    2;                        !- Hourly Value
-
-SCHEDULE:CONSTANT,
     Phius_77F,                !- Name
     Any Number,               !- Schedule Type Limits Name
     25;                       !- Hourly Value
+
+SCHEDULE:CONSTANT,
+    DHW_122F,                 !- Name
+    Any Number,               !- Schedule Type Limits Name
+    50;                       !- Hourly Value
 
 SCHEDULE:CONSTANT,
     HUMIDITY_SETPOINT,        !- Name
@@ -897,11 +1178,6 @@ SCHEDULE:CONSTANT,
     ERVAvailable,             !- Name
     Any Number,               !- Schedule Type Limits Name
     1;                        !- Hourly Value
-
-SCHEDULE:CONSTANT,
-    Count,                    !- Name
-    AnyNumber,                !- Schedule Type Limits Name
-    0;                        !- Hourly Value
 
 MATERIAL,
     M01 100mm brick,          !- Name
@@ -1331,7 +1607,7 @@ MATERIAL:AIRGAP,
 
 WINDOWMATERIAL:SIMPLEGLAZINGSYSTEM,
     ExteriorWindow1,          !- Name
-    2.66866,                  !- UFactor
+    1.7034,                   !- UFactor
     0.4;                      !- Solar Heat Gain Coefficient
 
 WINDOWMATERIAL:SHADE,
@@ -1641,7 +1917,7 @@ BuildingSurface:Detailed,
 BuildingSurface:Detailed,
     Front Wall 1,             !- Name
     Wall,                     !- Surface Type
-    Exterior Wall,            !- Construction Name
+    Exterior Wall +2in EPS,    !- Construction Name
     Zone 1,                   !- Zone Name
     Outdoors,                 !- Outside Boundary Condition
     ,                         !- Outside Boundary Condition Object
@@ -1665,7 +1941,7 @@ BuildingSurface:Detailed,
 BuildingSurface:Detailed,
     Left Wall 1,              !- Name
     Wall,                     !- Surface Type
-    Exterior Wall,            !- Construction Name
+    Exterior Wall +2in EPS,    !- Construction Name
     Zone 1,                   !- Zone Name
     Outdoors,                 !- Outside Boundary Condition
     ,                         !- Outside Boundary Condition Object
@@ -1689,7 +1965,7 @@ BuildingSurface:Detailed,
 BuildingSurface:Detailed,
     Attic,                    !- Name
     Ceiling,                  !- Surface Type
-    Exterior Roof,            !- Construction Name
+    Exterior Roof R-60,       !- Construction Name
     Zone 1,                   !- Zone Name
     Outdoors,                 !- Outside Boundary Condition
     ,                         !- Outside Boundary Condition Object
@@ -1713,7 +1989,7 @@ BuildingSurface:Detailed,
 BuildingSurface:Detailed,
     Right Wall 2,             !- Name
     Wall,                     !- Surface Type
-    Exterior Wall,            !- Construction Name
+    Exterior Wall +2in EPS,    !- Construction Name
     Zone 1,                   !- Zone Name
     Outdoors,                 !- Outside Boundary Condition
     ,                         !- Outside Boundary Condition Object
@@ -1737,7 +2013,7 @@ BuildingSurface:Detailed,
 BuildingSurface:Detailed,
     Back Wall 1,              !- Name
     Wall,                     !- Surface Type
-    Exterior Wall,            !- Construction Name
+    Exterior Wall +2in EPS,    !- Construction Name
     Zone 1,                   !- Zone Name
     Outdoors,                 !- Outside Boundary Condition
     ,                         !- Outside Boundary Condition Object
@@ -1761,7 +2037,7 @@ BuildingSurface:Detailed,
 BuildingSurface:Detailed,
     Right Wall 1,             !- Name
     Wall,                     !- Surface Type
-    Exterior Wall,            !- Construction Name
+    Exterior Wall +2in EPS,    !- Construction Name
     Zone 1,                   !- Zone Name
     Outdoors,                 !- Outside Boundary Condition
     ,                         !- Outside Boundary Condition Object
@@ -1785,7 +2061,7 @@ BuildingSurface:Detailed,
 BuildingSurface:Detailed,
     Front Wall 2,             !- Name
     Wall,                     !- Surface Type
-    Exterior Wall,            !- Construction Name
+    Exterior Wall +2in EPS,    !- Construction Name
     Zone 1,                   !- Zone Name
     Outdoors,                 !- Outside Boundary Condition
     ,                         !- Outside Boundary Condition Object
@@ -1809,7 +2085,7 @@ BuildingSurface:Detailed,
 BuildingSurface:Detailed,
     Left Wall 2,              !- Name
     Wall,                     !- Surface Type
-    Exterior Wall,            !- Construction Name
+    Exterior Wall +2in EPS,    !- Construction Name
     Zone 1,                   !- Zone Name
     Outdoors,                 !- Outside Boundary Condition
     ,                         !- Outside Boundary Condition Object
@@ -1857,7 +2133,7 @@ BuildingSurface:Detailed,
 BuildingSurface:Detailed,
     Back Wall 2,              !- Name
     Wall,                     !- Surface Type
-    Exterior Wall,            !- Construction Name
+    Exterior Wall +2in EPS,    !- Construction Name
     Zone 1,                   !- Zone Name
     Outdoors,                 !- Outside Boundary Condition
     ,                         !- Outside Boundary Condition Object
@@ -2142,8 +2418,8 @@ FOUNDATION:KIVA,
     ,                         !- Exterior Horizontal Insulation Material Name
     ,                         !- Exterior Horizontal Insulation Depth
     0,                        !- Exterior Horizontal Insulation Width
-    EPS 2in,                  !- Exterior Vertical Insulation Material Name
-    0.6096,                   !- Exterior Vertical Insulation Depth
+    EPS 4in,                  !- Exterior Vertical Insulation Material Name
+    1.2192,                   !- Exterior Vertical Insulation Depth
     0.2,                      !- Wall Height Above Grade
     0,                        !- Wall Depth Below Slab
     ,                         !- Footing Wall Construction Name
@@ -2304,7 +2580,7 @@ ZONEINFILTRATION:FLOWCOEFFICIENT,
     Zone_Infiltration,        !- Name
     Zone 1,                   !- Zone Name
     Always_On,                !- Schedule Name
-    0.14849,                  !- Flow Coefficient
+    0.00695,                  !- Flow Coefficient
     0.078,                    !- Stack Coefficient
     0.67,                     !- Pressure Exponent
     0.17,                     !- Wind Coefficient
@@ -2507,8 +2783,8 @@ ZONEHVAC:ENERGYRECOVERYVENTILATOR,
     ERV1,                     !- Name
     ERVAvailable,             !- Availability Schedule Name
     ERV_Core,                 !- Heat Exchanger Name
-    0.009438949,              !- Supply Air Flow Rate
-    0.009438949,              !- Exhaust Air Flow Rate
+    0.028316847,              !- Supply Air Flow Rate
+    0.028316847,              !- Exhaust Air Flow Rate
     ERV_Supply_Fan,           !- Supply Air Fan Name
     ERV_Exhaust_Fan;          !- Exhaust Air Fan Name
 
@@ -2764,143 +3040,6 @@ WATERHEATER:MIXED,
     IndirectHeatPrimarySetpoint,    !- Source Side Flow Control Mode
     ,                         !- Indirect Alternate Setpoint Temperature Schedule Name
     General;                  !- EndUse Subcategory
-
-ENERGYMANAGEMENTSYSTEM:SENSOR,
-    IWB,                      !- Name
-    Zone_1_Zone_Air_Node,     !- OutputVariable or OutputMeter Index Key Name
-    System Node Wetbulb Temperature;    !- OutputVariable or OutputMeter Name
-
-ENERGYMANAGEMENTSYSTEM:SENSOR,
-    OWB,                      !- Name
-    *,                        !- OutputVariable or OutputMeter Index Key Name
-    Site Outdoor Air Wetbulb Temperature;    !- OutputVariable or OutputMeter Name
-
-ENERGYMANAGEMENTSYSTEM:SENSOR,
-    IDB,                      !- Name
-    Zone 1,                   !- OutputVariable or OutputMeter Index Key Name
-    Zone Air Temperature;     !- OutputVariable or OutputMeter Name
-
-ENERGYMANAGEMENTSYSTEM:SENSOR,
-    ODB,                      !- Name
-    *,                        !- OutputVariable or OutputMeter Index Key Name
-    Site Outdoor Air Drybulb Temperature;    !- OutputVariable or OutputMeter Name
-
-ENERGYMANAGEMENTSYSTEM:SENSOR,
-    NatVentAvail,             !- Name
-    NatVent,                  !- OutputVariable or OutputMeter Index Key Name
-    Schedule Value;           !- OutputVariable or OutputMeter Name
-
-ENERGYMANAGEMENTSYSTEM:SENSOR,
-    Clock,                    !- Name
-    PhiusExtLight,            !- OutputVariable or OutputMeter Index Key Name
-    Exterior Lights Electricity Energy;    !- OutputVariable or OutputMeter Name
-
-ENERGYMANAGEMENTSYSTEM:SENSOR,
-    PV,                       !- Name
-    ELC,                      !- OutputVariable or OutputMeter Index Key Name
-    Electric Load Center Produced Electricity Energy;    !- OutputVariable or OutputMeter Name
-
-ENERGYMANAGEMENTSYSTEM:SENSOR,
-    MorphOnOff,               !- Name
-    Weather Morph,            !- OutputVariable or OutputMeter Index Key Name
-    Schedule Value;           !- OutputVariable or OutputMeter Name
-
-ENERGYMANAGEMENTSYSTEM:SENSOR,
-    Count,                    !- Name
-    Count,                    !- OutputVariable or OutputMeter Index Key Name
-    Schedule Value;           !- OutputVariable or OutputMeter Name
-
-ENERGYMANAGEMENTSYSTEM:SENSOR,
-    ODP,                      !- Name
-    *,                        !- OutputVariable or OutputMeter Index Key Name
-    Site Outdoor Air Dewpoint Temperature;    !- OutputVariable or OutputMeter Name
-
-ENERGYMANAGEMENTSYSTEM:ACTUATOR,
-    WindowEconomizer,         !- Name
-    WindowFraction2,          !- Actuated Component Unique Name
-    Schedule:Constant,        !- Actuated Component Type
-    Schedule Value;           !- Actuated Component Control Type
-
-ENERGYMANAGEMENTSYSTEM:ACTUATOR,
-    DC_Coolings,              !- Name
-    Demand Control Cooling,    !- Actuated Component Unique Name
-    Schedule:Compact,         !- Actuated Component Type
-    Schedule Value;           !- Actuated Component Control Type
-
-ENERGYMANAGEMENTSYSTEM:ACTUATOR,
-    ODB2,                     !- Name
-    Environment,              !- Actuated Component Unique Name
-    Weather Data,             !- Actuated Component Type
-    Outdoor Dry Bulb;         !- Actuated Component Control Type
-
-ENERGYMANAGEMENTSYSTEM:ACTUATOR,
-    Count2,                   !- Name
-    Count,                    !- Actuated Component Unique Name
-    Schedule:Constant,        !- Actuated Component Type
-    Schedule Value;           !- Actuated Component Control Type
-
-ENERGYMANAGEMENTSYSTEM:ACTUATOR,
-    ODP2,                     !- Name
-    Environment,              !- Actuated Component Unique Name
-    Weather Data,             !- Actuated Component Type
-    Outdoor Dew Point;        !- Actuated Component Control Type
-
-ENERGYMANAGEMENTSYSTEM:PROGRAMCALLINGMANAGER,
-    CO2Caller,                !- Name
-    BeginZoneTimestepBeforeSetCurrentWeather,    !- EnergyPlus Model Calling Point
-    SummerVentDB;             !- Program Name 1
-
-ENERGYMANAGEMENTSYSTEM:PROGRAMCALLINGMANAGER,
-    WeatherMorph,             !- Name
-    BeginZoneTimestepBeforeSetCurrentWeather,    !- EnergyPlus Model Calling Point
-    DBMorph,                  !- Program Name 1
-    DPMorph;                  !- Program Name 2
-
-ENERGYMANAGEMENTSYSTEM:PROGRAM,
-    SummerVentWB,             !- Name
-    IF IWB> 1+ OWB && NatVentAvail > 0 && Clock > 0,    !- Program Line 1
-    SET WindowEconomizer = 1,    !- Program Line 2
-    SET DC_Coolings = 0,      !- Program Line 3
-    ELSE,                     !- Program Line 4
-    SET WindowEconomizer = 0,    !- Program Line 5
-    ENDIF;                    !- Program Line 6
-
-ENERGYMANAGEMENTSYSTEM:PROGRAM,
-    SummerVentDB,             !- Name
-    IF IDB> 1+ ODB && NatVentAvail > 0 && Clock > 0,    !- Program Line 1
-    SET WindowEconomizer = 1,    !- Program Line 2
-    SET DC_Coolings = 0,      !- Program Line 3
-    ELSE,                     !- Program Line 4
-    SET WindowEconomizer = 0,    !- Program Line 5
-    ENDIF;                    !- Program Line 6
-
-ENERGYMANAGEMENTSYSTEM:PROGRAM,
-    DBMorph,                  !- Name
-    IF MorphOnOff == 1,       !- Program Line 1
-    SET ODB2 = (@TodayOutDryBulbTemp Hour TimeStepNum) + 0*(@Sin (PI*Count/168)),    !- Program Line 2
-    SET Count2 = Count + 0.25,    !- Program Line 3
-    ELSEIF MorphOnOff == 2,    !- Program Line 4
-    SET ODB2 = (@TodayOutDryBulbTemp Hour TimeStepNum) +0*(@Sin (PI*Count/168)),    !- Program Line 5
-    SET Count2 = Count + 0.25,    !- Program Line 6
-    ELSE,                     !- Program Line 7
-    SET ODB2 = @TodayOutDryBulbTemp Hour TimeStepNum,    !- Program Line 8
-    SET Count2 = 0,           !- Program Line 9
-    ENDIF,                    !- Program Line 10
-    RETURN;                   !- Program Line 11
-
-ENERGYMANAGEMENTSYSTEM:PROGRAM,
-    DPMorph,                  !- Name
-    IF MorphOnOff == 1,       !- Program Line 1
-    SET ODP2 = (@TodayOutDewPointTemp Hour TimeStepNum) + 0*(@Sin (PI*Count/168)),    !- Program Line 2
-    SET Count2 = Count + 0.25,    !- Program Line 3
-    ELSEIF MorphOnOff == 2,    !- Program Line 4
-    SET ODP2 = (@TodayOutDewPointTemp Hour TimeStepNum) +0*(@Sin (PI*Count/168)),    !- Program Line 5
-    SET Count2 = Count + 0.25,    !- Program Line 6
-    ELSE,                     !- Program Line 7
-    SET ODP2 = @TodayOutDewPointTemp TimeStepNum,    !- Program Line 8
-    SET Count2 = 0,           !- Program Line 9
-    ENDIF,                    !- Program Line 10
-    RETURN;                   !- Program Line 11
 
 DEMANDMANAGERASSIGNMENTLIST,
     Demand Limiting,          !- Name
@@ -3192,7 +3331,7 @@ COMPONENTCOST:LINEITEM,
     ExteriorWindow1,          !- Item Name
     ,                         !- Object EndUse Key
     ,                         !- Cost per Each
-    163.7813958925203;        !- Cost per Area
+    157.5011227448069;        !- Cost per Area
 
 OUTPUT:VARIABLEDICTIONARY,
     IDF;                      !- Key Field

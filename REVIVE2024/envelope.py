@@ -63,6 +63,13 @@ def costBuilder(idf, name, type, lineItemType, itemName, objEndUse, costEach, co
         Cost_per_Each = costEach,
         Cost_per_Area = costArea
         )
+    
+def glazingBuilder(idf, name, uFactor, shgc):
+    idf.newidfobject('WINDOWMATERIAL:SIMPLEGLAZINGSYSTEM',
+        Name = name,
+        UFactor = uFactor,
+        Solar_Heat_Gain_Coefficient = shgc
+        )
 
 def Infiltration(idf, flowCoefficient):
     

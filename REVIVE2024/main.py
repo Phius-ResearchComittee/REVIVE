@@ -107,7 +107,7 @@ tab1_layout =   [[sg.Text('IDD File Location:', size =(15, 1)),sg.InputText("C:\
                 ]
 
 tab2_layout =   [[sg.Text('Batch Name:', size =(20, 1)),sg.InputText('Name your batch of files', key='batchName')],
-                 [sg.Checkbox('Generate PDF?', size=(25, 1), default=True,key='genPDF')],
+                 [sg.Checkbox('Generate PDF?', size=(25, 1), default=False,key='genPDF')],
                  [sg.Checkbox('Delete Unecessary Files?', size=(25, 1), default=True,key='DeleteFiles')]
                 ]
 
@@ -129,7 +129,7 @@ layout1 = [
             sg.Tab('3 Phase ADORB', tab3_layout,),]])],
             [sg.Button('LOAD'), sg.Button('RUN ANALYSIS'), sg.Button('EXIT')]]  
 
-window = sg.Window('Phius REVIVE 2024 Analysis Tool v23.0.5',layout1, default_element_size=(125, 125), grab_anywhere=True)
+window = sg.Window('Phius REVIVE 2024 Analysis Tool v23.1.0',layout1, default_element_size=(125, 125), grab_anywhere=True)
 
 #==============================================================================================================================
 # 3.0 File Management
@@ -381,90 +381,56 @@ while True:
 
 
                 # Materials and constructions
-                materialBuilder(idf1, 'M01 100mm brick', 'MediumRough', 0.1016, 0.89, 1920, 790)
-                materialBuilder(idf1, 'G05 25mm wood', 'MediumSmooth', 0.0254, 0.15, 608, 1630)
-                materialBuilder(idf1, 'F08 Metal surface', 'Smooth', 0.0008, 45.28, 7824, 500)
-                materialBuilder(idf1, 'I01 25mm insulation board', 'MediumRough', 0.0254, 0.03, 43, 1210)
-                materialBuilder(idf1, 'I02 50mm insulation board', 'MediumRough', 0.0508, 0.03, 43, 1210)
-                materialBuilder(idf1, 'G01a 19mm gypsum board', 'MediumSmooth', 0.019, 0.16, 800, 1090)
-                materialBuilder(idf1, 'M11 100mm lightweight concrete', 'MediumRough', 0.1016, 0.53, 1280, 840)
-                materialBuilder(idf1, 'F16 Acoustic tile', 'MediumSmooth', 0.0191, 0.06, 368, 590)
-                materialBuilder(idf1, 'M15 200mm heavyweight concrete', 'MediumRough', 0.2032, 1.95, 2240, 900)
-                materialBuilder(idf1, 'M05 200mm concrete block', 'MediumRough', 0.1016, 1.11, 800, 920)
-                materialBuilder(idf1, 'Mass wood', 'MediumSmooth', 0.065532, 0.15, 608.701223809829, 1630)
-                materialBuilder(idf1, 'Foundation EPS', 'MediumSmooth', 0.0508, 0.02884, 29, 1210)
-                materialBuilder(idf1, 'EPS', 'MediumSmooth', 0.0508, 0.02884, 29, 1210)
-                materialBuilder(idf1, 'F11 Wood siding', 'MediumSmooth', 0.0127, 0.09, 592, 1170)
-                materialBuilder(idf1, 'R-11 3.5in Wood Stud', 'VeryRough', 0.0889, 0.05426246, 19, 960)
-                materialBuilder(idf1, 'Plywood (Douglas Fir) - 12.7mm', 'Smooth', 0.0127, 0.12, 540, 1210)
-                materialBuilder(idf1, 'EPS 1in', 'MediumSmooth', 0.0254, 0.02884, 29, 1210)
-                materialBuilder(idf1, 'EPS 1.625in', 'MediumSmooth', 0.041275, 0.02884, 29, 1210)
-                materialBuilder(idf1, 'EPS 2in', 'MediumSmooth', 0.0508, 0.02884, 29, 1210)
-                materialBuilder(idf1, 'EPS 4in', 'MediumSmooth', 0.1016, 0.02884, 29, 1210 )
-                materialBuilder(idf1, 'EPS 6in', 'MediumSmooth', 0.1524, 0.02884, 29, 1210)
-                materialBuilder(idf1, 'EPS 7.5in', 'MediumSmooth', 0.1905, 0.02884, 29, 1210)
-                materialBuilder(idf1, 'EPS 9in', 'MediumSmooth', 0.1524, 0.02884, 29, 1210)
-                materialBuilder(idf1, 'EPS 14in', 'MediumSmooth', 0.3556, 0.02884, 29, 1210)
-                materialBuilder(idf1, 'FG Attic R-19', 'MediumRough', 0.13716, 0.04119794, 64, 960)
-                materialBuilder(idf1, 'FG Attic R-30', 'MediumRough', 0.21844, 0.04119794, 64, 960)
-                materialBuilder(idf1, 'FG Attic R-38', 'MediumRough', 0.275844, 0.04119794, 64, 960)
-                materialBuilder(idf1, 'FG Attic R-49', 'MediumRough', 0.3556, 0.04119794, 64, 960)
-                materialBuilder(idf1, 'FG Attic R-55', 'MediumRough', 0.3991229, 0.04119794, 64, 960)
-                materialBuilder(idf1, 'FG Attic R-60', 'MediumRough', 0.3556, 0.04119794, 64, 960)
-                materialBuilder(idf1, 'FG Attic R-75', 'MediumRough', 0.54356, 0.04119794, 64, 960)
-                materialBuilder(idf1, 'FG Attic R-100', 'MediumRough', 0.72644, 0.04119794, 64, 960)
-                materialBuilder(idf1, 'ccSF R-13', 'Rough', 0.05503418, 0.024033814, 32, 920)
-                materialBuilder(idf1, 'ccSF R-19', 'Rough', 0.080433418, 0.024033814, 32, 920)
-                materialBuilder(idf1, 'ccSF R-30', 'Rough', 0.127, 0.024033814, 32, 920)
-                materialBuilder(idf1, 'ccSF R-38', 'Rough', 0.160866582, 0.024033814, 32, 920)
-                materialBuilder(idf1, 'ccSF R-49', 'Rough', 0.207433418, 0.024033814, 32, 920)
-                materialBuilder(idf1, 'StemWall UnIns', 'MediumRough', 0.003175, 0.53, 1280, 840)
+                materials = pd.read_csv(str(inputValues['dataBases']) + 'Material Database.csv')
+                materialList = materials.shape[0]
 
-                constructionBuilder(idf1, 'Brick Wall', ['M01 100mm brick'])
-                constructionBuilder(idf1, 'Ext_Door1',['G05 25mm wood'])
-                constructionBuilder(idf1, 'Thermal Mass',['G05 25mm wood'])
-                constructionBuilder(idf1, 'Interior Floor', ['Plywood (Douglas Fir) - 12.7mm', 'F05 Ceiling air space resistance', 'G01a 19mm gypsum board'])
-                constructionBuilder(idf1, 'Exterior Slab UnIns', ['M15 200mm heavyweight concrete'])
-                constructionBuilder(idf1, 'Exterior Slab + 2in EPS', ['EPS 2in', 'M15 200mm heavyweight concrete'])
-                constructionBuilder(idf1, 'Exterior Wall', ['F11 Wood siding', 'R-11 3.5in Wood Stud', 'G01a 19mm gypsum board'])
-                constructionBuilder(idf1, 'Interior Wall', ['G01a 19mm gypsum board', 'F04 Wall air space resistance', 'G01a 19mm gypsum board'])
-                constructionBuilder(idf1, 'Exterior Roof', ['FG Attic R-19', 'Plywood (Douglas Fir) - 12.7mm', 'G01a 19mm gypsum board'])
-                constructionBuilder(idf1, 'Exterior Door', ['F08 Metal surface', 'I02 50mm insulation board', 'F08 Metal surface'])
-                constructionBuilder(idf1, 'Interior Door', ['G05 25mm wood'])
-                constructionBuilder(idf1, 'Exterior Wall +1in EPS', ['F11 Wood siding', 'EPS 1in', 'Plywood (Douglas Fir) - 12.7mm', 'R-11 3.5in Wood Stud', 'G01a 19mm gypsum board'])
-                constructionBuilder(idf1, 'Exterior Wall +1.625in EPS', ['F11 Wood siding', 'EPS 1.625in', 'Plywood (Douglas Fir) - 12.7mm', 'R-11 3.5in Wood Stud', 'G01a 19mm gypsum board'])
-                constructionBuilder(idf1, 'Exterior Wall +2in EPS', ['F11 Wood siding', 'EPS 2in', 'Plywood (Douglas Fir) - 12.7mm', 'R-11 3.5in Wood Stud', 'G01a 19mm gypsum board'])
-                constructionBuilder(idf1, 'Exterior Wall +4in EPS', ['F11 Wood siding', 'EPS 4in', 'Plywood (Douglas Fir) - 12.7mm', 'R-11 3.5in Wood Stud', 'G01a 19mm gypsum board'])
-                constructionBuilder(idf1, 'Exterior Wall +7.5in EPS', ['F11 Wood siding', 'EPS 7.5in', 'Plywood (Douglas Fir) - 12.7mm', 'R-11 3.5in Wood Stud', 'G01a 19mm gypsum board'])
-                constructionBuilder(idf1, 'Exterior Wall +6in EPS', ['F11 Wood siding', 'EPS 6in', 'Plywood (Douglas Fir) - 12.7mm', 'R-11 3.5in Wood Stud', 'G01a 19mm gypsum board'])
-                constructionBuilder(idf1, 'Exterior Wall +9in EPS', ['F11 Wood siding', 'EPS 9in', 'Plywood (Douglas Fir) - 12.7mm', 'R-11 3.5in Wood Stud', 'G01a 19mm gypsum board'])
-                constructionBuilder(idf1, 'Exterior Wall +14in EPS', ['F11 Wood siding', 'EPS 14in', 'Plywood (Douglas Fir) - 12.7mm', 'R-11 3.5in Wood Stud', 'G01a 19mm gypsum board'])
-                constructionBuilder(idf1, 'Exterior Roof R-30', ['FG Attic R-30', 'Plywood (Douglas Fir) - 12.7mm', 'G01a 19mm gypsum board'])
-                constructionBuilder(idf1, 'Exterior Roof R-38', ['FG Attic R-38', 'Plywood (Douglas Fir) - 12.7mm', 'G01a 19mm gypsum board'])
-                constructionBuilder(idf1, 'Exterior Roof R-49', ['FG Attic R-49', 'Plywood (Douglas Fir) - 12.7mm', 'G01a 19mm gypsum board'])
-                constructionBuilder(idf1, 'Exterior Roof R-55', ['FG Attic R-55', 'Plywood (Douglas Fir) - 12.7mm', 'G01a 19mm gypsum board'])
-                constructionBuilder(idf1, 'Exterior Roof R-60', ['FG Attic R-60', 'Plywood (Douglas Fir) - 12.7mm', 'G01a 19mm gypsum board'])
-                constructionBuilder(idf1, 'Exterior Roof R-75', ['FG Attic R-75', 'Plywood (Douglas Fir) - 12.7mm', 'G01a 19mm gypsum board'])
-                constructionBuilder(idf1, 'Exterior Roof R-100', ['FG Attic R-100', 'Plywood (Douglas Fir) - 12.7mm', 'G01a 19mm gypsum board'])
-                constructionBuilder(idf1, 'P+B UnIns', ['Plywood (Douglas Fir) - 12.7mm', 'F05 Ceiling air space resistance', 'Plywood (Douglas Fir) - 12.7mm', 'G05 25mm wood'])
-                constructionBuilder(idf1, 'P+B R-13', ['Plywood (Douglas Fir) - 12.7mm', 'ccSF R-13', 'Plywood (Douglas Fir) - 12.7mm', 'G05 25mm wood'])
-                constructionBuilder(idf1, 'P+B R-19', ['Plywood (Douglas Fir) - 12.7mm', 'ccSF R-19', 'Plywood (Douglas Fir) - 12.7mm', 'G05 25mm wood'])
-                constructionBuilder(idf1, 'P+B R-30', ['Plywood (Douglas Fir) - 12.7mm', 'ccSF R-30', 'Plywood (Douglas Fir) - 12.7mm', 'G05 25mm wood'])
-                constructionBuilder(idf1, 'P+B R-38', ['Plywood (Douglas Fir) - 12.7mm', 'ccSF R-38', 'Plywood (Douglas Fir) - 12.7mm', 'G05 25mm wood'])
-                constructionBuilder(idf1, 'P+B R-49', ['Plywood (Douglas Fir) - 12.7mm', 'ccSF R-49', 'Plywood (Douglas Fir) - 12.7mm', 'G05 25mm wood'])
+                for item in range(materialList):
+                    materialBuilder(idf1, materials['Name'][item], materials['Roughness'][item], materials['Thickness'][item], materials['Conductivity'][item],
+                                    materials['Density'][item], materials['Specific_Heat'][item])
+                    
+                glazingSpecs = pd.read_csv(str(inputValues['dataBases']) + 'Window Database.csv')
 
-                costBuilder(idf1, 'Wall 1', '','Construction', 'Exterior Wall +1in EPS','','',13.77915008)
-                costBuilder(idf1, 'Wall 2', '','Construction', 'Exterior Wall +1.625in EPS','','',16.79333916)
-                costBuilder(idf1, 'Wall 3', '','Construction', 'Exterior Wall +2in EPS','','',18.62338253)
-                costBuilder(idf1, 'Wall 4', '','Construction', 'Exterior Wall +4in EPS','','',25.40530796)
-                costBuilder(idf1, 'Wall 5', '','Construction', 'Exterior Wall +6in EPS','','',34.55552481)
-                costBuilder(idf1, 'Wall 6', '','Construction', 'Exterior Wall +9in EPS','','',46.93522996)
-                costBuilder(idf1, 'Wall 7', '','Construction', 'Exterior Wall +14in EPS','','',63.6209195100001)
-                costBuilder(idf1, 'Roof 1', '','Construction', 'Exterior Roof R-30','','',7.96607114000001)
-                costBuilder(idf1, 'Roof 2', '','Construction', 'Exterior Roof R-49','','',8.39666958000001)
-                costBuilder(idf1, 'Roof 3', '','Construction', 'Exterior Roof R-60','','',21.529922)
-                costBuilder(idf1, 'Roof 4', '','Construction', 'Exterior Roof R-75','','',39.39975726)
-                costBuilder(idf1, 'Roof 5', '','Construction', 'Exterior Roof R-100','','',69.3263488400001)
+                glazings = glazingSpecs.shape[0]
+
+                for item in range(glazings):
+                    glazingBuilder(idf1, glazingSpecs['Name'][item], glazingSpecs['U-Factor'][item],glazingSpecs['SHGC'][item])
+
+                # Constructions 
+                #     
+                constructionList = pd.read_csv(str(inputValues['dataBases']) + 'Construction Database.csv')
+
+                constructions = constructionList.shape[0]
+
+                for item in range(constructions):
+                    
+                    layers = [constructionList['Outside_Layer'][item],
+                    constructionList['Layer_2'][item],
+                    constructionList['Layer_3'][item],
+                    constructionList['Layer_4'][item],
+                    constructionList['Layer_5'][item],
+                    constructionList['Layer_6'][item],
+                    constructionList['Layer_7'][item],
+                    constructionList['Layer_8'][item],
+                    constructionList['Layer_9'][item],
+                    constructionList['Layer_10'][item]]
+
+                    layerList = [x for x in layers if str(x) != 'nan']
+
+                    constructionBuilder(idf1, constructionList['Name'][item],layerList)
+
+
+                # costBuilder(idf1, 'Wall 1', '','Construction', 'Exterior Wall +1in EPS','','',13.77915008)
+                # costBuilder(idf1, 'Wall 2', '','Construction', 'Exterior Wall +1.625in EPS','','',16.79333916)
+                # costBuilder(idf1, 'Wall 3', '','Construction', 'Exterior Wall +2in EPS','','',18.62338253)
+                # costBuilder(idf1, 'Wall 4', '','Construction', 'Exterior Wall +4in EPS','','',25.40530796)
+                # costBuilder(idf1, 'Wall 5', '','Construction', 'Exterior Wall +6in EPS','','',34.55552481)
+                # costBuilder(idf1, 'Wall 6', '','Construction', 'Exterior Wall +9in EPS','','',46.93522996)
+                # costBuilder(idf1, 'Wall 7', '','Construction', 'Exterior Wall +14in EPS','','',63.6209195100001)
+                # costBuilder(idf1, 'Roof 1', '','Construction', 'Exterior Roof R-30','','',7.96607114000001)
+                # costBuilder(idf1, 'Roof 2', '','Construction', 'Exterior Roof R-49','','',8.39666958000001)
+                # costBuilder(idf1, 'Roof 3', '','Construction', 'Exterior Roof R-60','','',21.529922)
+                # costBuilder(idf1, 'Roof 4', '','Construction', 'Exterior Roof R-75','','',39.39975726)
+                # costBuilder(idf1, 'Roof 5', '','Construction', 'Exterior Roof R-100','','',69.3263488400001)
                 costBuilder(idf1, 'Window 1', '','Construction', 'ExteriorWindow1','','',(147*math.exp(0.23*Ext_Window1_Ufactor)))
 
                 # Envelope inputs
