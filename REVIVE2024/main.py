@@ -385,15 +385,16 @@ while True:
                 materialList = materials.shape[0]
 
                 for item in range(materialList):
-                    materialBuilder(idf1, materials['Name'][item], materials['Roughness'][item], materials['Thickness'][item], materials['Conductivity'][item],
-                                    materials['Density'][item], materials['Specific_Heat'][item])
+                    materialBuilder(idf1, materials['NAME'][item], materials['ROUGHNESS'][item], 
+                                    materials['THICKNESS [m]'][item], materials['CONDUCTIVITY [W/mK]'][item],
+                                    materials['DENSITY [kg/m3]'][item], materials['SPECIFIC HEAT CAPACITY [J/kgK]'][item])
                     
                 glazingSpecs = pd.read_csv(str(inputValues['dataBases']) + 'Window Database.csv')
 
                 glazings = glazingSpecs.shape[0]
 
                 for item in range(glazings):
-                    glazingBuilder(idf1, glazingSpecs['Name'][item], glazingSpecs['U-Factor'][item],glazingSpecs['SHGC'][item])
+                    glazingBuilder(idf1, glazingSpecs['NAME'][item], glazingSpecs['U-FACTOR [W/m2K]'][item],glazingSpecs['SHGC'][item])
 
                 # Constructions 
                 #     
@@ -784,7 +785,22 @@ while True:
                 annualElec = ((hourly['Whole Building:Facility Total Purchased Electricity Energy [J](Hourly)'].sum()*0.0000002778*elecPrice)+144)
                 
                 # annualCO2 = CO2_Elec + CO2_gas
-                dirMR = [(firstCost,1),(8500,20),(8500,40),(8500,60)]
+
+                carbonDatabase = pd.read_csv(str(inputValues['dataBases']) + 'Carbon Correction Database.csv')
+
+                carbonMeasures = ['HP Replace 2', 'HP Replace 3']
+
+                carbonMeasureCost = []
+
+                for measure in range(carbonDatabase.shape[0]):
+                    if carbonDatabase['Name'][measure] in carbonMeasures:
+                        carbonMeasureCost.append((carbonDatabase['Cost'][measure], carbonDatabase['Year'][measure]))
+
+                carbonMeasureCost.append(firstCost)
+
+                # print(carbonMeasureCost)
+
+                dirMR = carbonMeasureCost
                 emCO2 = [(emCO2_firstCost,1),((8500*laborFraction*0.3),20),((8500*laborFraction*0.3),40),((8500*laborFraction*0.3),60)] 
                 eTrans = peakElec
                 
