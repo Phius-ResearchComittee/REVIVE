@@ -256,7 +256,9 @@ def WindowShadingControl(idf, windowNames):
 def AssignContructions(idf, Ext_Wall1,Ext_Wall2,Ext_Wall3,
                        Ext_Roof1,Ext_Roof2,Ext_Roof3,
                        Ext_Floor1,Ext_Floor2,Ext_Floor3,
-                       Ext_Door1, Int_Floor1):
+                       Ext_Door1,Ext_Door2,Ext_Door3, 
+                       Int_Floor1,Int_Floor2,Int_Floor3,
+                       Ext_Window1,Ext_Window2,Ext_Window3):
 
     count = -1
     for srf in idf.idfobjects['BuildingSurface:Detailed']:
@@ -284,13 +286,25 @@ def AssignContructions(idf, Ext_Wall1,Ext_Wall2,Ext_Wall3,
             surface.Construction_Name = str(Ext_Door1)
         if surface.Construction_Name == 'Int_Floor1':
             surface.Construction_Name = str(Int_Floor1)
+        if surface.Construction_Name == 'Ext_Door2':
+            surface.Construction_Name = str(Ext_Door2)
+        if surface.Construction_Name == 'Int_Floor2':
+            surface.Construction_Name = str(Int_Floor2)
+        if surface.Construction_Name == 'Ext_Door3':
+            surface.Construction_Name = str(Ext_Door3)
+        if surface.Construction_Name == 'Int_Floor3':
+            surface.Construction_Name = str(Int_Floor3)
 
     count = -1
     for fen in idf.idfobjects['FenestrationSurface:Detailed']:
         count = 1
         window = idf.idfobjects['FenestrationSurface:Detailed'][count]
         if window.Construction_Name == 'Ext_Window1':
-            window.Construction_Name = 'Ext_Window1'
+            window.Construction_Name = str(Ext_Window1)
+        if window.Construction_Name == 'Ext_Window2':
+            window.Construction_Name = str(Ext_Window2)
+        if window.Construction_Name == 'Ext_Window3':
+            window.Construction_Name = str(Ext_Window3)
 
 def FoundationInterface(idf,foundationList):
 

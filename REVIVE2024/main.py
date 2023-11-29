@@ -1,7 +1,7 @@
 #=============================================================================================================================
 # PhiusREVIVE Research Tool
-# Updated 2023/10/12
-# v23.0.4
+# Updated 2023/11/27
+# v23.1.0
 #
 #
 
@@ -219,7 +219,6 @@ while True:
                 fridge = (445/(8760))*1000 # always on design load
                 fracHighEff = 1.0
                 PhiusLights = (0.2 + 0.8*(4 - 3*fracHighEff)/3.7)*(455 + 0.8*icfa) * 0.8 * 1000 * (1/365) #power per day W use Phius calc
-                # PhiusLights = (((2 + 0.8*(4 - 3*fracHighEff/3.7)))*(455 + 0.8*icfa)*0.8)/365)*1000 #power per day W use Phius calc
                 PhiusMELs = ((413 + 69*Nbr + 0.91*icfa)/365)*1000*0.8 #consumption per day per phius calc
                 rangeElec = ((331 + 39*Nbr)/365)*1000
                 clothesDryer = ((12.4*(164+46.5*Nbr)*1.18/3.01*(2.874/0.817-704/392)/(0.2184*(4.5*4.08+0.24)))/365)*1000
@@ -249,8 +248,9 @@ while True:
                 # Envelope
 
                 flowCoefficient = runList['FLOW_COEFFICIENT [SI]'][runCount]
-                Ext_Window1_Ufactor = runList['EXT_WINDOW_1_U-FACTOR'][runCount]
-                Ext_Window1_SHGC = runList['EXT_WINDOW_1_SHGC'][runCount]
+                Ext_Window1 = runList['EXT_WINDOW_1'][runCount]
+                Ext_Window2 = runList['EXT_WINDOW_2'][runCount]
+                Ext_Window3 = runList['EXT_WINDOW_3'][runCount]
 
                 Ext_Wall1 = runList['EXT_WALL_1_NAME'][runCount]
                 Ext_Roof1 = runList['EXT_ROOF_1_NAME'][runCount]
@@ -258,12 +258,17 @@ while True:
                 Ext_Door1 = runList['EXT_DOOR_1_NAME'][runCount]
                 Int_Floor1 = runList['INT_FLOOR_1_NAME'][runCount]
 
-                Ext_Wall2 = 0
-                Ext_Wall3 = 0
-                Ext_Roof2 = 0
-                Ext_Roof3 = 0
-                Ext_Floor2 = 0
-                Ext_Floor3 = 0
+                Ext_Wall2 = runList['EXT_WALL_2_NAME'][runCount]
+                Ext_Roof2 = runList['EXT_ROOF_2_NAME'][runCount]
+                Ext_Floor2 = runList['EXT_FLOOR_2_NAME'][runCount]
+                Ext_Door2 = runList['EXT_DOOR_2_NAME'][runCount]
+                Int_Floor2 = runList['INT_FLOOR_2_NAME'][runCount]
+
+                Ext_Wall3 = runList['EXT_WALL_3_NAME'][runCount]
+                Ext_Roof3 = runList['EXT_ROOF_3_NAME'][runCount]
+                Ext_Floor3 = runList['EXT_FLOOR_3_NAME'][runCount]
+                Ext_Door3 = runList['EXT_DOOR_3_NAME'][runCount]
+                Int_Floor3 = runList['INT_FLOOR_3_NAME'][runCount]
 
                 # Foundation interfaces
                 fnd1 = runList['FOUNDATION_INTERFACE_1'][runCount]
@@ -271,19 +276,28 @@ while True:
                 fnd1p = runList['FOUNDATION_PERIMETER_1'][runCount]
                 fnd1d = runList['FOUNDATION_INSULATION_DEPTH_1'][runCount]
 
-                # fnd2 = 'Crawl'
-                # fnd2i = 'XPS'
-                # fnd2p = 30
-                # fnd2d = 2*0.3048
+                fnd2 = runList['FOUNDATION_INTERFACE_2'][runCount]
+                fnd2i = runList['FOUNDATION_INSUINSULATION_2'][runCount]
+                fnd2p = runList['FOUNDATION_PERIMETER_2'][runCount]
+                fnd2d = runList['FOUNDATION_INSULATION_DEPTH_2'][runCount]
 
-                # fnd3 = 'Basement'
-                # fnd3i = 'MWB'
-                # fnd3p = 35
-                # fnd3d = 2*0.3048
+                fnd3 = runList['FOUNDATION_INTERFACE_3'][runCount]
+                fnd3i = runList['FOUNDATION_INSUINSULATION_3'][runCount]
+                fnd3p = runList['FOUNDATION_PERIMETER_3'][runCount]
+                fnd3d = runList['FOUNDATION_INSULATION_DEPTH_3'][runCount]
 
-                foundationList = [(fnd1,fnd1i,fnd1d,fnd1p)]
-                            # (fnd2,fnd2i,fnd2d,fnd2p),
-                            # (fnd3,fnd3i,fnd3d,fnd3p)]
+
+                if str(fnd1) != 'nan':
+                    foundationList = [(fnd1,fnd1i,fnd1d,fnd1p)]
+
+                if str(fnd2) != 'nan':
+                    foundationList = [(fnd1,fnd1i,fnd1d,fnd1p),
+                                      (fnd2,fnd2i,fnd2d,fnd2p)]
+                
+                if str(fnd3) != 'nan':
+                    foundationList = [(fnd1,fnd1i,fnd1d,fnd1p),
+                                      (fnd2,fnd2i,fnd2d,fnd2p),
+                                      (fnd3,fnd3i,fnd3d,fnd3p)]
 
                 # Schedule Based Inputs 
                 outage1start = runList['OUTAGE_1_START'][runCount]
@@ -418,21 +432,26 @@ while True:
                     layerList = [x for x in layers if str(x) != 'nan']
 
                     constructionBuilder(idf1, constructionList['Name'][item],layerList)
+                
+                for item in range(constructions):
+                    
+                    name = constructionList['Name'][item]
+                    cost = constructionList['Cost_Per_Area_[$/m2]'][item]
 
+                    if cost != 0:
+                        costBuilder(idf1, name, '','Construction', name,'','',cost)
 
-                # costBuilder(idf1, 'Wall 1', '','Construction', 'Exterior Wall +1in EPS','','',13.77915008)
-                # costBuilder(idf1, 'Wall 2', '','Construction', 'Exterior Wall +1.625in EPS','','',16.79333916)
-                # costBuilder(idf1, 'Wall 3', '','Construction', 'Exterior Wall +2in EPS','','',18.62338253)
-                # costBuilder(idf1, 'Wall 4', '','Construction', 'Exterior Wall +4in EPS','','',25.40530796)
-                # costBuilder(idf1, 'Wall 5', '','Construction', 'Exterior Wall +6in EPS','','',34.55552481)
-                # costBuilder(idf1, 'Wall 6', '','Construction', 'Exterior Wall +9in EPS','','',46.93522996)
-                # costBuilder(idf1, 'Wall 7', '','Construction', 'Exterior Wall +14in EPS','','',63.6209195100001)
-                # costBuilder(idf1, 'Roof 1', '','Construction', 'Exterior Roof R-30','','',7.96607114000001)
-                # costBuilder(idf1, 'Roof 2', '','Construction', 'Exterior Roof R-49','','',8.39666958000001)
-                # costBuilder(idf1, 'Roof 3', '','Construction', 'Exterior Roof R-60','','',21.529922)
-                # costBuilder(idf1, 'Roof 4', '','Construction', 'Exterior Roof R-75','','',39.39975726)
-                # costBuilder(idf1, 'Roof 5', '','Construction', 'Exterior Roof R-100','','',69.3263488400001)
-                costBuilder(idf1, 'Window 1', '','Construction', 'ExteriorWindow1','','',(147*math.exp(0.23*Ext_Window1_Ufactor)))
+                # This function creates line item costs
+                # def costBuilder(idf, name, type, lineItemType, itemName, objEndUse, costEach, costArea):
+                #     idf.newidfobject('ComponentCost:LineItem',
+                #         Name = name,
+                #         Type = type,
+                #         Line_Item_Type = lineItemType,
+                #         Item_Name = itemName,
+                #         Object_EndUse_Key = objEndUse,
+                #         Cost_per_Each = costEach,
+                #         Cost_per_Area = costArea
+                #         )
 
                 # Envelope inputs
                 Infiltration(idf1, flowCoefficient)
@@ -445,12 +464,13 @@ while True:
                 # Window inputs and shading controls
                 WindowVentilation(idf1, halfHeight, operableArea_N, operableArea_W, 
                         operableArea_S, operableArea_E)
-                WindowMaterials(idf1, Ext_Window1_Ufactor,Ext_Window1_SHGC)
 
-                AssignContructions(idf1, Ext_Wall1,Ext_Wall2,Ext_Wall3,
-                        Ext_Roof1,Ext_Roof2,Ext_Roof3,
-                        Ext_Floor1,Ext_Floor2,Ext_Floor3,
-                        Ext_Door1, Int_Floor1)
+                AssignContructions(idf, Ext_Wall1,Ext_Wall2,Ext_Wall3,
+                       Ext_Roof1,Ext_Roof2,Ext_Roof3,
+                       Ext_Floor1,Ext_Floor2,Ext_Floor3,
+                       Ext_Door1,Ext_Door2,Ext_Door3, 
+                       Int_Floor1,Int_Floor2,Int_Floor3,
+                       Ext_Window1,Ext_Window2,Ext_Window3)
 
                 # Sizing settings:
                 SizingSettings(idf1, ZoneName)
@@ -701,11 +721,11 @@ while True:
                         peakElec = float(ltable[1][1][4])
 
                 if 'BASE' in str(BaseFileName):
-                    firstCost = 0
+                    firstCost = [0,0]
                 else:
                     for ltable in ltables:
                         if 'Construction Cost Estimate Summary' in '\n'.join(ltable[0]): #and 'For: Entire Facility' in '\n'.join(ltable[0]):
-                            firstCost = (float(ltable[1][9][2])*1.8)
+                            firstCost = [(float(ltable[1][9][2])*1.8),0]
 
                 # Save HTML and CSV outputs
                 reportHTML = (str(studyFolder) +'\eplustbl.htm')
@@ -746,7 +766,7 @@ while True:
                 MWH = hourlyBA['Whole Building:Facility Total Purchased Electricity Energy [J](Hourly)']*0.0000000002778
 
                 laborFraction = 0.4
-                emCO2_firstCost = firstCost*laborFraction*0.3
+                emCO2_firstCost = firstCost[0]*laborFraction*0.3
 
                 # hourlyEmissions = pd.read_csv(emissionsDatabase)
                 # emissions = hourlyEmissions[str(gridRegion)]
@@ -788,7 +808,9 @@ while True:
 
                 carbonDatabase = pd.read_csv(str(inputValues['dataBases']) + 'Carbon Correction Database.csv')
 
-                carbonMeasures = ['HP Replace 2', 'HP Replace 3']
+
+                if str(runList['CARBON_MEASURES'][runCount]) != 'nan':
+                    carbonMeasures = carbondMeasures = list(runList['CARBON_MEASURES'][runCount].split(', '))
 
                 carbonMeasureCost = []
 
@@ -829,7 +851,7 @@ while True:
                                                     'Cooling Battery Size [kWh]':coolingBattery,
                                                     'First Year Electric Cost [$]':annualElec,
                                                     'First Year Gas Cost [$]':annualGas,
-                                                    'First Cost [$]':firstCost,
+                                                    'First Cost [$]':firstCost[0],
                                                     'Total ADORB Cost [$]':adorbCost,
                                                     'pv_dirEn_tot':pv_dirEn_tot,
                                                     'pv_dirMR_tot':pv_dirMR_tot,
@@ -855,8 +877,8 @@ while True:
                 errorFile1= (str(studyFolder) + '\eplusout.err')
                 errorFile2 = (str(studyFolder) + "/" + str(BaseFileName)  + '_BA_eplusout.sql')
                 
-                    # if os.path.exists(errorFile2):
-                    #     os.remove(reportCSV2)
+                if os.path.exists(errorFile2):
+                    os.remove(errorFile2)
                 os.rename(errorFile1,errorFile2)
                 newResultRow = pd.DataFrame([{'Run Name':runList['CASE_NAME'][runCount],
                                                         'SET ≤ 12.2°C Hours (F)':'ERROR',

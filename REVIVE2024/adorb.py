@@ -33,7 +33,7 @@ def adorb(BaseFileName, studyFolder, duration, annualElec, annualGas, annualCO2E
     years = range(duration)
     pv = []
     r2 = []
-    pc= 0.5
+    pc= 0.25
     # Dependencies and databasing
     # NatEmiss = pd.read_csv('NatlEmission.csv')
 
