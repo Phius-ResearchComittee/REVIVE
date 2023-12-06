@@ -1,0 +1,146 @@
+!-Generator IDFEditor 1.53
+!-Option SortedOrder
+
+!-NOTE: All comments with '!-' are ignored by the IDFEditor and are generated automatically.
+!-      Use '!' comments if they need to be retained when using the IDFEditor.
+
+
+!-   ===========  ALL OBJECTS IN CLASS: SITE:LOCATION ===========
+
+! The following Location and Design Day data are produced as possible from the indicated data source.
+! Wind Speeds follow the indicated design conditions rather than traditional values (6.7 m/s heating, 3.35 m/s cooling)
+! No special attempts at re-creating or determining missing data parts (e.g. Wind speed or direction)
+! are done.  Therefore, you should look at the data and fill in any incorrect values as you desire.
+Site:Location,
+    Honolulu Intl Arpt_HI_USA Design_Conditions,  !- Name
+    21.32,                   !- Latitude {deg}
+    -157.93,                 !- Longitude {deg}
+    -10.00,                  !- Time Zone {hr}
+    2.00;                    !- Elevation {m}
+
+
+!-   ===========  ALL OBJECTS IN CLASS: SIZINGPERIOD:DESIGNDAY ===========
+
+!  WMO=911820 Time Zone=PCH: (GMT-10:00) Hawaii
+!  Data Source=ASHRAE 2009 Annual Design Conditions
+! Using Design Conditions from "Climate Design Data 2013 ASHRAE Handbook"
+! Honolulu Intl Arpt_HI_USA Extreme Annual Wind Speeds, 1%=9.9m/s, 2.5%=9m/s, 5%=8.4m/s
+! Honolulu Intl Arpt_HI_USA Extreme Annual Temperatures, Max Drybulb=14.7°C Min Drybulb=32.9°C
+! Honolulu Intl Arpt_HI_USA Annual Heating Design Conditions Wind Speed=1.9m/s Wind Dir=320
+! Coldest Month=FEB
+! Honolulu Intl Arpt_HI_USA Annual Heating 99.6%, MaxDB=16.6°C
+SizingPeriod:DesignDay,
+    Honolulu Intl Arpt Ann Htg 99.6% Condns DB,  !- Name
+    2,                       !- Month
+    21,                      !- Day of Month
+    WinterDesignDay,         !- Day Type
+    16.6,                    !- Maximum Dry-Bulb Temperature {C}
+    0.0,                     !- Daily Dry-Bulb Temperature Range {deltaC}
+    DefaultMultipliers,      !- Dry-Bulb Temperature Range Modifier Type
+    ,                        !- Dry-Bulb Temperature Range Modifier Day Schedule Name
+    Wetbulb,                 !- Humidity Condition Type
+    16.6,                    !- Wetbulb or DewPoint at Maximum Dry-Bulb {C}
+    ,                        !- Humidity Condition Day Schedule Name
+    ,                        !- Humidity Ratio at Maximum Dry-Bulb {kgWater/kgDryAir}
+    ,                        !- Enthalpy at Maximum Dry-Bulb {J/kg}
+    ,                        !- Daily Wet-Bulb Temperature Range {deltaC}
+    101301.,                 !- Barometric Pressure {Pa}
+    1.9,                     !- Wind Speed {m/s}
+    320,                     !- Wind Direction {deg}
+    No,                      !- Rain Indicator
+    No,                      !- Snow Indicator
+    No,                      !- Daylight Saving Time Indicator
+    ASHRAEClearSky,          !- Solar Model Indicator
+    ,                        !- Beam Solar Day Schedule Name
+    ,                        !- Diffuse Solar Day Schedule Name
+    ,                        !- ASHRAE Clear Sky Optical Depth for Beam Irradiance (taub) {dimensionless}
+    ,                        !- ASHRAE Clear Sky Optical Depth for Diffuse Irradiance (taud) {dimensionless}
+    0.00;                    !- Sky Clearness
+
+! Honolulu Intl Arpt_HI_USA Annual Heating 99%, MaxDB=17.7°C
+SizingPeriod:DesignDay,
+    Honolulu Intl Arpt Ann Htg 99% Condns DB,  !- Name
+    2,                       !- Month
+    21,                      !- Day of Month
+    WinterDesignDay,         !- Day Type
+    17.7,                    !- Maximum Dry-Bulb Temperature {C}
+    0.0,                     !- Daily Dry-Bulb Temperature Range {deltaC}
+    DefaultMultipliers,      !- Dry-Bulb Temperature Range Modifier Type
+    ,                        !- Dry-Bulb Temperature Range Modifier Day Schedule Name
+    Wetbulb,                 !- Humidity Condition Type
+    17.7,                    !- Wetbulb or DewPoint at Maximum Dry-Bulb {C}
+    ,                        !- Humidity Condition Day Schedule Name
+    ,                        !- Humidity Ratio at Maximum Dry-Bulb {kgWater/kgDryAir}
+    ,                        !- Enthalpy at Maximum Dry-Bulb {J/kg}
+    ,                        !- Daily Wet-Bulb Temperature Range {deltaC}
+    101301.,                 !- Barometric Pressure {Pa}
+    1.9,                     !- Wind Speed {m/s}
+    320,                     !- Wind Direction {deg}
+    No,                      !- Rain Indicator
+    No,                      !- Snow Indicator
+    No,                      !- Daylight Saving Time Indicator
+    ASHRAEClearSky,          !- Solar Model Indicator
+    ,                        !- Beam Solar Day Schedule Name
+    ,                        !- Diffuse Solar Day Schedule Name
+    ,                        !- ASHRAE Clear Sky Optical Depth for Beam Irradiance (taub) {dimensionless}
+    ,                        !- ASHRAE Clear Sky Optical Depth for Diffuse Irradiance (taud) {dimensionless}
+    0.00;                    !- Sky Clearness
+
+! Honolulu Intl Arpt Annual Cooling Design Conditions Wind Speed=6.8m/s Wind Dir=60
+! Hottest Month=AUG
+! Honolulu Intl Arpt_HI_USA Annual Cooling (DB=>MWB) .4%, MaxDB=32.1°C MWB=23.4°C
+SizingPeriod:DesignDay,
+    Honolulu Intl Arpt Ann Clg .4% Condns DB=>MWB,  !- Name
+    8,                       !- Month
+    21,                      !- Day of Month
+    SummerDesignDay,         !- Day Type
+    32.1,                    !- Maximum Dry-Bulb Temperature {C}
+    7,                       !- Daily Dry-Bulb Temperature Range {deltaC}
+    DefaultMultipliers,      !- Dry-Bulb Temperature Range Modifier Type
+    ,                        !- Dry-Bulb Temperature Range Modifier Day Schedule Name
+    Wetbulb,                 !- Humidity Condition Type
+    23.4,                    !- Wetbulb or DewPoint at Maximum Dry-Bulb {C}
+    ,                        !- Humidity Condition Day Schedule Name
+    ,                        !- Humidity Ratio at Maximum Dry-Bulb {kgWater/kgDryAir}
+    ,                        !- Enthalpy at Maximum Dry-Bulb {J/kg}
+    ,                        !- Daily Wet-Bulb Temperature Range {deltaC}
+    101301.,                 !- Barometric Pressure {Pa}
+    6.8,                     !- Wind Speed {m/s}
+    60,                      !- Wind Direction {deg}
+    No,                      !- Rain Indicator
+    No,                      !- Snow Indicator
+    No,                      !- Daylight Saving Time Indicator
+    ASHRAETau,               !- Solar Model Indicator
+    ,                        !- Beam Solar Day Schedule Name
+    ,                        !- Diffuse Solar Day Schedule Name
+    0.349,                   !- ASHRAE Clear Sky Optical Depth for Beam Irradiance (taub) {dimensionless}
+    2.612;                   !- ASHRAE Clear Sky Optical Depth for Diffuse Irradiance (taud) {dimensionless}
+
+! Honolulu Intl Arpt_HI_USA Annual Cooling (DB=>MWB) 1%, MaxDB=31.6°C MWB=23.1°C
+SizingPeriod:DesignDay,
+    Honolulu Intl Arpt Ann Clg 1% Condns DB=>MWB,  !- Name
+    8,                       !- Month
+    21,                      !- Day of Month
+    SummerDesignDay,         !- Day Type
+    31.6,                    !- Maximum Dry-Bulb Temperature {C}
+    7,                       !- Daily Dry-Bulb Temperature Range {deltaC}
+    DefaultMultipliers,      !- Dry-Bulb Temperature Range Modifier Type
+    ,                        !- Dry-Bulb Temperature Range Modifier Day Schedule Name
+    Wetbulb,                 !- Humidity Condition Type
+    23.1,                    !- Wetbulb or DewPoint at Maximum Dry-Bulb {C}
+    ,                        !- Humidity Condition Day Schedule Name
+    ,                        !- Humidity Ratio at Maximum Dry-Bulb {kgWater/kgDryAir}
+    ,                        !- Enthalpy at Maximum Dry-Bulb {J/kg}
+    ,                        !- Daily Wet-Bulb Temperature Range {deltaC}
+    101301.,                 !- Barometric Pressure {Pa}
+    6.8,                     !- Wind Speed {m/s}
+    60,                      !- Wind Direction {deg}
+    No,                      !- Rain Indicator
+    No,                      !- Snow Indicator
+    No,                      !- Daylight Saving Time Indicator
+    ASHRAETau,               !- Solar Model Indicator
+    ,                        !- Beam Solar Day Schedule Name
+    ,                        !- Diffuse Solar Day Schedule Name
+    0.349,                   !- ASHRAE Clear Sky Optical Depth for Beam Irradiance (taub) {dimensionless}
+    2.612;                   !- ASHRAE Clear Sky Optical Depth for Diffuse Irradiance (taud) {dimensionless}
+

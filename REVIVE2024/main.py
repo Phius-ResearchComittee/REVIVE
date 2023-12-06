@@ -52,6 +52,7 @@ from eppy.runner.run_functions import runIDFs
 import PySimpleGUI as sg
 # from PIL import Image, ImageTk
 import os
+import gc
 from eppy.results import readhtml # the eppy module with functions to read the html
 from eppy.results import fasthtml
 import subprocess
@@ -169,6 +170,7 @@ while True:
 
                 idfgName = inputValues['GEO']
                 emissionsDatabase = (str(inputValues['dataBases']) + 'Hourly Emission Rates.csv')
+                weatherDatabase = (str(inputValues['dataBases']) + '/Weather Data/')
                 runList = pd.read_csv(str(runListPath))
                 totalRuns = runList.shape[0]
                 batchName = str(inputValues['batchName'])
@@ -197,8 +199,8 @@ while True:
                 # 4.0 Variable Assignment
                 #==============================================================================================================================
 
-                epwFile = runList['EPW'][runCount]
-                ddyName = runList['DDY'][runCount]
+                epwFile = str(weatherDatabase) + str(runList['EPW'][runCount])
+                ddyName =  str(weatherDatabase) + str(runList['DDY'][runCount])
 
                 ZoneName = 'Zone 1'
 
@@ -606,6 +608,7 @@ while True:
                 heatingGraphFile = (str(studyFolder) + "/" + str(BaseFileName) + "_Heating Outage Resilience Graphs.png")
 
                 plt.savefig(str(heatingGraphFile), dpi=300)
+                plt.clf()
 
                 x = hourlyCool['DateTime']
 
@@ -639,7 +642,9 @@ while True:
                 coolingGraphFile = (str(studyFolder) + "/" + str(BaseFileName) + "_Cooling Outage Resilience Graphs.png")
 
                 plt.savefig(str(coolingGraphFile), dpi=300)
-
+                plt.clf()
+                del fig
+                gc.collect()
 
                 # Battery Sizing
                 heatingBattery = (hourlyHeat['Whole Building:Facility Total Purchased Electricity Energy [J](Hourly)'].sum())*0.0000002778
@@ -890,8 +895,8 @@ while True:
                             adorb.adorbBarGraph)
 
                 
-                # ResultsTable.to_csv(str(studyFolder) + "/" + str(batchName) + "_ResultsTable.csv")
-                # print('Saved Results')
+                ResultsTable.to_csv(str(studyFolder) + "/" + str(batchName) + "_ResultsTable.csv")
+                print('Saved Results')
 
             except:
                 errorFile1= (str(studyFolder) + '\eplusout.err')
@@ -924,8 +929,8 @@ while True:
                 newResultRow.to_csv(str(studyFolder) + "/" + str(caseName) + "_Test_ResultsTable.csv")
                 
                 ResultsTable = pd.concat([ResultsTable, newResultRow], axis=0, ignore_index=True)#, ignore_index=Truue
-        ResultsTable.to_csv(str(studyFolder) + "/" + str(batchName) + "_ResultsTable.csv")
-        print('Saved Results')
+                ResultsTable.to_csv(str(studyFolder) + "/" + str(batchName) + "_ResultsTable.csv")
+                print('Saved Results')
 
 
 

@@ -181,6 +181,7 @@ def adorb(BaseFileName, studyFolder, duration, annualElec, annualGas, annualCO2E
                         ax.legend(loc="upper right")
                         ax.set_xlabel('Cost [$]')
                         plt.savefig(str(adorb.adorbBarGraph),dpi=300)
+                        plt.clf()
     try:
         fig = df2.plot(kind='area', xlabel='Years', ylabel='Cummulative Present Value [$]', title=(str(BaseFileName) + '_ADORB COST'), figsize=(10,6)).get_figure()
 

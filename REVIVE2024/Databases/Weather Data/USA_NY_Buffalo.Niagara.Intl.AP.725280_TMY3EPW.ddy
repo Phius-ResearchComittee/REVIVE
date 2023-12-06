@@ -1,0 +1,153 @@
+!-Generator IDFEditor 1.53
+!-Option SortedOrder
+
+!-NOTE: All comments with '!-' are ignored by the IDFEditor and are generated automatically.
+!-      Use '!' comments if they need to be retained when using the IDFEditor.
+
+
+!-   ===========  ALL OBJECTS IN CLASS: SITE:LOCATION ===========
+
+! The following Location and Design Day data are produced as possible from the indicated data source.
+! Wind Speeds follow the indicated design conditions rather than traditional values (6.7 m/s heating, 3.35 m/s cooling)
+! No special attempts at re-creating or determining missing data parts (e.g. Wind speed or direction)
+! are done.  Therefore, you should look at the data and fill in any incorrect values as you desire.
+Site:Location,
+    Buffalo Niagara Intl AP_NY_USA Design_Conditions,  !- Name
+    42.93,                   !- Latitude {deg}
+    -78.73,                  !- Longitude {deg}
+    -5.00,                   !- Time Zone {hr}
+    215.00;                  !- Elevation {m}
+
+
+!-   ===========  ALL OBJECTS IN CLASS: SIZINGPERIOD:DESIGNDAY ===========
+
+! Using Design Conditions from "Climate Design Data 2013 ASHRAE Handbook"
+! Buffalo Niagara Intl AP_NY_USA Extreme Annual Wind Speeds, 1%=12.3m/s, 2.5%=10.9m/s, 5%=9.3m/s
+! Buffalo Niagara Intl AP_NY_USA Extreme Annual Temperatures, Max Drybulb=-18.8°C Min Drybulb=32.6°C
+! Buffalo Niagara Intl AP_NY_USA Annual Heating Design Conditions Wind Speed=4.6m/s Wind Dir=260
+! Coldest Month=JAN
+! Buffalo Niagara Intl AP_NY_USA Annual Heating 99.6%, MaxDB=-15.8°C
+SizingPeriod:DesignDay,
+    Buffalo Niagara Intl AP Ann Htg 99.6% Condns DB,  !- Name
+    1,                       !- Month
+    21,                      !- Day of Month
+    WinterDesignDay,         !- Day Type
+    -15.8,                   !- Maximum Dry-Bulb Temperature {C}
+    0.0,                     !- Daily Dry-Bulb Temperature Range {deltaC}
+    DefaultMultipliers,      !- Dry-Bulb Temperature Range Modifier Type
+    ,                        !- Dry-Bulb Temperature Range Modifier Day Schedule Name
+    Wetbulb,                 !- Humidity Condition Type
+    -15.8,                   !- Wetbulb or DewPoint at Maximum Dry-Bulb {C}
+    ,                        !- Humidity Condition Day Schedule Name
+    ,                        !- Humidity Ratio at Maximum Dry-Bulb {kgWater/kgDryAir}
+    ,                        !- Enthalpy at Maximum Dry-Bulb {J/kg}
+    ,                        !- Daily Wet-Bulb Temperature Range {deltaC}
+    98769.,                  !- Barometric Pressure {Pa}
+    4.6,                     !- Wind Speed {m/s}
+    260,                     !- Wind Direction {deg}
+    No,                      !- Rain Indicator
+    No,                      !- Snow Indicator
+    No,                      !- Daylight Saving Time Indicator
+    ASHRAEClearSky,          !- Solar Model Indicator
+    ,                        !- Beam Solar Day Schedule Name
+    ,                        !- Diffuse Solar Day Schedule Name
+    ,                        !- ASHRAE Clear Sky Optical Depth for Beam Irradiance (taub) {dimensionless}
+    ,                        !- ASHRAE Clear Sky Optical Depth for Diffuse Irradiance (taud) {dimensionless}
+    0.00;                    !- Sky Clearness
+
+! Buffalo Niagara Intl AP_NY_USA Annual Heating 99%, MaxDB=-13.6°C
+SizingPeriod:DesignDay,
+    Buffalo Niagara Intl AP Ann Htg 99% Condns DB,  !- Name
+    1,                       !- Month
+    21,                      !- Day of Month
+    WinterDesignDay,         !- Day Type
+    -13.6,                   !- Maximum Dry-Bulb Temperature {C}
+    0.0,                     !- Daily Dry-Bulb Temperature Range {deltaC}
+    DefaultMultipliers,      !- Dry-Bulb Temperature Range Modifier Type
+    ,                        !- Dry-Bulb Temperature Range Modifier Day Schedule Name
+    Wetbulb,                 !- Humidity Condition Type
+    -13.6,                   !- Wetbulb or DewPoint at Maximum Dry-Bulb {C}
+    ,                        !- Humidity Condition Day Schedule Name
+    ,                        !- Humidity Ratio at Maximum Dry-Bulb {kgWater/kgDryAir}
+    ,                        !- Enthalpy at Maximum Dry-Bulb {J/kg}
+    ,                        !- Daily Wet-Bulb Temperature Range {deltaC}
+    98769.,                  !- Barometric Pressure {Pa}
+    4.6,                     !- Wind Speed {m/s}
+    260,                     !- Wind Direction {deg}
+    No,                      !- Rain Indicator
+    No,                      !- Snow Indicator
+    No,                      !- Daylight Saving Time Indicator
+    ASHRAEClearSky,          !- Solar Model Indicator
+    ,                        !- Beam Solar Day Schedule Name
+    ,                        !- Diffuse Solar Day Schedule Name
+    ,                        !- ASHRAE Clear Sky Optical Depth for Beam Irradiance (taub) {dimensionless}
+    ,                        !- ASHRAE Clear Sky Optical Depth for Diffuse Irradiance (taud) {dimensionless}
+    0.00;                    !- Sky Clearness
+
+! Buffalo Niagara Intl AP Annual Cooling Design Conditions Wind Speed=5.5m/s Wind Dir=240
+! Hottest Month=JUL
+! Buffalo Niagara Intl AP_NY_USA Annual Cooling (DB=>MWB) .4%, MaxDB=30.2°C MWB=21.8°C
+SizingPeriod:DesignDay,
+    Buffalo Niagara Intl AP Ann Clg .4% Condns DB=>MWB,  !- Name
+    7,                       !- Month
+    21,                      !- Day of Month
+    SummerDesignDay,         !- Day Type
+    30.2,                    !- Maximum Dry-Bulb Temperature {C}
+    9.1,                     !- Daily Dry-Bulb Temperature Range {deltaC}
+    DefaultMultipliers,      !- Dry-Bulb Temperature Range Modifier Type
+    ,                        !- Dry-Bulb Temperature Range Modifier Day Schedule Name
+    Wetbulb,                 !- Humidity Condition Type
+    21.8,                    !- Wetbulb or DewPoint at Maximum Dry-Bulb {C}
+    ,                        !- Humidity Condition Day Schedule Name
+    ,                        !- Humidity Ratio at Maximum Dry-Bulb {kgWater/kgDryAir}
+    ,                        !- Enthalpy at Maximum Dry-Bulb {J/kg}
+    ,                        !- Daily Wet-Bulb Temperature Range {deltaC}
+    98769.,                  !- Barometric Pressure {Pa}
+    5.5,                     !- Wind Speed {m/s}
+    240,                     !- Wind Direction {deg}
+    No,                      !- Rain Indicator
+    No,                      !- Snow Indicator
+    No,                      !- Daylight Saving Time Indicator
+    ASHRAETau,               !- Solar Model Indicator
+    ,                        !- Beam Solar Day Schedule Name
+    ,                        !- Diffuse Solar Day Schedule Name
+    0.405,                   !- ASHRAE Clear Sky Optical Depth for Beam Irradiance (taub) {dimensionless}
+    2.228;                   !- ASHRAE Clear Sky Optical Depth for Diffuse Irradiance (taud) {dimensionless}
+
+! Buffalo Niagara Intl AP_NY_USA Annual Cooling (DB=>MWB) 1%, MaxDB=28.8°C MWB=21.1°C
+SizingPeriod:DesignDay,
+    Buffalo Niagara Intl AP Ann Clg 1% Condns DB=>MWB,  !- Name
+    7,                       !- Month
+    21,                      !- Day of Month
+    SummerDesignDay,         !- Day Type
+    28.8,                    !- Maximum Dry-Bulb Temperature {C}
+    9.1,                     !- Daily Dry-Bulb Temperature Range {deltaC}
+    DefaultMultipliers,      !- Dry-Bulb Temperature Range Modifier Type
+    ,                        !- Dry-Bulb Temperature Range Modifier Day Schedule Name
+    Wetbulb,                 !- Humidity Condition Type
+    21.1,                    !- Wetbulb or DewPoint at Maximum Dry-Bulb {C}
+    ,                        !- Humidity Condition Day Schedule Name
+    ,                        !- Humidity Ratio at Maximum Dry-Bulb {kgWater/kgDryAir}
+    ,                        !- Enthalpy at Maximum Dry-Bulb {J/kg}
+    ,                        !- Daily Wet-Bulb Temperature Range {deltaC}
+    98769.,                  !- Barometric Pressure {Pa}
+    5.5,                     !- Wind Speed {m/s}
+    240,                     !- Wind Direction {deg}
+    No,                      !- Rain Indicator
+    No,                      !- Snow Indicator
+    No,                      !- Daylight Saving Time Indicator
+    ASHRAETau,               !- Solar Model Indicator
+    ,                        !- Beam Solar Day Schedule Name
+    ,                        !- Diffuse Solar Day Schedule Name
+    0.405,                   !- ASHRAE Clear Sky Optical Depth for Beam Irradiance (taub) {dimensionless}
+    2.228;                   !- ASHRAE Clear Sky Optical Depth for Diffuse Irradiance (taud) {dimensionless}
+
+
+!-   ===========  ALL OBJECTS IN CLASS: RUNPERIODCONTROL:DAYLIGHTSAVINGTIME ===========
+
+!  WMO=725280 Time Zone=NAE: (GMT-05:00) Eastern Time (US & Canada)
+!  Data Source=ASHRAE 2009 Annual Design Conditions
+RunPeriodControl:DaylightSavingTime,
+    2nd Sunday in March,     !- Start Date
+    1st Sunday in November;  !- End Date
+

@@ -1,0 +1,153 @@
+!-Generator IDFEditor 1.53
+!-Option SortedOrder
+
+!-NOTE: All comments with '!-' are ignored by the IDFEditor and are generated automatically.
+!-      Use '!' comments if they need to be retained when using the IDFEditor.
+
+
+!-   ===========  ALL OBJECTS IN CLASS: SITE:LOCATION ===========
+
+! The following Location and Design Day data are produced as possible from the indicated data source.
+! Wind Speeds follow the indicated design conditions rather than traditional values (6.7 m/s heating, 3.35 m/s cooling)
+! No special attempts at re-creating or determining missing data parts (e.g. Wind speed or direction)
+! are done.  Therefore, you should look at the data and fill in any incorrect values as you desire.
+Site:Location,
+    Rochester International Arpt_MN_USA Design_Conditions,  !- Name
+    43.90,                   !- Latitude {deg}
+    -92.50,                  !- Longitude {deg}
+    -6.00,                   !- Time Zone {hr}
+    398.00;                  !- Elevation {m}
+
+
+!-   ===========  ALL OBJECTS IN CLASS: SIZINGPERIOD:DESIGNDAY ===========
+
+! Using Design Conditions from "Climate Design Data 2013 ASHRAE Handbook"
+! Rochester International Arpt_MN_USA Extreme Annual Wind Speeds, 1%=12.8m/s, 2.5%=11.5m/s, 5%=10.5m/s
+! Rochester International Arpt_MN_USA Extreme Annual Temperatures, Max Drybulb=-28.4°C Min Drybulb=33.8°C
+! Rochester International Arpt_MN_USA Annual Heating Design Conditions Wind Speed=5.4m/s Wind Dir=310
+! Coldest Month=JAN
+! Rochester International Arpt_MN_USA Annual Heating 99.6%, MaxDB=-25°C
+SizingPeriod:DesignDay,
+    Rochester International Arpt Ann Htg 99.6% Condns DB,  !- Name
+    1,                       !- Month
+    21,                      !- Day of Month
+    WinterDesignDay,         !- Day Type
+    -25,                     !- Maximum Dry-Bulb Temperature {C}
+    0.0,                     !- Daily Dry-Bulb Temperature Range {deltaC}
+    DefaultMultipliers,      !- Dry-Bulb Temperature Range Modifier Type
+    ,                        !- Dry-Bulb Temperature Range Modifier Day Schedule Name
+    Wetbulb,                 !- Humidity Condition Type
+    -25,                     !- Wetbulb or DewPoint at Maximum Dry-Bulb {C}
+    ,                        !- Humidity Condition Day Schedule Name
+    ,                        !- Humidity Ratio at Maximum Dry-Bulb {kgWater/kgDryAir}
+    ,                        !- Enthalpy at Maximum Dry-Bulb {J/kg}
+    ,                        !- Daily Wet-Bulb Temperature Range {deltaC}
+    96634.,                  !- Barometric Pressure {Pa}
+    5.4,                     !- Wind Speed {m/s}
+    310,                     !- Wind Direction {deg}
+    No,                      !- Rain Indicator
+    No,                      !- Snow Indicator
+    No,                      !- Daylight Saving Time Indicator
+    ASHRAEClearSky,          !- Solar Model Indicator
+    ,                        !- Beam Solar Day Schedule Name
+    ,                        !- Diffuse Solar Day Schedule Name
+    ,                        !- ASHRAE Clear Sky Optical Depth for Beam Irradiance (taub) {dimensionless}
+    ,                        !- ASHRAE Clear Sky Optical Depth for Diffuse Irradiance (taud) {dimensionless}
+    0.00;                    !- Sky Clearness
+
+! Rochester International Arpt_MN_USA Annual Heating 99%, MaxDB=-22.3°C
+SizingPeriod:DesignDay,
+    Rochester International Arpt Ann Htg 99% Condns DB,  !- Name
+    1,                       !- Month
+    21,                      !- Day of Month
+    WinterDesignDay,         !- Day Type
+    -22.3,                   !- Maximum Dry-Bulb Temperature {C}
+    0.0,                     !- Daily Dry-Bulb Temperature Range {deltaC}
+    DefaultMultipliers,      !- Dry-Bulb Temperature Range Modifier Type
+    ,                        !- Dry-Bulb Temperature Range Modifier Day Schedule Name
+    Wetbulb,                 !- Humidity Condition Type
+    -22.3,                   !- Wetbulb or DewPoint at Maximum Dry-Bulb {C}
+    ,                        !- Humidity Condition Day Schedule Name
+    ,                        !- Humidity Ratio at Maximum Dry-Bulb {kgWater/kgDryAir}
+    ,                        !- Enthalpy at Maximum Dry-Bulb {J/kg}
+    ,                        !- Daily Wet-Bulb Temperature Range {deltaC}
+    96634.,                  !- Barometric Pressure {Pa}
+    5.4,                     !- Wind Speed {m/s}
+    310,                     !- Wind Direction {deg}
+    No,                      !- Rain Indicator
+    No,                      !- Snow Indicator
+    No,                      !- Daylight Saving Time Indicator
+    ASHRAEClearSky,          !- Solar Model Indicator
+    ,                        !- Beam Solar Day Schedule Name
+    ,                        !- Diffuse Solar Day Schedule Name
+    ,                        !- ASHRAE Clear Sky Optical Depth for Beam Irradiance (taub) {dimensionless}
+    ,                        !- ASHRAE Clear Sky Optical Depth for Diffuse Irradiance (taud) {dimensionless}
+    0.00;                    !- Sky Clearness
+
+! Rochester International Arpt Annual Cooling Design Conditions Wind Speed=6.5m/s Wind Dir=200
+! Hottest Month=JUL
+! Rochester International Arpt_MN_USA Annual Cooling (DB=>MWB) .4%, MaxDB=31.1°C MWB=23°C
+SizingPeriod:DesignDay,
+    Rochester International Arpt Ann Clg .4% Condns DB=>MWB,  !- Name
+    7,                       !- Month
+    21,                      !- Day of Month
+    SummerDesignDay,         !- Day Type
+    31.1,                    !- Maximum Dry-Bulb Temperature {C}
+    10.3,                    !- Daily Dry-Bulb Temperature Range {deltaC}
+    DefaultMultipliers,      !- Dry-Bulb Temperature Range Modifier Type
+    ,                        !- Dry-Bulb Temperature Range Modifier Day Schedule Name
+    Wetbulb,                 !- Humidity Condition Type
+    23,                      !- Wetbulb or DewPoint at Maximum Dry-Bulb {C}
+    ,                        !- Humidity Condition Day Schedule Name
+    ,                        !- Humidity Ratio at Maximum Dry-Bulb {kgWater/kgDryAir}
+    ,                        !- Enthalpy at Maximum Dry-Bulb {J/kg}
+    ,                        !- Daily Wet-Bulb Temperature Range {deltaC}
+    96634.,                  !- Barometric Pressure {Pa}
+    6.5,                     !- Wind Speed {m/s}
+    200,                     !- Wind Direction {deg}
+    No,                      !- Rain Indicator
+    No,                      !- Snow Indicator
+    No,                      !- Daylight Saving Time Indicator
+    ASHRAETau,               !- Solar Model Indicator
+    ,                        !- Beam Solar Day Schedule Name
+    ,                        !- Diffuse Solar Day Schedule Name
+    0.362,                   !- ASHRAE Clear Sky Optical Depth for Beam Irradiance (taub) {dimensionless}
+    2.334;                   !- ASHRAE Clear Sky Optical Depth for Diffuse Irradiance (taud) {dimensionless}
+
+! Rochester International Arpt_MN_USA Annual Cooling (DB=>MWB) 1%, MaxDB=29.3°C MWB=22.1°C
+SizingPeriod:DesignDay,
+    Rochester International Arpt Ann Clg 1% Condns DB=>MWB,  !- Name
+    7,                       !- Month
+    21,                      !- Day of Month
+    SummerDesignDay,         !- Day Type
+    29.3,                    !- Maximum Dry-Bulb Temperature {C}
+    10.3,                    !- Daily Dry-Bulb Temperature Range {deltaC}
+    DefaultMultipliers,      !- Dry-Bulb Temperature Range Modifier Type
+    ,                        !- Dry-Bulb Temperature Range Modifier Day Schedule Name
+    Wetbulb,                 !- Humidity Condition Type
+    22.1,                    !- Wetbulb or DewPoint at Maximum Dry-Bulb {C}
+    ,                        !- Humidity Condition Day Schedule Name
+    ,                        !- Humidity Ratio at Maximum Dry-Bulb {kgWater/kgDryAir}
+    ,                        !- Enthalpy at Maximum Dry-Bulb {J/kg}
+    ,                        !- Daily Wet-Bulb Temperature Range {deltaC}
+    96634.,                  !- Barometric Pressure {Pa}
+    6.5,                     !- Wind Speed {m/s}
+    200,                     !- Wind Direction {deg}
+    No,                      !- Rain Indicator
+    No,                      !- Snow Indicator
+    No,                      !- Daylight Saving Time Indicator
+    ASHRAETau,               !- Solar Model Indicator
+    ,                        !- Beam Solar Day Schedule Name
+    ,                        !- Diffuse Solar Day Schedule Name
+    0.362,                   !- ASHRAE Clear Sky Optical Depth for Beam Irradiance (taub) {dimensionless}
+    2.334;                   !- ASHRAE Clear Sky Optical Depth for Diffuse Irradiance (taud) {dimensionless}
+
+
+!-   ===========  ALL OBJECTS IN CLASS: RUNPERIODCONTROL:DAYLIGHTSAVINGTIME ===========
+
+!  WMO=726440 Time Zone=NAC: (GMT-06:00) Central Time (US & Canada)
+!  Data Source=ASHRAE 2009 Annual Design Conditions
+RunPeriodControl:DaylightSavingTime,
+    2nd Sunday in March,     !- Start Date
+    1st Sunday in November;  !- End Date
+

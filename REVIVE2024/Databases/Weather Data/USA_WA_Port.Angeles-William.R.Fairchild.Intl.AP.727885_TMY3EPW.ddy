@@ -1,0 +1,153 @@
+!-Generator IDFEditor 1.53
+!-Option SortedOrder
+
+!-NOTE: All comments with '!-' are ignored by the IDFEditor and are generated automatically.
+!-      Use '!' comments if they need to be retained when using the IDFEditor.
+
+
+!-   ===========  ALL OBJECTS IN CLASS: SITE:LOCATION ===========
+
+! The following Location and Design Day data are produced as possible from the indicated data source.
+! Wind Speeds follow the indicated design conditions rather than traditional values (6.7 m/s heating, 3.35 m/s cooling)
+! No special attempts at re-creating or determining missing data parts (e.g. Wind speed or direction)
+! are done.  Therefore, you should look at the data and fill in any incorrect values as you desire.
+Site:Location,
+    William R Fairchild_WA_USA Design_Conditions,  !- Name
+    48.12,                   !- Latitude {deg}
+    -123.50,                 !- Longitude {deg}
+    -8.00,                   !- Time Zone {hr}
+    91.00;                   !- Elevation {m}
+
+
+!-   ===========  ALL OBJECTS IN CLASS: SIZINGPERIOD:DESIGNDAY ===========
+
+! Using Design Conditions from "Climate Design Data 2013 ASHRAE Handbook"
+! William R Fairchild_WA_USA Extreme Annual Wind Speeds, 1%=8m/s, 2.5%=6.7m/s, 5%=5.6m/s
+! William R Fairchild_WA_USA Extreme Annual Temperatures, Max Drybulb=-6.4°C Min Drybulb=31.1°C
+! William R Fairchild_WA_USA Annual Heating Design Conditions Wind Speed=1.4m/s Wind Dir=230
+! Coldest Month=JAN
+! William R Fairchild_WA_USA Annual Heating 99.6%, MaxDB=-4.1°C
+SizingPeriod:DesignDay,
+    William R Fairchild Ann Htg 99.6% Condns DB,  !- Name
+    1,                       !- Month
+    21,                      !- Day of Month
+    WinterDesignDay,         !- Day Type
+    -4.1,                    !- Maximum Dry-Bulb Temperature {C}
+    0.0,                     !- Daily Dry-Bulb Temperature Range {deltaC}
+    DefaultMultipliers,      !- Dry-Bulb Temperature Range Modifier Type
+    ,                        !- Dry-Bulb Temperature Range Modifier Day Schedule Name
+    Wetbulb,                 !- Humidity Condition Type
+    -4.1,                    !- Wetbulb or DewPoint at Maximum Dry-Bulb {C}
+    ,                        !- Humidity Condition Day Schedule Name
+    ,                        !- Humidity Ratio at Maximum Dry-Bulb {kgWater/kgDryAir}
+    ,                        !- Enthalpy at Maximum Dry-Bulb {J/kg}
+    ,                        !- Daily Wet-Bulb Temperature Range {deltaC}
+    100237.,                 !- Barometric Pressure {Pa}
+    1.4,                     !- Wind Speed {m/s}
+    230,                     !- Wind Direction {deg}
+    No,                      !- Rain Indicator
+    No,                      !- Snow Indicator
+    No,                      !- Daylight Saving Time Indicator
+    ASHRAEClearSky,          !- Solar Model Indicator
+    ,                        !- Beam Solar Day Schedule Name
+    ,                        !- Diffuse Solar Day Schedule Name
+    ,                        !- ASHRAE Clear Sky Optical Depth for Beam Irradiance (taub) {dimensionless}
+    ,                        !- ASHRAE Clear Sky Optical Depth for Diffuse Irradiance (taud) {dimensionless}
+    0.00;                    !- Sky Clearness
+
+! William R Fairchild_WA_USA Annual Heating 99%, MaxDB=-2.5°C
+SizingPeriod:DesignDay,
+    William R Fairchild Ann Htg 99% Condns DB,  !- Name
+    1,                       !- Month
+    21,                      !- Day of Month
+    WinterDesignDay,         !- Day Type
+    -2.5,                    !- Maximum Dry-Bulb Temperature {C}
+    0.0,                     !- Daily Dry-Bulb Temperature Range {deltaC}
+    DefaultMultipliers,      !- Dry-Bulb Temperature Range Modifier Type
+    ,                        !- Dry-Bulb Temperature Range Modifier Day Schedule Name
+    Wetbulb,                 !- Humidity Condition Type
+    -2.5,                    !- Wetbulb or DewPoint at Maximum Dry-Bulb {C}
+    ,                        !- Humidity Condition Day Schedule Name
+    ,                        !- Humidity Ratio at Maximum Dry-Bulb {kgWater/kgDryAir}
+    ,                        !- Enthalpy at Maximum Dry-Bulb {J/kg}
+    ,                        !- Daily Wet-Bulb Temperature Range {deltaC}
+    100237.,                 !- Barometric Pressure {Pa}
+    1.4,                     !- Wind Speed {m/s}
+    230,                     !- Wind Direction {deg}
+    No,                      !- Rain Indicator
+    No,                      !- Snow Indicator
+    No,                      !- Daylight Saving Time Indicator
+    ASHRAEClearSky,          !- Solar Model Indicator
+    ,                        !- Beam Solar Day Schedule Name
+    ,                        !- Diffuse Solar Day Schedule Name
+    ,                        !- ASHRAE Clear Sky Optical Depth for Beam Irradiance (taub) {dimensionless}
+    ,                        !- ASHRAE Clear Sky Optical Depth for Diffuse Irradiance (taud) {dimensionless}
+    0.00;                    !- Sky Clearness
+
+! William R Fairchild Annual Cooling Design Conditions Wind Speed=2.1m/s Wind Dir=90
+! Hottest Month=AUG
+! William R Fairchild_WA_USA Annual Cooling (DB=>MWB) .4%, MaxDB=26.3°C MWB=17°C
+SizingPeriod:DesignDay,
+    William R Fairchild Ann Clg .4% Condns DB=>MWB,  !- Name
+    8,                       !- Month
+    21,                      !- Day of Month
+    SummerDesignDay,         !- Day Type
+    26.3,                    !- Maximum Dry-Bulb Temperature {C}
+    9,                       !- Daily Dry-Bulb Temperature Range {deltaC}
+    DefaultMultipliers,      !- Dry-Bulb Temperature Range Modifier Type
+    ,                        !- Dry-Bulb Temperature Range Modifier Day Schedule Name
+    Wetbulb,                 !- Humidity Condition Type
+    17,                      !- Wetbulb or DewPoint at Maximum Dry-Bulb {C}
+    ,                        !- Humidity Condition Day Schedule Name
+    ,                        !- Humidity Ratio at Maximum Dry-Bulb {kgWater/kgDryAir}
+    ,                        !- Enthalpy at Maximum Dry-Bulb {J/kg}
+    ,                        !- Daily Wet-Bulb Temperature Range {deltaC}
+    100237.,                 !- Barometric Pressure {Pa}
+    2.1,                     !- Wind Speed {m/s}
+    90,                      !- Wind Direction {deg}
+    No,                      !- Rain Indicator
+    No,                      !- Snow Indicator
+    No,                      !- Daylight Saving Time Indicator
+    ASHRAETau,               !- Solar Model Indicator
+    ,                        !- Beam Solar Day Schedule Name
+    ,                        !- Diffuse Solar Day Schedule Name
+    0.328,                   !- ASHRAE Clear Sky Optical Depth for Beam Irradiance (taub) {dimensionless}
+    2.555;                   !- ASHRAE Clear Sky Optical Depth for Diffuse Irradiance (taud) {dimensionless}
+
+! William R Fairchild_WA_USA Annual Cooling (DB=>MWB) 1%, MaxDB=23.4°C MWB=15.8°C
+SizingPeriod:DesignDay,
+    William R Fairchild Ann Clg 1% Condns DB=>MWB,  !- Name
+    8,                       !- Month
+    21,                      !- Day of Month
+    SummerDesignDay,         !- Day Type
+    23.4,                    !- Maximum Dry-Bulb Temperature {C}
+    9,                       !- Daily Dry-Bulb Temperature Range {deltaC}
+    DefaultMultipliers,      !- Dry-Bulb Temperature Range Modifier Type
+    ,                        !- Dry-Bulb Temperature Range Modifier Day Schedule Name
+    Wetbulb,                 !- Humidity Condition Type
+    15.8,                    !- Wetbulb or DewPoint at Maximum Dry-Bulb {C}
+    ,                        !- Humidity Condition Day Schedule Name
+    ,                        !- Humidity Ratio at Maximum Dry-Bulb {kgWater/kgDryAir}
+    ,                        !- Enthalpy at Maximum Dry-Bulb {J/kg}
+    ,                        !- Daily Wet-Bulb Temperature Range {deltaC}
+    100237.,                 !- Barometric Pressure {Pa}
+    2.1,                     !- Wind Speed {m/s}
+    90,                      !- Wind Direction {deg}
+    No,                      !- Rain Indicator
+    No,                      !- Snow Indicator
+    No,                      !- Daylight Saving Time Indicator
+    ASHRAETau,               !- Solar Model Indicator
+    ,                        !- Beam Solar Day Schedule Name
+    ,                        !- Diffuse Solar Day Schedule Name
+    0.328,                   !- ASHRAE Clear Sky Optical Depth for Beam Irradiance (taub) {dimensionless}
+    2.555;                   !- ASHRAE Clear Sky Optical Depth for Diffuse Irradiance (taud) {dimensionless}
+
+
+!-   ===========  ALL OBJECTS IN CLASS: RUNPERIODCONTROL:DAYLIGHTSAVINGTIME ===========
+
+!  WMO=727885 Time Zone=NAP: (GMT-08:00) Pacific Time (US & Canada); Tijuana
+!  Data Source=ASHRAE 2009 Annual Design Conditions
+RunPeriodControl:DaylightSavingTime,
+    2nd Sunday in March,     !- Start Date
+    1st Sunday in November;  !- End Date
+

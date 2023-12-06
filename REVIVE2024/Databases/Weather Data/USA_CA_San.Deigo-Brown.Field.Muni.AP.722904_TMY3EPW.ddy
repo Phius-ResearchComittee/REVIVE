@@ -1,0 +1,153 @@
+!-Generator IDFEditor 1.53
+!-Option SortedOrder
+
+!-NOTE: All comments with '!-' are ignored by the IDFEditor and are generated automatically.
+!-      Use '!' comments if they need to be retained when using the IDFEditor.
+
+
+!-   ===========  ALL OBJECTS IN CLASS: SITE:LOCATION ===========
+
+! The following Location and Design Day data are produced as possible from the indicated data source.
+! Wind Speeds follow the indicated design conditions rather than traditional values (6.7 m/s heating, 3.35 m/s cooling)
+! No special attempts at re-creating or determining missing data parts (e.g. Wind speed or direction)
+! are done.  Therefore, you should look at the data and fill in any incorrect values as you desire.
+Site:Location,
+    San Diego-Brown Field Muni AP_CA_USA Design_Conditions,  !- Name
+    32.58,                   !- Latitude {deg}
+    -116.98,                 !- Longitude {deg}
+    -8.00,                   !- Time Zone {hr}
+    159.00;                  !- Elevation {m}
+
+
+!-   ===========  ALL OBJECTS IN CLASS: SIZINGPERIOD:DESIGNDAY ===========
+
+! Using Design Conditions from "Climate Design Data 2013 ASHRAE Handbook"
+! San Diego-Brown Field Muni AP_CA_USA Extreme Annual Wind Speeds, 1%=7.3m/s, 2.5%=5.9m/s, 5%=5.4m/s
+! San Diego-Brown Field Muni AP_CA_USA Extreme Annual Temperatures, Max Drybulb=1.5°C Min Drybulb=36.9°C
+! San Diego-Brown Field Muni AP_CA_USA Annual Heating Design Conditions Wind Speed=2.8m/s Wind Dir=120
+! Coldest Month=DEC
+! San Diego-Brown Field Muni AP_CA_USA Annual Heating 99.6%, MaxDB=3.8°C
+SizingPeriod:DesignDay,
+    San Diego-Brown Field Muni AP Ann Htg 99.6% Condns DB,  !- Name
+    12,                      !- Month
+    21,                      !- Day of Month
+    WinterDesignDay,         !- Day Type
+    3.8,                     !- Maximum Dry-Bulb Temperature {C}
+    0.0,                     !- Daily Dry-Bulb Temperature Range {deltaC}
+    DefaultMultipliers,      !- Dry-Bulb Temperature Range Modifier Type
+    ,                        !- Dry-Bulb Temperature Range Modifier Day Schedule Name
+    Wetbulb,                 !- Humidity Condition Type
+    3.8,                     !- Wetbulb or DewPoint at Maximum Dry-Bulb {C}
+    ,                        !- Humidity Condition Day Schedule Name
+    ,                        !- Humidity Ratio at Maximum Dry-Bulb {kgWater/kgDryAir}
+    ,                        !- Enthalpy at Maximum Dry-Bulb {J/kg}
+    ,                        !- Daily Wet-Bulb Temperature Range {deltaC}
+    99429.,                  !- Barometric Pressure {Pa}
+    2.8,                     !- Wind Speed {m/s}
+    120,                     !- Wind Direction {deg}
+    No,                      !- Rain Indicator
+    No,                      !- Snow Indicator
+    No,                      !- Daylight Saving Time Indicator
+    ASHRAEClearSky,          !- Solar Model Indicator
+    ,                        !- Beam Solar Day Schedule Name
+    ,                        !- Diffuse Solar Day Schedule Name
+    ,                        !- ASHRAE Clear Sky Optical Depth for Beam Irradiance (taub) {dimensionless}
+    ,                        !- ASHRAE Clear Sky Optical Depth for Diffuse Irradiance (taud) {dimensionless}
+    0.00;                    !- Sky Clearness
+
+! San Diego-Brown Field Muni AP_CA_USA Annual Heating 99%, MaxDB=5.9°C
+SizingPeriod:DesignDay,
+    San Diego-Brown Field Muni AP Ann Htg 99% Condns DB,  !- Name
+    12,                      !- Month
+    21,                      !- Day of Month
+    WinterDesignDay,         !- Day Type
+    5.9,                     !- Maximum Dry-Bulb Temperature {C}
+    0.0,                     !- Daily Dry-Bulb Temperature Range {deltaC}
+    DefaultMultipliers,      !- Dry-Bulb Temperature Range Modifier Type
+    ,                        !- Dry-Bulb Temperature Range Modifier Day Schedule Name
+    Wetbulb,                 !- Humidity Condition Type
+    5.9,                     !- Wetbulb or DewPoint at Maximum Dry-Bulb {C}
+    ,                        !- Humidity Condition Day Schedule Name
+    ,                        !- Humidity Ratio at Maximum Dry-Bulb {kgWater/kgDryAir}
+    ,                        !- Enthalpy at Maximum Dry-Bulb {J/kg}
+    ,                        !- Daily Wet-Bulb Temperature Range {deltaC}
+    99429.,                  !- Barometric Pressure {Pa}
+    2.8,                     !- Wind Speed {m/s}
+    120,                     !- Wind Direction {deg}
+    No,                      !- Rain Indicator
+    No,                      !- Snow Indicator
+    No,                      !- Daylight Saving Time Indicator
+    ASHRAEClearSky,          !- Solar Model Indicator
+    ,                        !- Beam Solar Day Schedule Name
+    ,                        !- Diffuse Solar Day Schedule Name
+    ,                        !- ASHRAE Clear Sky Optical Depth for Beam Irradiance (taub) {dimensionless}
+    ,                        !- ASHRAE Clear Sky Optical Depth for Diffuse Irradiance (taud) {dimensionless}
+    0.00;                    !- Sky Clearness
+
+! San Diego-Brown Field Muni AP Annual Cooling Design Conditions Wind Speed=4m/s Wind Dir=280
+! Hottest Month=AUG
+! San Diego-Brown Field Muni AP_CA_USA Annual Cooling (DB=>MWB) .4%, MaxDB=32°C MWB=17.8°C
+SizingPeriod:DesignDay,
+    San Diego-Brown Field Muni AP Ann Clg .4% Condns DB=>MWB,  !- Name
+    8,                       !- Month
+    21,                      !- Day of Month
+    SummerDesignDay,         !- Day Type
+    32,                      !- Maximum Dry-Bulb Temperature {C}
+    8.9,                     !- Daily Dry-Bulb Temperature Range {deltaC}
+    DefaultMultipliers,      !- Dry-Bulb Temperature Range Modifier Type
+    ,                        !- Dry-Bulb Temperature Range Modifier Day Schedule Name
+    Wetbulb,                 !- Humidity Condition Type
+    17.8,                    !- Wetbulb or DewPoint at Maximum Dry-Bulb {C}
+    ,                        !- Humidity Condition Day Schedule Name
+    ,                        !- Humidity Ratio at Maximum Dry-Bulb {kgWater/kgDryAir}
+    ,                        !- Enthalpy at Maximum Dry-Bulb {J/kg}
+    ,                        !- Daily Wet-Bulb Temperature Range {deltaC}
+    99429.,                  !- Barometric Pressure {Pa}
+    4,                       !- Wind Speed {m/s}
+    280,                     !- Wind Direction {deg}
+    No,                      !- Rain Indicator
+    No,                      !- Snow Indicator
+    No,                      !- Daylight Saving Time Indicator
+    ASHRAETau,               !- Solar Model Indicator
+    ,                        !- Beam Solar Day Schedule Name
+    ,                        !- Diffuse Solar Day Schedule Name
+    0.369,                   !- ASHRAE Clear Sky Optical Depth for Beam Irradiance (taub) {dimensionless}
+    2.432;                   !- ASHRAE Clear Sky Optical Depth for Diffuse Irradiance (taud) {dimensionless}
+
+! San Diego-Brown Field Muni AP_CA_USA Annual Cooling (DB=>MWB) 1%, MaxDB=29.1°C MWB=18.1°C
+SizingPeriod:DesignDay,
+    San Diego-Brown Field Muni AP Ann Clg 1% Condns DB=>MWB,  !- Name
+    8,                       !- Month
+    21,                      !- Day of Month
+    SummerDesignDay,         !- Day Type
+    29.1,                    !- Maximum Dry-Bulb Temperature {C}
+    8.9,                     !- Daily Dry-Bulb Temperature Range {deltaC}
+    DefaultMultipliers,      !- Dry-Bulb Temperature Range Modifier Type
+    ,                        !- Dry-Bulb Temperature Range Modifier Day Schedule Name
+    Wetbulb,                 !- Humidity Condition Type
+    18.1,                    !- Wetbulb or DewPoint at Maximum Dry-Bulb {C}
+    ,                        !- Humidity Condition Day Schedule Name
+    ,                        !- Humidity Ratio at Maximum Dry-Bulb {kgWater/kgDryAir}
+    ,                        !- Enthalpy at Maximum Dry-Bulb {J/kg}
+    ,                        !- Daily Wet-Bulb Temperature Range {deltaC}
+    99429.,                  !- Barometric Pressure {Pa}
+    4,                       !- Wind Speed {m/s}
+    280,                     !- Wind Direction {deg}
+    No,                      !- Rain Indicator
+    No,                      !- Snow Indicator
+    No,                      !- Daylight Saving Time Indicator
+    ASHRAETau,               !- Solar Model Indicator
+    ,                        !- Beam Solar Day Schedule Name
+    ,                        !- Diffuse Solar Day Schedule Name
+    0.369,                   !- ASHRAE Clear Sky Optical Depth for Beam Irradiance (taub) {dimensionless}
+    2.432;                   !- ASHRAE Clear Sky Optical Depth for Diffuse Irradiance (taud) {dimensionless}
+
+
+!-   ===========  ALL OBJECTS IN CLASS: RUNPERIODCONTROL:DAYLIGHTSAVINGTIME ===========
+
+!  WMO=722904 Time Zone=NAP: (GMT-08:00) Pacific Time (US & Canada); Tijuana
+!  Data Source=ASHRAE 2009 Annual Design Conditions
+RunPeriodControl:DaylightSavingTime,
+    2nd Sunday in March,     !- Start Date
+    1st Sunday in November;  !- End Date
+
