@@ -135,11 +135,6 @@ def adorb(BaseFileName, studyFolder, duration, annualElec, annualGas, annualCO2E
     df2['pv_eTrans'] = df['pv_eTrans'].cumsum()
 
     # df2.plot(kind='area', xlabel='Years', ylabel='Cummulative Present Value [$]', title='ADORB COST', figsize=(6.5,8.5))
-    fig = df2.plot(kind='area', xlabel='Years', ylabel='Cummulative Present Value [$]', title=(str(BaseFileName) + '_ADORB COST'), figsize=(10,6)).get_figure()
-    
-    adorb.adorbWedgeGraph = (str(studyFolder) + "/" + str(BaseFileName) + '_ADORB_Wedge.png')
-    adorb.adorbBarGraph = (str(studyFolder) + "/" + str(BaseFileName) + '_ADORB_Bar.png')
-    fig.savefig(str(adorb.adorbWedgeGraph))
 
 
     pv_dirEn_tot = df['pv_dirEn'].sum()
@@ -186,6 +181,15 @@ def adorb(BaseFileName, studyFolder, duration, annualElec, annualGas, annualCO2E
                         ax.legend(loc="upper right")
                         ax.set_xlabel('Cost [$]')
                         plt.savefig(str(adorb.adorbBarGraph),dpi=300)
+    try:
+        fig = df2.plot(kind='area', xlabel='Years', ylabel='Cummulative Present Value [$]', title=(str(BaseFileName) + '_ADORB COST'), figsize=(10,6)).get_figure()
+
+        adorb.adorbWedgeGraph = (str(studyFolder) + "/" + str(BaseFileName) + '_ADORB_Wedge.png')
+        adorb.adorbBarGraph = (str(studyFolder) + "/" + str(BaseFileName) + '_ADORB_Bar.png')
+        fig.savefig(str(adorb.adorbWedgeGraph))
+
+    except:
+        print('No Graph')
 
     return sum(pv), pv_dirEn_tot, pv_dirMR_tot, pv_opCO2_tot, pv_emCO2_tot,pv_eTrans_tot
 

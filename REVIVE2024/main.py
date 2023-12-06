@@ -99,15 +99,15 @@ tab0_layout =  [[sg.Text('Welcome')],
                 [sg.Text('10. Press RUN ANALYSIS to start. A popup will show progress, and a second popup will appear to confirm completition')],
                 ]
 
-tab1_layout =   [[sg.Text('IDD File Location:', size =(15, 1)),sg.InputText("C:\EnergyPlusV9-5-0\Energy+.idd", key='iddFile'), sg.FileBrowse()],
+tab1_layout =   [[sg.Text('Batch Name:', size =(15, 1)),sg.InputText('Name your batch of files', key='batchName')],
+                [sg.Text('IDD File Location:', size =(15, 1)),sg.InputText("C:\EnergyPlusV9-5-0\Energy+.idd", key='iddFile'), sg.FileBrowse()],
                 [sg.Text('Study Folder:', size =(15, 1)),sg.InputText('C:/Users/amitc_crl/OneDrive/Documents/GitHub/REVIVE/REVIVE2024/Testing Files/Testing_2023-08-29', key='studyFolder'), sg.FolderBrowse()],
                 [sg.Text('Geometry IDF:', size =(15, 1)),sg.InputText('C:/Users/amitc_crl/OneDrive/Documents/GitHub/REVIVE/PhiusREVIVE/Testing/PNNL_SF_Geometry.idf', key='GEO'), sg.FileBrowse()],
                 [sg.Text('Run List Location:', size =(15, 1)),sg.InputText('C:/Users/amitc_crl/OneDrive/Documents/GitHub/REVIVE/REVIVE2024/Testing Files/Testing_2023-08-29/testRuns.csv', key='runList'), sg.FileBrowse()],
                 [sg.Text('Database Folder Location:', size =(15, 1)),sg.InputText('C:/Users/amitc_crl/OneDrive/Documents/GitHub/REVIVE/REVIVE2024/Databases/', key='dataBases'), sg.FolderBrowse()]
                 ]
 
-tab2_layout =   [[sg.Text('Batch Name:', size =(20, 1)),sg.InputText('Name your batch of files', key='batchName')],
-                 [sg.Checkbox('Generate PDF?', size=(25, 1), default=False,key='genPDF')],
+tab2_layout =   [[sg.Checkbox('Generate PDF?', size=(25, 1), default=False,key='genPDF')],
                  [sg.Checkbox('Delete Unecessary Files?', size=(25, 1), default=True,key='DeleteFiles')]
                 ]
 
@@ -124,8 +124,8 @@ layout1 = [
     # [sg.Image(r'C:\Users\amitc_crl\OneDrive\Documents\GitHub\REVIVE\REVIVE2024\al_REVIVE_PILOT_logo.png')],
             [sg.TabGroup(
             [[sg.Tab('Start', tab0_layout,),
-            sg.Tab('Project Settings', tab1_layout,),
-            sg.Tab('Basic Input Data', tab2_layout,),
+            sg.Tab('Project Inputs', tab1_layout,),
+            sg.Tab('Run Settings', tab2_layout,),
             sg.Tab('3 Phase ADORB', tab3_layout,),]])],
             [sg.Button('LOAD'), sg.Button('RUN ANALYSIS'), sg.Button('EXIT')]]  
 
@@ -465,7 +465,7 @@ while True:
                 WindowVentilation(idf1, halfHeight, operableArea_N, operableArea_W, 
                         operableArea_S, operableArea_E)
 
-                AssignContructions(idf, Ext_Wall1,Ext_Wall2,Ext_Wall3,
+                AssignContructions(idf1, Ext_Wall1,Ext_Wall2,Ext_Wall3,
                        Ext_Roof1,Ext_Roof2,Ext_Roof3,
                        Ext_Floor1,Ext_Floor2,Ext_Floor3,
                        Ext_Door1,Ext_Door2,Ext_Door3, 
@@ -725,6 +725,7 @@ while True:
                 else:
                     for ltable in ltables:
                         if 'Construction Cost Estimate Summary' in '\n'.join(ltable[0]): #and 'For: Entire Facility' in '\n'.join(ltable[0]):
+                            firstCost = [(float(ltable[1][9][2])),0]
                             firstCost = [(float(ltable[1][9][2])*1.8),0]
 
                 # Save HTML and CSV outputs
@@ -765,12 +766,6 @@ while True:
 
                 MWH = hourlyBA['Whole Building:Facility Total Purchased Electricity Energy [J](Hourly)']*0.0000000002778
 
-                laborFraction = 0.4
-                emCO2_firstCost = firstCost[0]*laborFraction*0.3
-
-                # hourlyEmissions = pd.read_csv(emissionsDatabase)
-                # emissions = hourlyEmissions[str(gridRegion)]
-                
                 CO2_Elec_List = []
                 count = 0
                 os.listdir(str(databases) + '/CambiumFactors')
@@ -787,7 +782,7 @@ while True:
 
                 # CO2_Elec = sum(MWH*emissions)
 
-                gasPrice = 0.64 #$/therm
+                gasPrice = runList['GAS_PRICE_[$/THERM]'][runCount]
 
                 if natGasPresent == 1:
                     monthlyMTR = monthlyMTR.drop(index=[0,1,2,3,4,5,6,7])
@@ -798,16 +793,17 @@ while True:
                     annualCO2Gas = 0
                     annualGas = 0
 
+
                 # Future above to be better integrated
 
                 duration = 70
-                elecPrice = 0.1324 #$/kWh
-                annualElec = ((hourly['Whole Building:Facility Total Purchased Electricity Energy [J](Hourly)'].sum()*0.0000002778*elecPrice)+144)
+                elecPrice = float(runList['ELEC_PRICE_[$/kWh]'][runCount])
+                annualElec = ((hourly['Whole Building:Facility Total Purchased Electricity Energy [J](Hourly)'].sum()*0.0000002778*elecPrice)+100)
                 
                 # annualCO2 = CO2_Elec + CO2_gas
 
                 carbonDatabase = pd.read_csv(str(inputValues['dataBases']) + 'Carbon Correction Database.csv')
-
+                countryEmissionsDatabase = pd.read_csv(str(inputValues['dataBases']) + 'Country Emission Database.csv')
 
                 if str(runList['CARBON_MEASURES'][runCount]) != 'nan':
                     carbonMeasures = carbondMeasures = list(runList['CARBON_MEASURES'][runCount].split(', '))
@@ -820,10 +816,33 @@ while True:
 
                 carbonMeasureCost.append(firstCost)
 
+                emCO2 = []
+
+                for measure in range(carbonDatabase.shape[0]):
+                    if carbonDatabase['Name'][measure] in carbonMeasures:
+                        for country in range(countryEmissionsDatabase.shape[0]):
+                            if str(countryEmissionsDatabase['COUNTRY'][country]) == str(carbonDatabase['Country'][1]):
+                                ef = countryEmissionsDatabase['EF [kg/$]'][country]
+                            if str(countryEmissionsDatabase['COUNTRY'][country]) == 'USA':
+                                efUSA = countryEmissionsDatabase['EF [kg/$]'][country]
+                        emCO2.append(((carbonDatabase['Cost'][measure]*ef*(1-carbonDatabase['Labor Fraction'][measure])) + 
+                                      ((carbonDatabase['Cost'][measure]*efUSA*(carbonDatabase['Labor Fraction'][measure]))), carbonDatabase['Year'][measure]))
+                        # Labor fraction should be subtracted out and have USA EF applied
+
+                for country in range(countryEmissionsDatabase.shape[0]):
+                            if str(countryEmissionsDatabase['COUNTRY'][country]) == str(runList['ENVELOPE_COUNTRY'][runCount]):
+                                efENV = countryEmissionsDatabase['EF [kg/$]'][country]
+                                emCO2first = ((firstCost[0] * (1-runList['ENVELOPE_LABOR_FRACTION'][runCount]) * efENV) + 
+                                    (firstCost[0] * (runList['ENVELOPE_LABOR_FRACTION'][runCount]) * efUSA))
+
+                                emCO2firstCost = [emCO2first,0]
+
+                emCO2.append(emCO2firstCost)
+
                 # print(carbonMeasureCost)
 
                 dirMR = carbonMeasureCost
-                emCO2 = [(emCO2_firstCost,1),((8500*laborFraction*0.3),20),((8500*laborFraction*0.3),40),((8500*laborFraction*0.3),60)] 
+                # emCO2 = [(emCO2_firstCost,1),((8500*laborFraction*0.3),20),((8500*laborFraction*0.3),40),((8500*laborFraction*0.3),60)] 
                 eTrans = peakElec
                 
                 final = adorb(BaseFileName, studyFolder, duration, annualElec, annualGas, annualCO2Elec, annualCO2Gas, dirMR, emCO2, eTrans)
@@ -849,7 +868,7 @@ while True:
                                                     'Peak Electric Demand [W]':peakElec,
                                                     'Heating Battery Size [kWh]':heatingBattery, 
                                                     'Cooling Battery Size [kWh]':coolingBattery,
-                                                    'First Year Electric Cost [$]':annualElec,
+                                                    'First Year Electric Cost [$]' : annualElec,
                                                     'First Year Gas Cost [$]':annualGas,
                                                     'First Cost [$]':firstCost[0],
                                                     'Total ADORB Cost [$]':adorbCost,
@@ -871,7 +890,8 @@ while True:
                             adorb.adorbBarGraph)
 
                 
-                ResultsTable.to_csv(str(studyFolder) + "/" + str(batchName) + "_ResultsTable.csv")
+                # ResultsTable.to_csv(str(studyFolder) + "/" + str(batchName) + "_ResultsTable.csv")
+                # print('Saved Results')
 
             except:
                 errorFile1= (str(studyFolder) + '\eplusout.err')
@@ -879,7 +899,7 @@ while True:
                 
                 if os.path.exists(errorFile2):
                     os.remove(errorFile2)
-                os.rename(errorFile1,errorFile2)
+                    os.rename(errorFile1,errorFile2)
                 newResultRow = pd.DataFrame([{'Run Name':runList['CASE_NAME'][runCount],
                                                         'SET ≤ 12.2°C Hours (F)':'ERROR',
                                                         "Hours < 2°C [hr]":'ERROR',
@@ -903,7 +923,9 @@ while True:
             
                 newResultRow.to_csv(str(studyFolder) + "/" + str(caseName) + "_Test_ResultsTable.csv")
                 
-                ResultsTable = pd.concat([ResultsTable, newResultRow], axis=0, ignore_index=True)#, ignore_index=True)
+                ResultsTable = pd.concat([ResultsTable, newResultRow], axis=0, ignore_index=True)#, ignore_index=Truue
+        ResultsTable.to_csv(str(studyFolder) + "/" + str(batchName) + "_ResultsTable.csv")
+        print('Saved Results')
 
 
 

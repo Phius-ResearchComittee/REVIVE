@@ -1,4 +1,5 @@
-Name,Year,Cost,kg CO2
-HP Replace 1,20,8500,
-HP Replace 2,40,8500,
-HP Replace 3,60,8500,
+Name,Year,Cost,kg CO2,Country,Labor Fraction
+HP Replace 1,20,8500,,USA,0.4
+HP Replace 2,40,8500,,USA,0.4
+HP Replace 3,60,8500,,USA,0.4
+Vegan Bike Riding Carpenters,15,-15000,,USA,1

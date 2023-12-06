@@ -95,17 +95,17 @@ def SpecialMaterials(idf):
         Thermal_Resistance = 0.18
         )
 
-def WindowMaterials(idf, Ext_Window1_Ufactor,Ext_Window1_SHGC):
+# def WindowMaterials(idf, Ext_Window1_Ufactor,Ext_Window1_SHGC):
 
-    idf.newidfobject('WindowMaterial:SimpleGlazingSystem',
-        Name = 'ExteriorWindow1',
-        UFactor = (Ext_Window1_Ufactor*5.678),
-        Solar_Heat_Gain_Coefficient = Ext_Window1_SHGC
-        )
+#     idf.newidfobject('WindowMaterial:SimpleGlazingSystem',
+#         Name = 'ExteriorWindow1',
+#         UFactor = (Ext_Window1_Ufactor*5.678),
+#         Solar_Heat_Gain_Coefficient = Ext_Window1_SHGC
+#         )
 
-    idf.newidfobject('Construction',
-        Name = 'Ext_Window1',
-        Outside_Layer = 'ExteriorWindow1')
+#     idf.newidfobject('Construction',
+#         Name = 'Ext_Window1',
+#         Outside_Layer = 'ExteriorWindow1')
     
 def ShadeMaterials(idf):
 
@@ -297,10 +297,11 @@ def AssignContructions(idf, Ext_Wall1,Ext_Wall2,Ext_Wall3,
 
     count = -1
     for fen in idf.idfobjects['FenestrationSurface:Detailed']:
-        count = 1
+        count += 1
         window = idf.idfobjects['FenestrationSurface:Detailed'][count]
         if window.Construction_Name == 'Ext_Window1':
             window.Construction_Name = str(Ext_Window1)
+            # window.Construction_Name = 'pizza'
         if window.Construction_Name == 'Ext_Window2':
             window.Construction_Name = str(Ext_Window2)
         if window.Construction_Name == 'Ext_Window3':

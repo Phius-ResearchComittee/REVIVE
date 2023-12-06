@@ -427,6 +427,9 @@ def AnnualSchedules(idf, outage1start, outage1end, outage2start, outage2end,
 
     idf.newidfobject('ScheduleTypeLimits',
         Name = 'Any Number')
+    
+    idf.newidfobject('ScheduleTypeLimits',
+        Name = 'ANYNUMBER')
 
     idf.newidfobject('ScheduleTypeLimits',
         Name = 'Fraction')
