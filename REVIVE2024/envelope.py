@@ -53,7 +53,7 @@ def materialBuilder(idf, name, rough, thick, conduct, dense, heatCap):
         )
 
 # This function creates line item costs
-def costBuilder(idf, name, type, lineItemType, itemName, objEndUse, costEach, costArea):
+def costBuilder(idf, name, type, lineItemType, itemName, objEndUse, costEach, costArea,quantity):
     idf.newidfobject('ComponentCost:LineItem',
         Name = name,
         Type = type,
@@ -61,7 +61,8 @@ def costBuilder(idf, name, type, lineItemType, itemName, objEndUse, costEach, co
         Item_Name = itemName,
         Object_EndUse_Key = objEndUse,
         Cost_per_Each = costEach,
-        Cost_per_Area = costArea
+        Cost_per_Area = costArea,
+        Quantity = quantity
         )
     
 def glazingBuilder(idf, name, uFactor, shgc):

@@ -24,7 +24,7 @@ import subprocess
 import os
 from os import system
 
-def Renewables(idf, ZoneName):
+def Renewables(idf, ZoneName, PV_SIZE, PV_TILT):
 
     idf.newidfobject('DemandManagerAssignmentList',
         Name = 'Demand Limiting',
@@ -44,7 +44,7 @@ def Renewables(idf, ZoneName):
         Reset_Control = 'Fixed',
         Minimum_Reset_Duration = 30,
         Maximum_Heating_Setpoint_Reset = 20,
-        Maximum_Cooling_Setpoint_Reset = 28.8888888888889,
+        Maximum_Cooling_Setpoint_Reset = 27,
         # Reset_Step_Change = ,
         Selection_Control = 'All',
         # Rotation_Duration = ,
@@ -53,12 +53,12 @@ def Renewables(idf, ZoneName):
     idf.newidfobject('Generator:PVWatts',
         Name = 'PV Array',
         PVWatts_Version = 5,
-        DC_System_Capacity = 3000,
+        DC_System_Capacity = PV_SIZE,
         Module_Type = 'Standard',
         Array_Type = 'FixedOpenRack',
         System_Losses = 0.14,
         Array_Geometry_Type = 'TiltAzimuth',
-        Tilt_Angle = 57,
+        Tilt_Angle = PV_TILT,
         Azimuth_Angle = 180,
         # Surface_Name = ,
         Ground_Coverage_Ratio = 0.4)

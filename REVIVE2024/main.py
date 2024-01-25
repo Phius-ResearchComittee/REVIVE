@@ -1,7 +1,7 @@
 #=============================================================================================================================
 # PhiusREVIVE Research Tool
 # Updated 2023/11/27
-# v23.1.0
+# v24.1.0
 #
 #
 
@@ -42,6 +42,7 @@ import matplotlib.pyplot as plt
 import datetime as dt
 from datetime import datetime
 import email.utils as eutils
+from statistics import mean
 import time
 import math
 # import streamlit as st
@@ -102,13 +103,14 @@ tab0_layout =  [[sg.Text('Welcome')],
 
 tab1_layout =   [[sg.Text('Batch Name:', size =(15, 1)),sg.InputText('Name your batch of files', key='batchName')],
                 [sg.Text('IDD File Location:', size =(15, 1)),sg.InputText("C:\EnergyPlusV9-5-0\Energy+.idd", key='iddFile'), sg.FileBrowse()],
-                [sg.Text('Study Folder:', size =(15, 1)),sg.InputText('C:/Users/amitc_crl/OneDrive/Documents/GitHub/REVIVE/REVIVE2024/Testing Files/Testing_2023-08-29', key='studyFolder'), sg.FolderBrowse()],
-                [sg.Text('Geometry IDF:', size =(15, 1)),sg.InputText('C:/Users/amitc_crl/OneDrive/Documents/GitHub/REVIVE/PhiusREVIVE/Testing/PNNL_SF_Geometry.idf', key='GEO'), sg.FileBrowse()],
-                [sg.Text('Run List Location:', size =(15, 1)),sg.InputText('C:/Users/amitc_crl/OneDrive/Documents/GitHub/REVIVE/REVIVE2024/Testing Files/Testing_2023-08-29/testRuns.csv', key='runList'), sg.FileBrowse()],
-                [sg.Text('Database Folder Location:', size =(15, 1)),sg.InputText('C:/Users/amitc_crl/OneDrive/Documents/GitHub/REVIVE/REVIVE2024/Databases/', key='dataBases'), sg.FolderBrowse()]
+                [sg.Text('Study Folder:', size =(15, 1)),sg.InputText('C:/REVIVE v23.1.0/Parametric Runs 2', key='studyFolder'), sg.FolderBrowse()],
+                [sg.Text('Geometry IDF:', size =(15, 1)),sg.InputText('C:/REVIVE v23.1.0/Databases/Sample Geometry/PNNL_SF_Geometry.idf', key='GEO'), sg.FileBrowse()],
+                [sg.Text('Run List Location:', size =(15, 1)),sg.InputText('C:/REVIVE v23.1.0/Parametric Run List/ChicagoIL_ParametricRuns_2023-12-06.csv', key='runList'), sg.FileBrowse()],
+                [sg.Text('Database Folder Location:', size =(15, 1)),sg.InputText('C:/REVIVE v23.1.0/Databases', key='dataBases'), sg.FolderBrowse()]
                 ]
 
 tab2_layout =   [[sg.Checkbox('Generate PDF?', size=(25, 1), default=False,key='genPDF')],
+                 [sg.Checkbox('Generate Graphs Files?', size=(25, 1), default=False,key='GenerateGraphs')],
                  [sg.Checkbox('Delete Unecessary Files?', size=(25, 1), default=True,key='DeleteFiles')]
                 ]
 
@@ -130,7 +132,7 @@ layout1 = [
             sg.Tab('3 Phase ADORB', tab3_layout,),]])],
             [sg.Button('LOAD'), sg.Button('RUN ANALYSIS'), sg.Button('EXIT')]]  
 
-window = sg.Window('Phius REVIVE 2024 Analysis Tool v23.1.0',layout1, default_element_size=(125, 125), grab_anywhere=True)
+window = sg.Window('Phius REVIVE 2024 Analysis Tool v24.1.0',layout1, default_element_size=(125, 125), grab_anywhere=True)
 
 #==============================================================================================================================
 # 3.0 File Management
@@ -156,11 +158,13 @@ while True:
         multiphaseADORB(year1Path,year1Start,year2Path,year2Start,year3Path,year3Start)
 
     if event == 'RUN ANALYSIS':
-        ResultsTable = pd.DataFrame(columns=["Run Name","SET ≤ 12.2°C Hours (F)","Hours < 2°C [hr]","Caution (> 26.7, ≤ 32.2°C) [hr]","Extreme Caution (> 32.2, ≤ 39.4°C) [hr]",
+        ResultsTable = pd.DataFrame(columns=["Run Name","SET ≤ 12.2°C Hours (F)","Hours < 2°C [hr]",'Total Deadly Days','Min outdoor DB [°C]','Min outdoor DP [°C]',
+                                                    'Max outdoor DB [°C]','Max outdoor DP [°C]',"Caution (> 26.7, ≤ 32.2°C) [hr]","Extreme Caution (> 32.2, ≤ 39.4°C) [hr]",
                                                     "Danger (> 39.4, ≤ 51.7°C) [hr]","Extreme Danger (> 51.7°C) [hr]", 'EUI','Peak Electric Demand [W]',
                                                     'Heating Battery Size [kWh]', 'Cooling Battery Size [kWh]', 'Total ADORB Cost [$]','First Year Electric Cost [$]',
-                                                    'First Year Gas Cost [$]','First Cost [$]','pv_dirEn_tot','pv_dirMR_tot','pv_opCO2_tot','pv_emCO2_tot',
-                                                    'pv_eTrans_tot'])
+                                                    'First Year Gas Cost [$]','First Cost [$]','Wall Cost [$]','Roof Cost [$]','Floor Cost [$]','Window Cost [$]',
+                                                    'Door Cost [$]','Air Sealing Cost [$]','Mechanical Cost [$]','Water Heater Cost [$]','Appliances Cost [$]','PV Cost [$]',
+                                                    'Battery Cost [$]','pv_dirEn_tot','pv_dirMR_tot','pv_opCO2_tot','pv_emCO2_tot','pv_eTrans_tot'])
         for case in range(totalRuns):
             try:
                 iddfile = str(inputValues['iddFile'])
@@ -176,6 +180,7 @@ while True:
                 batchName = str(inputValues['batchName'])
 
                 pdfReport = inputValues['genPDF']
+                graphs = inputValues['GenerateGraphs']
                 cleanFolder = inputValues['DeleteFiles']
 
 
@@ -247,6 +252,9 @@ while True:
                 sizingLoadSensible = G_0s + G_cfs*icfa_M + G_ocs*occ
                 sizingLoadLatent = G_0l + G_cfl*icfa_M + G_ocl*occ
 
+                PV_SIZE = runList['PV_SIZE_[W]'][runCount]
+                PV_TILT = runList['PV_TILT'][runCount]
+                
                 # Envelope
 
                 flowCoefficient = runList['FLOW_COEFFICIENT [SI]'][runCount]
@@ -397,7 +405,7 @@ while True:
 
 
                 # Materials and constructions
-                materials = pd.read_csv(str(inputValues['dataBases']) + 'Material Database.csv')
+                materials = pd.read_csv(str(inputValues['dataBases']) + '/Material Database.csv')
                 materialList = materials.shape[0]
 
                 for item in range(materialList):
@@ -405,7 +413,7 @@ while True:
                                     materials['THICKNESS [m]'][item], materials['CONDUCTIVITY [W/mK]'][item],
                                     materials['DENSITY [kg/m3]'][item], materials['SPECIFIC HEAT CAPACITY [J/kgK]'][item])
                     
-                glazingSpecs = pd.read_csv(str(inputValues['dataBases']) + 'Window Database.csv')
+                glazingSpecs = pd.read_csv(str(inputValues['dataBases']) + '/Window Database.csv')
 
                 glazings = glazingSpecs.shape[0]
 
@@ -414,46 +422,27 @@ while True:
 
                 # Constructions 
                 #     
-                constructionList = pd.read_csv(str(inputValues['dataBases']) + 'Construction Database.csv')
+                constructionList = pd.read_csv(str(inputValues['dataBases']) + '/Construction Database.csv')
 
                 constructions = constructionList.shape[0]
 
                 for item in range(constructions):
-                    
-                    layers = [constructionList['Outside_Layer'][item],
-                    constructionList['Layer_2'][item],
-                    constructionList['Layer_3'][item],
-                    constructionList['Layer_4'][item],
-                    constructionList['Layer_5'][item],
-                    constructionList['Layer_6'][item],
-                    constructionList['Layer_7'][item],
-                    constructionList['Layer_8'][item],
-                    constructionList['Layer_9'][item],
-                    constructionList['Layer_10'][item]]
+                    if str(constructionList['Outside_Layer'][item]) != 'nan':
+                        layers = [constructionList['Outside_Layer'][item],
+                        constructionList['Layer_2'][item],
+                        constructionList['Layer_3'][item],
+                        constructionList['Layer_4'][item],
+                        constructionList['Layer_5'][item],
+                        constructionList['Layer_6'][item],
+                        constructionList['Layer_7'][item],
+                        constructionList['Layer_8'][item],
+                        constructionList['Layer_9'][item],
+                        constructionList['Layer_10'][item]]
 
-                    layerList = [x for x in layers if str(x) != 'nan']
+                        layerList = [x for x in layers if str(x) != 'nan']
 
                     constructionBuilder(idf1, constructionList['Name'][item],layerList)
                 
-                for item in range(constructions):
-                    
-                    name = constructionList['Name'][item]
-                    cost = constructionList['Cost_Per_Area_[$/m2]'][item]
-
-                    if cost != 0:
-                        costBuilder(idf1, name, '','Construction', name,'','',cost)
-
-                # This function creates line item costs
-                # def costBuilder(idf, name, type, lineItemType, itemName, objEndUse, costEach, costArea):
-                #     idf.newidfobject('ComponentCost:LineItem',
-                #         Name = name,
-                #         Type = type,
-                #         Line_Item_Type = lineItemType,
-                #         Item_Name = itemName,
-                #         Object_EndUse_Key = objEndUse,
-                #         Cost_per_Each = costEach,
-                #         Cost_per_Area = costArea
-                #         )
 
                 # Envelope inputs
                 Infiltration(idf1, flowCoefficient)
@@ -482,7 +471,7 @@ while True:
                 WaterHeater(idf1, ZoneName, dhwFuel, DHW_CombinedGPM)
                 Curves(idf1)
 
-                Renewables(idf1, ZoneName)
+                Renewables(idf1, ZoneName, PV_SIZE, PV_TILT)
 
                 SimulationOutputs(idf1)
                 # ============================================================================
@@ -506,7 +495,7 @@ while True:
                 zeroSch(idf1, 'BADishwasherSchedule')
                 ResilienceSchedules(idf1, outage1start, outage1end, outage2start, outage2end, 
                             coolingOutageStart,coolingOutageEnd,NatVentAvail,
-                            demandCoolingAvail,shadingAvail)
+                            demandCoolingAvail,shadingAvail,outage1type)
                 
                 ResilienceControls(idf1, NatVentType)
 
@@ -579,72 +568,98 @@ while True:
                 hourlyHeat = hourly.loc[maskh]
                 hourlyCool = hourly.loc[maskc]
 
+                MinDBOut = min(hourlyHeat['Environment:Site Outdoor Air Drybulb Temperature [C](Hourly)'].tolist())
+                MinDPOut = min(hourlyHeat['Environment:Site Outdoor Air Dewpoint Temperature [C](Hourly)'].tolist())
+                MaxDBOut = max(hourlyCool['Environment:Site Outdoor Air Drybulb Temperature [C](Hourly)'].tolist())
+                MaxDPOut = max(hourlyCool['Environment:Site Outdoor Air Dewpoint Temperature [C](Hourly)'].tolist())
+
                 x = hourlyHeat['DateTime']
+                if graphs == True:
+                    fig = plt.figure(layout='constrained', figsize=(10, 10))
+                    fig.suptitle((str(caseName) + '_Heating Outage Resilience'), fontsize='x-large')
+                    ax = fig.subplot_mosaic([['temperature'],['rh'],['SET']])
+                    ax['temperature'].plot(x,hourlyHeat["Environment:Site Outdoor Air Drybulb Temperature [C](Hourly)"], label="Site Dry Bulb [C]", linestyle='dashed')
+                    ax['temperature'].plot(x,hourlyHeat["ZONE 1:Zone Air Temperature [C](Hourly)"], label="Zone Dry Bulb [C]",color='black',linewidth=2)
+                    ax['temperature'].set_ylim(((min(min(hourlyHeat["Environment:Site Outdoor Air Drybulb Temperature [C](Hourly)"]), min(hourlyHeat["ZONE 1:Zone Air Temperature [C](Hourly)"])))-5),((max(max(hourlyHeat["Environment:Site Outdoor Air Drybulb Temperature [C](Hourly)"]), max(hourlyHeat["ZONE 1:Zone Air Temperature [C](Hourly)"])))+5))
+                    ax['temperature'].set_ylabel('Temperature [C]')
+                    ax['temperature'].legend(ncol=2, loc='lower left', borderaxespad=0, fontsize='x-small')
+                    ax['temperature'].grid(True)
 
-                fig = plt.figure(layout='constrained', figsize=(10, 10))
-                fig.suptitle((str(caseName) + '_Heating Outage Resilience'), fontsize='x-large')
-                ax = fig.subplot_mosaic([['temperature'],['rh'],['SET']])
-                ax['temperature'].plot(x,hourlyHeat["Environment:Site Outdoor Air Drybulb Temperature [C](Hourly)"], label="Site Dry Bulb [C]", linestyle='dashed')
-                ax['temperature'].plot(x,hourlyHeat["ZONE 1:Zone Air Temperature [C](Hourly)"], label="Zone Dry Bulb [C]",color='black',linewidth=2)
-                ax['temperature'].set_ylim(((min(min(hourlyHeat["Environment:Site Outdoor Air Drybulb Temperature [C](Hourly)"]), min(hourlyHeat["ZONE 1:Zone Air Temperature [C](Hourly)"])))-5),((max(max(hourlyHeat["Environment:Site Outdoor Air Drybulb Temperature [C](Hourly)"]), max(hourlyHeat["ZONE 1:Zone Air Temperature [C](Hourly)"])))+5))
-                ax['temperature'].set_ylabel('Temperature [C]')
-                ax['temperature'].legend(ncol=2, loc='lower left', borderaxespad=0, fontsize='x-small')
-                ax['temperature'].grid(True)
+                    ax['rh'].plot(x,hourlyHeat['ZONE 1:Zone Air Relative Humidity [%](Hourly)'], label=("Zone RH"),color='black',linewidth=2)
+                    ax['rh'].set_ylabel('Relative Humidity [%]')
+                    ax['rh'].set_ylim(0,100)
+                    ax['rh'].legend(ncol=2, loc='lower left', borderaxespad=0, fontsize='x-small')
+                    ax['rh'].grid(True)
 
-                ax['rh'].plot(x,hourlyHeat['ZONE 1:Zone Air Relative Humidity [%](Hourly)'], label=("Zone RH"),color='black',linewidth=2)
-                ax['rh'].set_ylabel('Relative Humidity [%]')
-                ax['rh'].set_ylim(0,100)
-                ax['rh'].legend(ncol=2, loc='lower left', borderaxespad=0, fontsize='x-small')
-                ax['rh'].grid(True)
+                    ax['SET'].plot(x,hourlyHeat['ZONE OCCUPANTS:Zone Thermal Comfort Pierce Model Standard Effective Temperature [C](Hourly)'], label=("Zone SET"),color='black',linewidth=2)
+                    ax['SET'].grid(True)
+                    ax['SET'].legend(ncol=2, loc='lower left', borderaxespad=0, fontsize='x-small')
+                    ax['SET'].set_ylim((min(hourlyHeat['ZONE OCCUPANTS:Zone Thermal Comfort Pierce Model Standard Effective Temperature [C](Hourly)'])-5),(max(hourlyHeat['ZONE OCCUPANTS:Zone Thermal Comfort Pierce Model Standard Effective Temperature [C](Hourly)'])+5))
+                    ax['SET'].set_xlabel('Date')
+                    ax['SET'].set_ylabel('Standard Effective Temperature [°C]')
+                    ax['SET'].axhline(12.2, color='crimson', linestyle='dashed')
 
-                ax['SET'].plot(x,hourlyHeat['ZONE OCCUPANTS:Zone Thermal Comfort Pierce Model Standard Effective Temperature [C](Hourly)'], label=("Zone SET"),color='black',linewidth=2)
-                ax['SET'].grid(True)
-                ax['SET'].legend(ncol=2, loc='lower left', borderaxespad=0, fontsize='x-small')
-                ax['SET'].set_ylim((min(hourlyHeat['ZONE OCCUPANTS:Zone Thermal Comfort Pierce Model Standard Effective Temperature [C](Hourly)'])-5),(max(hourlyHeat['ZONE OCCUPANTS:Zone Thermal Comfort Pierce Model Standard Effective Temperature [C](Hourly)'])+5))
-                ax['SET'].set_xlabel('Date')
-                ax['SET'].set_ylabel('Standard Effective Temperature [°C]')
-                ax['SET'].axhline(12.2, color='crimson', linestyle='dashed')
+                    heatingGraphFile = (str(studyFolder) + "/" + str(BaseFileName) + "_Heating Outage Resilience Graphs.png")
 
-                heatingGraphFile = (str(studyFolder) + "/" + str(BaseFileName) + "_Heating Outage Resilience Graphs.png")
-
-                plt.savefig(str(heatingGraphFile), dpi=300)
-                plt.clf()
+                    plt.savefig(str(heatingGraphFile), dpi=300)
+                    plt.clf()
 
                 x = hourlyCool['DateTime']
+                if graphs == True:
+                    fig = plt.figure(layout='constrained', figsize=(10, 10))
+                    fig.suptitle((str(caseName) + '_Cooling Outage Resilience'), fontsize='x-large')
+                    ax = fig.subplot_mosaic([['temperature'],['rh'],['HI']])
+                    ax['temperature'].plot(x,hourlyCool["Environment:Site Outdoor Air Drybulb Temperature [C](Hourly)"], label="Site Dry Bulb [C]", linestyle='dashed')
+                    ax['temperature'].plot(x,hourlyCool["ZONE 1:Zone Air Temperature [C](Hourly)"], label="Zone Dry Bulb [C]",color='black',linewidth=2)
+                    ax['temperature'].set_ylim(((min(min(hourlyCool["Environment:Site Outdoor Air Drybulb Temperature [C](Hourly)"]), min(hourlyCool["ZONE 1:Zone Air Temperature [C](Hourly)"])))-5),((max(max(hourlyCool["Environment:Site Outdoor Air Drybulb Temperature [C](Hourly)"]), max(hourlyCool["ZONE 1:Zone Air Temperature [C](Hourly)"])))+5))
+                    ax['temperature'].set_ylabel('Temperature [C]')
+                    ax['temperature'].legend(ncol=2, loc='lower left', borderaxespad=0, fontsize='x-small')
+                    ax['temperature'].grid(True)
 
-                fig = plt.figure(layout='constrained', figsize=(10, 10))
-                fig.suptitle((str(caseName) + '_Cooling Outage Resilience'), fontsize='x-large')
-                ax = fig.subplot_mosaic([['temperature'],['rh'],['HI']])
-                ax['temperature'].plot(x,hourlyCool["Environment:Site Outdoor Air Drybulb Temperature [C](Hourly)"], label="Site Dry Bulb [C]", linestyle='dashed')
-                ax['temperature'].plot(x,hourlyCool["ZONE 1:Zone Air Temperature [C](Hourly)"], label="Zone Dry Bulb [C]",color='black',linewidth=2)
-                ax['temperature'].set_ylim(((min(min(hourlyCool["Environment:Site Outdoor Air Drybulb Temperature [C](Hourly)"]), min(hourlyCool["ZONE 1:Zone Air Temperature [C](Hourly)"])))-5),((max(max(hourlyCool["Environment:Site Outdoor Air Drybulb Temperature [C](Hourly)"]), max(hourlyCool["ZONE 1:Zone Air Temperature [C](Hourly)"])))+5))
-                ax['temperature'].set_ylabel('Temperature [C]')
-                ax['temperature'].legend(ncol=2, loc='lower left', borderaxespad=0, fontsize='x-small')
-                ax['temperature'].grid(True)
+                    ax['rh'].plot(x,hourlyCool['ZONE 1:Zone Air Relative Humidity [%](Hourly)'], label=("Zone RH"),color='black',linewidth=2)
+                    ax['rh'].set_ylabel('Relative Humidity [%]')
+                    ax['rh'].set_ylim(0,100)
+                    ax['rh'].legend(ncol=2, loc='lower left', borderaxespad=0, fontsize='x-small')
+                    ax['rh'].grid(True)
 
-                ax['rh'].plot(x,hourlyCool['ZONE 1:Zone Air Relative Humidity [%](Hourly)'], label=("Zone RH"),color='black',linewidth=2)
-                ax['rh'].set_ylabel('Relative Humidity [%]')
-                ax['rh'].set_ylim(0,100)
-                ax['rh'].legend(ncol=2, loc='lower left', borderaxespad=0, fontsize='x-small')
-                ax['rh'].grid(True)
+                    ax['HI'].plot(x,hourlyCool['ZONE 1:Zone Heat Index [C](Hourly)'], label=("Zone HI"),color='black',linewidth=2)
+                    ax['HI'].grid(True)
+                    ax['HI'].legend(ncol=2, loc='lower left', borderaxespad=0, fontsize='x-small')
+                    ax['HI'].set_ylim((min(hourlyCool['ZONE 1:Zone Heat Index [C](Hourly)'])-5),(max(hourlyCool['ZONE 1:Zone Heat Index [C](Hourly)'])+5))
+                    ax['HI'].set_xlabel('Date')
+                    ax['HI'].set_ylabel('Heat Index [°C]')
+                    ax['HI'].axhline(26.7, color='seagreen', linestyle='dashed')
+                    ax['HI'].axhline(32.2, color='orange', linestyle='dashed')
+                    ax['HI'].axhline(39.4, color='crimson', linestyle='dashed')
+                    ax['HI'].axhline(51.7, color='darkmagenta', linestyle='dashed')
 
-                ax['HI'].plot(x,hourlyCool['ZONE 1:Zone Heat Index [C](Hourly)'], label=("Zone HI"),color='black',linewidth=2)
-                ax['HI'].grid(True)
-                ax['HI'].legend(ncol=2, loc='lower left', borderaxespad=0, fontsize='x-small')
-                ax['HI'].set_ylim((min(hourlyCool['ZONE 1:Zone Heat Index [C](Hourly)'])-5),(max(hourlyCool['ZONE 1:Zone Heat Index [C](Hourly)'])+5))
-                ax['HI'].set_xlabel('Date')
-                ax['HI'].set_ylabel('Heat Index [°C]')
-                ax['HI'].axhline(26.7, color='seagreen', linestyle='dashed')
-                ax['HI'].axhline(32.2, color='orange', linestyle='dashed')
-                ax['HI'].axhline(39.4, color='crimson', linestyle='dashed')
-                ax['HI'].axhline(51.7, color='darkmagenta', linestyle='dashed')
+                    coolingGraphFile = (str(studyFolder) + "/" + str(BaseFileName) + "_Cooling Outage Resilience Graphs.png")
 
-                coolingGraphFile = (str(studyFolder) + "/" + str(BaseFileName) + "_Cooling Outage Resilience Graphs.png")
-
-                plt.savefig(str(coolingGraphFile), dpi=300)
-                plt.clf()
-                del fig
+                    plt.savefig(str(coolingGraphFile), dpi=300)
+                    plt.clf()
+                    del fig
                 gc.collect()
+
+                # Mora days
+
+                RH = hourlyCool['ZONE 1:Zone Air Relative Humidity [%](Hourly)'].tolist()
+                Temp = hourlyCool['ZONE 1:Zone Air Temperature [C](Hourly)'].tolist()
+
+                RHdays = [RH[x:x+24] for x in range(0, len(RH), 24)]
+                TEMPdays = [Temp[x:x+24] for x in range(0, len(Temp), 24)]
+
+                avgRH = []
+                avgTemp = []
+                moraDays = []
+                moraPF = []
+                moraTotalDays = 0
+                for day in range(7):
+                    avgRH.append(mean(RHdays[day]))
+                    avgTemp.append(mean(TEMPdays[day]))
+                    moraDays.append((49.593 - 48.580*np.array(mean(RHdays[day])*0.01) +25.887*np.array(mean(RHdays[day])*0.01)**2))
+                    moraPF.append(mean(TEMPdays[day])-((49.593 - 48.580*np.array(mean(RHdays[day])*0.01) +25.887*np.array(mean(RHdays[day])*0.01)**2)))
+                    if (mean(TEMPdays[day])-((49.593 - 48.580*np.array(mean(RHdays[day])*0.01) +25.887*np.array(mean(RHdays[day])*0.01)**2))) > 0:
+                        moraTotalDays = moraTotalDays+1
 
                 # Battery Sizing
                 heatingBattery = (hourlyHeat['Whole Building:Facility Total Purchased Electricity Energy [J](Hourly)'].sum())*0.0000002778
@@ -687,8 +702,39 @@ while True:
 
                 AnnualERV(idf1, occ, ervSense, ervLatent)
 
+                for item in range(constructions):
+                    
+                    name = constructionList['Name'][item]
+                    outerLayer = constructionList['Outside_Layer'][item]
+                    cost = constructionList['Cost_Per_Area_[$/m2]'][item]
+                    costSealing = constructionList['Air_Sealing_Cost_[$/ft2 ICFA]'][item]
+                    costBatt = constructionList['Battery_Cost_[$/kWh]'][item]
+                    costPV = constructionList['PV_Cost_[$/W]'][item]
+                    costMech = constructionList['Mechanical Cost'][item]
+
+                    if cost > 0 and str(outerLayer) != 'nan':
+                        costBuilder(idf1, name, '','Construction', name,'','',cost,'')
+                    
+                    if costSealing > 0 and str(name) == str(flowCoefficient):
+                        costBuilder(idf1,('AIR SEALING = ' + str(name)),'','General',0,0,(costSealing*icfa),'',1)
+
+                    if costMech> 0 and str(name) == str(mechSystemType):
+                        costBuilder(idf1, ('MECH_' + str(name)),'','General',0,0,costMech,'',1)
+
+                    if costMech> 0 and str(dhwFuel) in str(name):
+                        costBuilder(idf1, (str(name)),'','General',0,0,costMech,'',1)
+                    
+                    if costMech> 0 and 'Apppliances' in str(name):
+                        costBuilder(idf1, (str(name)),'','General',0,0,costMech,'',1)
+                    
+                    if costBatt > 0 and str(outerLayer) == 'nan':
+                        costBuilder(idf1, name,'' ,'General',0,0,(costBatt*max(heatingBattery,coolingBattery)),'',1)
+
+                    if costPV > 0 and str(outerLayer) == 'nan':
+                        costBuilder(idf1, name,'' ,'General',0,0,(costPV*PV_SIZE),'',1)
 
 
+                    
                 # Annual Result Collection
 
                 idf1.saveas(str(testingFile_BA))
@@ -727,11 +773,70 @@ while True:
 
                 if 'BASE' in str(BaseFileName):
                     firstCost = [0,0]
+                    wallCost = 0
+                    roofCost = 0
+                    floorCost = 0
+                    windowCost = 0
+                    doorCost = 0
+                    airSealing = 0
+                    mechCost = 0
+                    dhwCost = 0
+                    applianceCost = 0
+                    pvCost = 0
+                    batteryCost = 0
                 else:
+                    wallCostList = []
+                    roofCostList = []
+                    floorCostList = []
+                    windowCostList = []
+                    doorCostList = []
+                    airSealingCostList = []
+                    mechCostList = []
+                    dhwCostList = []
+                    applianceCostList = []
                     for ltable in ltables:
                         if 'Construction Cost Estimate Summary' in '\n'.join(ltable[0]): #and 'For: Entire Facility' in '\n'.join(ltable[0]):
                             firstCost = [(float(ltable[1][9][2])),0]
-                            firstCost = [(float(ltable[1][9][2])*1.8),0]
+                            # firstCost = [(float(ltable[1][9][2])*1.8),0]
+                        if 'Cost Line Item Details' in '\n'.join(ltable[0]):
+                            rows = len(ltable[1])
+                            for row in range(rows):
+                                # print(ltable[1][row][2])
+                                # print(ltable[1][row][5])
+                                if 'WALL' in str(ltable[1][row][2]):
+                                    wallCostList.append(ltable[1][row][6])
+                                if 'ROOF' in str(ltable[1][row][2]):
+                                    roofCostList.append(ltable[1][row][6])
+                                if 'FLOOR' in str(ltable[1][row][2]):
+                                    floorCostList.append(ltable[1][row][6])
+                                if 'WINDOW' in str(ltable[1][row][2]):
+                                    windowCostList.append(ltable[1][row][6])
+                                if 'DOOR' in str(ltable[1][row][2]):
+                                    doorCostList.append(ltable[1][row][6])
+                                if 'AIR SEALING' in str(ltable[1][row][2]):
+                                    airSealingCostList.append(ltable[1][row][6])
+                                if 'MECH' in str(ltable[1][row][2]):
+                                    mechCostList.append(ltable[1][row][6])
+                                if 'DHW' in str(ltable[1][row][2]):
+                                    dhwCostList.append(ltable[1][row][6])
+                                if 'APPLIANCE' in str(ltable[1][row][2]):
+                                    applianceCostList.append(ltable[1][row][6])
+                                if 'PV COST' in str(ltable[1][row][2]):
+                                    pvCost = (ltable[1][row][6])
+                                if 'BATTERY COST' in str(ltable[1][row][2]):
+                                    batteryCost = (ltable[1][row][6])
+
+                    wallCost = (sum(wallCostList))
+                    roofCost = (sum(roofCostList))
+                    floorCost = (sum(floorCostList))
+                    windowCost = (sum(windowCostList))
+                    doorCost = (sum(doorCostList))
+                    airSealing = (sum(airSealingCostList))
+                    mechCost = (sum(mechCostList))
+                    dhwCost = (sum(dhwCostList))
+                    applianceCost = (sum(applianceCostList))
+                    pvCost = pvCost
+                    batteryCost = batteryCost
 
                 # Save HTML and CSV outputs
                 reportHTML = (str(studyFolder) +'\eplustbl.htm')
@@ -807,8 +912,8 @@ while True:
                 
                 # annualCO2 = CO2_Elec + CO2_gas
 
-                carbonDatabase = pd.read_csv(str(inputValues['dataBases']) + 'Carbon Correction Database.csv')
-                countryEmissionsDatabase = pd.read_csv(str(inputValues['dataBases']) + 'Country Emission Database.csv')
+                carbonDatabase = pd.read_csv(str(inputValues['dataBases']) + '/Carbon Correction Database.csv')
+                countryEmissionsDatabase = pd.read_csv(str(inputValues['dataBases']) + '/Country Emission Database.csv')
 
                 if str(runList['CARBON_MEASURES'][runCount]) != 'nan':
                     carbonMeasures = carbondMeasures = list(runList['CARBON_MEASURES'][runCount].split(', '))
@@ -850,7 +955,7 @@ while True:
                 # emCO2 = [(emCO2_firstCost,1),((8500*laborFraction*0.3),20),((8500*laborFraction*0.3),40),((8500*laborFraction*0.3),60)] 
                 eTrans = peakElec
                 
-                final = adorb(BaseFileName, studyFolder, duration, annualElec, annualGas, annualCO2Elec, annualCO2Gas, dirMR, emCO2, eTrans)
+                final = adorb(BaseFileName, studyFolder, duration, annualElec, annualGas, annualCO2Elec, annualCO2Gas, dirMR, emCO2, eTrans, graphs)
 
                 adorbCost = final[0]
                 pv_dirEn_tot = final[1]
@@ -865,6 +970,11 @@ while True:
                 newResultRow = pd.DataFrame([{'Run Name':runList['CASE_NAME'][runCount],
                                                     'SET ≤ 12.2°C Hours (F)':HeatingSET,
                                                     "Hours < 2°C [hr]":Below2C,
+                                                    'Total Deadly Days':moraTotalDays,
+                                                    'Min outdoor DB [°C]':MinDBOut,
+                                                    'Min outdoor DP [°C]':MinDPOut,
+                                                    'Max outdoor DB [°C]':MaxDBOut,
+                                                    'Max outdoor DP [°C]':MaxDPOut,
                                                     "Caution (> 26.7, ≤ 32.2°C) [hr]":Caution,
                                                     "Extreme Caution (> 32.2, ≤ 39.4°C) [hr]":ExtremeCaution,
                                                     "Danger (> 39.4, ≤ 51.7°C) [hr]":Danger,
@@ -876,6 +986,17 @@ while True:
                                                     'First Year Electric Cost [$]' : annualElec,
                                                     'First Year Gas Cost [$]':annualGas,
                                                     'First Cost [$]':firstCost[0],
+                                                    'Wall Cost [$]':wallCost,
+                                                    'Roof Cost [$]':roofCost,
+                                                    'Floor Cost [$]':floorCost,
+                                                    'Window Cost [$]':windowCost,
+                                                    'Door Cost [$]':doorCost,
+                                                    'Air Sealing Cost [$]':airSealing,
+                                                    'Mechanical Cost [$]':mechCost,
+                                                    'Water Heater Cost [$]':dhwCost,
+                                                    'Appliances Cost [$]':applianceCost,
+                                                    'PV Cost [$]':pvCost,
+                                                    'Battery Cost [$]':batteryCost,
                                                     'Total ADORB Cost [$]':adorbCost,
                                                     'pv_dirEn_tot':pv_dirEn_tot,
                                                     'pv_dirMR_tot':pv_dirMR_tot,
@@ -908,6 +1029,11 @@ while True:
                 newResultRow = pd.DataFrame([{'Run Name':runList['CASE_NAME'][runCount],
                                                         'SET ≤ 12.2°C Hours (F)':'ERROR',
                                                         "Hours < 2°C [hr]":'ERROR',
+                                                        'Total Deadly Days':'ERROR',
+                                                        'Min outdoor DB [°C]':'ERROR',
+                                                        'Min outdoor DP [°C]':'ERROR',
+                                                        'Max outdoor DB [°C]':'ERROR',
+                                                        'Max outdoor DP [°C]':'ERROR',
                                                         "Caution (> 26.7, ≤ 32.2°C) [hr]":'ERROR',
                                                         "Extreme Caution (> 32.2, ≤ 39.4°C) [hr]":'ERROR',
                                                         "Danger (> 39.4, ≤ 51.7°C) [hr]":'ERROR',
@@ -919,6 +1045,17 @@ while True:
                                                         'First Year Electric Cost [$]':'ERROR',
                                                         'First Year Gas Cost [$]':'ERROR',
                                                         'First Cost [$]':'ERROR',
+                                                            'Wall Cost [$]':'ERROR',
+                                                            'Roof Cost [$]':'ERROR',
+                                                            'Floor Cost [$]':'ERROR',
+                                                            'Window Cost [$]':'ERROR',
+                                                            'Door Cost [$]':'ERROR',
+                                                            'Air Sealing Cost [$]':'ERROR',
+                                                            'Mechanical Cost [$]':'ERROR',
+                                                            'Water Heater Cost [$]':'ERROR',
+                                                            'Appliances Cost [$]':'ERROR',
+                                                            'PV Cost [$]':'ERROR',
+                                                            'Battery Cost [$]':'ERROR',
                                                         'Total ADORB Cost [$]':'ERROR',
                                                         'pv_dirEn_tot':'ERROR',
                                                         'pv_dirMR_tot':'ERROR',

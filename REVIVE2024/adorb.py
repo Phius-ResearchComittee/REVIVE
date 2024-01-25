@@ -28,7 +28,7 @@ import shutil
 import fnmatch
 import glob
 
-def adorb(BaseFileName, studyFolder, duration, annualElec, annualGas, annualCO2Elec, annualCO2Gas, dirMR, emCO2, eTrans):
+def adorb(BaseFileName, studyFolder, duration, annualElec, annualGas, annualCO2Elec, annualCO2Gas, dirMR, emCO2, eTrans, graphs):
     results = pd.DataFrame(columns=['pv_dirEn', 'pv_opCO2', 'pv_dirMR', 'pv_emCO2', 'pv_eTrans'])
     years = range(duration)
     pv = []
@@ -166,28 +166,29 @@ def adorb(BaseFileName, studyFolder, duration, annualElec, annualGas, annualCO2E
                         }
                         width = 0.3  # the width of the bars: can also be len(x) sequence
 
+                        if graphs == True:
+                            fig, ax = plt.subplots(figsize=(10,6))
+                            left = np.zeros(2)
 
-                        fig, ax = plt.subplots(figsize=(10,6))
-                        left = np.zeros(2)
+                            for sex, sex_count in case_data.items():
+                                # p = ax.bar(case, sex_count, width, label=sex, bottom=bottom)
+                                y = ax.barh(case,sex_count,width,label=sex,left=left)
+                                left += sex_count
 
-                        for sex, sex_count in case_data.items():
-                            # p = ax.bar(case, sex_count, width, label=sex, bottom=bottom)
-                            y = ax.barh(case,sex_count,width,label=sex,left=left)
-                            left += sex_count
+                                ax.bar_label(y, label_type='center',rotation=-45)
 
-                            ax.bar_label(y, label_type='center',rotation=-45)
-
-                        ax.set_title('Total Lifecycle ADORB Cost')
-                        ax.legend(loc="upper right")
-                        ax.set_xlabel('Cost [$]')
-                        plt.savefig(str(adorb.adorbBarGraph),dpi=300)
-                        plt.clf()
+                            ax.set_title('Total Lifecycle ADORB Cost')
+                            ax.legend(loc="upper right")
+                            ax.set_xlabel('Cost [$]')
+                            plt.savefig(str(adorb.adorbBarGraph),dpi=300)
+                            plt.clf()
     try:
-        fig = df2.plot(kind='area', xlabel='Years', ylabel='Cummulative Present Value [$]', title=(str(BaseFileName) + '_ADORB COST'), figsize=(10,6)).get_figure()
+        if graphs == True:
+            fig = df2.plot(kind='area', xlabel='Years', ylabel='Cummulative Present Value [$]', title=(str(BaseFileName) + '_ADORB COST'), figsize=(10,6)).get_figure()
 
-        adorb.adorbWedgeGraph = (str(studyFolder) + "/" + str(BaseFileName) + '_ADORB_Wedge.png')
-        adorb.adorbBarGraph = (str(studyFolder) + "/" + str(BaseFileName) + '_ADORB_Bar.png')
-        fig.savefig(str(adorb.adorbWedgeGraph))
+            adorb.adorbWedgeGraph = (str(studyFolder) + "/" + str(BaseFileName) + '_ADORB_Wedge.png')
+            adorb.adorbBarGraph = (str(studyFolder) + "/" + str(BaseFileName) + '_ADORB_Bar.png')
+            fig.savefig(str(adorb.adorbWedgeGraph))
 
     except:
         print('No Graph')
