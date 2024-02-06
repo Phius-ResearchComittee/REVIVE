@@ -103,10 +103,10 @@ tab0_layout =  [[sg.Text('Welcome')],
 
 tab1_layout =   [[sg.Text('Batch Name:', size =(15, 1)),sg.InputText('Name your batch of files', key='batchName')],
                 [sg.Text('IDD File Location:', size =(15, 1)),sg.InputText("C:\EnergyPlusV9-5-0\Energy+.idd", key='iddFile'), sg.FileBrowse()],
-                [sg.Text('Study Folder:', size =(15, 1)),sg.InputText('C:/REVIVE v23.1.0/Parametric Runs 2', key='studyFolder'), sg.FolderBrowse()],
-                [sg.Text('Geometry IDF:', size =(15, 1)),sg.InputText('C:/REVIVE v23.1.0/Databases/Sample Geometry/PNNL_SF_Geometry.idf', key='GEO'), sg.FileBrowse()],
-                [sg.Text('Run List Location:', size =(15, 1)),sg.InputText('C:/REVIVE v23.1.0/Parametric Run List/ChicagoIL_ParametricRuns_2023-12-06.csv', key='runList'), sg.FileBrowse()],
-                [sg.Text('Database Folder Location:', size =(15, 1)),sg.InputText('C:/REVIVE v23.1.0/Databases', key='dataBases'), sg.FolderBrowse()]
+                [sg.Text('Study Folder:', size =(15, 1)),sg.InputText('C:/REVIVE v24.1.0/Parametric Runs Results', key='studyFolder'), sg.FolderBrowse()],
+                [sg.Text('Geometry IDF:', size =(15, 1)),sg.InputText('C:/REVIVE v24.1.0/Databases/Sample Geometry/PNNL_SF_Geometry.idf', key='GEO'), sg.FileBrowse()],
+                [sg.Text('Run List Location:', size =(15, 1)),sg.InputText("C:/REVIVE v24.1.0/Parametric Run List/PRL_2024-01-30.csv", key='runList'), sg.FileBrowse()],
+                [sg.Text('Database Folder Location:', size =(15, 1)),sg.InputText('C:/REVIVE v24.1.0/Databases', key='dataBases'), sg.FolderBrowse()]
                 ]
 
 tab2_layout =   [[sg.Checkbox('Generate PDF?', size=(25, 1), default=False,key='genPDF')],
@@ -221,16 +221,78 @@ while True:
                 ervSense = 0
                 ervLatent = 0
 
-                # IHG Calc 
+                # IHG Calc
+                constructionList = pd.read_csv(str(inputValues['dataBases']) + '/Construction Database.csv')
+                appliance_list = list(runList['APPLIANCE_LIST'][runCount].split(', '))
 
-                fridge = (445/(8760))*1000 # always on design load
-                fracHighEff = 1.0
+                constructions = constructionList.shape[0]
+                for item in range(constructions):
+                    if str(constructionList['Name'][item]) in appliance_list:
+                        if 'FRIDGE' in constructionList['Name'][item]:
+                            fridge_demand = constructionList['Appliance_Rating'][item]
+                            fridge_cost = constructionList['Mechanical Cost'][item]
+                            fridge = (fridge_demand/(8760))*1000 # always on design load
+                        if 'DISHWASHER' in constructionList['Name'][item]:
+                            dishwasher_demand = constructionList['Appliance_Rating'][item]
+                            dishwasher_cost = constructionList['Mechanical Cost'][item]
+                            dishWasher = (((86.3 + (47.73 / (215 / dishwasher_demand)))/215) * ((88.4 + 34.9*Nbr)*(12/12))*(1/365)*1000)
+                        if 'CLOTHESWASHER' in constructionList['Name'][item]:
+                            clotheswasher_demand = constructionList['Appliance_Rating'][item]
+                            clotheswasher_cost = constructionList['Mechanical Cost'][item]
+                            clothesWasher = (clotheswasher_demand/365)*1000
+                        if 'CLOTHESDRYER' in constructionList['Name'][item]:
+                            clothesdryer_demand = constructionList['Appliance_Rating'][item]
+                            clothesdryer_cost = constructionList['Mechanical Cost'][item]
+                            clothesDryer = ((12.4*(164+46.5*Nbr)*1.18/3.01*(2.874/0.817-704/clothesdryer_demand)/(0.2184*(4.5*4.08+0.24)))/365)*1000
+                        if 'RANGE' in constructionList['Name'][item]:
+                            range_cost = constructionList['Mechanical Cost'][item]
+                        if 'LIGHTS' in constructionList['Name'][item]:
+                            fracHighEff = constructionList['Appliance_Rating'][item]
+                            lights_cost = constructionList['Mechanical Cost'][item]
+                try:
+                    fridge_demand
+                except:
+                    fridge_demand = 0
+                    fridge_cost = 0
+                    fridge = 0
+                try:
+                    dishwasher_demand
+                except:
+                    dishwasher_demand = 0
+                    dishwasher_cost = 0
+                    dishwasher = 0
+                try:
+                    clotheswasher_demand
+                except:
+                    clotheswasher_demand = 0
+                    clotheswasher_cost = 0
+                    clothesWasher = 0
+                try:
+                    clothesdryer_demand
+                except:
+                    clothesdryer_demand = 0
+                    clothesdryer_cost = 0
+                    clothesDryer = 0
+                try:
+                    range_cost
+                except:
+                    range_cost = 0
+                try:
+                    fracHighEff
+                except:
+                    fracHighEff = 0
+                    lights_cost = 0
+
+                        
+                total_appliance_cost = (fridge_cost + dishwasher_cost + clotheswasher_cost + clothesdryer_cost + range_cost)
+
+                
                 PhiusLights = (0.2 + 0.8*(4 - 3*fracHighEff)/3.7)*(455 + 0.8*icfa) * 0.8 * 1000 * (1/365) #power per day W use Phius calc
                 PhiusMELs = ((413 + 69*Nbr + 0.91*icfa)/365)*1000*0.8 #consumption per day per phius calc
                 rangeElec = ((331 + 39*Nbr)/365)*1000
-                clothesDryer = ((12.4*(164+46.5*Nbr)*1.18/3.01*(2.874/0.817-704/392)/(0.2184*(4.5*4.08+0.24)))/365)*1000
-                clothesWasher = (120/365)*1000
-                dishWasher = (((86.3 + (47.73 / (215 / 269)))/215) * ((88.4 + 34.9*Nbr)*(12/12))*(1/365)*1000)
+                
+                
+                
                 
                 # DHW Calc per BA
                 DHW_ClothesWasher = 2.3 + 0.78*Nbr
@@ -724,14 +786,15 @@ while True:
                     if costMech> 0 and str(dhwFuel) in str(name):
                         costBuilder(idf1, (str(name)),'','General',0,0,costMech,'',1)
                     
-                    if costMech> 0 and 'Apppliances' in str(name):
-                        costBuilder(idf1, (str(name)),'','General',0,0,costMech,'',1)
-                    
                     if costBatt > 0 and str(outerLayer) == 'nan':
                         costBuilder(idf1, name,'' ,'General',0,0,(costBatt*max(heatingBattery,coolingBattery)),'',1)
 
                     if costPV > 0 and str(outerLayer) == 'nan':
                         costBuilder(idf1, name,'' ,'General',0,0,(costPV*PV_SIZE),'',1)
+
+
+                costBuilder(idf1, ('APPLIANCES'),'','General',0,0,total_appliance_cost,'',1)
+                costBuilder(idf1, ('LIGHTS'),'','General',0,0,lights_cost,'',1)
 
 
                     
@@ -782,6 +845,7 @@ while True:
                     mechCost = 0
                     dhwCost = 0
                     applianceCost = 0
+                    lightsCost = 0
                     pvCost = 0
                     batteryCost = 0
                 else:
@@ -794,6 +858,7 @@ while True:
                     mechCostList = []
                     dhwCostList = []
                     applianceCostList = []
+                    lightsCost = []
                     for ltable in ltables:
                         if 'Construction Cost Estimate Summary' in '\n'.join(ltable[0]): #and 'For: Entire Facility' in '\n'.join(ltable[0]):
                             firstCost = [(float(ltable[1][9][2])),0]
@@ -819,7 +884,9 @@ while True:
                                     mechCostList.append(ltable[1][row][6])
                                 if 'DHW' in str(ltable[1][row][2]):
                                     dhwCostList.append(ltable[1][row][6])
-                                if 'APPLIANCE' in str(ltable[1][row][2]):
+                                if 'APPLIANCES' in str(ltable[1][row][2]):
+                                    applianceCostList.append(ltable[1][row][6])
+                                if 'LIGHTS' in str(ltable[1][row][2]):
                                     applianceCostList.append(ltable[1][row][6])
                                 if 'PV COST' in str(ltable[1][row][2]):
                                     pvCost = (ltable[1][row][6])
@@ -1071,7 +1138,7 @@ while True:
 
 
 
-
+        # Utility Functions
         if cleanFolder == True:
             os.listdir(studyFolder)
             for filename in os.listdir(studyFolder):
