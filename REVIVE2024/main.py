@@ -166,7 +166,7 @@ while True:
                                                     'Door Cost [$]','Air Sealing Cost [$]','Mechanical Cost [$]','Water Heater Cost [$]','Appliances Cost [$]','PV Cost [$]',
                                                     'Battery Cost [$]','pv_dirEn_tot','pv_dirMR_tot','pv_opCO2_tot','pv_emCO2_tot','pv_eTrans_tot'])
         for case in range(totalRuns):
-            try:
+            # try:
                 iddfile = str(inputValues['iddFile'])
                 runListPath = inputValues['runList']
                 studyFolder = inputValues['studyFolder']
@@ -504,13 +504,11 @@ while True:
                         layerList = [x for x in layers if str(x) != 'nan']
 
                     constructionBuilder(idf1, constructionList['Name'][item],layerList)
-                
 
                 # Envelope inputs
                 Infiltration(idf1, flowCoefficient)
                 SpecialMaterials(idf1)
                 FoundationInterface(idf1,foundationList)
-
 
                 ShadeMaterials(idf1)
 
@@ -1086,55 +1084,55 @@ while True:
                 ResultsTable.to_csv(str(studyFolder) + "/" + str(batchName) + "_ResultsTable.csv")
                 print('Saved Results')
 
-            except:
-                errorFile1= (str(studyFolder) + '\eplusout.err')
-                errorFile2 = (str(studyFolder) + "/" + str(BaseFileName)  + '_BA_eplusout.sql')
+            # except:
+            #     errorFile1= (str(studyFolder) + '\eplusout.err')
+            #     errorFile2 = (str(studyFolder) + "/" + str(BaseFileName)  + '_BA_eplusout.sql')
                 
-                if os.path.exists(errorFile2):
-                    os.remove(errorFile2)
-                    os.rename(errorFile1,errorFile2)
-                newResultRow = pd.DataFrame([{'Run Name':runList['CASE_NAME'][runCount],
-                                                        'SET ≤ 12.2°C Hours (F)':'ERROR',
-                                                        "Hours < 2°C [hr]":'ERROR',
-                                                        'Total Deadly Days':'ERROR',
-                                                        'Min outdoor DB [°C]':'ERROR',
-                                                        'Min outdoor DP [°C]':'ERROR',
-                                                        'Max outdoor DB [°C]':'ERROR',
-                                                        'Max outdoor DP [°C]':'ERROR',
-                                                        "Caution (> 26.7, ≤ 32.2°C) [hr]":'ERROR',
-                                                        "Extreme Caution (> 32.2, ≤ 39.4°C) [hr]":'ERROR',
-                                                        "Danger (> 39.4, ≤ 51.7°C) [hr]":'ERROR',
-                                                        "Extreme Danger (> 51.7°C) [hr]":'ERROR',
-                                                        'EUI':'ERROR',
-                                                        'Peak Electric Demand [W]':'ERROR',
-                                                        'Heating Battery Size [kWh]':'ERROR', 
-                                                        'Cooling Battery Size [kWh]':'ERROR',
-                                                        'First Year Electric Cost [$]':'ERROR',
-                                                        'First Year Gas Cost [$]':'ERROR',
-                                                        'First Cost [$]':'ERROR',
-                                                            'Wall Cost [$]':'ERROR',
-                                                            'Roof Cost [$]':'ERROR',
-                                                            'Floor Cost [$]':'ERROR',
-                                                            'Window Cost [$]':'ERROR',
-                                                            'Door Cost [$]':'ERROR',
-                                                            'Air Sealing Cost [$]':'ERROR',
-                                                            'Mechanical Cost [$]':'ERROR',
-                                                            'Water Heater Cost [$]':'ERROR',
-                                                            'Appliances Cost [$]':'ERROR',
-                                                            'PV Cost [$]':'ERROR',
-                                                            'Battery Cost [$]':'ERROR',
-                                                        'Total ADORB Cost [$]':'ERROR',
-                                                        'pv_dirEn_tot':'ERROR',
-                                                        'pv_dirMR_tot':'ERROR',
-                                                        'pv_opCO2_tot':'ERROR',
-                                                        'pv_emCO2_tot':'ERROR',
-                                                        'pv_eTrans_tot':'ERROR'}])
+            #     if os.path.exists(errorFile2):
+            #         os.remove(errorFile2)
+            #         os.rename(errorFile1,errorFile2)
+            #     newResultRow = pd.DataFrame([{'Run Name':runList['CASE_NAME'][runCount],
+            #                                             'SET ≤ 12.2°C Hours (F)':'ERROR',
+            #                                             "Hours < 2°C [hr]":'ERROR',
+            #                                             'Total Deadly Days':'ERROR',
+            #                                             'Min outdoor DB [°C]':'ERROR',
+            #                                             'Min outdoor DP [°C]':'ERROR',
+            #                                             'Max outdoor DB [°C]':'ERROR',
+            #                                             'Max outdoor DP [°C]':'ERROR',
+            #                                             "Caution (> 26.7, ≤ 32.2°C) [hr]":'ERROR',
+            #                                             "Extreme Caution (> 32.2, ≤ 39.4°C) [hr]":'ERROR',
+            #                                             "Danger (> 39.4, ≤ 51.7°C) [hr]":'ERROR',
+            #                                             "Extreme Danger (> 51.7°C) [hr]":'ERROR',
+            #                                             'EUI':'ERROR',
+            #                                             'Peak Electric Demand [W]':'ERROR',
+            #                                             'Heating Battery Size [kWh]':'ERROR', 
+            #                                             'Cooling Battery Size [kWh]':'ERROR',
+            #                                             'First Year Electric Cost [$]':'ERROR',
+            #                                             'First Year Gas Cost [$]':'ERROR',
+            #                                             'First Cost [$]':'ERROR',
+            #                                                 'Wall Cost [$]':'ERROR',
+            #                                                 'Roof Cost [$]':'ERROR',
+            #                                                 'Floor Cost [$]':'ERROR',
+            #                                                 'Window Cost [$]':'ERROR',
+            #                                                 'Door Cost [$]':'ERROR',
+            #                                                 'Air Sealing Cost [$]':'ERROR',
+            #                                                 'Mechanical Cost [$]':'ERROR',
+            #                                                 'Water Heater Cost [$]':'ERROR',
+            #                                                 'Appliances Cost [$]':'ERROR',
+            #                                                 'PV Cost [$]':'ERROR',
+            #                                                 'Battery Cost [$]':'ERROR',
+            #                                             'Total ADORB Cost [$]':'ERROR',
+            #                                             'pv_dirEn_tot':'ERROR',
+            #                                             'pv_dirMR_tot':'ERROR',
+            #                                             'pv_opCO2_tot':'ERROR',
+            #                                             'pv_emCO2_tot':'ERROR',
+            #                                             'pv_eTrans_tot':'ERROR'}])
             
-                newResultRow.to_csv(str(studyFolder) + "/" + str(caseName) + "_Test_ResultsTable.csv")
+            #     newResultRow.to_csv(str(studyFolder) + "/" + str(caseName) + "_Test_ResultsTable.csv")
                 
-                ResultsTable = pd.concat([ResultsTable, newResultRow], axis=0, ignore_index=True)#, ignore_index=Truue
-                ResultsTable.to_csv(str(studyFolder) + "/" + str(batchName) + "_ResultsTable.csv")
-                print('Saved Results')
+            #     ResultsTable = pd.concat([ResultsTable, newResultRow], axis=0, ignore_index=True)#, ignore_index=Truue
+            #     ResultsTable.to_csv(str(studyFolder) + "/" + str(batchName) + "_ResultsTable.csv")
+            #     print('Saved Results')
 
 
 
