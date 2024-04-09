@@ -1,11 +1,11 @@
 #=============================================================================================================================
 # PhiusREVIVE Research Tool
-# Updated 2023/11/27
-# v24.1.0
+# Updated 2024/03/04
+# v24.2.0
 #
 #
 
-# Copyright (c) 2023 Phius
+# Copyright (c) 2024 Phius
 
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -50,6 +50,7 @@ import eppy as eppy
 from eppy import modeleditor
 from eppy.modeleditor import IDF
 from eppy.runner.run_functions import runIDFs
+from joblib import Parallel, delayed
 import PySimpleGUI as sg
 # from PIL import Image, ImageTk
 import os
@@ -104,12 +105,13 @@ tab0_layout =  [[sg.Text('Welcome')],
 tab1_layout =   [[sg.Text('Batch Name:', size =(15, 1)),sg.InputText('Name your batch of files', key='batchName')],
                 [sg.Text('IDD File Location:', size =(15, 1)),sg.InputText("C:\EnergyPlusV9-5-0\Energy+.idd", key='iddFile'), sg.FileBrowse()],
                 [sg.Text('Study Folder:', size =(15, 1)),sg.InputText('C:/REVIVE v24.1.0/Parametric Runs Results', key='studyFolder'), sg.FolderBrowse()],
-                [sg.Text('Geometry IDF:', size =(15, 1)),sg.InputText('C:/REVIVE v24.1.0/Databases/Sample Geometry/PNNL_SF_Geometry.idf', key='GEO'), sg.FileBrowse()],
+                # [sg.Text('Geometry IDF:', size =(15, 1)),sg.InputText('C:/REVIVE v24.1.0/Databases/Sample Geometry/PNNL_SF_Geometry.idf', key='GEO'), sg.FileBrowse()],
                 [sg.Text('Run List Location:', size =(15, 1)),sg.InputText("C:/REVIVE v24.1.0/Parametric Run List/PRL_2024-01-30.csv", key='runList'), sg.FileBrowse()],
                 [sg.Text('Database Folder Location:', size =(15, 1)),sg.InputText('C:/REVIVE v24.1.0/Databases', key='dataBases'), sg.FolderBrowse()]
                 ]
 
-tab2_layout =   [[sg.Checkbox('Generate PDF?', size=(25, 1), default=False,key='genPDF')],
+tab2_layout =   [[sg.Text('Parallel Processes:', size =(10, 1)),sg.OptionMenu([1,2,4,8,12,16,20,24,28,32], default_value='4', key='PARALLEL')],
+                 [sg.Checkbox('Generate PDF?', size=(25, 1), default=False,key='genPDF')],
                  [sg.Checkbox('Generate Graphs Files?', size=(25, 1), default=False,key='GenerateGraphs')],
                  [sg.Checkbox('Delete Unecessary Files?', size=(25, 1), default=True,key='DeleteFiles')]
                 ]
@@ -132,7 +134,7 @@ layout1 = [
             sg.Tab('3 Phase ADORB', tab3_layout,),]])],
             [sg.Button('LOAD'), sg.Button('RUN ANALYSIS'), sg.Button('EXIT')]]  
 
-window = sg.Window('Phius REVIVE 2024 Analysis Tool v24.1.0',layout1, default_element_size=(125, 125), grab_anywhere=True)
+window = sg.Window('Phius REVIVE 2024 Analysis Tool v24.2.0',layout1, default_element_size=(125, 125), grab_anywhere=True)
 
 #==============================================================================================================================
 # 3.0 File Management
@@ -158,6 +160,12 @@ while True:
         multiphaseADORB(year1Path,year1Start,year2Path,year2Start,year3Path,year3Start)
 
     if event == 'RUN ANALYSIS':
+        cleanFolder = inputValues['DeleteFiles']
+        studyFolder = inputValues['studyFolder']
+        parallel_cores = inputValues['PARALLEL']
+        batchName = str(inputValues['batchName'])
+
+
         ResultsTable = pd.DataFrame(columns=["Run Name","SET ≤ 12.2°C Hours (F)","Hours < 2°C [hr]",'Total Deadly Days','Min outdoor DB [°C]','Min outdoor DP [°C]',
                                                     'Max outdoor DB [°C]','Max outdoor DP [°C]',"Caution (> 26.7, ≤ 32.2°C) [hr]","Extreme Caution (> 32.2, ≤ 39.4°C) [hr]",
                                                     "Danger (> 39.4, ≤ 51.7°C) [hr]","Extreme Danger (> 51.7°C) [hr]", 'EUI','Peak Electric Demand [W]',
@@ -165,14 +173,15 @@ while True:
                                                     'First Year Gas Cost [$]','First Cost [$]','Wall Cost [$]','Roof Cost [$]','Floor Cost [$]','Window Cost [$]',
                                                     'Door Cost [$]','Air Sealing Cost [$]','Mechanical Cost [$]','Water Heater Cost [$]','Appliances Cost [$]','PV Cost [$]',
                                                     'Battery Cost [$]','pv_dirEn_tot','pv_dirMR_tot','pv_opCO2_tot','pv_emCO2_tot','pv_eTrans_tot'])
-        for case in range(totalRuns):
-            # try:
+        # for case in range(totalRuns):
+        def simulation(case, ResultsTable):        
+            try:
                 iddfile = str(inputValues['iddFile'])
                 runListPath = inputValues['runList']
                 studyFolder = inputValues['studyFolder']
                 databases = inputValues['dataBases']
 
-                idfgName = inputValues['GEO']
+                
                 emissionsDatabase = (str(inputValues['dataBases']) + 'Hourly Emission Rates.csv')
                 weatherDatabase = (str(inputValues['dataBases']) + '/Weather Data/')
                 runList = pd.read_csv(str(runListPath))
@@ -181,13 +190,14 @@ while True:
 
                 pdfReport = inputValues['genPDF']
                 graphs = inputValues['GenerateGraphs']
-                cleanFolder = inputValues['DeleteFiles']
+                
 
 
                 os.chdir(str(studyFolder))
                 IDF.setiddname(iddfile)
 
                 runCount = case
+                idfgName = runList['GEOMETRY_IDF'][runCount]
                 BaseFileName = (batchName + '_' + runList['CASE_NAME'][runCount])
                 caseName = runList['CASE_NAME'][runCount]
 
@@ -412,7 +422,7 @@ while True:
                 #==============================================================================================================================
 
                 open(str(testingFile_BR), 'w')
-                idfg = IDF(str(idfgName))
+                idfg = IDF(str(studyFolder) + '/' + str(idfgName)) 
                 ddy = IDF(ddyName)
                 idf1 = IDF(str(testingFile_BR))
 
@@ -515,6 +525,8 @@ while True:
                 # Window inputs and shading controls
                 WindowVentilation(idf1, halfHeight, operableArea_N, operableArea_W, 
                         operableArea_S, operableArea_E)
+                
+                WindowShadingControl(idf1, windowNames)
 
                 AssignContructions(idf1, Ext_Wall1,Ext_Wall2,Ext_Wall3,
                        Ext_Roof1,Ext_Roof2,Ext_Roof3,
@@ -573,9 +585,8 @@ while True:
 
                 idf1.saveas(str(testingFile_BR))
                 idf = IDF(str(testingFile_BR), str(epwFile))
-                idf.run(readvars=True)
-
-                fname = (str(studyFolder) + '/eplustbl.htm')
+                idf.run(readvars=True,output_prefix=str(str(BaseFileName) + "_BR"))
+                fname = (str(studyFolder) + '/' + str(BaseFileName) + '_BRtbl.htm')
                 filehandle = open(fname, 'r').read()
                 ltables = readhtml.lines_table(filehandle) # reads the tables with their titles
 
@@ -600,7 +611,8 @@ while True:
 
 
                 # Resilience Graphs
-                filehandle = (str(studyFolder) + '\eplusout.csv')
+                        
+                filehandle = (str(studyFolder) + '/' + str(BaseFileName) + '_BRout.csv')
                 hourly = pd.read_csv(filehandle)
                 hourlyBA = pd.read_csv(filehandle)
 
@@ -737,30 +749,30 @@ while True:
                 reportSQL2= (str(studyFolder) + "/" + str(BaseFileName)  + '_BR_eplusout.sql')
 
 
-                if os.path.exists(reportCSV2):
-                    os.remove(reportCSV2)
+                # if os.path.exists(reportCSV2):
+                #     os.remove(reportCSV2)
                 
-                if os.path.exists(reportHTML2):
-                    os.remove(reportHTML2)
+                # if os.path.exists(reportHTML2):
+                #     os.remove(reportHTML2)
 
-                if os.path.exists(reportSQL2):
-                    os.remove(reportSQL2)
+                # if os.path.exists(reportSQL2):
+                #     os.remove(reportSQL2)
 
-                os.rename(reportHTML,reportHTML2)
-                os.rename(reportCSV,reportCSV2)
-                os.rename(reportSQL,reportSQL2)
+                # os.rename(reportHTML,reportHTML2)
+                # os.rename(reportCSV,reportCSV2)
+                # os.rename(reportSQL,reportSQL2)
 
                 # ============================================================================
                 # Annual Specific
                 # ============================================================================
 
-                idf1 = IDF(str(passIDF))
+                idf2 = IDF(str(passIDF))
 
-                AnnualSchedules(idf1, outage1start, outage1end, outage2start, outage2end, 
+                AnnualSchedules(idf2, outage1start, outage1end, outage2start, outage2end, 
                             coolingOutageStart,coolingOutageEnd,NatVentAvail,
                             demandCoolingAvail,shadingAvail)
 
-                AnnualERV(idf1, occ, ervSense, ervLatent)
+                AnnualERV(idf2, occ, ervSense, ervLatent)
 
                 for item in range(constructions):
                     
@@ -773,37 +785,41 @@ while True:
                     costMech = constructionList['Mechanical Cost'][item]
 
                     if cost > 0 and str(outerLayer) != 'nan':
-                        costBuilder(idf1, name, '','Construction', name,'','',cost,'')
+                        costBuilder(idf2, name, '','Construction', name,'','',cost,'')
                     
                     if costSealing > 0 and str(name) == str(flowCoefficient):
-                        costBuilder(idf1,('AIR SEALING = ' + str(name)),'','General',0,0,(costSealing*icfa),'',1)
+                        costBuilder(idf2,('AIR SEALING = ' + str(name)),'','General',0,0,(costSealing*icfa),'',1)
 
                     if costMech> 0 and str(name) == str(mechSystemType):
-                        costBuilder(idf1, ('MECH_' + str(name)),'','General',0,0,costMech,'',1)
+                        costBuilder(idf2, ('MECH_' + str(name)),'','General',0,0,costMech,'',1)
 
                     if costMech> 0 and str(dhwFuel) in str(name):
-                        costBuilder(idf1, (str(name)),'','General',0,0,costMech,'',1)
+                        costBuilder(idf2, (str(name)),'','General',0,0,costMech,'',1)
                     
                     if costBatt > 0 and str(outerLayer) == 'nan':
-                        costBuilder(idf1, name,'' ,'General',0,0,(costBatt*max(heatingBattery,coolingBattery)),'',1)
+                        costBuilder(idf2, name,'' ,'General',0,0,(costBatt*max(heatingBattery,coolingBattery)),'',1)
 
                     if costPV > 0 and str(outerLayer) == 'nan':
-                        costBuilder(idf1, name,'' ,'General',0,0,(costPV*PV_SIZE),'',1)
+                        costBuilder(idf2, name,'' ,'General',0,0,(costPV*PV_SIZE),'',1)
 
 
-                costBuilder(idf1, ('APPLIANCES'),'','General',0,0,total_appliance_cost,'',1)
-                costBuilder(idf1, ('LIGHTS'),'','General',0,0,lights_cost,'',1)
+                costBuilder(idf2, ('APPLIANCES'),'','General',0,0,total_appliance_cost,'',1)
+                costBuilder(idf2, ('LIGHTS'),'','General',0,0,lights_cost,'',1)
 
 
                     
                 # Annual Result Collection
 
-                idf1.saveas(str(testingFile_BA))
+                idf2.saveas(str(testingFile_BA))
                 idf = IDF(str(testingFile_BA), str(epwFile))
-                idf.run(readvars=True)
+                idf.run(readvars=True,output_prefix=str((str(BaseFileName) + '_BA')))
 
-                filehandle = (str(studyFolder) + '\eplusout.csv')
-                filehandleMTR = (str(studyFolder) + '\eplusmtr.csv')
+
+
+
+
+                filehandle = (str(studyFolder) + '/' + str(BaseFileName) + '_BAout.csv')
+                filehandleMTR = (str(studyFolder) + '/' + str(BaseFileName) + '_BAmtr.csv')
                 hourly = pd.read_csv(filehandle)
                 monthlyMTR= pd.read_csv(filehandleMTR)
 
@@ -820,7 +836,7 @@ while True:
                 hourly = hourly.drop(index = dropWarmup)
                 hourly = hourly.reset_index()
 
-                fname = (str(studyFolder) + '/eplustbl.htm')
+                fname = (str(studyFolder) + '/' + str(BaseFileName) + '_BAtbl.htm')
                 filehandle = open(fname, 'r').read()
                 ltables = readhtml.lines_table(filehandle) # reads the tables with their titles
 
@@ -911,18 +927,18 @@ while True:
                 reportCSV2 = (str(studyFolder) + "/" + str(BaseFileName)  + '_BA_eplusout.csv')
                 reportSQL2= (str(studyFolder) + "/" + str(BaseFileName)  + '_BA_eplusout.sql')
 
-                if os.path.exists(reportCSV2):
-                    os.remove(reportCSV2)
+                # if os.path.exists(reportCSV2):
+                #     os.remove(reportCSV2)
                 
-                if os.path.exists(reportHTML2):
-                    os.remove(reportHTML2)
+                # if os.path.exists(reportHTML2):
+                #     os.remove(reportHTML2)
 
-                if os.path.exists(reportSQL2):
-                    os.remove(reportSQL2)
+                # if os.path.exists(reportSQL2):
+                #     os.remove(reportSQL2)
 
-                os.rename(reportHTML,reportHTML2)
-                os.rename(reportCSV,reportCSV2)
-                os.rename(reportSQL,reportSQL2)
+                # os.rename(reportHTML,reportHTML2)
+                # os.rename(reportCSV,reportCSV2)
+                # os.rename(reportSQL,reportSQL2)
 
     ##################ADORB 436253 RED QUEEN PIN
 
@@ -973,8 +989,13 @@ while True:
 
                 duration = 70
                 elecPrice = float(runList['ELEC_PRICE_[$/kWh]'][runCount])
-                annualElec = ((hourly['Whole Building:Facility Total Purchased Electricity Energy [J](Hourly)'].sum()*0.0000002778*elecPrice)+100)
+                elec_sellback_price = float(runList['SELLBACK_PRICE_[$/kWh]'][runCount])
+                annualElec = ((hourly['Whole Building:Facility Total Purchased Electricity Energy [J](Hourly)'].sum()*0.0000002778*elecPrice)-
+                              (hourly['Whole Building:Facility Total Surplus Electricity Energy [J](Hourly)'].sum()*0.0000002778*elec_sellback_price)
+                               +100)
                 
+                
+
                 # annualCO2 = CO2_Elec + CO2_gas
 
                 carbonDatabase = pd.read_csv(str(inputValues['dataBases']) + '/Carbon Correction Database.csv')
@@ -1080,65 +1101,74 @@ while True:
                             firstCost, adorbCost, heatingGraphFile, coolingGraphFile, adorb.adorbWedgeGraph,
                             adorb.adorbBarGraph)
 
+            except:
+                # errorFile1= (str(studyFolder) + '\eplusout.err')
+                # errorFile2 = (str(studyFolder) + "/" + str(BaseFileName)  + '_BA_eplusout.sql')
                 
-                ResultsTable.to_csv(str(studyFolder) + "/" + str(batchName) + "_ResultsTable.csv")
-                print('Saved Results')
-
-            # except:
-            #     errorFile1= (str(studyFolder) + '\eplusout.err')
-            #     errorFile2 = (str(studyFolder) + "/" + str(BaseFileName)  + '_BA_eplusout.sql')
-                
-            #     if os.path.exists(errorFile2):
-            #         os.remove(errorFile2)
-            #         os.rename(errorFile1,errorFile2)
-            #     newResultRow = pd.DataFrame([{'Run Name':runList['CASE_NAME'][runCount],
-            #                                             'SET ≤ 12.2°C Hours (F)':'ERROR',
-            #                                             "Hours < 2°C [hr]":'ERROR',
-            #                                             'Total Deadly Days':'ERROR',
-            #                                             'Min outdoor DB [°C]':'ERROR',
-            #                                             'Min outdoor DP [°C]':'ERROR',
-            #                                             'Max outdoor DB [°C]':'ERROR',
-            #                                             'Max outdoor DP [°C]':'ERROR',
-            #                                             "Caution (> 26.7, ≤ 32.2°C) [hr]":'ERROR',
-            #                                             "Extreme Caution (> 32.2, ≤ 39.4°C) [hr]":'ERROR',
-            #                                             "Danger (> 39.4, ≤ 51.7°C) [hr]":'ERROR',
-            #                                             "Extreme Danger (> 51.7°C) [hr]":'ERROR',
-            #                                             'EUI':'ERROR',
-            #                                             'Peak Electric Demand [W]':'ERROR',
-            #                                             'Heating Battery Size [kWh]':'ERROR', 
-            #                                             'Cooling Battery Size [kWh]':'ERROR',
-            #                                             'First Year Electric Cost [$]':'ERROR',
-            #                                             'First Year Gas Cost [$]':'ERROR',
-            #                                             'First Cost [$]':'ERROR',
-            #                                                 'Wall Cost [$]':'ERROR',
-            #                                                 'Roof Cost [$]':'ERROR',
-            #                                                 'Floor Cost [$]':'ERROR',
-            #                                                 'Window Cost [$]':'ERROR',
-            #                                                 'Door Cost [$]':'ERROR',
-            #                                                 'Air Sealing Cost [$]':'ERROR',
-            #                                                 'Mechanical Cost [$]':'ERROR',
-            #                                                 'Water Heater Cost [$]':'ERROR',
-            #                                                 'Appliances Cost [$]':'ERROR',
-            #                                                 'PV Cost [$]':'ERROR',
-            #                                                 'Battery Cost [$]':'ERROR',
-            #                                             'Total ADORB Cost [$]':'ERROR',
-            #                                             'pv_dirEn_tot':'ERROR',
-            #                                             'pv_dirMR_tot':'ERROR',
-            #                                             'pv_opCO2_tot':'ERROR',
-            #                                             'pv_emCO2_tot':'ERROR',
-            #                                             'pv_eTrans_tot':'ERROR'}])
+                # if os.path.exists(errorFile2):
+                #     os.remove(errorFile2)
+                #     os.rename(errorFile1,errorFile2)
+                newResultRow = pd.DataFrame([{'Run Name':runList['CASE_NAME'][runCount],
+                                                        'SET ≤ 12.2°C Hours (F)':'ERROR',
+                                                        "Hours < 2°C [hr]":'ERROR',
+                                                        'Total Deadly Days':'ERROR',
+                                                        'Min outdoor DB [°C]':'ERROR',
+                                                        'Min outdoor DP [°C]':'ERROR',
+                                                        'Max outdoor DB [°C]':'ERROR',
+                                                        'Max outdoor DP [°C]':'ERROR',
+                                                        "Caution (> 26.7, ≤ 32.2°C) [hr]":'ERROR',
+                                                        "Extreme Caution (> 32.2, ≤ 39.4°C) [hr]":'ERROR',
+                                                        "Danger (> 39.4, ≤ 51.7°C) [hr]":'ERROR',
+                                                        "Extreme Danger (> 51.7°C) [hr]":'ERROR',
+                                                        'EUI':'ERROR',
+                                                        'Peak Electric Demand [W]':'ERROR',
+                                                        'Heating Battery Size [kWh]':'ERROR', 
+                                                        'Cooling Battery Size [kWh]':'ERROR',
+                                                        'First Year Electric Cost [$]':'ERROR',
+                                                        'First Year Gas Cost [$]':'ERROR',
+                                                        'First Cost [$]':'ERROR',
+                                                        'Wall Cost [$]':'ERROR',
+                                                        'Roof Cost [$]':'ERROR',
+                                                        'Floor Cost [$]':'ERROR',
+                                                        'Window Cost [$]':'ERROR',
+                                                        'Door Cost [$]':'ERROR',
+                                                        'Air Sealing Cost [$]':'ERROR',
+                                                        'Mechanical Cost [$]':'ERROR',
+                                                        'Water Heater Cost [$]':'ERROR',
+                                                        'Appliances Cost [$]':'ERROR',
+                                                        'PV Cost [$]':'ERROR',
+                                                        'Battery Cost [$]':'ERROR',
+                                                        'Total ADORB Cost [$]':'ERROR',
+                                                        'pv_dirEn_tot':'ERROR',
+                                                        'pv_dirMR_tot':'ERROR',
+                                                        'pv_opCO2_tot':'ERROR',
+                                                        'pv_emCO2_tot':'ERROR',
+                                                        'pv_eTrans_tot':'ERROR'}])
             
-            #     newResultRow.to_csv(str(studyFolder) + "/" + str(caseName) + "_Test_ResultsTable.csv")
+                newResultRow.to_csv(str(studyFolder) + "/" + str(caseName) + "_Test_ResultsTable.csv")
                 
-            #     ResultsTable = pd.concat([ResultsTable, newResultRow], axis=0, ignore_index=True)#, ignore_index=Truue
-            #     ResultsTable.to_csv(str(studyFolder) + "/" + str(batchName) + "_ResultsTable.csv")
-            #     print('Saved Results')
+                ResultsTable = pd.concat([ResultsTable, newResultRow], axis=0, ignore_index=True)#, ignore_index=Truue
+                ResultsTable.to_csv(str(studyFolder) + "/" + str(batchName) + "_ResultsTable.csv")
+                # print('Saved Results')
 
+
+        Parallel(n_jobs=int(parallel_cores))(delayed(simulation)(case, ResultsTable)for case in range(totalRuns))
+
+        time.sleep(5)
+        files = os.listdir(str(studyFolder))
+        for file in files:
+            if file.endswith('ResultsTable.csv'):
+                newResultRow = pd.read_csv((str(studyFolder) + '/' + str(file)))
+                ResultsTable = pd.concat([ResultsTable, newResultRow], axis=0, ignore_index=True)
+        ResultsTable.to_csv(str(studyFolder) + "/" + str(batchName) + "_ResultsTable.csv")
+        print('Saved Results')
 
 
         # Utility Functions
         if cleanFolder == True:
+            time.sleep(10)
             os.listdir(studyFolder)
+            os.chdir(studyFolder)
             for filename in os.listdir(studyFolder):
                 if filename.endswith('.idf'):
                         if 'PASS' in filename:
