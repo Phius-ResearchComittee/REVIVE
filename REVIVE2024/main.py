@@ -45,6 +45,7 @@ import email.utils as eutils
 from statistics import mean
 import time
 import math
+import csv
 # import streamlit as st
 import eppy as eppy
 from eppy import modeleditor
@@ -143,6 +144,14 @@ while True:
     event, inputValues = window.read()
     if event == 'LOAD':
         runListPath = inputValues['runList']
+        # validate input
+        try:
+            assert os.path.isfile(runListPath), "Run list path does not exist."
+            assert runListPath[-4:]==".csv", "Run list file is not CSV."
+        except AssertionError as e:
+            sg.popup(e)
+            continue
+
         runList = pd.read_csv(str(runListPath))
         totalRuns = runList.shape[0]
         sg.popup('Loaded ' + str(totalRuns) + ' Cases')
@@ -161,10 +170,24 @@ while True:
 
     if event == 'RUN ANALYSIS':
         cleanFolder = inputValues['DeleteFiles']
-        studyFolder = inputValues['studyFolder']
         parallel_cores = inputValues['PARALLEL']
         batchName = str(inputValues['batchName'])
 
+        iddfile = str(inputValues['iddFile'])
+        runListPath = inputValues['runList']
+        studyFolder = inputValues['studyFolder']
+        databases = inputValues['dataBases']
+        
+        emissionsDatabase = str(inputValues['dataBases']) + '/Hourly Emission Rates.csv'
+        weatherDatabase = str(inputValues['dataBases']) + '/Weather Data/'
+        constructionDatabase = str(inputValues['dataBases']) + '/Construction Database.csv'
+        
+        runList = pd.read_csv(str(runListPath))
+        totalRuns = runList.shape[0]
+        batchName = str(inputValues['batchName']).replace(" ", "_")
+
+        pdfReport = inputValues['genPDF']
+        graphs = inputValues['GenerateGraphs']
 
         ResultsTable = pd.DataFrame(columns=["Run Name","SET ≤ 12.2°C Hours (F)","Hours < 2°C [hr]",'Total Deadly Days','Min outdoor DB [°C]','Min outdoor DP [°C]',
                                                     'Max outdoor DB [°C]','Max outdoor DP [°C]',"Caution (> 26.7, ≤ 32.2°C) [hr]","Extreme Caution (> 32.2, ≤ 39.4°C) [hr]",
@@ -173,50 +196,65 @@ while True:
                                                     'First Year Gas Cost [$]','First Cost [$]','Wall Cost [$]','Roof Cost [$]','Floor Cost [$]','Window Cost [$]',
                                                     'Door Cost [$]','Air Sealing Cost [$]','Mechanical Cost [$]','Water Heater Cost [$]','Appliances Cost [$]','PV Cost [$]',
                                                     'Battery Cost [$]','pv_dirEn_tot','pv_dirMR_tot','pv_opCO2_tot','pv_emCO2_tot','pv_eTrans_tot'])
+
+        # validate input data
+        with open('required_columns.csv') as f:
+            reader = csv.reader(f)
+            required_columns = list(reader)[0]
+
+        try:
+            assert os.path.isfile(iddfile), "Energy+ path does not exist."
+            assert os.path.isfile(runListPath), "Run list path does not exist."
+            assert os.path.isdir(studyFolder), "Study folder path does not exist."
+            assert os.path.isdir(databases), "Database path does not exist."
+            assert os.path.isfile(emissionsDatabase), 'Database folder is missing "Hourly Emission Rates.csv".'
+            assert os.path.isdir(weatherDatabase), 'Database folder is missing "Weather Data" directory.'
+            assert os.path.isfile(constructionDatabase), 'Database folder is missing "Construction Database.csv".'
+
+            for col in required_columns:
+                assert col in runList, f'{col} column missing, run list may be out of date.'
+        
+        except AssertionError as e:
+            sg.popup(e)
+            continue
+
         # for case in range(totalRuns):
-        def simulation(case, ResultsTable):        
+        def simulation(case, ResultsTable):
+            os.chdir(str(studyFolder))
+            IDF.setiddname(iddfile)
+
+            runCount = case
+            idfgName = runList['GEOMETRY_IDF'][runCount]
+            BaseFileName = (batchName + '_' + runList['CASE_NAME'][runCount])
+            caseName = runList['CASE_NAME'][runCount]
+
+            sg.one_line_progress_meter('Progress Meter', runCount, totalRuns, 'Analysis Running','Current Case: ' + str(caseName))
+
+            print('Running: ' + str(BaseFileName))
+
+            # testingFile = str(studyFolder) + "/" + str(BaseFileName) + ".idf"
+            testingFile_BA = str(studyFolder) + "/" + str(BaseFileName) + "_BA.idf"
+            testingFile_BR = str(studyFolder) + "/" + str(BaseFileName) + "_BR.idf"
+            passIDF = str(studyFolder) + "/" + str(BaseFileName) + "_PASS.idf"
+
+            #==============================================================================================================================
+            # 4.0 Variable Assignment
+            #==============================================================================================================================
+
             try:
-                iddfile = str(inputValues['iddFile'])
-                runListPath = inputValues['runList']
-                studyFolder = inputValues['studyFolder']
-                databases = inputValues['dataBases']
-
-                
-                emissionsDatabase = (str(inputValues['dataBases']) + 'Hourly Emission Rates.csv')
-                weatherDatabase = (str(inputValues['dataBases']) + '/Weather Data/')
-                runList = pd.read_csv(str(runListPath))
-                totalRuns = runList.shape[0]
-                batchName = str(inputValues['batchName'])
-
-                pdfReport = inputValues['genPDF']
-                graphs = inputValues['GenerateGraphs']
-                
-
-
-                os.chdir(str(studyFolder))
-                IDF.setiddname(iddfile)
-
-                runCount = case
-                idfgName = runList['GEOMETRY_IDF'][runCount]
-                BaseFileName = (batchName + '_' + runList['CASE_NAME'][runCount])
-                caseName = runList['CASE_NAME'][runCount]
-
-                sg.one_line_progress_meter('Progress Meter', runCount, totalRuns, 'Analysis Running','Current Case: ' + str(caseName))
-
-                print('Running: ' + str(BaseFileName))
-
-                # testingFile = str(studyFolder) + "/" + str(BaseFileName) + ".idf"
-                testingFile_BA = str(studyFolder) + "/" + str(BaseFileName) + "_BA.idf"
-                testingFile_BR = str(studyFolder) + "/" + str(BaseFileName) + "_BR.idf"
-                passIDF = str(studyFolder) + "/" + str(BaseFileName) + "_PASS.idf"
-
-                #==============================================================================================================================
-                # 4.0 Variable Assignment
-                #==============================================================================================================================
-
                 epwFile = str(weatherDatabase) + str(runList['EPW'][runCount])
                 ddyName =  str(weatherDatabase) + str(runList['DDY'][runCount])
+                
+                # validate spreadsheet input
+                assert os.path.isfile(epwFile), "Cannot find specified EPW file."
+                assert os.path.isfile(ddyName), "Cannot find specified DDY file."
+                
+            except AssertionError as ae:
+                # handling still needs some work
+                sg.popup(e)
+                return
 
+            try:
                 ZoneName = 'Zone 1'
 
                 icfa = runList['ICFA'][runCount]
@@ -232,7 +270,7 @@ while True:
                 ervLatent = 0
 
                 # IHG Calc
-                constructionList = pd.read_csv(str(inputValues['dataBases']) + '/Construction Database.csv')
+                constructionList = pd.read_csv(constructionDatabase)
                 appliance_list = list(runList['APPLIANCE_LIST'][runCount].split(', '))
 
                 constructions = constructionList.shape[0]
@@ -1101,7 +1139,8 @@ while True:
                             firstCost, adorbCost, heatingGraphFile, coolingGraphFile, adorb.adorbWedgeGraph,
                             adorb.adorbBarGraph)
 
-            except:
+            except Exception as e:
+                sg.popup(e)
                 # errorFile1= (str(studyFolder) + '\eplusout.err')
                 # errorFile2 = (str(studyFolder) + "/" + str(BaseFileName)  + '_BA_eplusout.sql')
                 
