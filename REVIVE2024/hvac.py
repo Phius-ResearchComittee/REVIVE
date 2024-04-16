@@ -571,7 +571,7 @@ def Curves(idf):
         Output_Unit_Type = 'Dimensionless'
         )
     
-def ReslienceERV(idf, occ, ervSense, ervLatent):
+def ResilienceERV(idf, occ, ervSense, ervLatent):
 
     idf.newidfobject('ZoneHVAC:EnergyRecoveryVentilator',
         Name = 'ERV1',

@@ -14,7 +14,6 @@ import math
 import eppy as eppy
 from eppy import modeleditor
 from eppy.modeleditor import IDF
-from eppy.runner.run_functions import runIDFs
 import PySimpleGUI as sg
 # from PIL import Image, ImageTk
 import os
