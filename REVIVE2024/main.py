@@ -276,29 +276,48 @@ while True:
                 appliance_list = list(runList['APPLIANCE_LIST'][runCount].split(', '))
 
                 constructions = constructionList.shape[0]
+                appliance_replacement_cost_map = {} # keys are year from start, values are all appliance replacement costs for that year
                 for item in range(constructions):
                     if str(constructionList['Name'][item]) in appliance_list:
+
                         if 'FRIDGE' in constructionList['Name'][item]:
                             fridge_demand = constructionList['Appliance_Rating'][item]
                             fridge_cost = constructionList['Mechanical Cost'][item]
                             fridge = (fridge_demand/(8760))*1000 # always on design load
+                            lifespan = int(constructionList['Appliance_Lifespan'][item])
+                            appliance_replacement_cost_map[lifespan] = appliance_replacement_cost_map.get(lifespan, 0) + fridge_cost
+
                         if 'DISHWASHER' in constructionList['Name'][item]:
                             dishwasher_demand = constructionList['Appliance_Rating'][item]
                             dishwasher_cost = constructionList['Mechanical Cost'][item]
                             dishWasher = (((86.3 + (47.73 / (215 / dishwasher_demand)))/215) * ((88.4 + 34.9*Nbr)*(12/12))*(1/365)*1000)
+                            lifespan = int(constructionList['Appliance_Lifespan'][item])
+                            appliance_replacement_cost_map[lifespan] = appliance_replacement_cost_map.get(lifespan, 0) + dishwasher_cost
+
                         if 'CLOTHESWASHER' in constructionList['Name'][item]:
                             clotheswasher_demand = constructionList['Appliance_Rating'][item]
                             clotheswasher_cost = constructionList['Mechanical Cost'][item]
                             clothesWasher = (clotheswasher_demand/365)*1000
+                            lifespan = int(constructionList['Appliance_Lifespan'][item])
+                            appliance_replacement_cost_map[lifespan] = appliance_replacement_cost_map.get(lifespan, 0) + clotheswasher_cost
+
                         if 'CLOTHESDRYER' in constructionList['Name'][item]:
                             clothesdryer_demand = constructionList['Appliance_Rating'][item]
                             clothesdryer_cost = constructionList['Mechanical Cost'][item]
                             clothesDryer = ((12.4*(164+46.5*Nbr)*1.18/3.01*(2.874/0.817-704/clothesdryer_demand)/(0.2184*(4.5*4.08+0.24)))/365)*1000
+                            lifespan = int(constructionList['Appliance_Lifespan'][item])
+                            appliance_replacement_cost_map[lifespan] = appliance_replacement_cost_map.get(lifespan, 0) + clothesdryer_cost
+                        
                         if 'RANGE' in constructionList['Name'][item]:
                             range_cost = constructionList['Mechanical Cost'][item]
+                            lifespan = int(constructionList['Appliance_Lifespan'][item])
+                            appliance_replacement_cost_map[lifespan] = appliance_replacement_cost_map.get(lifespan, 0) + range_cost
+
                         if 'LIGHTS' in constructionList['Name'][item]:
                             fracHighEff = constructionList['Appliance_Rating'][item]
                             lights_cost = constructionList['Mechanical Cost'][item]
+                            lifespan = int(constructionList['Appliance_Lifespan'][item])
+                            appliance_replacement_cost_map[lifespan] = appliance_replacement_cost_map.get(lifespan, 0) + lights_cost
                 try:
                     fridge_demand
                 except:
@@ -1048,7 +1067,7 @@ while True:
 
                 for measure in range(carbonDatabase.shape[0]):
                     if carbonDatabase['Name'][measure] in carbonMeasures:
-                        carbonMeasureCost.append((carbonDatabase['Cost'][measure], carbonDatabase['Year'][measure]))
+                        carbonMeasureCost.append([carbonDatabase['Cost'][measure], carbonDatabase['Year'][measure]])
 
                 carbonMeasureCost.append(firstCost)
 
@@ -1061,8 +1080,8 @@ while True:
                                 ef = countryEmissionsDatabase['EF [kg/$]'][country]
                             if str(countryEmissionsDatabase['COUNTRY'][country]) == 'USA':
                                 efUSA = countryEmissionsDatabase['EF [kg/$]'][country]
-                        emCO2.append(((carbonDatabase['Cost'][measure]*ef*(1-carbonDatabase['Labor Fraction'][measure])) + 
-                                      ((carbonDatabase['Cost'][measure]*efUSA*(carbonDatabase['Labor Fraction'][measure]))), carbonDatabase['Year'][measure]))
+                        emCO2.append([(carbonDatabase['Cost'][measure]*ef*(1-carbonDatabase['Labor Fraction'][measure])) + 
+                                      ((carbonDatabase['Cost'][measure]*efUSA*(carbonDatabase['Labor Fraction'][measure]))), carbonDatabase['Year'][measure]])
                         # Labor fraction should be subtracted out and have USA EF applied
 
                 for country in range(countryEmissionsDatabase.shape[0]):
@@ -1078,6 +1097,13 @@ while True:
                 # print(carbonMeasureCost)
 
                 dirMR = carbonMeasureCost
+
+                # add cost for appliance replacement
+                for replace_interval, replace_cost in appliance_replacement_cost_map.items():
+                    for year in range(replace_interval, duration, replace_interval):
+                        dirMR.append([replace_cost, year])
+                        # TODO: transfer to dictionary to save efficiency
+
                 # emCO2 = [(emCO2_firstCost,1),((8500*laborFraction*0.3),20),((8500*laborFraction*0.3),40),((8500*laborFraction*0.3),60)] 
                 eTrans = peakElec
                 
