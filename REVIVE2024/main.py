@@ -60,6 +60,7 @@ from eppy.results import readhtml # the eppy module with functions to read the h
 from eppy.results import fasthtml
 import subprocess
 import os
+import sys
 from os import system
 import pylatex
 
@@ -140,6 +141,7 @@ window = sg.Window('Phius REVIVE 2024 Analysis Tool v24.2.0',layout1, default_el
 #==============================================================================================================================
 # 3.0 File Management
 #==============================================================================================================================
+DUMMY_MODE = True if "--test" in sys.argv or "-t" in sys.argv else False
 while True:
     event, inputValues = window.read()
     if event == 'LOAD':
@@ -170,21 +172,21 @@ while True:
 
     if event == 'RUN ANALYSIS':
         cleanFolder = inputValues['DeleteFiles']
-        parallel_cores = inputValues['PARALLEL']
-        batchName = str(inputValues['batchName'])
+        parallel_cores = int(inputValues['PARALLEL'])
+        batchName = str(inputValues['batchName']) if not DUMMY_MODE else "dummy"
 
         iddfile = str(inputValues['iddFile'])
-        runListPath = inputValues['runList']
-        studyFolder = inputValues['studyFolder']
-        databases = inputValues['dataBases']
+        runListPath = str(inputValues['runList']) if not DUMMY_MODE else os.path.join("dummy", "dummy_runlist.csv")
+        studyFolder = str(inputValues['studyFolder']) if not DUMMY_MODE else os.path.abspath("dummy")
+        databases = str(inputValues['dataBases'])
         
-        emissionsDatabase = str(inputValues['dataBases']) + '/Hourly Emission Rates.csv'
-        weatherDatabase = str(inputValues['dataBases']) + '/Weather Data/'
-        constructionDatabase = str(inputValues['dataBases']) + '/Construction Database.csv'
+        emissionsDatabase = os.path.join(databases,'Hourly Emission Rates.csv')
+        weatherDatabase = os.path.join(databases, 'Weather Data')
+        constructionDatabase = os.path.join(databases, 'Construction Database.csv')
         
-        runList = pd.read_csv(str(runListPath))
+        runList = pd.read_csv(runListPath)
         totalRuns = runList.shape[0]
-        batchName = str(inputValues['batchName']).replace(" ", "_")
+        batchName = batchName.replace(" ", "_")
 
         pdfReport = inputValues['genPDF']
         graphs = inputValues['GenerateGraphs']
@@ -621,10 +623,13 @@ while True:
 
                 # add the index in from the for loop for the number of runs to make this table happen faster
 
-                idf1.saveas(str(testingFile_BR))
-                idf = IDF(str(testingFile_BR), str(epwFile))
-                idf.run(readvars=True,output_prefix=str(str(BaseFileName) + "_BR"))
-                fname = (str(studyFolder) + '/' + str(BaseFileName) + '_BRtbl.htm')
+                # run the simulation or generate dummy files for speed
+                if not DUMMY_MODE:
+                    idf1.saveas(str(testingFile_BR))
+                    idf = IDF(str(testingFile_BR), str(epwFile))
+                    idf.run(readvars=True,output_prefix=str(str(BaseFileName) + "_BR"))
+
+                fname = os.path.join(studyFolder, BaseFileName + '_BRtbl.htm')
                 filehandle = open(fname, 'r').read()
                 ltables = readhtml.lines_table(filehandle) # reads the tables with their titles
 
@@ -848,16 +853,14 @@ while True:
                     
                 # Annual Result Collection
 
-                idf2.saveas(str(testingFile_BA))
-                idf = IDF(str(testingFile_BA), str(epwFile))
-                idf.run(readvars=True,output_prefix=str((str(BaseFileName) + '_BA')))
+                if not DUMMY_MODE:
+                    idf2.saveas(str(testingFile_BA))
+                    idf = IDF(str(testingFile_BA), str(epwFile))
+                    idf.run(readvars=True,output_prefix=str((str(BaseFileName) + '_BA')))
 
 
-
-
-
-                filehandle = (str(studyFolder) + '/' + str(BaseFileName) + '_BAout.csv')
-                filehandleMTR = (str(studyFolder) + '/' + str(BaseFileName) + '_BAmtr.csv')
+                filehandle = os.path.join(studyFolder, BaseFileName + '_BAout.csv')
+                filehandleMTR = os.path.join(studyFolder, BaseFileName + '_BAmtr.csv')
                 hourly = pd.read_csv(filehandle)
                 monthlyMTR= pd.read_csv(filehandleMTR)
 
