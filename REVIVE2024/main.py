@@ -226,8 +226,8 @@ while True:
             IDF.setiddname(iddfile)
 
             runCount = case
-            idfgName = runList['GEOMETRY_IDF'][runCount]
-            BaseFileName = (batchName + '_' + runList['CASE_NAME'][runCount])
+            idfgName = str(runList['GEOMETRY_IDF'][runCount])
+            BaseFileName = str(batchName + '_' + runList['CASE_NAME'][runCount])
             caseName = runList['CASE_NAME'][runCount]
 
             sg.one_line_progress_meter('Progress Meter', runCount, totalRuns, 'Analysis Running','Current Case: ' + str(caseName))
@@ -235,17 +235,17 @@ while True:
             print('Running: ' + str(BaseFileName))
 
             # testingFile = str(studyFolder) + "/" + str(BaseFileName) + ".idf"
-            testingFile_BA = str(studyFolder) + "/" + str(BaseFileName) + "_BA.idf"
-            testingFile_BR = str(studyFolder) + "/" + str(BaseFileName) + "_BR.idf"
-            passIDF = str(studyFolder) + "/" + str(BaseFileName) + "_PASS.idf"
+            testingFile_BA = os.path.join(studyFolder, BaseFileName + "_BA.idf")
+            testingFile_BR = os.path.join(studyFolder, BaseFileName + "_BR.idf")
+            passIDF = os.path.join(studyFolder, BaseFileName + "_PASS.idf")
 
             #==============================================================================================================================
             # 4.0 Variable Assignment
             #==============================================================================================================================
 
             try:
-                epwFile = str(weatherDatabase) + str(runList['EPW'][runCount])
-                ddyName =  str(weatherDatabase) + str(runList['DDY'][runCount])
+                epwFile = os.path.join(weatherDatabase, str(runList['EPW'][runCount]))
+                ddyName =  os.path.join(weatherDatabase, str(runList['DDY'][runCount]))
                 
                 # validate spreadsheet input
                 assert os.path.isfile(epwFile), "Cannot find specified EPW file."
@@ -462,7 +462,7 @@ while True:
                 #==============================================================================================================================
 
                 open(str(testingFile_BR), 'w')
-                idfg = IDF(str(studyFolder) + '/' + str(idfgName)) 
+                idfg = IDF(os.path.join(studyFolder, idfgName))
                 ddy = IDF(ddyName)
                 idf1 = IDF(str(testingFile_BR))
 
@@ -517,7 +517,7 @@ while True:
 
 
                 # Materials and constructions
-                materials = pd.read_csv(str(inputValues['dataBases']) + '/Material Database.csv')
+                materials = pd.read_csv(os.path.join(databases, 'Material Database.csv'))
                 materialList = materials.shape[0]
 
                 for item in range(materialList):
@@ -525,7 +525,7 @@ while True:
                                     materials['THICKNESS [m]'][item], materials['CONDUCTIVITY [W/mK]'][item],
                                     materials['DENSITY [kg/m3]'][item], materials['SPECIFIC HEAT CAPACITY [J/kgK]'][item])
                     
-                glazingSpecs = pd.read_csv(str(inputValues['dataBases']) + '/Window Database.csv')
+                glazingSpecs = pd.read_csv(os.path.join(databases, 'Window Database.csv'))
 
                 glazings = glazingSpecs.shape[0]
 
@@ -534,7 +534,7 @@ while True:
 
                 # Constructions 
                 #     
-                constructionList = pd.read_csv(str(inputValues['dataBases']) + '/Construction Database.csv')
+                constructionList = pd.read_csv(os.path.join(databases, 'Construction Database.csv'))
 
                 constructions = constructionList.shape[0]
 
@@ -655,7 +655,7 @@ while True:
 
                 # Resilience Graphs
                         
-                filehandle = (str(studyFolder) + '/' + str(BaseFileName) + '_BRout.csv')
+                filehandle = os.path.join(studyFolder, BaseFileName + '_BRout.csv')
                 hourly = pd.read_csv(filehandle)
                 hourlyBA = pd.read_csv(filehandle)
 
@@ -714,7 +714,7 @@ while True:
                     ax['SET'].set_ylabel('Standard Effective Temperature [°C]')
                     ax['SET'].axhline(12.2, color='crimson', linestyle='dashed')
 
-                    heatingGraphFile = (str(studyFolder) + "/" + str(BaseFileName) + "_Heating Outage Resilience Graphs.png")
+                    heatingGraphFile = os.path.join(studyFolder, BaseFileName + "_Heating Outage Resilience Graphs.png")
 
                     plt.savefig(str(heatingGraphFile), dpi=300)
                     plt.clf()
@@ -748,7 +748,7 @@ while True:
                     ax['HI'].axhline(39.4, color='crimson', linestyle='dashed')
                     ax['HI'].axhline(51.7, color='darkmagenta', linestyle='dashed')
 
-                    coolingGraphFile = (str(studyFolder) + "/" + str(BaseFileName) + "_Cooling Outage Resilience Graphs.png")
+                    coolingGraphFile = os.path.join(studyFolder, BaseFileName + "_Cooling Outage Resilience Graphs.png")
 
                     plt.savefig(str(coolingGraphFile), dpi=300)
                     plt.clf()
@@ -784,12 +784,12 @@ while True:
                 # hourlyCool.to_csv(str(studyFolder) + "/" + str(BaseFileName) + "_hourlyCool.csv")
 
                 # Save HTML and CSV outputs
-                reportHTML = (str(studyFolder) +'\eplustbl.htm')
-                reportCSV = (str(studyFolder) + '\eplusout.csv')
-                reportSQL= (str(studyFolder) + '\eplusout.sql')
-                reportHTML2 = (str(studyFolder) + "/" + str(BaseFileName)  + '_BR_eplustbl.htm')
-                reportCSV2 = (str(studyFolder) + "/" + str(BaseFileName)  + '_BR_eplusout.csv')
-                reportSQL2= (str(studyFolder) + "/" + str(BaseFileName)  + '_BR_eplusout.sql')
+                reportHTML = os.path.join(studyFolder, 'eplustbl.htm')
+                reportCSV = os.path.join(studyFolder, 'eplusout.csv')
+                reportSQL= os.path.join(studyFolder, 'eplusout.sql')
+                reportHTML2 = os.path.join(studyFolder, BaseFileName + '_BR_eplustbl.htm')
+                reportCSV2 = os.path.join(studyFolder, BaseFileName + '_BR_eplusout.csv')
+                reportSQL2= os.path.join(studyFolder, BaseFileName + '_BR_eplusout.sql')
 
 
                 # if os.path.exists(reportCSV2):
@@ -877,7 +877,7 @@ while True:
                 hourly = hourly.drop(index = dropWarmup)
                 hourly = hourly.reset_index()
 
-                fname = (str(studyFolder) + '/' + str(BaseFileName) + '_BAtbl.htm')
+                fname = os.path.join(studyFolder, BaseFileName + '_BAtbl.htm')
                 filehandle = open(fname, 'r').read()
                 ltables = readhtml.lines_table(filehandle) # reads the tables with their titles
 
@@ -961,12 +961,12 @@ while True:
                     batteryCost = batteryCost
 
                 # Save HTML and CSV outputs
-                reportHTML = (str(studyFolder) +'\eplustbl.htm')
-                reportCSV = (str(studyFolder) + '\eplusout.csv')
-                reportSQL= (str(studyFolder) + '\eplusout.sql')
-                reportHTML2 = (str(studyFolder) + "/" + str(BaseFileName)  + '_BA_eplustbl.htm')
-                reportCSV2 = (str(studyFolder) + "/" + str(BaseFileName)  + '_BA_eplusout.csv')
-                reportSQL2= (str(studyFolder) + "/" + str(BaseFileName)  + '_BA_eplusout.sql')
+                reportHTML = os.path.join(studyFolder, 'eplustbl.htm')
+                reportCSV = os.path.join(studyFolder, 'eplusout.csv')
+                reportSQL= os.path.join(studyFolder, 'eplusout.sql')
+                reportHTML2 = os.path.join(studyFolder, BaseFileName + '_BA_eplustbl.htm')
+                reportCSV2 = os.path.join(studyFolder, BaseFileName + '_BA_eplusout.csv')
+                reportSQL2= os.path.join(studyFolder, BaseFileName + '_BA_eplusout.sql')
 
                 # if os.path.exists(reportCSV2):
                 #     os.remove(reportCSV2)
@@ -1000,10 +1000,9 @@ while True:
 
                 CO2_Elec_List = []
                 count = 0
-                os.listdir(str(databases) + '/CambiumFactors')
-                for filename in os.listdir(str(databases) + '/CambiumFactors'):
+                for filename in os.listdir(os.path.join(databases, 'CambiumFactors')):
                     if filename.endswith('.csv'):
-                        hourlyBAEmissions = pd.read_csv(str(databases) + '/CambiumFactors/' + str(filename))
+                        hourlyBAEmissions = pd.read_csv(os.path.join(databases, 'CambiumFactors', filename))
                         emissions = hourlyBAEmissions[str(gridRegion)]
                         CO2_Elec = sum(MWH*emissions)
                         count = count + 1
@@ -1039,8 +1038,8 @@ while True:
 
                 # annualCO2 = CO2_Elec + CO2_gas
 
-                carbonDatabase = pd.read_csv(str(inputValues['dataBases']) + '/Carbon Correction Database.csv')
-                countryEmissionsDatabase = pd.read_csv(str(inputValues['dataBases']) + '/Country Emission Database.csv')
+                carbonDatabase = pd.read_csv(os.path.join(databases, 'Carbon Correction Database.csv'))
+                countryEmissionsDatabase = pd.read_csv(os.path.join(databases, 'Country Emission Database.csv'))
 
                 if str(runList['CARBON_MEASURES'][runCount]) != 'nan':
                     carbonMeasures = carbondMeasures = list(runList['CARBON_MEASURES'][runCount].split(', '))
@@ -1131,7 +1130,7 @@ while True:
                                                     'pv_emCO2_tot':pv_emCO2_tot,
                                                     'pv_eTrans_tot':pv_eTrans_tot}])
             
-                newResultRow.to_csv(str(studyFolder) + "/" + str(caseName) + "_Test_ResultsTable.csv")
+                newResultRow.to_csv(os.path.join(studyFolder, caseName + "_Test_ResultsTable.csv"))
                 
                 ResultsTable = pd.concat([ResultsTable, newResultRow], axis=0, ignore_index=True)#, ignore_index=True)
 
@@ -1187,10 +1186,10 @@ while True:
                                                         'pv_emCO2_tot':'ERROR',
                                                         'pv_eTrans_tot':'ERROR'}])
             
-                newResultRow.to_csv(str(studyFolder) + "/" + str(caseName) + "_Test_ResultsTable.csv")
+                newResultRow.to_csv(os.path.join(studyFolder, caseName + "_Test_ResultsTable.csv"))
                 
                 ResultsTable = pd.concat([ResultsTable, newResultRow], axis=0, ignore_index=True)#, ignore_index=Truue
-                ResultsTable.to_csv(str(studyFolder) + "/" + str(batchName) + "_ResultsTable.csv")
+                ResultsTable.to_csv(os.path.join(studyFolder, batchName + "_ResultsTable.csv"))
                 # print('Saved Results')
 
 
@@ -1200,9 +1199,9 @@ while True:
         files = os.listdir(str(studyFolder))
         for file in files:
             if file.endswith('ResultsTable.csv'):
-                newResultRow = pd.read_csv((str(studyFolder) + '/' + str(file)))
+                newResultRow = pd.read_csv(os.path.join(studyFolder, file))
                 ResultsTable = pd.concat([ResultsTable, newResultRow], axis=0, ignore_index=True)
-        ResultsTable.to_csv(str(studyFolder) + "/" + str(batchName) + "_ResultsTable.csv")
+        ResultsTable.to_csv(os.path.join(studyFolder, batchName + "_ResultsTable.csv"))
         print('Saved Results')
 
 

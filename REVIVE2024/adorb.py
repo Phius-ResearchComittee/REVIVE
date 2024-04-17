@@ -186,9 +186,9 @@ def adorb(BaseFileName, studyFolder, duration, annualElec, annualGas, annualCO2E
         if graphs == True:
             fig = df2.plot(kind='area', xlabel='Years', ylabel='Cummulative Present Value [$]', title=(str(BaseFileName) + '_ADORB COST'), figsize=(10,6)).get_figure()
 
-            adorb.adorbWedgeGraph = (str(studyFolder) + "/" + str(BaseFileName) + '_ADORB_Wedge.png')
-            adorb.adorbBarGraph = (str(studyFolder) + "/" + str(BaseFileName) + '_ADORB_Bar.png')
-            fig.savefig(str(adorb.adorbWedgeGraph))
+            adorb.adorbWedgeGraph = os.path.join(studyFolder, BaseFileName + '_ADORB_Wedge.png')
+            adorb.adorbBarGraph = os.path.join(studyFolder, BaseFileName + '_ADORB_Bar.png')
+            fig.savefig(adorb.adorbWedgeGraph)
 
     except:
         print('No Graph')

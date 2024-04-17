@@ -182,7 +182,7 @@ def PDF_Report(caseName, studyFolder, HeatingSET, Below2C, Caution, ExtremeCauti
 
     
 
-    docname = (str(studyFolder) + "/" + str(caseName) + "_Summary Report")
+    docname = os.path.join(studyFolder, caseName + "_Summary Report")
     doc.generate_pdf(docname, silent=True, clean_tex=False)
 
 
