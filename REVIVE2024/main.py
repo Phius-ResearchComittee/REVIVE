@@ -276,7 +276,6 @@ while True:
                 appliance_list = list(runList['APPLIANCE_LIST'][runCount].split(', '))
 
                 constructions = constructionList.shape[0]
-                appliance_replacement_cost_map = {} # keys are year from start, values are all appliance replacement costs for that year
                 for item in range(constructions):
                     if str(constructionList['Name'][item]) in appliance_list:
 
@@ -284,40 +283,28 @@ while True:
                             fridge_demand = constructionList['Appliance_Rating'][item]
                             fridge_cost = constructionList['Mechanical Cost'][item]
                             fridge = (fridge_demand/(8760))*1000 # always on design load
-                            lifespan = int(constructionList['Appliance_Lifespan'][item])
-                            appliance_replacement_cost_map[lifespan] = appliance_replacement_cost_map.get(lifespan, 0) + fridge_cost
 
                         if 'DISHWASHER' in constructionList['Name'][item]:
                             dishwasher_demand = constructionList['Appliance_Rating'][item]
                             dishwasher_cost = constructionList['Mechanical Cost'][item]
                             dishWasher = (((86.3 + (47.73 / (215 / dishwasher_demand)))/215) * ((88.4 + 34.9*Nbr)*(12/12))*(1/365)*1000)
-                            lifespan = int(constructionList['Appliance_Lifespan'][item])
-                            appliance_replacement_cost_map[lifespan] = appliance_replacement_cost_map.get(lifespan, 0) + dishwasher_cost
 
                         if 'CLOTHESWASHER' in constructionList['Name'][item]:
                             clotheswasher_demand = constructionList['Appliance_Rating'][item]
                             clotheswasher_cost = constructionList['Mechanical Cost'][item]
                             clothesWasher = (clotheswasher_demand/365)*1000
-                            lifespan = int(constructionList['Appliance_Lifespan'][item])
-                            appliance_replacement_cost_map[lifespan] = appliance_replacement_cost_map.get(lifespan, 0) + clotheswasher_cost
 
                         if 'CLOTHESDRYER' in constructionList['Name'][item]:
                             clothesdryer_demand = constructionList['Appliance_Rating'][item]
                             clothesdryer_cost = constructionList['Mechanical Cost'][item]
                             clothesDryer = ((12.4*(164+46.5*Nbr)*1.18/3.01*(2.874/0.817-704/clothesdryer_demand)/(0.2184*(4.5*4.08+0.24)))/365)*1000
-                            lifespan = int(constructionList['Appliance_Lifespan'][item])
-                            appliance_replacement_cost_map[lifespan] = appliance_replacement_cost_map.get(lifespan, 0) + clothesdryer_cost
                         
                         if 'RANGE' in constructionList['Name'][item]:
                             range_cost = constructionList['Mechanical Cost'][item]
-                            lifespan = int(constructionList['Appliance_Lifespan'][item])
-                            appliance_replacement_cost_map[lifespan] = appliance_replacement_cost_map.get(lifespan, 0) + range_cost
 
                         if 'LIGHTS' in constructionList['Name'][item]:
                             fracHighEff = constructionList['Appliance_Rating'][item]
                             lights_cost = constructionList['Mechanical Cost'][item]
-                            lifespan = int(constructionList['Appliance_Lifespan'][item])
-                            appliance_replacement_cost_map[lifespan] = appliance_replacement_cost_map.get(lifespan, 0) + lights_cost
                 try:
                     fridge_demand
                 except:
@@ -552,8 +539,6 @@ while True:
                     glazingBuilder(idf1, glazingSpecs['NAME'][item], glazingSpecs['U-FACTOR [W/m2K]'][item],glazingSpecs['SHGC'][item])
 
                 # Constructions 
-                #     
-                constructionList = pd.read_csv(os.path.join(databases, 'Construction Database.csv'))
 
                 constructions = constructionList.shape[0]
 
@@ -1098,10 +1083,48 @@ while True:
 
                 dirMR = carbonMeasureCost
 
+                # EMBODIED CARBON CALCULATION
+
+                # extract cost line item subtotals
+                cost_line_df = None
+                for ltable in ltables:
+                    if ltable[0][0] == "Cost Line Item Details":
+                        cost_line_df = pd.DataFrame(ltable[1][1:],columns=ltable[1][0]).iloc[:-1] # drop the last summation row
+                        break
+                
+                # get emissions data ready
+                constructionList['Name'] = constructionList['Name'].apply(lambda x: x.lower())
+                constructionList = constructionList.set_index("Name")
+                countryEmissionsDatabase = countryEmissionsDatabase.set_index("COUNTRY")
+                country = runList['ENVELOPE_COUNTRY'][runCount]
+                price_of_carbon = 0.25 # units: $/kg according to spec
+                # TODO: AVOID HARDCODING CARBON MULTIPLE TIMES
+
+                # compute embodied carbon cost per non-zero line item
+                cost_line_df_subgroup = cost_line_df[cost_line_df["Quantity."] > 0]
+                for idx, row in cost_line_df_subgroup.iterrows():
+                    item_name = row["Item Name"].lower()
+                    subtotal = row["SubTotal $"]
+                    emissions_factor = countryEmissionsDatabase.loc[country, 'EF [kg/$]']
+                    try:
+                        # cross-reference with construction list if item exists
+                        labor_fraction = constructionList.loc[item_name, "Labor_Fraction"]
+                        lifetime = int(constructionList.loc[item_name, "Lifetime"])
+                    except KeyError:
+                        print(f"Could not find {item_name}.")
+                        continue
+                    embodied_carbon_calc = (subtotal * (1 - labor_fraction)) * (emissions_factor * price_of_carbon)
+                    
+                    # add cost anytime item needs installed or replaced
+                    if lifetime != 0:
+                        for year in range(0, duration, lifetime):
+                            emCO2.append([embodied_carbon_calc, year])
+                    else: emCO2.append([embodied_carbon_calc, 0])
+
                 # add cost for appliance replacement
-                for replace_interval, replace_cost in appliance_replacement_cost_map.items():
-                    for year in range(replace_interval, duration, replace_interval):
-                        dirMR.append([replace_cost, year])
+                # for replace_interval, replace_cost in appliance_replacement_cost_map.items():
+                #     for year in range(replace_interval, duration, replace_interval):
+                #         dirMR.append([replace_cost, year])
                         # TODO: transfer to dictionary to save efficiency
 
                 # emCO2 = [(emCO2_firstCost,1),((8500*laborFraction*0.3),20),((8500*laborFraction*0.3),40),((8500*laborFraction*0.3),60)] 
