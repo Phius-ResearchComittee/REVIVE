@@ -1,76 +1,76 @@
-,Name,CO2e_Per_Area_[kg/m2],Cost_Per_Area_[$/m2],Outside_Layer,Layer_2,Layer_3,Layer_4,Layer_5,Layer_6,Layer_7,Layer_8,Layer_9,Layer_10,Air_Sealing_Cost_[$/ft2 ICFA],Battery_Cost_[$/kWh],PV_Cost_[$/W],Mechanical Cost,Appliance_Rating,Appliance_Lifespan
-0,Brick Wall,1.8,0,M01 100mm brick,,,,,,,,,,,,,,,
-1,Ext_Door1,66.6,250,G05 25mm wood,,,,,,,,,,,,,,,
-2,Thermal Mass,0.00018,0,G05 25mm wood,,,,,,,,,,,,,,,
-3,Interior Floor,14.4,2,Plywood (Douglas Fir) - 12.7mm,F05 Ceiling air space resistance,G01a 19mm gypsum board,,,,,,,,,,,,,
-4,Exterior Slab UnIns,113.4,5,M15 200mm heavyweight concrete,,,,,,,,,,,,,,,
-5,Exterior Slab + 2in EPS,126,10,EPS 2in,M15 200mm heavyweight concrete,,,,,,,,,,,,,,
-6,Exterior Wall,18,10,F11 Wood siding,R-11 3.5in Wood Stud,G01a 19mm gypsum board,,,,,,,,,,,,,
-7,Interior Wall,12.6,5,G01a 19mm gypsum board,F04 Wall air space resistance,G01a 19mm gypsum board,,,,,,,,,,,,,
-8,Exterior Roof,18,5,FG Attic R-19,Plywood (Douglas Fir) - 12.7mm,G01a 19mm gypsum board,,,,,,,,,,,,,
-9,Exterior Door,1.8,256.28,F08 Metal surface,I02 50mm insulation board,F08 Metal surface,,,,,,,,,,,,,
-10,Interior Door,3.6,125,G05 25mm wood,,,,,,,,,,,,,,,
-11,Exterior Wall +1in EPS,23.4,13.78,F11 Wood siding,EPS 1in,Plywood (Douglas Fir) - 12.7mm,R-11 3.5in Wood Stud,G01a 19mm gypsum board,,,,,,,,,,,
-12,Exterior Wall +1.625in EPS,27,16.46,F11 Wood siding,EPS 1.625in,Plywood (Douglas Fir) - 12.7mm,R-11 3.5in Wood Stud,G01a 19mm gypsum board,,,,,,,,,,,
-13,Exterior Wall +2in EPS,28.8,18.62,F11 Wood siding,EPS 2in,Plywood (Douglas Fir) - 12.7mm,R-11 3.5in Wood Stud,G01a 19mm gypsum board,,,,,,,,,,,
-14,Exterior Wall +4in EPS,41.4,25.4,F11 Wood siding,EPS 4in,Plywood (Douglas Fir) - 12.7mm,R-11 3.5in Wood Stud,G01a 19mm gypsum board,,,,,,,,,,,
-15,Exterior Wall +7.5in EPS,63,39.23,F11 Wood siding,EPS 7.5in,Plywood (Douglas Fir) - 12.7mm,R-11 3.5in Wood Stud,G01a 19mm gypsum board,,,,,,,,,,,
-16,Exterior Wall +6in EPS,54,34.55,F11 Wood siding,EPS 6in,Plywood (Douglas Fir) - 12.7mm,R-11 3.5in Wood Stud,G01a 19mm gypsum board,,,,,,,,,,,
-17,Exterior Wall +9in EPS,72,46.93,F11 Wood siding,EPS 9in,Plywood (Douglas Fir) - 12.7mm,R-11 3.5in Wood Stud,G01a 19mm gypsum board,,,,,,,,,,,
-18,Exterior Wall +14in EPS,102.6,63.61,F11 Wood siding,EPS 14in,Plywood (Douglas Fir) - 12.7mm,R-11 3.5in Wood Stud,G01a 19mm gypsum board,,,,,,,,,,,
-19,Exterior Roof R-30,19.8,7.97,FG Attic R-30,Plywood (Douglas Fir) - 12.7mm,G01a 19mm gypsum board,,,,,,,,,,,,,
-20,Exterior Roof R-38,21.6,8.15,FG Attic R-38,Plywood (Douglas Fir) - 12.7mm,G01a 19mm gypsum board,,,,,,,,,,,,,
-21,Exterior Roof R-49,25.2,8.4,FG Attic R-49,Plywood (Douglas Fir) - 12.7mm,G01a 19mm gypsum board,,,,,,,,,,,,,
-22,Exterior Roof R-55,25.2,15,FG Attic R-55,Plywood (Douglas Fir) - 12.7mm,G01a 19mm gypsum board,,,,,,,,,,,,,
-23,Exterior Roof R-60,27,21.53,FG Attic R-60,Plywood (Douglas Fir) - 12.7mm,G01a 19mm gypsum board,,,,,,,,,,,,,
-24,Exterior Roof R-75,30.6,39.4,FG Attic R-75,Plywood (Douglas Fir) - 12.7mm,G01a 19mm gypsum board,,,,,,,,,,,,,
-25,Exterior Roof R-100,36,69.32,FG Attic R-100,Plywood (Douglas Fir) - 12.7mm,G01a 19mm gypsum board,,,,,,,,,,,,,
-26,P+B UnIns,16.2,15,Plywood (Douglas Fir) - 12.7mm,F05 Ceiling air space resistance,Plywood (Douglas Fir) - 12.7mm,G05 25mm wood,,,,,,,,,,,,
-27,P+B R-13,70.2,22.6,Plywood (Douglas Fir) - 12.7mm,ccSF R-13,Plywood (Douglas Fir) - 12.7mm,G05 25mm wood,,,,,,,,,,,,
-28,P+B R-19,79.2,29.06,Plywood (Douglas Fir) - 12.7mm,ccSF R-19,Plywood (Douglas Fir) - 12.7mm,G05 25mm wood,,,,,,,,,,,,
-29,P+B R-30,140.4,38.75,Plywood (Douglas Fir) - 12.7mm,ccSF R-30,Plywood (Douglas Fir) - 12.7mm,G05 25mm wood,,,,,,,,,,,,
-30,P+B R-38,144,46.44,Plywood (Douglas Fir) - 12.7mm,ccSF R-38,Plywood (Douglas Fir) - 12.7mm,G05 25mm wood,,,,,,,,,,,,
-31,P+B R-49,153,56.78,Plywood (Douglas Fir) - 12.7mm,ccSF R-49,Plywood (Douglas Fir) - 12.7mm,G05 25mm wood,,,,,,,,,,,,
-32,WINDOW_U-0.5 g=0.4,205.2,100,U-0.5 g=0.4,,,,,,,,,,,,,,,
-33,WINDOW_U-0.4 g=0.4,205.2,139.94,U-0.4 g=0.4,,,,,,,,,,,,,,,
-34,WINDOW_U-0.3 g=0.4,205.2,258.34,U-0.3 g=0.4,,,,,,,,,,,,,,,
-35,WINDOW_U-0.2 g=0.4,228.6,357.63,U-0.2 g=0.4,,,,,,,,,,,,,,,
-36,WINDOW_U-0.1 g=0.4,228.6,603.36,U-0.1 g=0.4,,,,,,,,,,,,,,,
-37,WINDOW_U-0.5 g=0.2,205.2,100,U-0.5 g=0.2,,,,,,,,,,,,,,,
-38,WINDOW_U-0.4 g=0.2,205.2,139.94,U-0.4 g=0.2,,,,,,,,,,,,,,,
-39,WINDOW_U-0.3 g=0.2,205.2,258.34,U-0.3 g=0.2,,,,,,,,,,,,,,,
-40,WINDOW_U-0.2 g=0.2,228.6,357.63,U-0.2 g=0.2,,,,,,,,,,,,,,,
-41,WINDOW_U-0.1 g=0.2,228.6,603.36,U-0.1 g=0.2,,,,,,,,,,,,,,,
-42,WINDOW_U-1.0 g=0.5,180,100,U-1.0 g=0.5,,,,,,,,,,,,,,,
-43,WINDOW_U-0.15 g=0.4,228.6,420,U-0.15 g=0.4,,,,,,,,,,,,,,,
-44,WINDOW_U-0.15 g=0.2,228.6,420,U-0.15 g=0.2,,,,,,,,,,,,,,,
-45,PV Cost,,,,,,,,,,,,,,,5,,,
-46,Battery Cost,,,,,,,,,,,,,,400,,,,
-47,0.00695,,,,,,,,,,,,,2.22,,,,,
-48,0.01042,,,,,,,,,,,,,1.96,,,,,
-49,0.03473,,,,,,,,,,,,,1.2,,,,,
-50,0.09292,,,,,,,,,,,,,0.5,,,,,
-51,0.05384,,,,,,,,,,,,,0.92,,,,,
-52,0.06252,,,,,,,,,,,,,0.83,,,,,
-53,0.14849,,,,,,,,,,,,,0,,,,,
-54,PTHP,,,,,,,,,,,,,,,,9500,,
-55,GasFurnaceDXAC,,,,,,,,,,,,,,,,7500,,
-56,DHW_Electricity,,,,,,,,,,,,,,,,1000,,
-57,DHW_NaturalGas,,,,,,,,,,,,,,,,1000,,
-58,FRIDGE 289,,,,,,,,,,,,,,,,975,289,17
-59,FRIDGE 360,,,,,,,,,,,,,,,,611,360,17
-60,DISHWASHER 269,,,,,,,,,,,,,,,,879,269,11
-61,DISHWASHER 360,,,,,,,,,,,,,,,,959,360,11
-62,CLOTHESWASHER 120,,,,,,,,,,,,,,,,590,120,14
-63,CLOTHESWASHER 160,,,,,,,,,,,,,,,,662,160,14
-64,CLOTHESDRYER ES,,,,,,,,,,,,,,,,760,704,13
-65,CLOTHESDRYER,,,,,,,,,,,,,,,,1000,550,13
-66,RANGE,,,,,,,,,,,,,,,,992,,13
-67,LIGHTS 100,,,,,,,,,,,,,,,,400,1,21
-68,LIGHTS 60,,,,,,,,,,,,,,,,250,0.6,66
-69,Uninsulated Stem Wall,18,1,M05 200mm concrete block,,,,,,,,,,,,,,,
-70,Basement Wall 4in EPS,22,1,M05 200mm concrete block,EPS 4in,,,,,,,,,,,,,,
-71,0.00909,,,,,,,,,,,,,2.22,,,,,
-72,0.0386,,,,,,,,,,,,,1.96,,,,,
-73,0.0818,,,,,,,,,,,,,1.2,,,,,
-74,0.12497,,,,,,,,,,,,,0.5,,,,,
+,Name,CO2e_Per_Area_[kg/m2],Cost_Per_Area_[$/m2],Outside_Layer,Layer_2,Layer_3,Layer_4,Layer_5,Layer_6,Layer_7,Layer_8,Layer_9,Layer_10,Air_Sealing_Cost_[$/ft2 ICFA],Battery_Cost_[$/kWh],PV_Cost_[$/W],Mechanical Cost,Appliance_Rating,Lifetime,Labor_Fraction
+0,Brick Wall,1.8,0,M01 100mm brick,,,,,,,,,,,,,,,30,0.15
+1,Ext_Door1,66.6,250,G05 25mm wood,,,,,,,,,,,,,,,30,0.3
+2,Thermal Mass,0.00018,0,G05 25mm wood,,,,,,,,,,,,,,,0,0.3
+3,Interior Floor,14.4,2,Plywood (Douglas Fir) - 12.7mm,F05 Ceiling air space resistance,G01a 19mm gypsum board,,,,,,,,,,,,,0,0.3
+4,Exterior Slab UnIns,113.4,5,M15 200mm heavyweight concrete,,,,,,,,,,,,,,,0,0.3
+5,Exterior Slab + 2in EPS,126,10,EPS 2in,M15 200mm heavyweight concrete,,,,,,,,,,,,,,0,0.3
+6,Exterior Wall,18,10,F11 Wood siding,R-11 3.5in Wood Stud,G01a 19mm gypsum board,,,,,,,,,,,,,0,0.3
+7,Interior Wall,12.6,5,G01a 19mm gypsum board,F04 Wall air space resistance,G01a 19mm gypsum board,,,,,,,,,,,,,0,0.3
+8,Exterior Roof,18,5,FG Attic R-19,Plywood (Douglas Fir) - 12.7mm,G01a 19mm gypsum board,,,,,,,,,,,,,30,0.3
+9,Exterior Door,1.8,256.28,F08 Metal surface,I02 50mm insulation board,F08 Metal surface,,,,,,,,,,,,,30,0.3
+10,Interior Door,3.6,125,G05 25mm wood,,,,,,,,,,,,,,,30,0.3
+11,Exterior Wall +1in EPS,23.4,13.78,F11 Wood siding,EPS 1in,Plywood (Douglas Fir) - 12.7mm,R-11 3.5in Wood Stud,G01a 19mm gypsum board,,,,,,,,,,,0,0.3
+12,Exterior Wall +1.625in EPS,27,16.46,F11 Wood siding,EPS 1.625in,Plywood (Douglas Fir) - 12.7mm,R-11 3.5in Wood Stud,G01a 19mm gypsum board,,,,,,,,,,,0,0.3
+13,Exterior Wall +2in EPS,28.8,18.62,F11 Wood siding,EPS 2in,Plywood (Douglas Fir) - 12.7mm,R-11 3.5in Wood Stud,G01a 19mm gypsum board,,,,,,,,,,,0,0.3
+14,Exterior Wall +4in EPS,41.4,25.4,F11 Wood siding,EPS 4in,Plywood (Douglas Fir) - 12.7mm,R-11 3.5in Wood Stud,G01a 19mm gypsum board,,,,,,,,,,,0,0.3
+15,Exterior Wall +7.5in EPS,63,39.23,F11 Wood siding,EPS 7.5in,Plywood (Douglas Fir) - 12.7mm,R-11 3.5in Wood Stud,G01a 19mm gypsum board,,,,,,,,,,,0,0.3
+16,Exterior Wall +6in EPS,54,34.55,F11 Wood siding,EPS 6in,Plywood (Douglas Fir) - 12.7mm,R-11 3.5in Wood Stud,G01a 19mm gypsum board,,,,,,,,,,,0,0.3
+17,Exterior Wall +9in EPS,72,46.93,F11 Wood siding,EPS 9in,Plywood (Douglas Fir) - 12.7mm,R-11 3.5in Wood Stud,G01a 19mm gypsum board,,,,,,,,,,,0,0.3
+18,Exterior Wall +14in EPS,102.6,63.61,F11 Wood siding,EPS 14in,Plywood (Douglas Fir) - 12.7mm,R-11 3.5in Wood Stud,G01a 19mm gypsum board,,,,,,,,,,,0,0.3
+19,Exterior Roof R-30,19.8,7.97,FG Attic R-30,Plywood (Douglas Fir) - 12.7mm,G01a 19mm gypsum board,,,,,,,,,,,,,30,0.3
+20,Exterior Roof R-38,21.6,8.15,FG Attic R-38,Plywood (Douglas Fir) - 12.7mm,G01a 19mm gypsum board,,,,,,,,,,,,,30,0.3
+21,Exterior Roof R-49,25.2,8.4,FG Attic R-49,Plywood (Douglas Fir) - 12.7mm,G01a 19mm gypsum board,,,,,,,,,,,,,30,0.3
+22,Exterior Roof R-55,25.2,15,FG Attic R-55,Plywood (Douglas Fir) - 12.7mm,G01a 19mm gypsum board,,,,,,,,,,,,,30,0.3
+23,Exterior Roof R-60,27,21.53,FG Attic R-60,Plywood (Douglas Fir) - 12.7mm,G01a 19mm gypsum board,,,,,,,,,,,,,30,0.3
+24,Exterior Roof R-75,30.6,39.4,FG Attic R-75,Plywood (Douglas Fir) - 12.7mm,G01a 19mm gypsum board,,,,,,,,,,,,,30,0.3
+25,Exterior Roof R-100,36,69.32,FG Attic R-100,Plywood (Douglas Fir) - 12.7mm,G01a 19mm gypsum board,,,,,,,,,,,,,30,0.3
+26,P+B UnIns,16.2,15,Plywood (Douglas Fir) - 12.7mm,F05 Ceiling air space resistance,Plywood (Douglas Fir) - 12.7mm,G05 25mm wood,,,,,,,,,,,,0,0.3
+27,P+B R-13,70.2,22.6,Plywood (Douglas Fir) - 12.7mm,ccSF R-13,Plywood (Douglas Fir) - 12.7mm,G05 25mm wood,,,,,,,,,,,,0,0.3
+28,P+B R-19,79.2,29.06,Plywood (Douglas Fir) - 12.7mm,ccSF R-19,Plywood (Douglas Fir) - 12.7mm,G05 25mm wood,,,,,,,,,,,,0,0.3
+29,P+B R-30,140.4,38.75,Plywood (Douglas Fir) - 12.7mm,ccSF R-30,Plywood (Douglas Fir) - 12.7mm,G05 25mm wood,,,,,,,,,,,,0,0.3
+30,P+B R-38,144,46.44,Plywood (Douglas Fir) - 12.7mm,ccSF R-38,Plywood (Douglas Fir) - 12.7mm,G05 25mm wood,,,,,,,,,,,,0,0.3
+31,P+B R-49,153,56.78,Plywood (Douglas Fir) - 12.7mm,ccSF R-49,Plywood (Douglas Fir) - 12.7mm,G05 25mm wood,,,,,,,,,,,,0,0.3
+32,WINDOW_U-0.5 g=0.4,205.2,100,U-0.5 g=0.4,,,,,,,,,,,,,,,30,0.5
+33,WINDOW_U-0.4 g=0.4,205.2,139.94,U-0.4 g=0.4,,,,,,,,,,,,,,,30,0.5
+34,WINDOW_U-0.3 g=0.4,205.2,258.34,U-0.3 g=0.4,,,,,,,,,,,,,,,30,0.5
+35,WINDOW_U-0.2 g=0.4,228.6,357.63,U-0.2 g=0.4,,,,,,,,,,,,,,,30,0.5
+36,WINDOW_U-0.1 g=0.4,228.6,603.36,U-0.1 g=0.4,,,,,,,,,,,,,,,30,0.5
+37,WINDOW_U-0.5 g=0.2,205.2,100,U-0.5 g=0.2,,,,,,,,,,,,,,,30,0.5
+38,WINDOW_U-0.4 g=0.2,205.2,139.94,U-0.4 g=0.2,,,,,,,,,,,,,,,30,0.5
+39,WINDOW_U-0.3 g=0.2,205.2,258.34,U-0.3 g=0.2,,,,,,,,,,,,,,,30,0.5
+40,WINDOW_U-0.2 g=0.2,228.6,357.63,U-0.2 g=0.2,,,,,,,,,,,,,,,30,0.5
+41,WINDOW_U-0.1 g=0.2,228.6,603.36,U-0.1 g=0.2,,,,,,,,,,,,,,,30,0.5
+42,WINDOW_U-1.0 g=0.5,180,100,U-1.0 g=0.5,,,,,,,,,,,,,,,30,0.5
+43,WINDOW_U-0.15 g=0.4,228.6,420,U-0.15 g=0.4,,,,,,,,,,,,,,,30,0.5
+44,WINDOW_U-0.15 g=0.2,228.6,420,U-0.15 g=0.2,,,,,,,,,,,,,,,30,0.5
+45,PV Cost,,,,,,,,,,,,,,,5,,,25,0.25
+46,Battery Cost,,,,,,,,,,,,,,400,,,,10,0.5
+47,0.00695,,,,,,,,,,,,,2.22,,,,,,
+48,0.01042,,,,,,,,,,,,,1.96,,,,,,
+49,0.03473,,,,,,,,,,,,,1.2,,,,,,
+50,0.09292,,,,,,,,,,,,,0.5,,,,,,
+51,0.05384,,,,,,,,,,,,,0.92,,,,,,
+52,0.06252,,,,,,,,,,,,,0.83,,,,,,
+53,0.14849,,,,,,,,,,,,,0,,,,,,
+54,PTHP,,,,,,,,,,,,,,,,9500,,15,0.15
+55,GasFurnaceDXAC,,,,,,,,,,,,,,,,7500,,20,0.4
+56,DHW_Electricity,,,,,,,,,,,,,,,,1000,,13,0.8
+57,DHW_NaturalGas,,,,,,,,,,,,,,,,1000,,13,0.8
+58,FRIDGE 289,,,,,,,,,,,,,,,,975,289,17,0.15
+59,FRIDGE 360,,,,,,,,,,,,,,,,611,360,17,0.15
+60,DISHWASHER 269,,,,,,,,,,,,,,,,879,269,11,0.3
+61,DISHWASHER 360,,,,,,,,,,,,,,,,959,360,11,0.3
+62,CLOTHESWASHER 120,,,,,,,,,,,,,,,,590,120,14,0.15
+63,CLOTHESWASHER 160,,,,,,,,,,,,,,,,662,160,14,0.15
+64,CLOTHESDRYER ES,,,,,,,,,,,,,,,,760,704,13,0.15
+65,CLOTHESDRYER,,,,,,,,,,,,,,,,1000,550,13,0.15
+66,RANGE,,,,,,,,,,,,,,,,992,,13,0.1
+67,LIGHTS 100,,,,,,,,,,,,,,,,400,1,21,0.3
+68,LIGHTS 60,,,,,,,,,,,,,,,,250,0.6,66,0.3
+69,Uninsulated Stem Wall,18,1,M05 200mm concrete block,,,,,,,,,,,,,,,0,
+70,Basement Wall 4in EPS,22,1,M05 200mm concrete block,EPS 4in,,,,,,,,,,,,,,0,
+71,0.00909,,,,,,,,,,,,,2.22,,,,,,
+72,0.0386,,,,,,,,,,,,,1.96,,,,,,
+73,0.0818,,,,,,,,,,,,,1.2,,,,,,
+74,0.12497,,,,,,,,,,,,,0.5,,,,,,
