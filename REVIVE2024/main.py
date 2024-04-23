@@ -1083,14 +1083,8 @@ while True:
 
                 dirMR = carbonMeasureCost
 
-                # EMBODIED CARBON CALCULATION
 
-                # extract cost line item subtotals
-                cost_line_df = None
-                for ltable in ltables:
-                    if ltable[0][0] == "Cost Line Item Details":
-                        cost_line_df = pd.DataFrame(ltable[1][1:],columns=ltable[1][0]).iloc[:-1] # drop the last summation row
-                        break
+                # EMBODIED CARBON CALCULATION
                 
                 # get emissions data ready
                 constructionList['Name'] = constructionList['Name'].apply(lambda x: x.lower())
@@ -1100,32 +1094,58 @@ while True:
                 price_of_carbon = 0.25 # units: $/kg according to spec
                 # TODO: AVOID HARDCODING CARBON MULTIPLE TIMES
 
-                # compute embodied carbon cost per non-zero line item
-                cost_line_df_subgroup = cost_line_df[cost_line_df["Quantity."] > 0]
-                for idx, row in cost_line_df_subgroup.iterrows():
-                    item_name = row["Item Name"].lower()
-                    subtotal = row["SubTotal $"]
+                # define routine to compute the embodied CO2 and direct maintenance costs for ADORB
+                def add_item_to_adorb_inputs(name, cost=None):
                     emissions_factor = countryEmissionsDatabase.loc[country, 'EF [kg/$]']
                     try:
                         # cross-reference with construction list if item exists
-                        labor_fraction = constructionList.loc[item_name, "Labor_Fraction"]
-                        lifetime = int(constructionList.loc[item_name, "Lifetime"])
+                        labor_fraction = constructionList.loc[name, "Labor_Fraction"]
+                        lifetime = int(constructionList.loc[name, "Lifetime"])
+                        if cost==None: cost = constructionList.loc[name, "Mechanical Cost"]
                     except KeyError:
-                        print(f"Could not find {item_name}.")
-                        continue
-                    embodied_carbon_calc = (subtotal * (1 - labor_fraction)) * (emissions_factor * price_of_carbon)
+                        print(f"Could not find \"{name}\" in construction database.")
+                        return
+                    embodied_carbon_calc = (cost * (1 - labor_fraction)) * (emissions_factor * price_of_carbon)
                     
                     # add cost anytime item needs installed or replaced
                     if lifetime != 0:
                         for year in range(0, duration, lifetime):
+                            dirMR.append([cost, year])
                             emCO2.append([embodied_carbon_calc, year])
-                    else: emCO2.append([embodied_carbon_calc, 0])
+                    else:
+                        dirMR.append([cost, 0])
+                        emCO2.append([embodied_carbon_calc, 0])
+                
 
-                # add cost for appliance replacement
-                # for replace_interval, replace_cost in appliance_replacement_cost_map.items():
-                #     for year in range(replace_interval, duration, replace_interval):
-                #         dirMR.append([replace_cost, year])
-                        # TODO: transfer to dictionary to save efficiency
+                # extract cost line item subtotals
+                cost_line_df = None
+                for ltable in ltables:
+                    if ltable[0][0] == "Cost Line Item Details":
+                        cost_line_df = pd.DataFrame(ltable[1][1:],columns=ltable[1][0]).iloc[:-1] # drop the last summation row
+                        break
+
+                # compute emCO2 and dirMR per non-zero line item
+                cost_line_df_subgroup = cost_line_df[cost_line_df["Quantity."] > 0]
+                for _, row in cost_line_df_subgroup.iterrows():
+
+                    # extract basic information
+                    item_name = row["Item Name"].lower()
+                    item_cost = row["SubTotal $"]
+
+                    # strip any mechanical labels if neccessary
+                    if item_name[:5] == "mech_": item_name = item_name[5:]
+
+                    # handle appliance breakdown after loop
+                    if item_name == "appliances" or item_name == "lights":
+                        continue
+                    
+                    # for all normal entries compute and add to emCO2 and dirMR list
+                    else:
+                        add_item_to_adorb_inputs(item_name, item_cost)
+                
+                # compute emCO2 and dirMR per each appliance/lights 
+                for appliance_name in appliance_list:
+                    add_item_to_adorb_inputs(appliance_name.lower())
 
                 # emCO2 = [(emCO2_firstCost,1),((8500*laborFraction*0.3),20),((8500*laborFraction*0.3),40),((8500*laborFraction*0.3),60)] 
                 eTrans = peakElec
