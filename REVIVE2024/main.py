@@ -139,6 +139,16 @@ layout1 = [
 window = sg.Window('Phius REVIVE 2024 Analysis Tool v24.2.0',layout1, default_element_size=(125, 125), grab_anywhere=True)
 
 #==============================================================================================================================
+# 3.0 Functions
+#==============================================================================================================================
+
+def divide_chunks(l, n): 
+      
+    # looping till length l 
+    for i in range(0, len(l), n):  
+        yield l[i:i + n] 
+
+#==============================================================================================================================
 # 3.0 File Management
 #==============================================================================================================================
 DUMMY_MODE = True if "--test" in sys.argv or "-t" in sys.argv else False
@@ -205,7 +215,7 @@ while True:
             required_columns = list(reader)[0]
 
         try:
-            assert os.path.isfile(iddfile), "Energy+ path does not exist."
+            assert os.path.isfile(iddfile), "Energy+ IDD path does not exist."
             assert os.path.isfile(runListPath), "Run list path does not exist."
             assert os.path.isdir(studyFolder), "Study folder path does not exist."
             assert os.path.isdir(databases), "Database path does not exist."
@@ -570,6 +580,13 @@ while True:
                 WindowVentilation(idf1, halfHeight, operableArea_N, operableArea_W, 
                         operableArea_S, operableArea_E)
                 
+
+                windowNames_split = list(divide_chunks(windowNames, 10))
+
+                for i in range(len(windowNames_split)):
+                    windowNamesChunk = windowNames_split[i]
+                    WindowShadingControl(idf1, windowNamesChunk)
+
                 WindowShadingControl(idf1, windowNames)
 
                 AssignContructions(idf1, Ext_Wall1,Ext_Wall2,Ext_Wall3,
