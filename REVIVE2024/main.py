@@ -272,75 +272,33 @@ while True:
                 ervLatent = 0
 
                 # IHG Calc
-                constructionList = pd.read_csv(constructionDatabase)
+                constructionList = pd.read_csv(constructionDatabase, index_col="Name")
                 appliance_list = list(runList['APPLIANCE_LIST'][runCount].split(', '))
 
-                constructions = constructionList.shape[0]
-                for item in range(constructions):
-                    if str(constructionList['Name'][item]) in appliance_list:
+                total_appliance_cost = fridge = dishWasher = clothesWasher = clothesDryer = lights_cost = 0
+                for appliance_name, row in constructionList.filter(items=appliance_list, axis=0).iterrows():
+                    rating = float(row["Appliance_Rating"]) # must be float for fractional efficiency
+                    cost = int(row["Mechanical Cost"])
+                    if 'FRIDGE' in appliance_name:
+                        fridge += (rating/(8760))*1000 # always on design load
 
-                        if 'FRIDGE' in constructionList['Name'][item]:
-                            fridge_demand = constructionList['Appliance_Rating'][item]
-                            fridge_cost = constructionList['Mechanical Cost'][item]
-                            fridge = (fridge_demand/(8760))*1000 # always on design load
+                    elif 'DISHWASHER' in appliance_name:
+                        dishWasher += (((86.3 + (47.73 / (215 / rating)))/215) * ((88.4 + 34.9*Nbr)*(12/12))*(1/365)*1000)
 
-                        if 'DISHWASHER' in constructionList['Name'][item]:
-                            dishwasher_demand = constructionList['Appliance_Rating'][item]
-                            dishwasher_cost = constructionList['Mechanical Cost'][item]
-                            dishWasher = (((86.3 + (47.73 / (215 / dishwasher_demand)))/215) * ((88.4 + 34.9*Nbr)*(12/12))*(1/365)*1000)
+                    elif 'CLOTHESWASHER' in appliance_name:
+                        clothesWasher += (rating/365)*1000
 
-                        if 'CLOTHESWASHER' in constructionList['Name'][item]:
-                            clotheswasher_demand = constructionList['Appliance_Rating'][item]
-                            clotheswasher_cost = constructionList['Mechanical Cost'][item]
-                            clothesWasher = (clotheswasher_demand/365)*1000
+                    elif 'CLOTHESDRYER' in appliance_name:
+                        clothesDryer += ((12.4*(164+46.5*Nbr)*1.18/3.01*(2.874/0.817-704/rating)/(0.2184*(4.5*4.08+0.24)))/365)*1000
 
-                        if 'CLOTHESDRYER' in constructionList['Name'][item]:
-                            clothesdryer_demand = constructionList['Appliance_Rating'][item]
-                            clothesdryer_cost = constructionList['Mechanical Cost'][item]
-                            clothesDryer = ((12.4*(164+46.5*Nbr)*1.18/3.01*(2.874/0.817-704/clothesdryer_demand)/(0.2184*(4.5*4.08+0.24)))/365)*1000
-                        
-                        if 'RANGE' in constructionList['Name'][item]:
-                            range_cost = constructionList['Mechanical Cost'][item]
-
-                        if 'LIGHTS' in constructionList['Name'][item]:
-                            fracHighEff = constructionList['Appliance_Rating'][item]
-                            lights_cost = constructionList['Mechanical Cost'][item]
-                try:
-                    fridge_demand
-                except:
-                    fridge_demand = 0
-                    fridge_cost = 0
-                    fridge = 0
-                try:
-                    dishwasher_demand
-                except:
-                    dishwasher_demand = 0
-                    dishwasher_cost = 0
-                    dishwasher = 0
-                try:
-                    clotheswasher_demand
-                except:
-                    clotheswasher_demand = 0
-                    clotheswasher_cost = 0
-                    clothesWasher = 0
-                try:
-                    clothesdryer_demand
-                except:
-                    clothesdryer_demand = 0
-                    clothesdryer_cost = 0
-                    clothesDryer = 0
-                try:
-                    range_cost
-                except:
-                    range_cost = 0
-                try:
-                    fracHighEff
-                except:
-                    fracHighEff = 0
-                    lights_cost = 0
-
-                        
-                total_appliance_cost = (fridge_cost + dishwasher_cost + clotheswasher_cost + clothesdryer_cost + range_cost)
+                    elif 'LIGHTS' in appliance_name:
+                        fracHighEff = rating
+                        lights_cost += cost
+                    
+                    total_appliance_cost += cost
+                
+                # REMOVE LATER
+                constructionList = constructionList.reset_index()
 
                 
                 PhiusLights = (0.2 + 0.8*(4 - 3*fracHighEff)/3.7)*(455 + 0.8*icfa) * 0.8 * 1000 * (1/365) #power per day W use Phius calc
