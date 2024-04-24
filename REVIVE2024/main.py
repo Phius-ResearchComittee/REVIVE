@@ -282,75 +282,33 @@ while True:
                 ervLatent = 0
 
                 # IHG Calc
-                constructionList = pd.read_csv(constructionDatabase)
+                constructionList = pd.read_csv(constructionDatabase, index_col="Name")
                 appliance_list = list(runList['APPLIANCE_LIST'][runCount].split(', '))
 
-                constructions = constructionList.shape[0]
-                for item in range(constructions):
-                    if str(constructionList['Name'][item]) in appliance_list:
+                total_appliance_cost = fridge = dishWasher = clothesWasher = clothesDryer = lights_cost = 0
+                for appliance_name, row in constructionList.filter(items=appliance_list, axis=0).iterrows():
+                    rating = float(row["Appliance_Rating"]) # must be float for fractional efficiency
+                    cost = int(row["Mechanical Cost"])
+                    if 'FRIDGE' in appliance_name:
+                        fridge += (rating/(8760))*1000 # always on design load
 
-                        if 'FRIDGE' in constructionList['Name'][item]:
-                            fridge_demand = constructionList['Appliance_Rating'][item]
-                            fridge_cost = constructionList['Mechanical Cost'][item]
-                            fridge = (fridge_demand/(8760))*1000 # always on design load
+                    elif 'DISHWASHER' in appliance_name:
+                        dishWasher += (((86.3 + (47.73 / (215 / rating)))/215) * ((88.4 + 34.9*Nbr)*(12/12))*(1/365)*1000)
 
-                        if 'DISHWASHER' in constructionList['Name'][item]:
-                            dishwasher_demand = constructionList['Appliance_Rating'][item]
-                            dishwasher_cost = constructionList['Mechanical Cost'][item]
-                            dishWasher = (((86.3 + (47.73 / (215 / dishwasher_demand)))/215) * ((88.4 + 34.9*Nbr)*(12/12))*(1/365)*1000)
+                    elif 'CLOTHESWASHER' in appliance_name:
+                        clothesWasher += (rating/365)*1000
 
-                        if 'CLOTHESWASHER' in constructionList['Name'][item]:
-                            clotheswasher_demand = constructionList['Appliance_Rating'][item]
-                            clotheswasher_cost = constructionList['Mechanical Cost'][item]
-                            clothesWasher = (clotheswasher_demand/365)*1000
+                    elif 'CLOTHESDRYER' in appliance_name:
+                        clothesDryer += ((12.4*(164+46.5*Nbr)*1.18/3.01*(2.874/0.817-704/rating)/(0.2184*(4.5*4.08+0.24)))/365)*1000
 
-                        if 'CLOTHESDRYER' in constructionList['Name'][item]:
-                            clothesdryer_demand = constructionList['Appliance_Rating'][item]
-                            clothesdryer_cost = constructionList['Mechanical Cost'][item]
-                            clothesDryer = ((12.4*(164+46.5*Nbr)*1.18/3.01*(2.874/0.817-704/clothesdryer_demand)/(0.2184*(4.5*4.08+0.24)))/365)*1000
-                        
-                        if 'RANGE' in constructionList['Name'][item]:
-                            range_cost = constructionList['Mechanical Cost'][item]
-
-                        if 'LIGHTS' in constructionList['Name'][item]:
-                            fracHighEff = constructionList['Appliance_Rating'][item]
-                            lights_cost = constructionList['Mechanical Cost'][item]
-                try:
-                    fridge_demand
-                except:
-                    fridge_demand = 0
-                    fridge_cost = 0
-                    fridge = 0
-                try:
-                    dishwasher_demand
-                except:
-                    dishwasher_demand = 0
-                    dishwasher_cost = 0
-                    dishwasher = 0
-                try:
-                    clotheswasher_demand
-                except:
-                    clotheswasher_demand = 0
-                    clotheswasher_cost = 0
-                    clothesWasher = 0
-                try:
-                    clothesdryer_demand
-                except:
-                    clothesdryer_demand = 0
-                    clothesdryer_cost = 0
-                    clothesDryer = 0
-                try:
-                    range_cost
-                except:
-                    range_cost = 0
-                try:
-                    fracHighEff
-                except:
-                    fracHighEff = 0
-                    lights_cost = 0
-
-                        
-                total_appliance_cost = (fridge_cost + dishwasher_cost + clotheswasher_cost + clothesdryer_cost + range_cost)
+                    elif 'LIGHTS' in appliance_name:
+                        fracHighEff = rating
+                        lights_cost += cost
+                    
+                    total_appliance_cost += cost
+                
+                # REMOVE LATER
+                constructionList = constructionList.reset_index()
 
                 
                 PhiusLights = (0.2 + 0.8*(4 - 3*fracHighEff)/3.7)*(455 + 0.8*icfa) * 0.8 * 1000 * (1/365) #power per day W use Phius calc
@@ -651,28 +609,21 @@ while True:
                     idf.run(readvars=True,output_prefix=str(str(BaseFileName) + "_BR"))
 
                 fname = os.path.join(studyFolder, BaseFileName + '_BRtbl.htm')
-                filehandle = open(fname, 'r').read()
-                ltables = readhtml.lines_table(filehandle) # reads the tables with their titles
 
-                for ltable in ltables:
-                    if 'Site and Source Energy' in '\n'.join(ltable[0]): #and 'For: Entire Facility' in '\n'.join(ltable[0]):
-                        eui = float(ltable[1][1][2])
+                site_source_energy_table = fasthtml.tablebyname(open(fname, 'r'), "Site and Source Energy")
+                eui = float(site_source_energy_table[1][1][2])
 
-                for ltable in ltables:
-                    if 'Time Bin Results' in '\n'.join(ltable[0]): #and 'For: Entire Facility' in '\n'.join(ltable[0]):
-                        Below2C = float(ltable[1][39][2])
-                        
-                for ltable in ltables:
-                    if 'Heating SET Hours' in '\n'.join(ltable[0]): #and 'For: Entire Facility' in '\n'.join(ltable[0]):
-                        HeatingSET = float(ltable[1][1][1])
+                time_bin_table = fasthtml.tablebyname(open(fname, 'r'), "Time Bin Results")
+                Below2C = float(time_bin_table[1][39][2])
 
-                for ltable in ltables:
-                    if 'Heat Index Hours' in '\n'.join(ltable[0]): #and 'For: Entire Facility' in '\n'.join(ltable[0]):
-                        Caution = float(ltable[1][1][2])
-                        ExtremeCaution = float(ltable[1][1][3])
-                        Danger = float(ltable[1][1][4])
-                        ExtremeDanger = float(ltable[1][1][5])
+                heating_set_hours_table = fasthtml.tablebyname(open(fname, 'r'), "Heating SET Hours")
+                HeatingSET = float(heating_set_hours_table[1][1][1])
 
+                heating_index_hours_table = fasthtml.tablebyname(open(fname, 'r'), "Heat Index Hours")
+                Caution = float(heating_index_hours_table[1][1][2])
+                ExtremeCaution = float(heating_index_hours_table[1][1][3])
+                Danger = float(heating_index_hours_table[1][1][4])
+                ExtremeDanger = float(heating_index_hours_table[1][1][5])
 
                 # Resilience Graphs
                         
@@ -685,9 +636,9 @@ while True:
                 hourly['Date'] = hourly['Date2'].map(str) + '/' + str(2020)
                 hourly['Time'] = (pd.to_numeric(hourly['Time'].str.split(':').str[0])-1).astype(str).apply(lambda x: f'0{x}' if len(x)==1 else x) + hourly['Time'].str[2:]
                 hourly['DateTime'] = hourly['Date'] + ' ' + hourly['Time']
-                hourly['DateTime'] = pd.to_datetime(hourly['DateTime'])
+                hourly['DateTime'] = pd.to_datetime(hourly['DateTime'], format="%m/%d/%Y %H:%M:%S", exact=True)
 
-                endWarmup = int((hourly[hourly['DateTime'] == '2020-01-01 00:00:00'].index.values))
+                endWarmup = hourly[hourly['DateTime'] == '2020-01-01 00:00:00'].index[0]
                 dropWarmup = [*range(0, endWarmup,1)]
 
                 hourly = hourly.drop(index = dropWarmup)
@@ -890,25 +841,21 @@ while True:
                 hourly['Date'] = hourly['Date2'].map(str) + '/' + str(2020)
                 hourly['Time'] = (pd.to_numeric(hourly['Time'].str.split(':').str[0])-1).astype(str).apply(lambda x: f'0{x}' if len(x)==1 else x) + hourly['Time'].str[2:]
                 hourly['DateTime'] = hourly['Date'] + ' ' + hourly['Time']
-                hourly['DateTime'] = pd.to_datetime(hourly['DateTime'])
+                hourly['DateTime'] = pd.to_datetime(hourly['DateTime'], format="%m/%d/%Y %H:%M:%S", exact=True)
 
-                endWarmup = int((hourly[hourly['DateTime'] == '2020-01-01 00:00:00'].index.values))
+                endWarmup = hourly[hourly['DateTime'] == '2020-01-01 00:00:00'].index[0]
                 dropWarmup = [*range(0, endWarmup,1)]
 
                 hourly = hourly.drop(index = dropWarmup)
                 hourly = hourly.reset_index()
 
                 fname = os.path.join(studyFolder, BaseFileName + '_BAtbl.htm')
-                filehandle = open(fname, 'r').read()
-                ltables = readhtml.lines_table(filehandle) # reads the tables with their titles
+                
+                site_source_energy_table = fasthtml.tablebyname(open(fname, 'r'), "Site and Source Energy")
+                eui = float(site_source_energy_table[1][1][2])
 
-                for ltable in ltables:
-                    if 'Site and Source Energy' in '\n'.join(ltable[0]): #and 'For: Entire Facility' in '\n'.join(ltable[0]):
-                        eui = float(ltable[1][1][2])
-
-                for ltable in ltables:
-                    if 'Annual and Peak Values - Electricity' in '\n'.join(ltable[0]): #and 'For: Entire Facility' in '\n'.join(ltable[0]):
-                        peakElec = float(ltable[1][1][4])
+                annual_peak_values_table = fasthtml.tablebyname(open(fname, 'r'), "Annual and Peak Values - Electricity")
+                peakElec = float(annual_peak_values_table[1][1][4])
 
                 if 'BASE' in str(BaseFileName):
                     firstCost = [0,0]
@@ -935,39 +882,39 @@ while True:
                     dhwCostList = []
                     applianceCostList = []
                     lightsCost = []
-                    for ltable in ltables:
-                        if 'Construction Cost Estimate Summary' in '\n'.join(ltable[0]): #and 'For: Entire Facility' in '\n'.join(ltable[0]):
-                            firstCost = [(float(ltable[1][9][2])),0]
-                            # firstCost = [(float(ltable[1][9][2])*1.8),0]
-                        if 'Cost Line Item Details' in '\n'.join(ltable[0]):
-                            rows = len(ltable[1])
-                            for row in range(rows):
-                                # print(ltable[1][row][2])
-                                # print(ltable[1][row][5])
-                                if 'WALL' in str(ltable[1][row][2]):
-                                    wallCostList.append(ltable[1][row][6])
-                                if 'ROOF' in str(ltable[1][row][2]):
-                                    roofCostList.append(ltable[1][row][6])
-                                if 'FLOOR' in str(ltable[1][row][2]):
-                                    floorCostList.append(ltable[1][row][6])
-                                if 'WINDOW' in str(ltable[1][row][2]):
-                                    windowCostList.append(ltable[1][row][6])
-                                if 'DOOR' in str(ltable[1][row][2]):
-                                    doorCostList.append(ltable[1][row][6])
-                                if 'AIR SEALING' in str(ltable[1][row][2]):
-                                    airSealingCostList.append(ltable[1][row][6])
-                                if 'MECH' in str(ltable[1][row][2]):
-                                    mechCostList.append(ltable[1][row][6])
-                                if 'DHW' in str(ltable[1][row][2]):
-                                    dhwCostList.append(ltable[1][row][6])
-                                if 'APPLIANCES' in str(ltable[1][row][2]):
-                                    applianceCostList.append(ltable[1][row][6])
-                                if 'LIGHTS' in str(ltable[1][row][2]):
-                                    applianceCostList.append(ltable[1][row][6])
-                                if 'PV COST' in str(ltable[1][row][2]):
-                                    pvCost = (ltable[1][row][6])
-                                if 'BATTERY COST' in str(ltable[1][row][2]):
-                                    batteryCost = (ltable[1][row][6])
+
+                    construction_cost_est_table = fasthtml.tablebyname(open(fname, 'r'), "Construction Cost Estimate Summary")
+                    firstCost = [float(construction_cost_est_table[1][9][2]),0]
+
+                    cost_line_item_detail_table = fasthtml.tablebyname(open(fname, 'r'), "Cost Line Item Details")
+                    rows = len(cost_line_item_detail_table[1])
+                    for row in range(rows):
+                        item_name = cost_line_item_detail_table[1][row][2]
+                        item_cost = cost_line_item_detail_table[1][row][6]
+                        if 'WALL' in item_name:
+                            wallCostList.append(item_cost)
+                        elif 'ROOF' in item_name:
+                            roofCostList.append(item_cost)
+                        elif 'FLOOR' in item_name:
+                            floorCostList.append(item_cost)
+                        elif 'WINDOW' in item_name:
+                            windowCostList.append(item_cost)
+                        elif 'DOOR' in item_name:
+                            doorCostList.append(item_cost)
+                        elif 'AIR SEALING' in item_name:
+                            airSealingCostList.append(item_cost)
+                        elif 'MECH' in item_name:
+                            mechCostList.append(item_cost)
+                        elif 'DHW' in item_name:
+                            dhwCostList.append(item_cost)
+                        elif 'APPLIANCES' in item_name:
+                            applianceCostList.append(item_cost)
+                        elif 'LIGHTS' in item_name:
+                            applianceCostList.append(item_cost)
+                        elif 'PV COST' in item_name:
+                            pvCost = (item_cost)
+                        elif 'BATTERY COST' in item_name:
+                            batteryCost = (item_cost)
 
                     wallCost = (sum(wallCostList))
                     roofCost = (sum(roofCostList))
@@ -1009,9 +956,9 @@ while True:
                 hourlyBA['Date'] = hourlyBA['Date2'].map(str) + '/' + str(2020)
                 hourlyBA['Time'] = (pd.to_numeric(hourlyBA['Time'].str.split(':').str[0])-1).astype(str).apply(lambda x: f'0{x}' if len(x)==1 else x) + hourlyBA['Time'].str[2:]
                 hourlyBA['DateTime'] = hourlyBA['Date'] + ' ' + hourlyBA['Time']
-                hourlyBA['DateTime'] = pd.to_datetime(hourlyBA['DateTime'])
+                hourlyBA['DateTime'] = pd.to_datetime(hourlyBA['DateTime'], format="%m/%d/%Y %H:%M:%S", exact=True)
 
-                endWarmup = int((hourlyBA[hourlyBA['DateTime'] == '2020-01-01 00:00:00'].index.values))
+                endWarmup = hourlyBA[hourlyBA['DateTime'] == '2020-01-01 00:00:00'].index[0]
                 dropWarmup = [*range(0, endWarmup,1)]
 
                 hourlyBA = hourlyBA.drop(index = dropWarmup)
@@ -1135,11 +1082,10 @@ while True:
                 
 
                 # extract cost line item subtotals
-                cost_line_df = None
-                for ltable in ltables:
-                    if ltable[0][0] == "Cost Line Item Details":
-                        cost_line_df = pd.DataFrame(ltable[1][1:],columns=ltable[1][0]).iloc[:-1] # drop the last summation row
-                        break
+                fname = os.path.join(studyFolder, BaseFileName + '_BAtbl.htm')
+                cost_line_item_detail_table = fasthtml.tablebyname(open(fname, 'r'), "Cost Line Item Details")
+                cost_line_df = pd.DataFrame(cost_line_item_detail_table[1][1:],
+                                            columns=cost_line_item_detail_table[1][0]).iloc[:-1] # drop the last summation row
 
                 # compute emCO2 and dirMR per non-zero line item
                 cost_line_df_subgroup = cost_line_df[cost_line_df["Quantity."] > 0]
