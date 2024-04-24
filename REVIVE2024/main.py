@@ -592,28 +592,21 @@ while True:
                     idf.run(readvars=True,output_prefix=str(str(BaseFileName) + "_BR"))
 
                 fname = os.path.join(studyFolder, BaseFileName + '_BRtbl.htm')
-                filehandle = open(fname, 'r').read()
-                ltables = readhtml.lines_table(filehandle) # reads the tables with their titles
 
-                for ltable in ltables:
-                    if 'Site and Source Energy' in '\n'.join(ltable[0]): #and 'For: Entire Facility' in '\n'.join(ltable[0]):
-                        eui = float(ltable[1][1][2])
+                site_source_energy_table = fasthtml.tablebyname(open(fname, 'r'), "Site and Source Energy")
+                eui = float(site_source_energy_table[1][1][2])
 
-                for ltable in ltables:
-                    if 'Time Bin Results' in '\n'.join(ltable[0]): #and 'For: Entire Facility' in '\n'.join(ltable[0]):
-                        Below2C = float(ltable[1][39][2])
-                        
-                for ltable in ltables:
-                    if 'Heating SET Hours' in '\n'.join(ltable[0]): #and 'For: Entire Facility' in '\n'.join(ltable[0]):
-                        HeatingSET = float(ltable[1][1][1])
+                time_bin_table = fasthtml.tablebyname(open(fname, 'r'), "Time Bin Results")
+                Below2C = float(time_bin_table[1][39][2])
 
-                for ltable in ltables:
-                    if 'Heat Index Hours' in '\n'.join(ltable[0]): #and 'For: Entire Facility' in '\n'.join(ltable[0]):
-                        Caution = float(ltable[1][1][2])
-                        ExtremeCaution = float(ltable[1][1][3])
-                        Danger = float(ltable[1][1][4])
-                        ExtremeDanger = float(ltable[1][1][5])
+                heating_set_hours_table = fasthtml.tablebyname(open(fname, 'r'), "Heating SET Hours")
+                HeatingSET = float(heating_set_hours_table[1][1][1])
 
+                heating_index_hours_table = fasthtml.tablebyname(open(fname, 'r'), "Heat Index Hours")
+                Caution = float(heating_index_hours_table[1][1][2])
+                ExtremeCaution = float(heating_index_hours_table[1][1][3])
+                Danger = float(heating_index_hours_table[1][1][4])
+                ExtremeDanger = float(heating_index_hours_table[1][1][5])
 
                 # Resilience Graphs
                         
@@ -840,16 +833,12 @@ while True:
                 hourly = hourly.reset_index()
 
                 fname = os.path.join(studyFolder, BaseFileName + '_BAtbl.htm')
-                filehandle = open(fname, 'r').read()
-                ltables = readhtml.lines_table(filehandle) # reads the tables with their titles
+                
+                site_source_energy_table = fasthtml.tablebyname(open(fname, 'r'), "Site and Source Energy")
+                eui = float(site_source_energy_table[1][1][2])
 
-                for ltable in ltables:
-                    if 'Site and Source Energy' in '\n'.join(ltable[0]): #and 'For: Entire Facility' in '\n'.join(ltable[0]):
-                        eui = float(ltable[1][1][2])
-
-                for ltable in ltables:
-                    if 'Annual and Peak Values - Electricity' in '\n'.join(ltable[0]): #and 'For: Entire Facility' in '\n'.join(ltable[0]):
-                        peakElec = float(ltable[1][1][4])
+                annual_peak_values_table = fasthtml.tablebyname(open(fname, 'r'), "Annual and Peak Values - Electricity")
+                peakElec = float(annual_peak_values_table[1][1][4])
 
                 if 'BASE' in str(BaseFileName):
                     firstCost = [0,0]
@@ -876,39 +865,39 @@ while True:
                     dhwCostList = []
                     applianceCostList = []
                     lightsCost = []
-                    for ltable in ltables:
-                        if 'Construction Cost Estimate Summary' in '\n'.join(ltable[0]): #and 'For: Entire Facility' in '\n'.join(ltable[0]):
-                            firstCost = [(float(ltable[1][9][2])),0]
-                            # firstCost = [(float(ltable[1][9][2])*1.8),0]
-                        if 'Cost Line Item Details' in '\n'.join(ltable[0]):
-                            rows = len(ltable[1])
-                            for row in range(rows):
-                                # print(ltable[1][row][2])
-                                # print(ltable[1][row][5])
-                                if 'WALL' in str(ltable[1][row][2]):
-                                    wallCostList.append(ltable[1][row][6])
-                                if 'ROOF' in str(ltable[1][row][2]):
-                                    roofCostList.append(ltable[1][row][6])
-                                if 'FLOOR' in str(ltable[1][row][2]):
-                                    floorCostList.append(ltable[1][row][6])
-                                if 'WINDOW' in str(ltable[1][row][2]):
-                                    windowCostList.append(ltable[1][row][6])
-                                if 'DOOR' in str(ltable[1][row][2]):
-                                    doorCostList.append(ltable[1][row][6])
-                                if 'AIR SEALING' in str(ltable[1][row][2]):
-                                    airSealingCostList.append(ltable[1][row][6])
-                                if 'MECH' in str(ltable[1][row][2]):
-                                    mechCostList.append(ltable[1][row][6])
-                                if 'DHW' in str(ltable[1][row][2]):
-                                    dhwCostList.append(ltable[1][row][6])
-                                if 'APPLIANCES' in str(ltable[1][row][2]):
-                                    applianceCostList.append(ltable[1][row][6])
-                                if 'LIGHTS' in str(ltable[1][row][2]):
-                                    applianceCostList.append(ltable[1][row][6])
-                                if 'PV COST' in str(ltable[1][row][2]):
-                                    pvCost = (ltable[1][row][6])
-                                if 'BATTERY COST' in str(ltable[1][row][2]):
-                                    batteryCost = (ltable[1][row][6])
+
+                    construction_cost_est_table = fasthtml.tablebyname(open(fname, 'r'), "Construction Cost Estimate Summary")
+                    firstCost = [float(construction_cost_est_table[1][9][2]),0]
+
+                    cost_line_item_detail_table = fasthtml.tablebyname(open(fname, 'r'), "Cost Line Item Details")
+                    rows = len(cost_line_item_detail_table[1])
+                    for row in range(rows):
+                        item_name = cost_line_item_detail_table[1][row][2]
+                        item_cost = cost_line_item_detail_table[1][row][6]
+                        if 'WALL' in item_name:
+                            wallCostList.append(item_cost)
+                        elif 'ROOF' in item_name:
+                            roofCostList.append(item_cost)
+                        elif 'FLOOR' in item_name:
+                            floorCostList.append(item_cost)
+                        elif 'WINDOW' in item_name:
+                            windowCostList.append(item_cost)
+                        elif 'DOOR' in item_name:
+                            doorCostList.append(item_cost)
+                        elif 'AIR SEALING' in item_name:
+                            airSealingCostList.append(item_cost)
+                        elif 'MECH' in item_name:
+                            mechCostList.append(item_cost)
+                        elif 'DHW' in item_name:
+                            dhwCostList.append(item_cost)
+                        elif 'APPLIANCES' in item_name:
+                            applianceCostList.append(item_cost)
+                        elif 'LIGHTS' in item_name:
+                            applianceCostList.append(item_cost)
+                        elif 'PV COST' in item_name:
+                            pvCost = (item_cost)
+                        elif 'BATTERY COST' in item_name:
+                            batteryCost = (item_cost)
 
                     wallCost = (sum(wallCostList))
                     roofCost = (sum(roofCostList))
@@ -1076,11 +1065,10 @@ while True:
                 
 
                 # extract cost line item subtotals
-                cost_line_df = None
-                for ltable in ltables:
-                    if ltable[0][0] == "Cost Line Item Details":
-                        cost_line_df = pd.DataFrame(ltable[1][1:],columns=ltable[1][0]).iloc[:-1] # drop the last summation row
-                        break
+                fname = os.path.join(studyFolder, BaseFileName + '_BAtbl.htm')
+                cost_line_item_detail_table = fasthtml.tablebyname(open(fname, 'r'), "Cost Line Item Details")
+                cost_line_df = pd.DataFrame(cost_line_item_detail_table[1][1:],
+                                            columns=cost_line_item_detail_table[1][0]).iloc[:-1] # drop the last summation row
 
                 # compute emCO2 and dirMR per non-zero line item
                 cost_line_df_subgroup = cost_line_df[cost_line_df["Quantity."] > 0]
