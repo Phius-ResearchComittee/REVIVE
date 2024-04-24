@@ -668,9 +668,9 @@ while True:
                 hourly['Date'] = hourly['Date2'].map(str) + '/' + str(2020)
                 hourly['Time'] = (pd.to_numeric(hourly['Time'].str.split(':').str[0])-1).astype(str).apply(lambda x: f'0{x}' if len(x)==1 else x) + hourly['Time'].str[2:]
                 hourly['DateTime'] = hourly['Date'] + ' ' + hourly['Time']
-                hourly['DateTime'] = pd.to_datetime(hourly['DateTime'])
+                hourly['DateTime'] = pd.to_datetime(hourly['DateTime'], format="%m/%d/%Y %H:%M:%S", exact=True)
 
-                endWarmup = int((hourly[hourly['DateTime'] == '2020-01-01 00:00:00'].index.values))
+                endWarmup = hourly[hourly['DateTime'] == '2020-01-01 00:00:00'].index[0]
                 dropWarmup = [*range(0, endWarmup,1)]
 
                 hourly = hourly.drop(index = dropWarmup)
@@ -873,9 +873,9 @@ while True:
                 hourly['Date'] = hourly['Date2'].map(str) + '/' + str(2020)
                 hourly['Time'] = (pd.to_numeric(hourly['Time'].str.split(':').str[0])-1).astype(str).apply(lambda x: f'0{x}' if len(x)==1 else x) + hourly['Time'].str[2:]
                 hourly['DateTime'] = hourly['Date'] + ' ' + hourly['Time']
-                hourly['DateTime'] = pd.to_datetime(hourly['DateTime'])
+                hourly['DateTime'] = pd.to_datetime(hourly['DateTime'], format="%m/%d/%Y %H:%M:%S", exact=True)
 
-                endWarmup = int((hourly[hourly['DateTime'] == '2020-01-01 00:00:00'].index.values))
+                endWarmup = hourly[hourly['DateTime'] == '2020-01-01 00:00:00'].index[0]
                 dropWarmup = [*range(0, endWarmup,1)]
 
                 hourly = hourly.drop(index = dropWarmup)
@@ -992,9 +992,9 @@ while True:
                 hourlyBA['Date'] = hourlyBA['Date2'].map(str) + '/' + str(2020)
                 hourlyBA['Time'] = (pd.to_numeric(hourlyBA['Time'].str.split(':').str[0])-1).astype(str).apply(lambda x: f'0{x}' if len(x)==1 else x) + hourlyBA['Time'].str[2:]
                 hourlyBA['DateTime'] = hourlyBA['Date'] + ' ' + hourlyBA['Time']
-                hourlyBA['DateTime'] = pd.to_datetime(hourlyBA['DateTime'])
+                hourlyBA['DateTime'] = pd.to_datetime(hourlyBA['DateTime'], format="%m/%d/%Y %H:%M:%S", exact=True)
 
-                endWarmup = int((hourlyBA[hourlyBA['DateTime'] == '2020-01-01 00:00:00'].index.values))
+                endWarmup = hourlyBA[hourlyBA['DateTime'] == '2020-01-01 00:00:00'].index[0]
                 dropWarmup = [*range(0, endWarmup,1)]
 
                 hourlyBA = hourlyBA.drop(index = dropWarmup)
