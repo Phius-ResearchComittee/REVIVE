@@ -24,11 +24,11 @@ import subprocess
 import os
 from os import system
 
-def People(idf, occ):
+def People(idf, zone, occ):
 
     idf.newidfobject('People',
-    Name = 'Zone Occupants',
-    Zone_or_ZoneList_Name = 'Zone 1',
+    Name = (str(zone) + ' Occupants'),
+    Zone_or_ZoneList_Name = str(zone),
     Number_of_People_Schedule_Name = 'OccupantSchedule',
     Number_of_People_Calculation_Method = 'People',
     Number_of_People = occ,
@@ -49,11 +49,11 @@ def People(idf, occ):
     Thermal_Comfort_Model_1_Type = 'Pierce'
     )
 
-def LightsMELsAppliances(idf, PhiusLights, PhiusMELs, fridge, rangeElec, clothesDryer,clothesWasher,dishWasher):
+def LightsMELsAppliances(idf, zone, PhiusLights, PhiusMELs, fridge, rangeElec, clothesDryer,clothesWasher,dishWasher):
 
     idf.newidfobject('Lights',
-        Name = 'PhiusLights',
-        Zone_or_ZoneList_Name = 'Zone 1',
+        Name = (str(zone) + ' PhiusLights'),
+        Zone_or_ZoneList_Name = str(zone),
         Schedule_Name = 'Phius_Lighting',
         Design_Level_Calculation_Method = 'LightingLevel',
         Lighting_Level = PhiusLights,
@@ -63,8 +63,8 @@ def LightsMELsAppliances(idf, PhiusLights, PhiusMELs, fridge, rangeElec, clothes
         )
 
     idf.newidfobject('ElectricEquipment',
-        Name = 'PhiusMELs',
-        Zone_or_ZoneList_Name = 'Zone 1',
+        Name = (str(zone) + ' PhiusMELs'),
+        Zone_or_ZoneList_Name = str(zone),
         Schedule_Name = 'Phius_MELs',
         Design_Level_Calculation_Method = 'EquipmentLevel',
         Design_Level = PhiusMELs,
@@ -73,8 +73,8 @@ def LightsMELsAppliances(idf, PhiusLights, PhiusMELs, fridge, rangeElec, clothes
         )
 
     idf.newidfobject('ElectricEquipment',
-        Name = 'Fridge',
-        Zone_or_ZoneList_Name = 'Zone 1',
+        Name = (str(zone) + ' Fridge'),
+        Zone_or_ZoneList_Name = str(zone),
         Schedule_Name = 'Always_On',
         Design_Level_Calculation_Method = 'EquipmentLevel',
         Design_Level = fridge,
@@ -83,8 +83,8 @@ def LightsMELsAppliances(idf, PhiusLights, PhiusMELs, fridge, rangeElec, clothes
         )
 
     idf.newidfobject('ElectricEquipment',
-        Name = 'Range',
-        Zone_or_ZoneList_Name = 'Zone 1',
+        Name = (str(zone) + ' Range'),
+        Zone_or_ZoneList_Name = str(zone),
         Schedule_Name = 'BARangeSchedule',
         Design_Level_Calculation_Method = 'EquipmentLevel',
         Design_Level = rangeElec,
@@ -94,8 +94,8 @@ def LightsMELsAppliances(idf, PhiusLights, PhiusMELs, fridge, rangeElec, clothes
         )
 
     idf.newidfobject('ElectricEquipment',
-        Name = 'ClothesDryer',
-        Zone_or_ZoneList_Name = 'Zone 1',
+        Name = (str(zone) + ' ClothesDryer'),
+        Zone_or_ZoneList_Name = str(zone),
         Schedule_Name = 'BAClothesDryerSchedule',
         Design_Level_Calculation_Method = 'EquipmentLevel',
         Design_Level = clothesDryer,
@@ -105,8 +105,8 @@ def LightsMELsAppliances(idf, PhiusLights, PhiusMELs, fridge, rangeElec, clothes
         )
 
     idf.newidfobject('ElectricEquipment',
-        Name = 'ClothesWasher',
-        Zone_or_ZoneList_Name = 'Zone 1',
+        Name = (str(zone) + ' ClothesWasher'),
+        Zone_or_ZoneList_Name = str(zone),
         Schedule_Name = 'BAClothesWasherSchedule',
         Design_Level_Calculation_Method = 'EquipmentLevel',
         Design_Level = clothesWasher,
@@ -116,8 +116,8 @@ def LightsMELsAppliances(idf, PhiusLights, PhiusMELs, fridge, rangeElec, clothes
         )
 
     idf.newidfobject('ElectricEquipment',
-        Name = 'Dishwasher',
-        Zone_or_ZoneList_Name = 'Zone 1',
+        Name = (str(zone) + ' Dishwasher'),
+        Zone_or_ZoneList_Name = str(zone),
         Schedule_Name = 'BADishwasherSchedule',
         Design_Level_Calculation_Method = 'EquipmentLevel',
         Design_Level = dishWasher,
@@ -132,34 +132,34 @@ def LightsMELsAppliances(idf, PhiusLights, PhiusMELs, fridge, rangeElec, clothes
         Design_Level = 1,
         Control_Option = 'AstronomicalClock')
 
-def SizingLoads(idf, sizingLoadSensible, sizingLoadLatent):
+def SizingLoads(idf, zone, sizingLoadSensible, sizingLoadLatent):
     idf.newidfobject('ElectricEquipment',
-        Name = 'SizingSensible',
-        Zone_or_ZoneList_Name = 'Zone 1',
+        Name = (str(zone) + ' SizingSensible'),
+        Zone_or_ZoneList_Name = str(zone),
         Schedule_Name = 'SizingLoads',
         Design_Level_Calculation_Method = 'EquipmentLevel',
         Design_Level = sizingLoadSensible)
 
     idf.newidfobject('ElectricEquipment',
-        Name = 'SizingLatent',
-        Zone_or_ZoneList_Name = 'Zone 1',
+        Name = (str(zone) + ' SizingLatent'),
+        Zone_or_ZoneList_Name = str(zone),
         Schedule_Name = 'SizingLoads',
         Design_Level_Calculation_Method = 'EquipmentLevel',
         Design_Level = sizingLoadLatent,
         Fraction_Latent = 1.0)
 
-def ThermalMass(idf, icfa_M):
+def ThermalMass(idf, zone, icfa):
 
     idf.newidfobject('InternalMass',
-        Name = 'Zone1 TM',
+        Name = (str(zone) + ' Zone1 TM'),
         Construction_Name = 'Thermal Mass', 
-        Zone_or_ZoneList_Name = 'Zone 1',
-        Surface_Area = icfa_M
+        Zone_or_ZoneList_Name = str(zone),
+        Surface_Area = icfa
         )
     
     idf.newidfobject('InternalMass',
-        Name = 'Partitions',
+        Name = (str(zone) + ' Partitions'),
         Construction_Name = 'Interior Wall', 
-        Zone_or_ZoneList_Name = 'Zone 1',
-        Surface_Area = icfa_M
+        Zone_or_ZoneList_Name = str(zone),
+        Surface_Area = icfa
         )

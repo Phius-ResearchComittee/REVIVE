@@ -267,6 +267,8 @@ while True:
                 return
 
             try:
+
+                
                 ZoneName = 'Zone 1'
 
                 icfa = runList['ICFA'][runCount]
@@ -284,60 +286,36 @@ while True:
                 # IHG Calc
                 constructionList = pd.read_csv(constructionDatabase, index_col="Name")
                 appliance_list = list(runList['APPLIANCE_LIST'][runCount].split(', '))
-
+                
                 total_appliance_cost = fridge = dishWasher = clothesWasher = clothesDryer = lights_cost = 0
-                for appliance_name, row in constructionList.filter(items=appliance_list, axis=0).iterrows():
-                    rating = float(row["Appliance_Rating"]) # must be float for fractional efficiency
-                    cost = int(row["Mechanical Cost"])
-                    if 'FRIDGE' in appliance_name:
-                        fridge += (rating/(8760))*1000 # always on design load
+                ihg_dict = {}
+                for Nbr in range(9):
+                    for appliance_name, row in constructionList.filter(items=appliance_list, axis=0).iterrows():
+                        rating = float(row["Appliance_Rating"]) # must be float for fractional efficiency
+                        cost = int(row["Mechanical Cost"])
+                        if 'FRIDGE' in appliance_name:
+                            fridge += (rating/(8760))*1000 # always on design load
 
-                    elif 'DISHWASHER' in appliance_name:
-                        dishWasher += (((86.3 + (47.73 / (215 / rating)))/215) * ((88.4 + 34.9*Nbr)*(12/12))*(1/365)*1000)
+                        elif 'DISHWASHER' in appliance_name:
+                            dishWasher += (((86.3 + (47.73 / (215 / rating)))/215) * ((88.4 + 34.9*Nbr)*(12/12))*(1/365)*1000)
 
-                    elif 'CLOTHESWASHER' in appliance_name:
-                        clothesWasher += (rating/365)*1000
+                        elif 'CLOTHESWASHER' in appliance_name:
+                            clothesWasher += (rating/365)*1000
 
-                    elif 'CLOTHESDRYER' in appliance_name:
-                        clothesDryer += ((12.4*(164+46.5*Nbr)*1.18/3.01*(2.874/0.817-704/rating)/(0.2184*(4.5*4.08+0.24)))/365)*1000
+                        elif 'CLOTHESDRYER' in appliance_name:
+                            clothesDryer += ((12.4*(164+46.5*Nbr)*1.18/3.01*(2.874/0.817-704/rating)/(0.2184*(4.5*4.08+0.24)))/365)*1000
 
-                    elif 'LIGHTS' in appliance_name:
-                        fracHighEff = rating
-                        lights_cost += cost
+                        elif 'LIGHTS' in appliance_name:
+                            fracHighEff = rating
+                            lights_cost += cost
                     
-                    total_appliance_cost += cost
+                        total_appliance_cost += cost
+                    ihg_dict[Nbr] = {'fridge':fridge, 'dishwasher':dishWasher, 'clotheswasher':clothesWasher,
+                                     'clothesdryer':clothesDryer, 'lighting efficacy':fracHighEff, 'applianceCost':total_appliance_cost}
+                    
                 
                 # REMOVE LATER
                 constructionList = constructionList.reset_index()
-
-                
-                PhiusLights = (0.2 + 0.8*(4 - 3*fracHighEff)/3.7)*(455 + 0.8*icfa) * 0.8 * 1000 * (1/365) #power per day W use Phius calc
-                PhiusMELs = ((413 + 69*Nbr + 0.91*icfa)/365)*1000*0.8 #consumption per day per phius calc
-                rangeElec = ((331 + 39*Nbr)/365)*1000
-                
-                
-                
-                
-                # DHW Calc per BA
-                DHW_ClothesWasher = 2.3 + 0.78*Nbr
-                DHW_Dishwasher = 2.26 + 0.75*Nbr
-                DHW_Shower = 0.83*(14 + 1.17*Nbr)
-                DHW_Bath = 0.83*(3.5+1.17*Nbr)
-                DHW_Sinks = 0.83*(12.5+4.16*Nbr)
-                DHW_CombinedGPM = (DHW_ClothesWasher + DHW_Dishwasher + DHW_Shower + DHW_Bath + DHW_Sinks)*4.381E-8
-
-                # Sizing loads from ASHRAE 1199-RP
-
-                G_0s = 136  #in W
-                G_0l = 20  #in W
-                G_cfs = 2.2  #in W
-                G_cfl = 0.22  #in W
-                G_ocs = 22  #in W
-                G_ocl = 12  #in W
-
-                sizingLoadSensible = G_0s + G_cfs*icfa_M + G_ocs*occ
-                sizingLoadLatent = G_0l + G_cfl*icfa_M + G_ocl*occ
-
                 PV_SIZE = runList['PV_SIZE_[W]'][runCount]
                 PV_TILT = runList['PV_TILT'][runCount]
                 
@@ -470,8 +448,6 @@ while True:
                 for bldg in ddy.idfobjects['SizingPeriod:DesignDay']:
                     idf1.copyidfobject(bldg)
 
-                zone = idf1.idfobjects['Zone'][0]
-                zone.Floor_Area = (icfa_M)
                 
                 # High level model information
                 Version(idf1)
@@ -482,14 +458,49 @@ while True:
                 RunPeriod(idf1)
                 GeometryRules(idf1)
 
-                # IHGs
-                People(idf1, occ)
-                LightsMELsAppliances(idf1, PhiusLights, PhiusMELs, fridge, rangeElec, 
+                modeled_zones = idf1.idfobjects['ZONE']
+
+                for zone in modeled_zones:
+                    zone_name = zone.Name.split('|')
+                    if 'UNIT' in str(zone_name[1]):
+                        occ = 1 + float(zone_name[2][0])
+                        icfa_zone = zone.Floor_Area
+                        Nbr_zone = float(zone_name[2][0])
+                        fracHighEff = ihg_dict[float(zone_name[2][0])]['lighting efficacy']
+                        PhiusLights = (0.2 + 0.8*(4 - 3*fracHighEff)/3.7)*(455 + 0.8*icfa_zone*10.76391) * 0.8 * 1000 * (1/365) #power per day W use Phius calc
+                        PhiusMELs = ((413 + 69*Nbr_zone + 0.91*icfa_zone*10.76391)/365)*1000*0.8 #consumption per day per phius calc
+                        rangeElec = ((331 + 39*Nbr_zone)/365)*1000
+                        
+                        # DHW Calc per BA
+                        DHW_ClothesWasher = 2.3 + 0.78*Nbr_zone
+                        DHW_Dishwasher = 2.26 + 0.75*Nbr_zone
+                        DHW_Shower = 0.83*(14 + 1.17*Nbr_zone)
+                        DHW_Bath = 0.83*(3.5+1.17*Nbr_zone)
+                        DHW_Sinks = 0.83*(12.5+4.16*Nbr_zone)
+                        DHW_CombinedGPM = (DHW_ClothesWasher + DHW_Dishwasher + DHW_Shower + DHW_Bath + DHW_Sinks)*4.381E-8
+
+                        # Sizing loads from ASHRAE 1199-RP
+
+                        G_0s = 136  #in W
+                        G_0l = 20  #in W
+                        G_cfs = 2.2  #in W
+                        G_cfl = 0.22  #in W
+                        G_ocs = 22  #in W
+                        G_ocl = 12  #in W
+
+                        sizingLoadSensible = G_0s + G_cfs*icfa_zone + G_ocs*occ
+                        sizingLoadLatent = G_0l + G_cfl*icfa_zone + G_ocl*occ
+                        People(idf1, zone_name, occ)
+                        LightsMELsAppliances(idf1, zone_name, PhiusLights, PhiusMELs, fridge, rangeElec, 
                                     clothesDryer,clothesWasher,dishWasher)
-                SizingLoads(idf1, sizingLoadSensible, sizingLoadLatent)
-                ThermalMass(idf1, icfa_M)
+                        SizingLoads(idf1, zone_name, sizingLoadSensible, sizingLoadLatent)
+                        ThermalMass(idf1, zone_name, icfa_zone)
 
-
+                    if 'STAIR' in str(zone_name[1]):
+                        print(str(zone_name[0]) + ' is some Stairs')
+                    if 'CORRIDOR' in str(zone_name[1]):
+                        print(str(zone_name[0]) + ' is some a Corridor')
+                
                 # Materials and constructions
                 materials = pd.read_csv(os.path.join(databases, 'Material Database.csv'))
                 materialList = materials.shape[0]
