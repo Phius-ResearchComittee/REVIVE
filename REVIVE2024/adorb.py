@@ -15,7 +15,6 @@ import eppy as eppy
 from eppy import modeleditor
 from eppy.modeleditor import IDF
 from eppy.runner.run_functions import runIDFs
-import PySimpleGUI as sg
 # from PIL import Image, ImageTk
 import os
 from eppy.results import readhtml # the eppy module with functions to read the html
@@ -258,4 +257,4 @@ def multiphaseADORB(year1Path,year1Start,year2Path,year2Start,year3Path,year3Sta
     adorbComp = final[['pv_dirEn','pv_dirMR','pv_eTrans','pv_emCO2','pv_opCO2']].sum()
     adorbTotal = sum(adorbComp)
 
-    sg.popup('Analysis Complete', adorbComp, ('ADORB Total = $' + str(round(adorbTotal))))
+    print("Analysis Complete")
