@@ -14,7 +14,6 @@ import math
 import eppy as eppy
 from eppy import modeleditor
 from eppy.modeleditor import IDF
-import PySimpleGUI as sg
 # from PIL import Image, ImageTk
 import os
 from eppy.results import readhtml # the eppy module with functions to read the html
