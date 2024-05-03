@@ -24,9 +24,49 @@ import REVIVE2024.envelope as envelope
 import REVIVE2024.hvac as hvac
 import REVIVE2024.internalHeatGains as internalHeatGains
 import REVIVE2024.outputs as outputs
-import REVIVE2024.parallel as parallel
+# import REVIVE2024.parallel as parallel
 import REVIVE2024.renewables as renewables
 import REVIVE2024.schedules as schedules
+import REVIVE2024.simControl as simControl
+import REVIVE2024.weatherMorph as weatherMorph
+
+def validate_input(batch_name, idd_file, study_folder, run_list, db_dir):
+    # ensure all fields are not empty
+    try:
+        assert batch_name, "a batch name"
+        assert idd_file, "the location of the Energy+ IDD File"
+        assert study_folder, "a study/output folder"
+        assert run_list, "a run list file"
+        assert db_dir, "the location of the database folder"
+    except AssertionError as missing_item:
+        return f"Please specify {missing_item}."
+    
+    # ensure all file paths can be found
+    try:
+        assert os.path.isfile(idd_file), f"Energy+ IDD file path ({idd_file})"
+        assert os.path.isfile(run_list), f"Run list file path ({run_list})"
+        assert os.path.isdir(study_folder), f"Study/output folder path ({study_folder})"
+        assert os.path.isdir(db_dir), f"Database folder path ({db_dir})"
+    except AssertionError as wrong_path:
+        return f"{wrong_path} does not exist."
+    
+    # ensure database folder contains necessary files/folders
+    try:
+        emissions_file = "Hourly Emission Rates.csv"
+        weather_folder = "Weather Data"
+        construction_file = "Construction Database.csv"
+        assert os.path.isfile(os.path.join(db_dir, emissions_file)), f"file \"{emissions_file}\""
+        assert os.path.isdir(os.path.join(db_dir, weather_folder)), f"folder \"{weather_folder}\""
+        assert os.path.isfile(os.path.join(db_dir, construction_file)), f"file \"{construction_file}\""
+    except AssertionError as missing_item:
+        return f"Cannot find {missing_item} in specified database directory."
+    
+    # add validation for columns here
+
+    # no errors to report
+    return ""
+        
+
 
 def simulate(batchName, iddfile, studyFolder, runList, databaseDir, graphs, pdfReport, isDummyMode):
     DUMMY_MODE = isDummyMode
