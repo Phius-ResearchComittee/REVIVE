@@ -80,6 +80,7 @@ def simulate(batchName, iddfile, studyFolder, runList, databaseDir, graphs, pdfR
 
     runList = pd.read_csv(runList)
     totalRuns = runList.shape[0]
+    ResultsTable = pd.DataFrame()
     for case in range(totalRuns):
         runCount = case
         idfgName = str(runList['GEOMETRY_IDF'][runCount])
@@ -97,18 +98,12 @@ def simulate(batchName, iddfile, studyFolder, runList, databaseDir, graphs, pdfR
         # 4.0 Variable Assignment
         #==============================================================================================================================
 
-        try:
-            epwFile = os.path.join(weatherDatabase, str(runList['EPW'][runCount]))
-            ddyName =  os.path.join(weatherDatabase, str(runList['DDY'][runCount]))
-            
-            # validate spreadsheet input
-            assert os.path.isfile(epwFile), "Cannot find specified EPW file."
-            assert os.path.isfile(ddyName), "Cannot find specified DDY file."
-            
-        except AssertionError as ae:
-            # handling still needs some work
-            print(e)
-            return
+        epwFile = os.path.join(weatherDatabase, str(runList['EPW'][runCount]))
+        ddyName =  os.path.join(weatherDatabase, str(runList['DDY'][runCount]))
+        
+        # validate spreadsheet input
+        assert os.path.isfile(epwFile), "Cannot find specified EPW file."
+        assert os.path.isfile(ddyName), "Cannot find specified DDY file."
 
         try:
             ZoneName = 'Zone 1'
@@ -1011,7 +1006,6 @@ def simulate(batchName, iddfile, studyFolder, runList, databaseDir, graphs, pdfR
                         adorb.adorbBarGraph)
 
         except Exception as e:
-            sg.popup(e)
             # errorFile1= (str(studyFolder) + '\eplusout.err')
             # errorFile2 = (str(studyFolder) + "/" + str(BaseFileName)  + '_BA_eplusout.sql')
             
@@ -1059,4 +1053,5 @@ def simulate(batchName, iddfile, studyFolder, runList, databaseDir, graphs, pdfR
             
             ResultsTable = pd.concat([ResultsTable, newResultRow], axis=0, ignore_index=True)#, ignore_index=Truue
             ResultsTable.to_csv(os.path.join(studyFolder, batchName + "_ResultsTable.csv"))
+            raise Exception(e)
             # print('Saved Results')
