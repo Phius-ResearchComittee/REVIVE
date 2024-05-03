@@ -165,4 +165,33 @@ class MyWidget(QtWidgets.QWidget):
 
     @QtCore.Slot()
     def simulate(self):
-        simulate.simulate()
+        # collect arguments to send to simulate function
+        batch_name = self.batch_name.text()
+        idd_file = self.file_entry_widgets[self.widget_labels[1]].text() # IDD File
+        study_folder = self.file_entry_widgets[self.widget_labels[2]].text() # Study/output folder
+        run_list = self.file_entry_widgets[self.widget_labels[3]].text() # Run list file
+        db_dir = self.file_entry_widgets[self.widget_labels[4]].text() # Database directory
+        show_graphs = self.gen_graphs_option.isChecked()
+        gen_pdf_report = self.gen_pdf_option.isChecked()
+        del_files = self.del_files_option.isChecked()
+        is_dummy_mode = "-t" in sys.argv or "--test" in sys.argv
+
+        # input validation
+        err_string = simulate.validate_input(batch_name, idd_file, study_folder, run_list, db_dir)
+
+        # run the simulation
+        try:
+            assert err_string == "", err_string
+            self.save_settings() # remember these inputs for next run
+            simulate.simulate(batch_name, idd_file, study_folder, run_list, db_dir, show_graphs, gen_pdf_report, is_dummy_mode)
+        except Exception as err_msg:
+            self.error_msg_box.setText(str(err_msg))
+            self.error_msg_box.exec_()
+        else:
+            self.completion_msg_box.setText("Analysis complete!")
+            self.completion_msg_box.exec_()
+
+    
+    def save_settings(self):
+        for widget_key, qline in self.file_entry_widgets.items():
+            self.settings.setValue(widget_key, qline.text())
