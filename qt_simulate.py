@@ -1,8 +1,9 @@
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
-import datetime as dt
-from datetime import datetime
+# import datetime as dt
+from datetime import datetime as dt
+from datetime import timedelta
 import email.utils as eutils
 from statistics import mean
 import eppy as eppy
@@ -317,20 +318,20 @@ def simulate(batchName, iddfile, studyFolder, runList, databaseDir, graphs, pdfR
             zone.Floor_Area = (icfa_M)
             
             # High level model information
-            Version(idf1)
-            SimulationControl(idf1)
-            Building(idf1,BaseFileName)
-            CO2Balance(idf1)
-            Timestep(idf1)
-            RunPeriod(idf1)
-            GeometryRules(idf1)
+            simControl.Version(idf1)
+            simControl.SimulationControl(idf1)
+            simControl.Building(idf1,BaseFileName)
+            simControl.CO2Balance(idf1)
+            simControl.Timestep(idf1)
+            simControl.RunPeriod(idf1)
+            simControl.GeometryRules(idf1)
 
             # IHGs
-            People(idf1, occ)
-            LightsMELsAppliances(idf1, PhiusLights, PhiusMELs, fridge, rangeElec, 
+            internalHeatGains.People(idf1, occ)
+            internalHeatGains.LightsMELsAppliances(idf1, PhiusLights, PhiusMELs, fridge, rangeElec, 
                                 clothesDryer,clothesWasher,dishWasher)
-            SizingLoads(idf1, sizingLoadSensible, sizingLoadLatent)
-            ThermalMass(idf1, icfa_M)
+            internalHeatGains.SizingLoads(idf1, sizingLoadSensible, sizingLoadLatent)
+            internalHeatGains.ThermalMass(idf1, icfa_M)
 
 
             # Materials and constructions
@@ -338,7 +339,7 @@ def simulate(batchName, iddfile, studyFolder, runList, databaseDir, graphs, pdfR
             materialList = materials.shape[0]
 
             for item in range(materialList):
-                materialBuilder(idf1, materials['NAME'][item], materials['ROUGHNESS'][item], 
+                envelope.materialBuilder(idf1, materials['NAME'][item], materials['ROUGHNESS'][item], 
                                 materials['THICKNESS [m]'][item], materials['CONDUCTIVITY [W/mK]'][item],
                                 materials['DENSITY [kg/m3]'][item], materials['SPECIFIC HEAT CAPACITY [J/kgK]'][item])
                 
@@ -347,7 +348,7 @@ def simulate(batchName, iddfile, studyFolder, runList, databaseDir, graphs, pdfR
             glazings = glazingSpecs.shape[0]
 
             for item in range(glazings):
-                glazingBuilder(idf1, glazingSpecs['NAME'][item], glazingSpecs['U-FACTOR [W/m2K]'][item],glazingSpecs['SHGC'][item])
+                envelope.glazingBuilder(idf1, glazingSpecs['NAME'][item], glazingSpecs['U-FACTOR [W/m2K]'][item],glazingSpecs['SHGC'][item])
 
             # Constructions 
 
@@ -368,22 +369,22 @@ def simulate(batchName, iddfile, studyFolder, runList, databaseDir, graphs, pdfR
 
                     layerList = [x for x in layers if str(x) != 'nan']
 
-                constructionBuilder(idf1, constructionList['Name'][item],layerList)
+                envelope.constructionBuilder(idf1, constructionList['Name'][item],layerList)
 
             # Envelope inputs
-            Infiltration(idf1, flowCoefficient)
-            SpecialMaterials(idf1)
-            FoundationInterface(idf1,foundationList)
+            envelope.Infiltration(idf1, flowCoefficient)
+            envelope.SpecialMaterials(idf1)
+            envelope.FoundationInterface(idf1,foundationList)
 
-            ShadeMaterials(idf1)
+            envelope.ShadeMaterials(idf1)
 
             # Window inputs and shading controls
-            WindowVentilation(idf1, halfHeight, operableArea_N, operableArea_W, 
+            envelope.WindowVentilation(idf1, halfHeight, operableArea_N, operableArea_W, 
                     operableArea_S, operableArea_E)
             
-            WindowShadingControl(idf1, windowNames)
+            envelope.WindowShadingControl(idf1, windowNames)
 
-            AssignContructions(idf1, Ext_Wall1,Ext_Wall2,Ext_Wall3,
+            envelope.AssignContructions(idf1, Ext_Wall1,Ext_Wall2,Ext_Wall3,
                     Ext_Roof1,Ext_Roof2,Ext_Roof3,
                     Ext_Floor1,Ext_Floor2,Ext_Floor3,
                     Ext_Door1,Ext_Door2,Ext_Door3, 
@@ -391,16 +392,16 @@ def simulate(batchName, iddfile, studyFolder, runList, databaseDir, graphs, pdfR
                     Ext_Window1,Ext_Window2,Ext_Window3)
 
             # Sizing settings:
-            SizingSettings(idf1, ZoneName)
-            HVACControls(idf1, ZoneName)
-            ZoneMechConnections(idf1, ZoneName)
-            HVACBuilder(idf1, ZoneName, mechSystemType)
-            WaterHeater(idf1, ZoneName, dhwFuel, DHW_CombinedGPM)
-            Curves(idf1)
+            hvac.SizingSettings(idf1, ZoneName)
+            hvac.HVACControls(idf1, ZoneName)
+            hvac.ZoneMechConnections(idf1, ZoneName)
+            hvac.HVACBuilder(idf1, ZoneName, mechSystemType)
+            hvac.WaterHeater(idf1, ZoneName, dhwFuel, DHW_CombinedGPM)
+            hvac.Curves(idf1)
 
-            Renewables(idf1, ZoneName, PV_SIZE, PV_TILT)
+            renewables.Renewables(idf1, ZoneName, PV_SIZE, PV_TILT)
 
-            SimulationOutputs(idf1)
+            outputs.SimulationOutputs(idf1)
             # ============================================================================
             # Pass IDF 
             # ============================================================================
@@ -413,22 +414,22 @@ def simulate(batchName, iddfile, studyFolder, runList, databaseDir, graphs, pdfR
 
             idf1 = IDF(str(passIDF))
 
-            zeroSch(idf1, 'BARangeSchedule')
-            zeroSch(idf1, 'Phius_Lighting')
-            zeroSch(idf1, 'Phius_MELs')
-            zeroSch(idf1, 'CombinedDHWSchedule')
-            zeroSch(idf1, 'BAClothesDryerSchedule')
-            zeroSch(idf1, 'BAClothesWasherSchedule')
-            zeroSch(idf1, 'BADishwasherSchedule')
-            ResilienceSchedules(idf1, outage1start, outage1end, outage2start, outage2end, 
+            schedules.zeroSch(idf1, 'BARangeSchedule')
+            schedules.zeroSch(idf1, 'Phius_Lighting')
+            schedules.zeroSch(idf1, 'Phius_MELs')
+            schedules.zeroSch(idf1, 'CombinedDHWSchedule')
+            schedules.zeroSch(idf1, 'BAClothesDryerSchedule')
+            schedules.zeroSch(idf1, 'BAClothesWasherSchedule')
+            schedules.zeroSch(idf1, 'BADishwasherSchedule')
+            schedules.ResilienceSchedules(idf1, outage1start, outage1end, outage2start, outage2end, 
                         coolingOutageStart,coolingOutageEnd,NatVentAvail,
                         demandCoolingAvail,shadingAvail,outage1type)
             
-            ResilienceControls(idf1, NatVentType)
+            schedules.ResilienceControls(idf1, NatVentType)
 
-            ResilienceERV(idf1, occ, ervSense, ervLatent)
+            hvac.ResilienceERV(idf1, occ, ervSense, ervLatent)
 
-            WeatherMorphSine(idf1, outage1start, outage1end, outage2start, outage2end,
+            weatherMorph.WeatherMorphSine(idf1, outage1start, outage1end, outage2start, outage2end,
                     MorphFactorDB1, MorphFactorDP1, MorphFactorDB2, MorphFactorDP2)
 
 
@@ -480,10 +481,10 @@ def simulate(batchName, iddfile, studyFolder, runList, databaseDir, graphs, pdfR
             hourly = hourly.drop(index = dropWarmup)
             hourly = hourly.reset_index()
 
-            heatingOutageStart1 = datetime.datetime.strptime((str(heatingOutageStart) + '/' + str(2020)), '%m/%d/%Y') + datetime.timedelta(hours=24)
-            coolingOutageStart1 = datetime.datetime.strptime((str(coolingOutageStart) + '/' + str(2020)), '%m/%d/%Y') + datetime.timedelta(hours=24)
-            heatingOutageEnd1 = datetime.datetime.strptime((str(heatingOutageEnd) + '/' + str(2020)), '%m/%d/%Y') + datetime.timedelta(hours=23)
-            coolingOutageEnd1 = datetime.datetime.strptime((str(coolingOutageEnd) + '/' + str(2020)), '%m/%d/%Y') + datetime.timedelta(hours=23)
+            heatingOutageStart1 = dt.strptime((str(heatingOutageStart) + '/' + str(2020)), '%m/%d/%Y') + timedelta(hours=24)
+            coolingOutageStart1 = dt.strptime((str(coolingOutageStart) + '/' + str(2020)), '%m/%d/%Y') + timedelta(hours=24)
+            heatingOutageEnd1 = dt.strptime((str(heatingOutageEnd) + '/' + str(2020)), '%m/%d/%Y') + timedelta(hours=23)
+            coolingOutageEnd1 = dt.strptime((str(coolingOutageEnd) + '/' + str(2020)), '%m/%d/%Y') + timedelta(hours=23)
 
             maskh = (hourly['DateTime'] >= heatingOutageStart1) & (hourly['DateTime'] <= heatingOutageEnd1)
             maskc = (hourly['DateTime'] >= coolingOutageStart1) & (hourly['DateTime'] <= coolingOutageEnd1)
@@ -619,11 +620,11 @@ def simulate(batchName, iddfile, studyFolder, runList, databaseDir, graphs, pdfR
 
             idf2 = IDF(str(passIDF))
 
-            AnnualSchedules(idf2, outage1start, outage1end, outage2start, outage2end, 
+            schedules.AnnualSchedules(idf2, outage1start, outage1end, outage2start, outage2end, 
                         coolingOutageStart,coolingOutageEnd,NatVentAvail,
                         demandCoolingAvail,shadingAvail)
 
-            AnnualERV(idf2, occ, ervSense, ervLatent)
+            hvac.AnnualERV(idf2, occ, ervSense, ervLatent)
 
             for item in range(constructions):
                 
@@ -636,26 +637,26 @@ def simulate(batchName, iddfile, studyFolder, runList, databaseDir, graphs, pdfR
                 costMech = constructionList['Mechanical Cost'][item]
 
                 if cost > 0 and str(outerLayer) != 'nan':
-                    costBuilder(idf2, name, '','Construction', name,'','',cost,'')
+                    envelope.costBuilder(idf2, name, '','Construction', name,'','',cost,'')
                 
                 if costSealing > 0 and str(name) == str(flowCoefficient):
-                    costBuilder(idf2,('AIR SEALING = ' + str(name)),'','General',0,0,(costSealing*icfa),'',1)
+                    envelope.costBuilder(idf2,('AIR SEALING = ' + str(name)),'','General',0,0,(costSealing*icfa),'',1)
 
                 if costMech> 0 and str(name) == str(mechSystemType):
-                    costBuilder(idf2, ('MECH_' + str(name)),'','General',0,0,costMech,'',1)
+                    envelope.costBuilder(idf2, ('MECH_' + str(name)),'','General',0,0,costMech,'',1)
 
                 if costMech> 0 and str(dhwFuel) in str(name):
-                    costBuilder(idf2, (str(name)),'','General',0,0,costMech,'',1)
+                    envelope.costBuilder(idf2, (str(name)),'','General',0,0,costMech,'',1)
                 
                 if costBatt > 0 and str(outerLayer) == 'nan':
-                    costBuilder(idf2, name,'' ,'General',0,0,(costBatt*max(heatingBattery,coolingBattery)),'',1)
+                    envelope.costBuilder(idf2, name,'' ,'General',0,0,(costBatt*max(heatingBattery,coolingBattery)),'',1)
 
                 if costPV > 0 and str(outerLayer) == 'nan':
-                    costBuilder(idf2, name,'' ,'General',0,0,(costPV*PV_SIZE),'',1)
+                    envelope.costBuilder(idf2, name,'' ,'General',0,0,(costPV*PV_SIZE),'',1)
 
 
-            costBuilder(idf2, ('APPLIANCES'),'','General',0,0,total_appliance_cost,'',1)
-            costBuilder(idf2, ('LIGHTS'),'','General',0,0,lights_cost,'',1)
+            envelope.costBuilder(idf2, ('APPLIANCES'),'','General',0,0,total_appliance_cost,'',1)
+            envelope.costBuilder(idf2, ('LIGHTS'),'','General',0,0,lights_cost,'',1)
 
 
                 
@@ -949,7 +950,7 @@ def simulate(batchName, iddfile, studyFolder, runList, databaseDir, graphs, pdfR
             # emCO2 = [(emCO2_firstCost,1),((8500*laborFraction*0.3),20),((8500*laborFraction*0.3),40),((8500*laborFraction*0.3),60)] 
             eTrans = peakElec
             
-            final = adorb(BaseFileName, studyFolder, duration, annualElec, annualGas, annualCO2Elec, annualCO2Gas, dirMR, emCO2, eTrans, graphs)
+            final = adorb.adorb(BaseFileName, studyFolder, duration, annualElec, annualGas, annualCO2Elec, annualCO2Gas, dirMR, emCO2, eTrans, graphs)
 
             adorbCost = final[0]
             pv_dirEn_tot = final[1]

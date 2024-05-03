@@ -1,8 +1,5 @@
 
-import random
 import sys
-import os
-import pandas as pd
 import qt_gui as gui
 from PySide6 import QtWidgets
 
