@@ -1,10 +1,12 @@
 from PySide6 import QtCore, QtWidgets, QtGui
 import qt_simulate as simulate
-import sys
 
 class MyWidget(QtWidgets.QWidget):
-    def __init__(self):
-        super().__init__()
+
+    def __init__(self, is_dummy_mode: bool, parent: QtWidgets.QWidget=None):
+        # initialize window
+        super().__init__(parent)
+        self.is_dummy_mode = is_dummy_mode
 
         # set up app identity
         self.app_name = "REVIVE Calculator Tool"
@@ -15,6 +17,54 @@ class MyWidget(QtWidgets.QWidget):
         # customize window
         self.setWindowTitle(self.app_name)
         self.setWindowIcon(self.icon)
+
+        # create a message box for error popups
+        self.error_msg_box = QtWidgets.QMessageBox()
+        self.error_msg_box.setIcon(QtWidgets.QMessageBox.Critical)
+        self.error_msg_box.setWindowTitle("Error")
+        self.error_msg_box.setWindowIcon(self.icon)
+
+        # create a message box for completion alert
+        self.info_msg_box = QtWidgets.QMessageBox()
+        self.info_msg_box.setIcon(QtWidgets.QMessageBox.Information)
+        self.info_msg_box.setWindowTitle(self.app_name)
+        self.info_msg_box.setWindowIcon(self.icon)
+
+        # create different pages
+        self.tab_widget = QtWidgets.QTabWidget()
+        self.tab_widget.addTab(SimulateTab(self), "Simulation")
+        self.tab_widget.addTab(MPAdorbTab(self), "Multi-phase ADORB")
+
+        # attach tab widgets to main widget
+        self.layout = QtWidgets.QVBoxLayout()
+        self.layout.addWidget(self.tab_widget)
+        self.setLayout(self.layout)
+
+
+    def set_setting(self, setting_key, setting_val):
+        self.settings.setValue(setting_key, setting_val)
+
+
+    def get_setting(self, setting_key):
+        return self.settings.value(setting_key, "")
+
+
+    def display_error(self, msg: str):
+        self.error_msg_box.setText(msg)
+        self.error_msg_box.exec_()
+
+
+    def display_info(self, msg: str):
+        self.info_msg_box.setText(msg)
+        self.info_msg_box.exec_()
+
+
+
+class SimulateTab(QtWidgets.QWidget):
+    def __init__(self, parent):
+        # init the widget
+        super().__init__(parent)
+        self.parent = parent
 
         # create top-level widgets
         self.file_entry_layout = QtWidgets.QGridLayout()
@@ -46,7 +96,7 @@ class MyWidget(QtWidgets.QWidget):
         self.progress_bar = QtWidgets.QProgressBar()
 
         # add top-level widgets to main layout
-        self.layout = QtWidgets.QVBoxLayout(self)
+        self.layout = QtWidgets.QVBoxLayout()
         self.layout.addWidget(self.file_entry_groupbox)
         self.layout.addWidget(self.run_options_groupbox)
         self.layout.addWidget(self.sim_button)
@@ -58,17 +108,8 @@ class MyWidget(QtWidgets.QWidget):
         # enable the big simulate button
         self.sim_button.clicked.connect(self.simulate)
 
-        # create a message box for error popups
-        self.error_msg_box = QtWidgets.QMessageBox()
-        self.error_msg_box.setIcon(QtWidgets.QMessageBox.Critical)
-        self.error_msg_box.setWindowTitle("Error")
-        self.error_msg_box.setWindowIcon(self.icon)
-
-        # create a message box for completion alert
-        self.completion_msg_box = QtWidgets.QMessageBox()
-        self.completion_msg_box.setIcon(QtWidgets.QMessageBox.Information)
-        self.completion_msg_box.setWindowTitle(self.app_name)
-        self.completion_msg_box.setWindowIcon(self.icon)
+        # set the layout
+        self.setLayout(self.layout)
 
 
     def create_file_entry_widgets(self):
@@ -88,7 +129,7 @@ class MyWidget(QtWidgets.QWidget):
                 QtWidgets.QLineEdit.TrailingPosition)
             
             # populate fields with last used information, blank string as default
-            qline.setText(self.settings.value(widget_key, ""))
+            qline.setText(self.parent.get_setting(widget_key))
             
             # add to layout
             qlabel = QtWidgets.QLabel()
@@ -98,13 +139,13 @@ class MyWidget(QtWidgets.QWidget):
 
         # connect the actions
         self._open_file_explorer_actions[self.widget_labels[1]].triggered.connect( # IDD file
-            lambda idd_handler : self.on_open_file(self.widget_labels[1], "*.idd"))
+            lambda _ : self.on_open_file(self.widget_labels[1], "*.idd"))
         self._open_file_explorer_actions[self.widget_labels[2]].triggered.connect( # Study/output folder
-            lambda output_handler : self.on_open_folder(self.widget_labels[2]))
+            lambda _ : self.on_open_folder(self.widget_labels[2]))
         self._open_file_explorer_actions[self.widget_labels[3]].triggered.connect( # Run list file
-            lambda runlist_handler : self.on_open_file(self.widget_labels[3], "*.csv"))
+            lambda _ : self.on_open_file(self.widget_labels[3], "*.csv"))
         self._open_file_explorer_actions[self.widget_labels[4]].triggered.connect( # Database folder
-            lambda db_handler : self.on_open_folder(self.widget_labels[4]))
+            lambda _ : self.on_open_folder(self.widget_labels[4]))
             
         # apply layout to groupbox widget
         self.file_entry_groupbox.setLayout(self.file_entry_layout)
@@ -174,7 +215,6 @@ class MyWidget(QtWidgets.QWidget):
         show_graphs = self.gen_graphs_option.isChecked()
         gen_pdf_report = self.gen_pdf_option.isChecked()
         del_files = self.del_files_option.isChecked()
-        is_dummy_mode = "-t" in sys.argv or "--test" in sys.argv
 
         # input validation
         err_string = simulate.validate_input(batch_name, idd_file, study_folder, run_list, db_dir)
@@ -183,15 +223,107 @@ class MyWidget(QtWidgets.QWidget):
         try:
             assert err_string == "", err_string
             self.save_settings() # remember these inputs for next run
-            simulate.simulate(batch_name, idd_file, study_folder, run_list, db_dir, show_graphs, gen_pdf_report, is_dummy_mode)
+            simulate.simulate(batch_name, idd_file, study_folder, run_list, db_dir, show_graphs, gen_pdf_report, self.parent.is_dummy_mode)
         except Exception as err_msg:
-            self.error_msg_box.setText(str(err_msg))
-            self.error_msg_box.exec_()
+            self.parent.display_error(str(err_msg))
         else:
-            self.completion_msg_box.setText("Analysis complete!")
-            self.completion_msg_box.exec_()
+            self.parent.display_info("Analysis complete!")
 
     
     def save_settings(self):
         for widget_key, qline in self.file_entry_widgets.items():
-            self.settings.setValue(widget_key, qline.text())
+            self.parent.set_setting(widget_key, qline.text())
+
+
+
+class MPAdorbTab(QtWidgets.QWidget):
+    def __init__(self, parent):
+        
+        # call widget init
+        super().__init__()
+        self.parent = parent
+
+        # create top-level widgets
+        self.layout = QtWidgets.QVBoxLayout()
+        self.phases_layout = QtWidgets.QVBoxLayout()
+        self.add_phase_button = QtWidgets.QPushButton("Add additional phase")
+        self.complete_button = QtWidgets.QPushButton("Complete")
+
+        # add widgets to main layout
+        self.layout.addLayout(self.phases_layout)
+        self.layout.addWidget(self.add_phase_button)
+        self.layout.addStretch()
+        self.layout.addWidget(self.complete_button)
+        
+        # init adorb constants
+        self.phase_count = 1
+        self.max_phases = 5
+        self.num_sim_years = 70
+
+        # store the results of the phases
+        self.file_entries = {}
+        self.year_entries = {}
+        
+        # set up phase entries
+        for _ in range(3):
+            self.spawn_phase_entry_widget()
+
+        # enable the buttons
+        self.add_phase_button.clicked.connect(self.spawn_phase_entry_widget)
+
+        # set the layout
+        self.setLayout(self.layout)
+
+
+    @QtCore.Slot()
+    def spawn_phase_entry_widget(self):
+        # check to make sure we haven't exceded capacity
+        if self.phase_count > self.max_phases:
+            self.parent.display_error(f"Max number of phases reached: {self.max_phases}.")
+            return
+
+        # create box for labels, file entry, and year entry
+        phase_layout = QtWidgets.QHBoxLayout()
+
+        # create file entry box and connect action
+        file_entry_box = QtWidgets.QLineEdit()
+        self.file_entries[self.phase_count] = file_entry_box
+        action = file_entry_box.addAction(
+            qApp.style().standardIcon(QtWidgets.QStyle.SP_DirOpenIcon),  # noqa: F821
+            QtWidgets.QLineEdit.TrailingPosition)
+        action.triggered.connect(
+            lambda _ : self.on_open_file(self.phase_count)
+        )
+
+        # create year dropdown box
+        year_start_box = QtWidgets.QComboBox()
+        year_start_box.addItems([str(x) for x in range(self.num_sim_years)])
+        year_start_box.resize(200,100)
+        self.year_entries[self.phase_count] = year_start_box
+
+        # create labels
+        file_entry_label = QtWidgets.QLabel("ADORB Results File:")
+        year_start_label = QtWidgets.QLabel("Year:")
+
+        # add new widgets to hbox
+        phase_layout.addWidget(file_entry_label)
+        phase_layout.addWidget(file_entry_box)
+        phase_layout.addWidget(year_start_label)
+        phase_layout.addWidget(year_start_box)
+
+        new_phase_widget = QtWidgets.QGroupBox(f"Phase {self.phase_count}")
+        new_phase_widget.setLayout(phase_layout)
+        self.phases_layout.addWidget(new_phase_widget)
+        self.phase_count += 1
+
+
+    @QtCore.Slot()
+    def on_open_file(self, phase_id):
+        qline = self.file_entries[phase_id]
+        prompt = f"Select File: Phase {phase_id}"
+        
+        path, _ = QtWidgets.QFileDialog.getOpenFileName(
+                self, prompt, QtCore.QDir.homePath(), "*.csv")
+
+        dest = QtCore.QDir(path)
+        qline.setText(QtCore.QDir.fromNativeSeparators(dest.path()))
