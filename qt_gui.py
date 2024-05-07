@@ -287,12 +287,13 @@ class MPAdorbTab(QtWidgets.QWidget):
 
         # create file entry box and connect action
         file_entry_box = QtWidgets.QLineEdit()
-        self.file_entries[self.phase_count] = file_entry_box
+        curr_count = self.phase_count
+        self.file_entries[curr_count] = file_entry_box
         action = file_entry_box.addAction(
             qApp.style().standardIcon(QtWidgets.QStyle.SP_DirOpenIcon),  # noqa: F821
             QtWidgets.QLineEdit.TrailingPosition)
         action.triggered.connect(
-            lambda _ : self.on_open_file(self.phase_count)
+            lambda _ : self.on_open_file(curr_count)
         )
 
         # create year dropdown box
