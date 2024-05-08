@@ -1,10 +1,10 @@
 
 import sys
 import qt_gui as gui
-from PySide6 import QtWidgets
+from PySide6.QtWidgets import QApplication
 
 if __name__=="__main__":
-    app = QtWidgets.QApplication([])
+    app = QApplication([])
 
     widget = gui.MyWidget("-t" in sys.argv or "--test" in sys.argv)
     widget.resize(800, 600)
