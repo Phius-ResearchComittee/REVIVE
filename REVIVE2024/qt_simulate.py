@@ -20,16 +20,16 @@ import os
 import sys
 from os import system
 import pylatex
-import REVIVE2024.adorb as adorb
-import REVIVE2024.envelope as envelope
-import REVIVE2024.hvac as hvac
-import REVIVE2024.internalHeatGains as internalHeatGains
-import REVIVE2024.outputs as outputs
-# import REVIVE2024.parallel as parallel
-import REVIVE2024.renewables as renewables
-import REVIVE2024.schedules as schedules
-import REVIVE2024.simControl as simControl
-import REVIVE2024.weatherMorph as weatherMorph
+import adorb
+import envelope
+import hvac
+import internalHeatGains
+import outputs
+# import parallel
+import renewables
+import schedules
+import simControl
+import weatherMorph
 
 def validate_input(batch_name, idd_file, study_folder, run_list, db_dir):
     # ensure all fields are not empty
@@ -66,7 +66,13 @@ def validate_input(batch_name, idd_file, study_folder, run_list, db_dir):
 
     # no errors to report
     return ""
-        
+
+
+def divide_chunks(l, n): 
+      
+    # looping till length l 
+    for i in range(0, len(l), n):  
+        yield l[i:i + n]
 
 
 def simulate(batchName, iddfile, studyFolder, runList, databaseDir, graphs, pdfReport, isDummyMode):
@@ -125,58 +131,34 @@ def simulate(batchName, iddfile, studyFolder, runList, databaseDir, graphs, pdfR
             appliance_list = list(runList['APPLIANCE_LIST'][runCount].split(', '))
 
             total_appliance_cost = fridge = dishWasher = clothesWasher = clothesDryer = lights_cost = 0
-            for appliance_name, row in constructionList.filter(items=appliance_list, axis=0).iterrows():
-                rating = float(row["Appliance_Rating"]) # must be float for fractional efficiency
-                cost = int(row["Mechanical Cost"])
-                if 'FRIDGE' in appliance_name:
-                    fridge += (rating/(8760))*1000 # always on design load
+            ihg_dict = {}
+            for Nbr in range(9):
+                for appliance_name, row in constructionList.filter(items=appliance_list, axis=0).iterrows():
+                    rating = float(row["Appliance_Rating"]) # must be float for fractional efficiency
+                    cost = int(row["Mechanical Cost"])
+                    if 'FRIDGE' in appliance_name:
+                        fridge += (rating/(8760))*1000 # always on design load
 
-                elif 'DISHWASHER' in appliance_name:
-                    dishWasher += (((86.3 + (47.73 / (215 / rating)))/215) * ((88.4 + 34.9*Nbr)*(12/12))*(1/365)*1000)
+                    elif 'DISHWASHER' in appliance_name:
+                        dishWasher += (((86.3 + (47.73 / (215 / rating)))/215) * ((88.4 + 34.9*Nbr)*(12/12))*(1/365)*1000)
 
-                elif 'CLOTHESWASHER' in appliance_name:
-                    clothesWasher += (rating/365)*1000
+                    elif 'CLOTHESWASHER' in appliance_name:
+                        clothesWasher += (rating/365)*1000
 
-                elif 'CLOTHESDRYER' in appliance_name:
-                    clothesDryer += ((12.4*(164+46.5*Nbr)*1.18/3.01*(2.874/0.817-704/rating)/(0.2184*(4.5*4.08+0.24)))/365)*1000
+                    elif 'CLOTHESDRYER' in appliance_name:
+                        clothesDryer += ((12.4*(164+46.5*Nbr)*1.18/3.01*(2.874/0.817-704/rating)/(0.2184*(4.5*4.08+0.24)))/365)*1000
 
-                elif 'LIGHTS' in appliance_name:
-                    fracHighEff = rating
-                    lights_cost += cost
+                    elif 'LIGHTS' in appliance_name:
+                        fracHighEff = rating
+                        lights_cost += cost
                 
-                total_appliance_cost += cost
+                    total_appliance_cost += cost
+                ihg_dict[Nbr] = {'fridge':fridge, 'dishwasher':dishWasher, 'clotheswasher':clothesWasher,
+                                    'clothesdryer':clothesDryer, 'lighting efficacy':fracHighEff, 'applianceCost':total_appliance_cost}
+                
             
             # REMOVE LATER
             constructionList = constructionList.reset_index()
-
-            
-            PhiusLights = (0.2 + 0.8*(4 - 3*fracHighEff)/3.7)*(455 + 0.8*icfa) * 0.8 * 1000 * (1/365) #power per day W use Phius calc
-            PhiusMELs = ((413 + 69*Nbr + 0.91*icfa)/365)*1000*0.8 #consumption per day per phius calc
-            rangeElec = ((331 + 39*Nbr)/365)*1000
-            
-            
-            
-            
-            # DHW Calc per BA
-            DHW_ClothesWasher = 2.3 + 0.78*Nbr
-            DHW_Dishwasher = 2.26 + 0.75*Nbr
-            DHW_Shower = 0.83*(14 + 1.17*Nbr)
-            DHW_Bath = 0.83*(3.5+1.17*Nbr)
-            DHW_Sinks = 0.83*(12.5+4.16*Nbr)
-            DHW_CombinedGPM = (DHW_ClothesWasher + DHW_Dishwasher + DHW_Shower + DHW_Bath + DHW_Sinks)*4.381E-8
-
-            # Sizing loads from ASHRAE 1199-RP
-
-            G_0s = 136  #in W
-            G_0l = 20  #in W
-            G_cfs = 2.2  #in W
-            G_cfl = 0.22  #in W
-            G_ocs = 22  #in W
-            G_ocl = 12  #in W
-
-            sizingLoadSensible = G_0s + G_cfs*icfa_M + G_ocs*occ
-            sizingLoadLatent = G_0l + G_cfl*icfa_M + G_ocl*occ
-
             PV_SIZE = runList['PV_SIZE_[W]'][runCount]
             PV_TILT = runList['PV_TILT'][runCount]
             
@@ -309,8 +291,6 @@ def simulate(batchName, iddfile, studyFolder, runList, databaseDir, graphs, pdfR
             for bldg in ddy.idfobjects['SizingPeriod:DesignDay']:
                 idf1.copyidfobject(bldg)
 
-            zone = idf1.idfobjects['Zone'][0]
-            zone.Floor_Area = (icfa_M)
             
             # High level model information
             simControl.Version(idf1)
@@ -321,14 +301,51 @@ def simulate(batchName, iddfile, studyFolder, runList, databaseDir, graphs, pdfR
             simControl.RunPeriod(idf1)
             simControl.GeometryRules(idf1)
 
-            # IHGs
-            internalHeatGains.People(idf1, occ)
-            internalHeatGains.LightsMELsAppliances(idf1, PhiusLights, PhiusMELs, fridge, rangeElec, 
+            modeled_zones = idf1.idfobjects['ZONE']
+            DHW_CombinedGPM = 0
+
+            for zone in modeled_zones:
+                zone_name = zone.Name.split('|')
+                zone_type = zone_name[1] if len(zone_name)>1 else ""
+                if 'UNIT' in zone_type:
+                    occ = 1 + float(zone_name[2][0])
+                    icfa_zone = zone.Floor_Area
+                    Nbr_zone = float(zone_name[2][0])
+                    fracHighEff = ihg_dict[float(zone_name[2][0])]['lighting efficacy']
+                    PhiusLights = (0.2 + 0.8*(4 - 3*fracHighEff)/3.7)*(455 + 0.8*icfa_zone*10.76391) * 0.8 * 1000 * (1/365) #power per day W use Phius calc
+                    PhiusMELs = ((413 + 69*Nbr_zone + 0.91*icfa_zone*10.76391)/365)*1000*0.8 #consumption per day per phius calc
+                    rangeElec = ((331 + 39*Nbr_zone)/365)*1000
+                    
+                    # DHW Calc per BA
+                    DHW_ClothesWasher = 2.3 + 0.78*Nbr_zone
+                    DHW_Dishwasher = 2.26 + 0.75*Nbr_zone
+                    DHW_Shower = 0.83*(14 + 1.17*Nbr_zone)
+                    DHW_Bath = 0.83*(3.5+1.17*Nbr_zone)
+                    DHW_Sinks = 0.83*(12.5+4.16*Nbr_zone)
+                    DHW_CombinedGPM = (DHW_ClothesWasher + DHW_Dishwasher + DHW_Shower + DHW_Bath + DHW_Sinks)*4.381E-8
+
+                    # Sizing loads from ASHRAE 1199-RP
+
+                    G_0s = 136  #in W
+                    G_0l = 20  #in W
+                    G_cfs = 2.2  #in W
+                    G_cfl = 0.22  #in W
+                    G_ocs = 22  #in W
+                    G_ocl = 12  #in W
+
+                    sizingLoadSensible = G_0s + G_cfs*icfa_zone + G_ocs*occ
+                    sizingLoadLatent = G_0l + G_cfl*icfa_zone + G_ocl*occ
+                    internalHeatGains.People(idf1, zone_name, occ)
+                    internalHeatGains.LightsMELsAppliances(idf1, zone_name, PhiusLights, PhiusMELs, fridge, rangeElec, 
                                 clothesDryer,clothesWasher,dishWasher)
-            internalHeatGains.SizingLoads(idf1, sizingLoadSensible, sizingLoadLatent)
-            internalHeatGains.ThermalMass(idf1, icfa_M)
+                    internalHeatGains.SizingLoads(idf1, zone_name, sizingLoadSensible, sizingLoadLatent)
+                    internalHeatGains.ThermalMass(idf1, zone_name, icfa_zone)
 
-
+                if 'STAIR' in zone_type:
+                    print(str(zone_name[0]) + ' is some Stairs')
+                if 'CORRIDOR' in zone_type:
+                    print(str(zone_name[0]) + ' is some a Corridor')
+            
             # Materials and constructions
             materials = pd.read_csv(os.path.join(databaseDir, 'Material Database.csv'))
             materialList = materials.shape[0]
@@ -377,7 +394,14 @@ def simulate(batchName, iddfile, studyFolder, runList, databaseDir, graphs, pdfR
             envelope.WindowVentilation(idf1, halfHeight, operableArea_N, operableArea_W, 
                     operableArea_S, operableArea_E)
             
-            envelope.WindowShadingControl(idf1, windowNames)
+
+            windowNames_split = list(divide_chunks(windowNames, 10))
+
+            for i in range(len(windowNames_split)):
+                windowNamesChunk = windowNames_split[i]
+                envelope.WindowShadingControl(idf1, windowNamesChunk)
+
+            # envelope.WindowShadingControl(idf1, windowNames)
 
             envelope.AssignContructions(idf1, Ext_Wall1,Ext_Wall2,Ext_Wall3,
                     Ext_Roof1,Ext_Roof2,Ext_Roof3,
@@ -827,7 +851,7 @@ def simulate(batchName, iddfile, studyFolder, runList, databaseDir, graphs, pdfR
 
             # Future above to be better integrated
 
-            duration = 70
+            duration = int(runList['ANALYSIS_DURATION'][runCount])
             elecPrice = float(runList['ELEC_PRICE_[$/kWh]'][runCount])
             elec_sellback_price = float(runList['SELLBACK_PRICE_[$/kWh]'][runCount])
             annualElec = ((hourly['Whole Building:Facility Total Purchased Electricity Energy [J](Hourly)'].sum()*0.0000002778*elecPrice)-
