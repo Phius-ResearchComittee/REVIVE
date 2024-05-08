@@ -459,10 +459,12 @@ while True:
                 GeometryRules(idf1)
 
                 modeled_zones = idf1.idfobjects['ZONE']
+                DHW_CombinedGPM = 0
 
                 for zone in modeled_zones:
                     zone_name = zone.Name.split('|')
-                    if 'UNIT' in str(zone_name[1]):
+                    zone_type = zone_name[1] if len(zone_name)>1 else ""
+                    if 'UNIT' in zone_type:
                         occ = 1 + float(zone_name[2][0])
                         icfa_zone = zone.Floor_Area
                         Nbr_zone = float(zone_name[2][0])
@@ -496,9 +498,9 @@ while True:
                         SizingLoads(idf1, zone_name, sizingLoadSensible, sizingLoadLatent)
                         ThermalMass(idf1, zone_name, icfa_zone)
 
-                    if 'STAIR' in str(zone_name[1]):
+                    if 'STAIR' in zone_type:
                         print(str(zone_name[0]) + ' is some Stairs')
-                    if 'CORRIDOR' in str(zone_name[1]):
+                    if 'CORRIDOR' in zone_type:
                         print(str(zone_name[0]) + ' is some a Corridor')
                 
                 # Materials and constructions
