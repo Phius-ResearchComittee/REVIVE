@@ -1008,7 +1008,7 @@ while True:
 
                 # Future above to be better integrated
 
-                duration = 70
+                duration = int(runList['ANALYSIS_DURATION'][runCount])
                 elecPrice = float(runList['ELEC_PRICE_[$/kWh]'][runCount])
                 elec_sellback_price = float(runList['SELLBACK_PRICE_[$/kWh]'][runCount])
                 annualElec = ((hourly['Whole Building:Facility Total Purchased Electricity Energy [J](Hourly)'].sum()*0.0000002778*elecPrice)-
