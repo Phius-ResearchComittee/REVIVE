@@ -19,9 +19,10 @@ from PySide6.QtWidgets import (
     QProgressBar,
     QLabel,
     QStyle,
-    QFileDialog  
+    QFileDialog,
+    QToolButton  
 )
-from PySide6.QtGui import QIcon
+from PySide6.QtGui import QIcon, QIconEngine
 import simulate
 
 class MyWidget(QWidget):
@@ -288,6 +289,9 @@ class MPAdorbTab(QWidget):
         # store the results of the phases
         self.file_entries = {}
         self.year_entries = {}
+
+        # keep track of current phase widgets
+        self.phase_widgets = []
         
         # set up phase entries
         for _ in range(3):
@@ -331,16 +335,44 @@ class MPAdorbTab(QWidget):
         file_entry_label = QLabel("ADORB Results File:")
         year_start_label = QLabel("Year:")
 
+        # create delete button
+        del_button = QToolButton()
+        icon = qApp.style().standardIcon(QStyle.SP_TrashIcon)
+        del_button.setIcon(icon)
+        del_button.setAutoRaise(True)
+        del_button.setToolButtonStyle(Qt.ToolButtonIconOnly)
+
         # add new widgets to hbox
         phase_layout.addWidget(file_entry_label)
         phase_layout.addWidget(file_entry_box)
         phase_layout.addWidget(year_start_label)
         phase_layout.addWidget(year_start_box)
+        phase_layout.addWidget(del_button)
 
+        # add to layout
         new_phase_widget = QGroupBox(f"Phase {self.phase_count}")
         new_phase_widget.setLayout(phase_layout)
         self.phases_layout.addWidget(new_phase_widget)
+        self.phase_widgets.append(new_phase_widget)
         self.phase_count += 1
+        
+        # connect delete button
+        del_button.clicked.connect(lambda _ : self.delete_phase_entry_widget(new_phase_widget))
+
+    @Slot()
+    def delete_phase_entry_widget(self, widget):
+        # remove the widget from the window
+        self.phases_layout.removeWidget(widget)
+        widget.deleteLater()
+
+        # decrement titles
+        idx = self.phase_widgets.index(widget)
+        for i in range(len(self.phase_widgets)-1, idx, -1):
+            self.phase_widgets[i].setTitle(self.phase_widgets[i-1].title())
+        
+        # remove from list
+        self.phase_widgets.pop(idx)
+        self.phase_count -= 1
 
 
     @Slot()
