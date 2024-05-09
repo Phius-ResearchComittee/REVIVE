@@ -235,9 +235,11 @@ class SimulateTab(QWidget):
         study_folder = self.file_entry_widgets[self.widget_labels[2]].text() # Study/output folder
         run_list = self.file_entry_widgets[self.widget_labels[3]].text() # Run list file
         db_dir = self.file_entry_widgets[self.widget_labels[4]].text() # Database directory
+        num_procs = self.num_parallel_procs.currentText()
         show_graphs = self.gen_graphs_option.isChecked()
         gen_pdf_report = self.gen_pdf_option.isChecked()
         del_files = self.del_files_option.isChecked()
+        is_dummy_mode = self.parent.is_dummy_mode
 
         # input validation
         err_string = simulate.validate_input(batch_name, idd_file, study_folder, run_list, db_dir)
@@ -246,7 +248,7 @@ class SimulateTab(QWidget):
         try:
             assert err_string == "", err_string
             self.save_settings() # remember these inputs for next run
-            simulate.simulate(batch_name, idd_file, study_folder, run_list, db_dir, show_graphs, gen_pdf_report, self.parent.is_dummy_mode)
+            simulate.parallel_simulate(batch_name, idd_file, study_folder, run_list, db_dir, num_procs, show_graphs, gen_pdf_report, is_dummy_mode)
         except Exception as err_msg:
             self.parent.display_error(str(err_msg))
         else:
