@@ -203,58 +203,62 @@ def adorb(BaseFileName, studyFolder, duration, annualElec, annualGas, annualCO2E
         # k_emCarb = 0
         # y is the year, counting from the current year = 1, that is, the future calendar year minus the previous calendar year.
 
-def multiphaseADORB(year1Path,year1Start,year2Path,year2Start,year3Path,year3Start):
+def validate_input(paths, year_starts):
+    return ""
 
-    duration0 = []
-    duration1 = []
-    duration2 = []
-    duration3 = []
+def multiphaseADORB(paths, year_starts):
+    print(paths)
+    print(year_starts)
+    # duration0 = []
+    # duration1 = []
+    # duration2 = []
+    # duration3 = []
 
-    year1 = ''
-    year2 = ''
-    year3 = ''
+    # year1 = ''
+    # year2 = ''
+    # year3 = ''
 
-    if year1Path:
-        year1 = pd.read_csv(str(year1Path))
-        year1FirstCost = year1['pv_dirMR'][1]
-        year1EC = year1['pv_emCO2'][1]
-        duration0 = [*range(0,year1Start)]
-        duration1 = [*range(year1Start,year2Start)]
-    if year2Path:
-        year2 = pd.read_csv(str(year2Path))
-        year2FirstCost = year2['pv_dirMR'][1]
-        year2EC = year2['pv_emCO2'][1]
-        if year3Path:
-            duration2 = [*range(year2Start,year3Start)]
-        else:
-            duration2 = [*range(year2Start,70)]
-    if year3Path:
-        year3 = pd.read_csv(str(year3Path))
-        year3FirstCost = year3['pv_dirMR'][1]
-        year3EC = year3['pv_emCO2'][1]
-        duration3 = [*range(year3Start,70)]
-
-
-    if year1Path:
-        year1 = year1.drop(index=(duration0 + duration2 + duration3))
-    if year2Path:
-        year2 = year2.drop(index=(duration0 + duration1 + duration3))
-    if year3Path:
-        year3 = year3.drop(index=(duration0 + duration1 + duration2))
+    # if year1Path:
+    #     year1 = pd.read_csv(str(year1Path))
+    #     year1FirstCost = year1['pv_dirMR'][1]
+    #     year1EC = year1['pv_emCO2'][1]
+    #     duration0 = [*range(0,year1Start)]
+    #     duration1 = [*range(year1Start,year2Start)]
+    # if year2Path:
+    #     year2 = pd.read_csv(str(year2Path))
+    #     year2FirstCost = year2['pv_dirMR'][1]
+    #     year2EC = year2['pv_emCO2'][1]
+    #     if year3Path:
+    #         duration2 = [*range(year2Start,year3Start)]
+    #     else:
+    #         duration2 = [*range(year2Start,70)]
+    # if year3Path:
+    #     year3 = pd.read_csv(str(year3Path))
+    #     year3FirstCost = year3['pv_dirMR'][1]
+    #     year3EC = year3['pv_emCO2'][1]
+    #     duration3 = [*range(year3Start,70)]
 
 
-    if year3Path:
-        final = pd.concat([year1,year2,year3],ignore_index=False)
-        final.at[year2Start, 'pv_dirMR'] = (year2FirstCost-year1FirstCost)/((1+0.02)**year2Start)
-        final.at[year3Start, 'pv_dirMR'] = (year3FirstCost-year2FirstCost-year1FirstCost)/((1+0.02)**year3Start)
-        final.at[year2Start, 'pv_emCO2'] = (year2EC-year1EC)
-        final.at[year3Start, 'pv_emCO2'] = (year3EC-year2EC-year1EC)
-    else:
-        final = pd.concat([year1,year2],ignore_index=False)
-        final.at[year2Start, 'pv_dirMR'] = (year2FirstCost-year1FirstCost)/((1+0.02)**year2Start)
-        final.at[year2Start, 'pv_emCO2']= (year2EC-year1EC)
+    # if year1Path:
+    #     year1 = year1.drop(index=(duration0 + duration2 + duration3))
+    # if year2Path:
+    #     year2 = year2.drop(index=(duration0 + duration1 + duration3))
+    # if year3Path:
+    #     year3 = year3.drop(index=(duration0 + duration1 + duration2))
 
-    adorbComp = final[['pv_dirEn','pv_dirMR','pv_eTrans','pv_emCO2','pv_opCO2']].sum()
-    adorbTotal = sum(adorbComp)
+
+    # if year3Path:
+    #     final = pd.concat([year1,year2,year3],ignore_index=False)
+    #     final.at[year2Start, 'pv_dirMR'] = (year2FirstCost-year1FirstCost)/((1+0.02)**year2Start)
+    #     final.at[year3Start, 'pv_dirMR'] = (year3FirstCost-year2FirstCost-year1FirstCost)/((1+0.02)**year3Start)
+    #     final.at[year2Start, 'pv_emCO2'] = (year2EC-year1EC)
+    #     final.at[year3Start, 'pv_emCO2'] = (year3EC-year2EC-year1EC)
+    # else:
+    #     final = pd.concat([year1,year2],ignore_index=False)
+    #     final.at[year2Start, 'pv_dirMR'] = (year2FirstCost-year1FirstCost)/((1+0.02)**year2Start)
+    #     final.at[year2Start, 'pv_emCO2']= (year2EC-year1EC)
+
+    # adorbComp = final[['pv_dirEn','pv_dirMR','pv_eTrans','pv_emCO2','pv_opCO2']].sum()
+    # adorbTotal = sum(adorbComp)
 
     print("Analysis Complete")
