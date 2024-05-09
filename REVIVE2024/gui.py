@@ -22,7 +22,7 @@ from PySide6.QtWidgets import (
     QFileDialog  
 )
 from PySide6.QtGui import QIcon
-import qt_simulate as simulate
+import simulate
 
 class MyWidget(QWidget):
 
