@@ -1,6 +1,6 @@
 
 import sys
-import qt_gui as gui
+import gui
 from PySide6.QtWidgets import QApplication
 
 if __name__=="__main__":
