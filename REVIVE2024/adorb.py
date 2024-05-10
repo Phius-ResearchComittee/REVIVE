@@ -206,59 +206,50 @@ def adorb(BaseFileName, studyFolder, duration, annualElec, annualGas, annualCO2E
 def validate_input(paths, year_starts):
     return ""
 
-def multiphaseADORB(paths, year_starts):
-    print(paths)
-    print(year_starts)
-    # duration0 = []
-    # duration1 = []
-    # duration2 = []
-    # duration3 = []
+def multiphaseADORB(paths, year_starts, max_simulation_year):
+    # create list of time periods [start, end)
+    phase_terms = []
+    for i in range(len(year_starts)-1):
+        phase_terms.append((year_starts[i], year_starts[i+1]))
+    phase_terms.append((year_starts[-1], max_simulation_year))
 
-    # year1 = ''
-    # year2 = ''
-    # year3 = ''
+    # load all results into dataframes
+    dfs = [pd.read_csv(path) for path in paths]
+    columns = dfs[0].columns
 
-    # if year1Path:
-    #     year1 = pd.read_csv(str(year1Path))
-    #     year1FirstCost = year1['pv_dirMR'][1]
-    #     year1EC = year1['pv_emCO2'][1]
-    #     duration0 = [*range(0,year1Start)]
-    #     duration1 = [*range(year1Start,year2Start)]
-    # if year2Path:
-    #     year2 = pd.read_csv(str(year2Path))
-    #     year2FirstCost = year2['pv_dirMR'][1]
-    #     year2EC = year2['pv_emCO2'][1]
-    #     if year3Path:
-    #         duration2 = [*range(year2Start,year3Start)]
-    #     else:
-    #         duration2 = [*range(year2Start,70)]
-    # if year3Path:
-    #     year3 = pd.read_csv(str(year3Path))
-    #     year3FirstCost = year3['pv_dirMR'][1]
-    #     year3EC = year3['pv_emCO2'][1]
-    #     duration3 = [*range(year3Start,70)]
+    # prepare resulting dataframe for the blended results
+    blended_df = pd.DataFrame(columns=columns)
 
+    # list the columns that need special handling
+    inflation_map = {"pv_dirMR": 0.02, 
+                     "pv_emCO2": 0.00} # TODO: DON'T HARDCODE THESE TWICE
 
-    # if year1Path:
-    #     year1 = year1.drop(index=(duration0 + duration2 + duration3))
-    # if year2Path:
-    #     year2 = year2.drop(index=(duration0 + duration1 + duration3))
-    # if year3Path:
-    #     year3 = year3.drop(index=(duration0 + duration1 + duration2))
+    # define function to undo the k inflation adjustment
+    def shift_k_inflation(start_year, duration, k, col_data):
+        original_years = pd.Series([x for x in range(duration)])
+        shifted_years = pd.Series([x+start_year for x in range(duration)])
+        return col_data*((1+k)**original_years)/((1+k)**shifted_years)
 
+    # loop through time segments
+    for i, (start, end) in enumerate(phase_terms):
+        
+        # get phase information
+        phase_duration = end-start
+        phase_df = dfs[i]
 
-    # if year3Path:
-    #     final = pd.concat([year1,year2,year3],ignore_index=False)
-    #     final.at[year2Start, 'pv_dirMR'] = (year2FirstCost-year1FirstCost)/((1+0.02)**year2Start)
-    #     final.at[year3Start, 'pv_dirMR'] = (year3FirstCost-year2FirstCost-year1FirstCost)/((1+0.02)**year3Start)
-    #     final.at[year2Start, 'pv_emCO2'] = (year2EC-year1EC)
-    #     final.at[year3Start, 'pv_emCO2'] = (year3EC-year2EC-year1EC)
-    # else:
-    #     final = pd.concat([year1,year2],ignore_index=False)
-    #     final.at[year2Start, 'pv_dirMR'] = (year2FirstCost-year1FirstCost)/((1+0.02)**year2Start)
-    #     final.at[year2Start, 'pv_emCO2']= (year2EC-year1EC)
+        # create empty dataframe for term
+        term_df = pd.DataFrame()
 
-    # adorbComp = final[['pv_dirEn','pv_dirMR','pv_eTrans','pv_emCO2','pv_opCO2']].sum()
-    # adorbTotal = sum(adorbComp)
+        for col in columns:
+            if col not in inflation_map.keys():
+                term_df[col] = phase_df[col].iloc[start:end,]
+            else:
+                raw_segment = phase_df[col].iloc[0:phase_duration,]
+                new_series = shift_k_inflation(start, phase_duration, inflation_map[col], raw_segment)
+                new_series.index = term_df.index
+                term_df[col] = new_series
+
+        blended_df = pd.concat([blended_df, term_df], axis=0)
+    blended_df.to_csv("Multiphase_results.csv") # CHANGE NAME
 
     print("Analysis Complete")

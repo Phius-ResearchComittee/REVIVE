@@ -385,7 +385,7 @@ class MPAdorbTab(QWidget):
     def on_open_file(self, groupbox: QGroupBox):
         phase_id = self.phase_widgets.index(groupbox)
         qline = self.file_entries[phase_id]
-        prompt = f"Select File: Phase {phase_id}"
+        prompt = f"Select File: Phase {phase_id+1}"
         
         path, _ = QFileDialog.getOpenFileName(
                 self, prompt, QDir.homePath(), "*.csv")
@@ -398,7 +398,7 @@ class MPAdorbTab(QWidget):
     def compute_mp_adorb(self):
         # collect arguments to send to simulate function
         adorb_paths = [x.text() for x in self.file_entries]
-        year_starts = [x.currentText() for x in self.year_entries]
+        year_starts = [int(x.currentText()) for x in self.year_entries]
         
         # input validation
         err_string = adorb.validate_input(adorb_paths, year_starts)
@@ -406,7 +406,7 @@ class MPAdorbTab(QWidget):
         # run the computation
         try:
             assert err_string == "", err_string
-            adorb.multiphaseADORB(adorb_paths, year_starts)
+            adorb.multiphaseADORB(adorb_paths, year_starts, self.num_sim_years)
         except Exception as err_msg:
             self.parent.display_error(str(err_msg))
         else:
