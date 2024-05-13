@@ -23,6 +23,8 @@ from PySide6.QtWidgets import (
     QToolButton  
 )
 from PySide6.QtGui import QIcon, QIconEngine
+import os
+import sys
 import simulate
 import adorb
 
@@ -37,7 +39,7 @@ class MyWidget(QWidget):
         self.app_name = "REVIVE Calculator Tool"
         self.settings = QSettings("Phius", self.app_name)
         self.icon = QIcon()
-        self.icon.addFile("Phius-Logo-RGB__Color_Icon.ico")
+        self.icon.addFile(os.path.join(getattr(sys, "_MEIPASS", os.getcwd()),"Phius-Logo-RGB__Color_Icon.ico"))
 
         # customize window
         self.setWindowTitle(self.app_name)
