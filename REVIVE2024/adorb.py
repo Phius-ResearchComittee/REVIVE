@@ -203,7 +203,71 @@ def adorb(BaseFileName, studyFolder, duration, annualElec, annualGas, annualCO2E
         # k_emCarb = 0
         # y is the year, counting from the current year = 1, that is, the future calendar year minus the previous calendar year.
 
-def validate_input(paths, year_starts):
+def validate_input(paths, year_starts, max_simulation_year):
+    # ensure at least one phase is provided
+    try:
+        assert len(paths)>0
+    except:
+        return f"Please add at least one phase."
+
+    # ensure all fields are not empty
+    for i, path in enumerate(paths):
+        try:
+            assert path != "", i+1
+        except AssertionError as missing_phase:
+            return f"Please specify an ADORB results path for Phase {missing_phase}."
+
+    # ensure all paths exist
+    for i, path in enumerate(paths):
+        try:
+            assert os.path.isfile(path), path
+        except AssertionError as wrong_path:
+            return f"Phase {i+1}: path \"{wrong_path}\" does not exist."
+
+    # ensure phase 1 starts at year zero
+    try:
+        assert year_starts[0]==0
+    except AssertionError:
+        return f"Phase 1 starting year must be 0."
+
+    # ensure every subsequent phase starts after the previous
+    for i, curr_year_start in enumerate(year_starts):
+        try:
+            if i>0:
+                assert curr_year_start > last_phase_start
+            last_phase_start = curr_year_start
+        except AssertionError:
+            return f"Phase {i+1}: starting year must be greater than that of previous phase."
+    
+    # ensure all files are adorb results format
+    adorb_cols = ["pv_dirEn","pv_opCO2","pv_dirMR","pv_emCO2","pv_eTrans"] # can we get rid of hard code
+    for i, path in enumerate(paths):
+        try:
+            df = pd.read_csv(path)
+            for col in adorb_cols:
+                assert col in df.columns, col
+        except AssertionError as missing_col:
+            return (f"Phase {i+1}: \"{col}\" column is missing from ADORB results file. Please "
+                    f"ensure the file was generated through the REVIVE simulation tool and that "
+                    f"the file name ends in \"ADORBresults.csv\".")
+    
+    # ensure every results file is an adequate length
+    for i, path in enumerate(paths):
+        try:
+            print(i)
+            print(len(year_starts))
+            print(i<len(year_starts)-1)
+            phase_max_year = year_starts[i+1] if i<len(year_starts)-1 else max_simulation_year
+            print(phase_max_year)
+            with open(path, "r") as reader:
+                file_length = len(reader.readlines())-1  # -1 to account for file headers
+            assert file_length>=phase_max_year, phase_max_year
+        except AssertionError as end_year:
+            return (f"Phase {i+1} ends on year {end_year}, so its ADORB simulation file must "
+                    f"contain at least {end_year} years. Please select another file or rerun "
+                    f"simulation with an extended duration.")
+
+    # no errors to report
     return ""
 
 def multiphaseADORB(paths, year_starts, max_simulation_year):
