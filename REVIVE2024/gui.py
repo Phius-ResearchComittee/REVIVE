@@ -401,7 +401,7 @@ class MPAdorbTab(QWidget):
         year_starts = [int(x.currentText()) for x in self.year_entries]
         
         # input validation
-        err_string = adorb.validate_input(adorb_paths, year_starts)
+        err_string = adorb.validate_input(adorb_paths, year_starts, self.num_sim_years)
 
         # run the computation
         try:
