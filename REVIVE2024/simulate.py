@@ -108,7 +108,8 @@ def validate_input(batch_name, idd_file, study_folder, run_list, db_dir):
     
     # ensure all required columns are present in run list
     try:
-        with open("required_columns.csv") as f:
+        req_cols_file_name = os.path.join(getattr(sys, "_MEIPASS", os.getcwd()),"required_columns.csv")
+        with open(req_cols_file_name, "r") as f:
             reader = csv.reader(f)
             required_columns = list(reader)[0]
         for col in required_columns:
