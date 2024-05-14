@@ -190,7 +190,7 @@ def simulate(si: SimInputs, case_id: int):
     assert os.path.isfile(ddyName), "Cannot find specified DDY file."
 
     try:
-        ZoneName = 'Zone 1'
+        zone_name = 'Zone 1'
 
         icfa = runList['ICFA'][runCount]
         icfa_M  =icfa*0.09290304
@@ -242,7 +242,7 @@ def simulate(si: SimInputs, case_id: int):
         
         # Envelope
 
-        flowCoefficient = runList['FLOW_COEFFICIENT [SI]'][runCount]
+        infiltration_rate = runList['INFILTRATION_RATE'][runCount]
         Ext_Window1 = runList['EXT_WINDOW_1'][runCount]
         Ext_Window2 = runList['EXT_WINDOW_2'][runCount]
         Ext_Window3 = runList['EXT_WINDOW_3'][runCount]
@@ -419,6 +419,17 @@ def simulate(si: SimInputs, case_id: int):
                 internalHeatGains.SizingLoads(idf1, zone_name, sizingLoadSensible, sizingLoadLatent)
                 internalHeatGains.ThermalMass(idf1, zone_name, icfa_zone)
 
+                envelope.infiltration(idf1, zone_name, infiltration_rate)
+
+                envelope.WindowVentilation(idf1, halfHeight, operableArea_N, operableArea_W, 
+                operableArea_S, operableArea_E)
+
+                hvac.SizingSettings(idf1, zone_name)
+                hvac.HVACControls(idf1, zone_name)
+                hvac.ZoneMechConnections(idf1, zone_name)
+                hvac.HVACBuilder(idf1, zone_name, mechSystemType)
+                hvac.WaterHeater(idf1, zone_name, dhwFuel, DHW_CombinedGPM)
+
             if 'STAIR' in zone_type:
                 print(str(zone_name[0]) + ' is some Stairs')
             if 'CORRIDOR' in zone_type:
@@ -462,24 +473,16 @@ def simulate(si: SimInputs, case_id: int):
             envelope.constructionBuilder(idf1, constructionList['Name'][item],layerList)
 
         # Envelope inputs
-        envelope.Infiltration(idf1, flowCoefficient)
+        
         envelope.SpecialMaterials(idf1)
         envelope.FoundationInterface(idf1,foundationList)
-
         envelope.ShadeMaterials(idf1)
-
-        # Window inputs and shading controls
-        envelope.WindowVentilation(idf1, halfHeight, operableArea_N, operableArea_W, 
-                operableArea_S, operableArea_E)
-        
 
         windowNames_split = list(divide_chunks(windowNames, 10))
 
         for i in range(len(windowNames_split)):
             windowNamesChunk = windowNames_split[i]
             envelope.WindowShadingControl(idf1, windowNamesChunk)
-
-        # envelope.WindowShadingControl(idf1, windowNames)
 
         envelope.AssignContructions(idf1, Ext_Wall1,Ext_Wall2,Ext_Wall3,
                 Ext_Roof1,Ext_Roof2,Ext_Roof3,
@@ -489,14 +492,9 @@ def simulate(si: SimInputs, case_id: int):
                 Ext_Window1,Ext_Window2,Ext_Window3)
 
         # Sizing settings:
-        hvac.SizingSettings(idf1, ZoneName)
-        hvac.HVACControls(idf1, ZoneName)
-        hvac.ZoneMechConnections(idf1, ZoneName)
-        hvac.HVACBuilder(idf1, ZoneName, mechSystemType)
-        hvac.WaterHeater(idf1, ZoneName, dhwFuel, DHW_CombinedGPM)
         hvac.Curves(idf1)
 
-        renewables.Renewables(idf1, ZoneName, PV_SIZE, PV_TILT)
+        renewables.Renewables(idf1, zone_name, PV_SIZE, PV_TILT)
 
         outputs.SimulationOutputs(idf1)
         # ============================================================================
@@ -524,7 +522,11 @@ def simulate(si: SimInputs, case_id: int):
         
         schedules.ResilienceControls(idf1, NatVentType)
 
-        hvac.ResilienceERV(idf1, occ, ervSense, ervLatent)
+        for zone in modeled_zones:
+            zone_name = zone.Name.split('|')
+            zone_type = zone_name[1] if len(zone_name)>1 else ""
+            if 'UNIT' in zone_type:
+                hvac.ResilienceERV(idf1, zone_name, occ, ervSense, ervLatent)
 
         weatherMorph.WeatherMorphSine(idf1, outage1start, outage1end, outage2start, outage2end,
                 MorphFactorDB1, MorphFactorDP1, MorphFactorDB2, MorphFactorDP2)
@@ -720,8 +722,11 @@ def simulate(si: SimInputs, case_id: int):
         schedules.AnnualSchedules(idf2, outage1start, outage1end, outage2start, outage2end, 
                     coolingOutageStart,coolingOutageEnd,NatVentAvail,
                     demandCoolingAvail,shadingAvail)
-
-        hvac.AnnualERV(idf2, occ, ervSense, ervLatent)
+        for zone in modeled_zones:
+            zone_name = zone.Name.split('|')
+            zone_type = zone_name[1] if len(zone_name)>1 else ""
+            if 'UNIT' in zone_type:
+                hvac.AnnualERV(idf2, zone_name, occ, ervSense, ervLatent)
 
         for item in range(constructions):
             

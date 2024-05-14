@@ -70,16 +70,23 @@ def glazingBuilder(idf, name, uFactor, shgc):
         Solar_Heat_Gain_Coefficient = shgc
         )
 
-def Infiltration(idf, flowCoefficient):
+def infiltration(idf, zone, infiltration_rate):
     
-    idf.newidfobject('ZoneInfiltration:FlowCoefficient',
-        Name = 'Zone_Infiltration',
-        Zone_Name = 'Zone 1',
+    infiltration_rate_4pa = infiltration_rate * 8.0752E-6
+
+    idf.newidfobject('ZoneInfiltration:DesignFlowRate',
+        Name = (str(zone) + ' Infiltration'),
+        Zone_Name = str(zone),
         Schedule_Name = 'Always_On',
-        Flow_Coefficient = flowCoefficient,
-        Stack_Coefficient = 0.078,
-        Wind_Coefficient = 0.17,
-        Shelter_Factor = 0.9
+        Design_Flow_Rate_Calculation_Method = 'Flow/ExteriorArea',
+        Design_Flow_Rate = 0,
+        Flow_per_Zone_Floor_Area = 0,
+        Flow_per_Exterior_Surface_Area = infiltration_rate_4pa,
+        Air_Changes_per_Hour = 0,
+        Constant_Term_Coefficient = 0,
+        Temperature_Term_Coefficient = 0,
+        Velocity_Term_Coefficient = 0.224,
+        Velocity_Squared_Term_Coefficient = 0
         )
 
 def SpecialMaterials(idf):
