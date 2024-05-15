@@ -576,21 +576,21 @@ def simulate(si: SimInputs, case_id: int):
 
         hourly.rename(columns = {'Date/Time':'DateTime'}, inplace = True)
         hourly[['Date2','Time']] = hourly.DateTime.str.split(expand=True)
-        hourly['Date'] = hourly['Date2'].map(str) + '/' + str(2020)
+        hourly['Date'] = hourly['Date2'].map(str)
         hourly['Time'] = (pd.to_numeric(hourly['Time'].str.split(':').str[0])-1).astype(str).apply(lambda x: f'0{x}' if len(x)==1 else x) + hourly['Time'].str[2:]
         hourly['DateTime'] = hourly['Date'] + ' ' + hourly['Time']
-        hourly['DateTime'] = pd.to_datetime(hourly['DateTime'], format="%m/%d/%Y %H:%M:%S", exact=True)
+        hourly['DateTime'] = pd.to_datetime(hourly['DateTime'], format="%m/%d %H:%M:%S", exact=True)
 
-        endWarmup = hourly[hourly['DateTime'] == '2020-01-01 00:00:00'].index[0]
+        endWarmup = hourly[hourly['DateTime'] == '1900-01-01 00:00:00'].index[0]
         dropWarmup = [*range(0, endWarmup,1)]
 
         hourly = hourly.drop(index = dropWarmup)
         hourly = hourly.reset_index()
 
-        heatingOutageStart1 = dt.strptime((str(heatingOutageStart) + '/' + str(2020)), '%m/%d/%Y') + timedelta(hours=24)
-        coolingOutageStart1 = dt.strptime((str(coolingOutageStart) + '/' + str(2020)), '%m/%d/%Y') + timedelta(hours=24)
-        heatingOutageEnd1 = dt.strptime((str(heatingOutageEnd) + '/' + str(2020)), '%m/%d/%Y') + timedelta(hours=23)
-        coolingOutageEnd1 = dt.strptime((str(coolingOutageEnd) + '/' + str(2020)), '%m/%d/%Y') + timedelta(hours=23)
+        heatingOutageStart1 = dt.strptime((str(heatingOutageStart)), '%d-%b') + timedelta(hours=24)
+        coolingOutageStart1 = dt.strptime((str(coolingOutageStart)), '%d-%b') + timedelta(hours=24)
+        heatingOutageEnd1 = dt.strptime((str(heatingOutageEnd)), '%d-%b') + timedelta(hours=23)
+        coolingOutageEnd1 = dt.strptime((str(coolingOutageEnd)), '%d-%b') + timedelta(hours=23)
 
         maskh = (hourly['DateTime'] >= heatingOutageStart1) & (hourly['DateTime'] <= heatingOutageEnd1)
         maskc = (hourly['DateTime'] >= coolingOutageStart1) & (hourly['DateTime'] <= coolingOutageEnd1)
@@ -604,27 +604,57 @@ def simulate(si: SimInputs, case_id: int):
         MaxDPOut = max(hourlyCool['Environment:Site Outdoor Air Dewpoint Temperature [C](Hourly)'].tolist())
 
         x = hourlyHeat['DateTime']
+
+        heating_outage_unit_results = {}
+        cooling_outage_unit_results = {}
+        for unit in unit_list:
+            heating_outage_unit_results[str(unit)] = mean(hourlyHeat[(str(unit).upper()+ ':Zone Air Temperature [C](Hourly)')])
+            cooling_outage_unit_results[str(unit)] = mean(hourlyCool[(str(unit).upper()+ ':Zone Air Temperature [C](Hourly)')])
+
+        number_zones = (len(unit_list))
+
+        if number_zones > 1:
+            heating_sorted_keys = sorted(heating_outage_unit_results.keys,key=lambda x: heating_outage_unit_results[x])
+            cooling_sorted_keys = sorted(cooling_outage_unit_results.keys,key=lambda x: cooling_outage_unit_results[x])
+
+            heating_min_unit = heating_sorted_keys[0]
+            heating_max_unit = heating_sorted_keys[-1]
+
+            cooling_min_unit = cooling_sorted_keys[0]
+            cooling_max_unit = cooling_sorted_keys[-1]
+
         if graphs == True:
             fig = plt.figure(layout='constrained', figsize=(10, 10))
             fig.suptitle((str(caseName) + '_Heating Outage Resilience'), fontsize='x-large')
             ax = fig.subplot_mosaic([['temperature'],['rh'],['SET']])
             ax['temperature'].plot(x,hourlyHeat["Environment:Site Outdoor Air Drybulb Temperature [C](Hourly)"], label="Site Dry Bulb [C]", linestyle='dashed')
-            ax['temperature'].plot(x,hourlyHeat["ZONE 1:Zone Air Temperature [C](Hourly)"], label="Zone Dry Bulb [C]",color='black',linewidth=2)
-            ax['temperature'].set_ylim(((min(min(hourlyHeat["Environment:Site Outdoor Air Drybulb Temperature [C](Hourly)"]), min(hourlyHeat["ZONE 1:Zone Air Temperature [C](Hourly)"])))-5),((max(max(hourlyHeat["Environment:Site Outdoor Air Drybulb Temperature [C](Hourly)"]), max(hourlyHeat["ZONE 1:Zone Air Temperature [C](Hourly)"])))+5))
+            
+            if number_zones == 1:
+                ax['temperature'].plot(x,hourlyHeat[(str(unit).upper() + ':Zone Air Temperature [C](Hourly)')], label=(str(unit)+ ' Zone Dry Bulb [C]'),color='black',linewidth=2)
+                ax['temperature'].set_ylim(((min(min(hourlyHeat["Environment:Site Outdoor Air Drybulb Temperature [C](Hourly)"]), min(hourlyHeat[(str(unit).upper()+ ':Zone Air Temperature [C](Hourly)')])))-5),((max(max(hourlyHeat["Environment:Site Outdoor Air Drybulb Temperature [C](Hourly)"]), max(hourlyHeat[(str(unit).upper()+ ':Zone Air Temperature [C](Hourly)')])))+5))
+            
+            if number_zones > 1:
+                ax['temperature'].plot(x,hourlyHeat[(str(unit).upper()+ ':Zone Air Temperature [C](Hourly)')], label=(str(unit)+ ' Zone Dry Bulb [C]'),color='black',linewidth=2)
+                ax['temperature'].set_ylim(((min(min(hourlyHeat["Environment:Site Outdoor Air Drybulb Temperature [C](Hourly)"]), min(hourlyHeat[(str(unit).upper()+ ':Zone Air Temperature [C](Hourly)')])))-5),((max(max(hourlyHeat["Environment:Site Outdoor Air Drybulb Temperature [C](Hourly)"]), max(hourlyHeat[(str(unit).upper()+ ':Zone Air Temperature [C](Hourly)')])))+5))
+            
+
             ax['temperature'].set_ylabel('Temperature [C]')
             ax['temperature'].legend(ncol=2, loc='lower left', borderaxespad=0, fontsize='x-small')
             ax['temperature'].grid(True)
 
-            ax['rh'].plot(x,hourlyHeat['ZONE 1:Zone Air Relative Humidity [%](Hourly)'], label=("Zone RH"),color='black',linewidth=2)
+            if number_zones == 1:
+                ax['rh'].plot(x,hourlyHeat[str(unit).upper()+ ':Zone Air Relative Humidity [%](Hourly)'], label=(str(unit)+ ' Zone RH'),color='black',linewidth=2)
+            
             ax['rh'].set_ylabel('Relative Humidity [%]')
             ax['rh'].set_ylim(0,100)
             ax['rh'].legend(ncol=2, loc='lower left', borderaxespad=0, fontsize='x-small')
             ax['rh'].grid(True)
 
-            ax['SET'].plot(x,hourlyHeat['ZONE OCCUPANTS:Zone Thermal Comfort Pierce Model Standard Effective Temperature [C](Hourly)'], label=("Zone SET"),color='black',linewidth=2)
+            if number_zones == 1:
+                ax['SET'].plot(x,hourlyHeat[str(unit).upper() + ' OCCUPANTS:Zone Thermal Comfort Pierce Model Standard Effective Temperature [C](Hourly)'], label=((str(unit)+ ' Zone SET')),color='black',linewidth=2)
+                ax['SET'].set_ylim((min(hourlyHeat[str(unit).upper() + ' OCCUPANTS:Zone Thermal Comfort Pierce Model Standard Effective Temperature [C](Hourly)'])-5),(max(hourlyHeat[str(unit).upper() + ' OCCUPANTS:Zone Thermal Comfort Pierce Model Standard Effective Temperature [C](Hourly)'])+5))
             ax['SET'].grid(True)
             ax['SET'].legend(ncol=2, loc='lower left', borderaxespad=0, fontsize='x-small')
-            ax['SET'].set_ylim((min(hourlyHeat['ZONE OCCUPANTS:Zone Thermal Comfort Pierce Model Standard Effective Temperature [C](Hourly)'])-5),(max(hourlyHeat['ZONE OCCUPANTS:Zone Thermal Comfort Pierce Model Standard Effective Temperature [C](Hourly)'])+5))
             ax['SET'].set_xlabel('Date')
             ax['SET'].set_ylabel('Standard Effective Temperature [°C]')
             ax['SET'].axhline(12.2, color='crimson', linestyle='dashed')
@@ -640,22 +670,25 @@ def simulate(si: SimInputs, case_id: int):
             fig.suptitle((str(caseName) + '_Cooling Outage Resilience'), fontsize='x-large')
             ax = fig.subplot_mosaic([['temperature'],['rh'],['HI']])
             ax['temperature'].plot(x,hourlyCool["Environment:Site Outdoor Air Drybulb Temperature [C](Hourly)"], label="Site Dry Bulb [C]", linestyle='dashed')
-            ax['temperature'].plot(x,hourlyCool["ZONE 1:Zone Air Temperature [C](Hourly)"], label="Zone Dry Bulb [C]",color='black',linewidth=2)
-            ax['temperature'].set_ylim(((min(min(hourlyCool["Environment:Site Outdoor Air Drybulb Temperature [C](Hourly)"]), min(hourlyCool["ZONE 1:Zone Air Temperature [C](Hourly)"])))-5),((max(max(hourlyCool["Environment:Site Outdoor Air Drybulb Temperature [C](Hourly)"]), max(hourlyCool["ZONE 1:Zone Air Temperature [C](Hourly)"])))+5))
+            if number_zones == 1:
+                ax['temperature'].plot(x,hourlyCool[(str(unit).upper() + ':Zone Air Temperature [C](Hourly)')], label=(str(unit)+ ' Zone Dry Bulb [C]'),color='black',linewidth=2)
+                ax['temperature'].set_ylim(((min(min(hourlyCool["Environment:Site Outdoor Air Drybulb Temperature [C](Hourly)"]), min(hourlyCool[(str(unit).upper() + ':Zone Air Temperature [C](Hourly)')])))-5),((max(max(hourlyCool["Environment:Site Outdoor Air Drybulb Temperature [C](Hourly)"]), max(hourlyCool[(str(unit).upper() + ':Zone Air Temperature [C](Hourly)')])))+5))
             ax['temperature'].set_ylabel('Temperature [C]')
             ax['temperature'].legend(ncol=2, loc='lower left', borderaxespad=0, fontsize='x-small')
             ax['temperature'].grid(True)
 
-            ax['rh'].plot(x,hourlyCool['ZONE 1:Zone Air Relative Humidity [%](Hourly)'], label=("Zone RH"),color='black',linewidth=2)
+            if number_zones == 1:
+                ax['rh'].plot(x,hourlyCool[(str(unit).upper() + ':Zone Air Relative Humidity [%](Hourly)')], label=(str(unit)+ ' Zone RH'),color='black',linewidth=2)
             ax['rh'].set_ylabel('Relative Humidity [%]')
             ax['rh'].set_ylim(0,100)
             ax['rh'].legend(ncol=2, loc='lower left', borderaxespad=0, fontsize='x-small')
             ax['rh'].grid(True)
-
-            ax['HI'].plot(x,hourlyCool['ZONE 1:Zone Heat Index [C](Hourly)'], label=("Zone HI"),color='black',linewidth=2)
+            
+            if number_zones == 1:
+                ax['HI'].plot(x,hourlyCool[(str(unit).upper() + ':Zone Heat Index [C](Hourly)')], label=((str(unit)+ ' Zone HI')),color='black',linewidth=2)
+                ax['HI'].set_ylim((min(hourlyCool[(str(unit).upper() + ':Zone Heat Index [C](Hourly)')])-5),(max(hourlyCool[(str(unit).upper() + ':Zone Heat Index [C](Hourly)')])+5))
             ax['HI'].grid(True)
             ax['HI'].legend(ncol=2, loc='lower left', borderaxespad=0, fontsize='x-small')
-            ax['HI'].set_ylim((min(hourlyCool['ZONE 1:Zone Heat Index [C](Hourly)'])-5),(max(hourlyCool['ZONE 1:Zone Heat Index [C](Hourly)'])+5))
             ax['HI'].set_xlabel('Date')
             ax['HI'].set_ylabel('Heat Index [°C]')
             ax['HI'].axhline(26.7, color='seagreen', linestyle='dashed')
@@ -672,31 +705,31 @@ def simulate(si: SimInputs, case_id: int):
 
         # Mora days
 
-        RH = hourlyCool['ZONE 1:Zone Air Relative Humidity [%](Hourly)'].tolist()
-        Temp = hourlyCool['ZONE 1:Zone Air Temperature [C](Hourly)'].tolist()
+        mora_days_units = {}
+        for unit in unit_list:
+            RH = hourlyCool[(str(unit).upper()+ ':Zone Air Relative Humidity [%](Hourly)')].tolist()
+            Temp = hourlyCool[(str(unit).upper()+ ':Zone Air Temperature [C](Hourly)')].tolist()
 
-        RHdays = [RH[x:x+24] for x in range(0, len(RH), 24)]
-        TEMPdays = [Temp[x:x+24] for x in range(0, len(Temp), 24)]
+            RHdays = [RH[x:x+24] for x in range(0, len(RH), 24)]
+            TEMPdays = [Temp[x:x+24] for x in range(0, len(Temp), 24)]
 
-        avgRH = []
-        avgTemp = []
-        moraDays = []
-        moraPF = []
-        moraTotalDays = 0
-        for day in range(7):
-            avgRH.append(mean(RHdays[day]))
-            avgTemp.append(mean(TEMPdays[day]))
-            moraDays.append((49.593 - 48.580*np.array(mean(RHdays[day])*0.01) +25.887*np.array(mean(RHdays[day])*0.01)**2))
-            moraPF.append(mean(TEMPdays[day])-((49.593 - 48.580*np.array(mean(RHdays[day])*0.01) +25.887*np.array(mean(RHdays[day])*0.01)**2)))
-            if (mean(TEMPdays[day])-((49.593 - 48.580*np.array(mean(RHdays[day])*0.01) +25.887*np.array(mean(RHdays[day])*0.01)**2))) > 0:
-                moraTotalDays = moraTotalDays+1
-
+            avgRH = []
+            avgTemp = []
+            moraDays = []
+            moraPF = []
+            moraTotalDays = 0
+            for day in range(7):
+                avgRH.append(mean(RHdays[day]))
+                avgTemp.append(mean(TEMPdays[day]))
+                moraDays.append((49.593 - 48.580*np.array(mean(RHdays[day])*0.01) +25.887*np.array(mean(RHdays[day])*0.01)**2))
+                moraPF.append(mean(TEMPdays[day])-((49.593 - 48.580*np.array(mean(RHdays[day])*0.01) +25.887*np.array(mean(RHdays[day])*0.01)**2)))
+                if (mean(TEMPdays[day])-((49.593 - 48.580*np.array(mean(RHdays[day])*0.01) +25.887*np.array(mean(RHdays[day])*0.01)**2))) > 0:
+                    moraTotalDays = moraTotalDays+1
+            mora_days_units[str(unit)] = moraTotalDays
+            
         # Battery Sizing
         heatingBattery = (hourlyHeat['Whole Building:Facility Total Purchased Electricity Energy [J](Hourly)'].sum())*0.0000002778
         coolingBattery = (hourlyCool['Whole Building:Facility Total Purchased Electricity Energy [J](Hourly)'].sum())*0.0000002778
-
-        # hourlyHeat.to_csv(str(studyFolder) + "/" + str(BaseFileName) + "_hourlyHeat.csv")
-        # hourlyCool.to_csv(str(studyFolder) + "/" + str(BaseFileName) + "_hourlyCool.csv")
 
         # Save HTML and CSV outputs
         reportHTML = os.path.join(studyFolder, 'eplustbl.htm')
@@ -705,20 +738,6 @@ def simulate(si: SimInputs, case_id: int):
         reportHTML2 = os.path.join(studyFolder, BaseFileName + '_BR_eplustbl.htm')
         reportCSV2 = os.path.join(studyFolder, BaseFileName + '_BR_eplusout.csv')
         reportSQL2= os.path.join(studyFolder, BaseFileName + '_BR_eplusout.sql')
-
-
-        # if os.path.exists(reportCSV2):
-        #     os.remove(reportCSV2)
-        
-        # if os.path.exists(reportHTML2):
-        #     os.remove(reportHTML2)
-
-        # if os.path.exists(reportSQL2):
-        #     os.remove(reportSQL2)
-
-        # os.rename(reportHTML,reportHTML2)
-        # os.rename(reportCSV,reportCSV2)
-        # os.rename(reportSQL,reportSQL2)
 
         # ============================================================================
         # Annual Specific
@@ -730,10 +749,10 @@ def simulate(si: SimInputs, case_id: int):
                     coolingOutageStart,coolingOutageEnd,NatVentAvail,
                     demandCoolingAvail,shadingAvail)
         for zone in modeled_zones:
-            zone_name = zone.Name.split('|')
-            zone_type = zone_name[1] if len(zone_name)>1 else ""
-            if 'UNIT' in zone_type:
-                hvac.AnnualERV(idf2, zone_name[0], occ, ervSense, ervLatent)
+            zone_name = zone.Name
+            hvac.AnnualERV(idf2, zone_name, occ, ervSense, ervLatent)
+
+        schedules.AnnualControls(idf2, unit_list)
 
         for item in range(constructions):
             
@@ -748,7 +767,7 @@ def simulate(si: SimInputs, case_id: int):
             if cost > 0 and str(outerLayer) != 'nan':
                 envelope.costBuilder(idf2, name, '','Construction', name,'','',cost,'')
             
-            if costSealing > 0 and str(name) == str(flowCoefficient):
+            if costSealing > 0 and str(name) == str(infiltration_rate):
                 envelope.costBuilder(idf2,('AIR SEALING = ' + str(name)),'','General',0,0,(costSealing*icfa),'',1)
 
             if costMech> 0 and str(name) == str(mechSystemType):

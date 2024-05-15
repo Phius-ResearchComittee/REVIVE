@@ -98,8 +98,8 @@ def ZoneMechConnections(idf, zone):
         )
 
     idf.newidfobject('NodeList',
-        Name = (str(zone) + 'Exhausts'),
-        Node_1_Name = (str(zone) + 'ERV_Exhaust'),
+        Name = (str(zone) + '_Exhausts'),
+        Node_1_Name = (str(zone) + '_ERV_Exhaust'),
         Node_2_Name = (str(zone) + '_MECH_Air_Inlet')
         )
     
@@ -144,7 +144,7 @@ def HVACBuilder(idf, zone, mechSystemType):
             Cooling_Coil_Name = (str(zone) + '_PTHP_DX_Cool_Coil'),
             #Cooling_Convergence_Tolerance_{dimensionless}
             Supplemental_Heating_Coil_Object_Type = 'Coil:Heating:Electric',
-            Supplemental_Heating_Coil_Name = (str(zone) + '_PTHPSupHeater'),
+            Supplemental_Heating_Coil_Name = (str(zone) + '_PTHP_Sup_Heater'),
             Maximum_Supply_Air_Temperature_from_Supplemental_Heater = 50,
             Maximum_Outdoor_DryBulb_Temperature_for_Supplemental_Heater_Operation = 10,
             Fan_Placement = 'BlowThrough'
@@ -213,7 +213,7 @@ def HVACBuilder(idf, zone, mechSystemType):
             )
 
         idf.newidfobject('Coil:Heating:Electric',
-            Name = (str(zone) + 'PTHP_Sup_Heater'),
+            Name = (str(zone) + '_PTHP_Sup_Heater'),
             Availability_Schedule_Name = 'MechAvailable',
             Efficiency = 1.0,
             Nominal_Capacity = 'autosize',
@@ -620,9 +620,9 @@ def ResilienceERV(idf, zone, occ, ervSense, ervLatent):
         Latent_Effectiveness_at_100_Cooling_Air_Flow = ervLatent,
         Sensible_Effectiveness_at_75_Cooling_Air_Flow = (ervSense * 1.1),
         Latent_Effectiveness_at_75_Cooling_Air_Flow =  (ervLatent * 1.1),
-        Supply_Air_Inlet_Node_Name = 'OA_1',
+        Supply_Air_Inlet_Node_Name = (str(zone) + '_OA_1'),
         Supply_Air_Outlet_Node_Name = (str(zone) + '_ERV_Core_Sup_Out'),
-        Exhaust_Air_Inlet_Node_Name = (str(zone) + '_Exhausts'),
+        Exhaust_Air_Inlet_Node_Name = (str(zone) + '_ERV_Exhaust'),
         Exhaust_Air_Outlet_Node_Name = (str(zone) + '_ERV_Core_Exh_Out'),
         Supply_Air_Outlet_Temperature_Control = 'No',
         Heat_Exchanger_Type = 'Plate',
@@ -634,12 +634,12 @@ def ResilienceERV(idf, zone, occ, ervSense, ervLatent):
         )
 
     idf.newidfobject('OutdoorAir:Node',
-        Name = 'OA_1',
+        Name = (str(zone) + '_OA_1'),
         Height_Above_Ground = 3.048
         )
 
     idf.newidfobject('OutdoorAir:Node',
-        Name = 'OA_2',
+        Name = (str(zone) + '_OA_2'),
         Height_Above_Ground = 3.048
         )
 
@@ -693,7 +693,7 @@ def AnnualERV(idf, zone, occ, ervSense, ervLatent):
         Latent_Effectiveness_at_100_Cooling_Air_Flow = ervLatent,
         Sensible_Effectiveness_at_75_Cooling_Air_Flow = (ervSense * 1.1),
         Latent_Effectiveness_at_75_Cooling_Air_Flow =  (ervLatent * 1.1),
-        Supply_Air_Inlet_Node_Name = 'OA_1',
+        Supply_Air_Inlet_Node_Name = (str(zone) + '_OA_1'),
         Supply_Air_Outlet_Node_Name = (str(zone) + '_ERV_Core_Sup_Out'),
         Exhaust_Air_Inlet_Node_Name = (str(zone) + '_ERV_Exhaust'),
         Exhaust_Air_Outlet_Node_Name = (str(zone) + '_ERV_Core_Exh_Out'),
@@ -707,11 +707,11 @@ def AnnualERV(idf, zone, occ, ervSense, ervLatent):
         )
 
     idf.newidfobject('OutdoorAir:Node',
-        Name = 'OA_1',
+        Name = (str(zone) + '_OA_1'),
         Height_Above_Ground = 3.048
         )
 
     idf.newidfobject('OutdoorAir:Node',
-        Name = 'OA_2',
+        Name = (str(zone) + '_OA_2'),
         Height_Above_Ground = 3.048
         )

@@ -58,6 +58,13 @@ def zeroSch(idf,nameSch):
 def ResilienceSchedules(idf, outage1start, outage1end, outage2start, outage2end, 
                         coolingOutageStart,coolingOutageEnd,NatVentAvail,
                         demandCoolingAvail,shadingAvail,outage1type):
+    
+    outage1start = datetime.datetime.strptime(outage1start, "%d-%b").strftime("%m/%d")
+    outage1end = datetime.datetime.strptime(outage1end, "%d-%b").strftime("%m/%d")
+    outage2start = datetime.datetime.strptime(outage2start, "%d-%b").strftime("%m/%d")
+    outage2end = datetime.datetime.strptime(outage2end, "%d-%b").strftime("%m/%d")
+    coolingOutageStart = datetime.datetime.strptime(coolingOutageStart, "%d-%b").strftime("%m/%d")
+    coolingOutageEnd = datetime.datetime.strptime(coolingOutageEnd, "%d-%b").strftime("%m/%d")
 
     idf.newidfobject('ScheduleTypeLimits',
         Name = 'Number')
@@ -357,7 +364,15 @@ def ResilienceSchedules(idf, outage1start, outage1end, outage2start, outage2end,
         Field_5 = 'For: AllOtherDays',
         Field_6  ='Until: 24:00',
         Field_7 = 0)
-    
+
+def AnnualControls(idf, unit_list):
+    for zone in unit_list:
+        idf.newidfobject('Schedule:Constant',
+            Name = (str(zone) + '_WindowFractionControl'),
+            Schedule_Type_Limits_Name = 'Any Number',
+            Hourly_Value = 0
+            )
+
 def ResilienceControls(idf, unit_list, NatVentType):
 
     for zone in unit_list:
@@ -404,7 +419,7 @@ def ResilienceControls(idf, unit_list, NatVentType):
             Program_Line_6 = 'ENDIF')
         
         idf.newidfobject('EnergyManagementSystem:ProgramCallingManager',
-            Name = 'Program Caller',
+            Name = (str(zone) + '_Program Caller'),
             EnergyPlus_Model_Calling_Point  ='BeginZoneTimestepBeforeSetCurrentWeather',
             Program_Name_1 = (str(zone) + '_SummerVentDB'))
 

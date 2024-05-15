@@ -245,7 +245,7 @@ def WindowShadingControl(idf, zone, windowNames):
     for i,param in enumerate(params):
         values['Fenestration_Surface_' + str(i+1) + '_Name'] = param
     idf.newidfobject('WindowShadingControl',
-    Name = 'Shading Control',
+    Name = (str(zone) + '_Shading Control'),
     Zone_Name = str(zone),
     Shading_Control_Sequence_Number = 1,
     Shading_Type = 'ExteriorShade',

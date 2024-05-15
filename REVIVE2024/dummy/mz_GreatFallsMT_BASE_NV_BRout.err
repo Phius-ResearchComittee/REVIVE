@@ -1,0 +1,36 @@
+Program Version,EnergyPlus, Version 9.5.0-de239b2e5f, YMD=2024.05.15 14:59,
+   ************* Beginning Zone Sizing Calculations
+   ** Warning ** ProcessScheduleInput: Schedule:Constant="COUNT", Schedule Type Limits Name="ANYNUMBER" not found -- will not be validated
+   ** Warning ** Foundation:Kiva="SLAB DETAILS", no Interior Horizontal Insulation Material Name defined
+   **   ~~~   ** Interior Horizontal Insulation Depth will not be used.
+   ** Warning ** Foundation:Kiva="SLAB DETAILS", no Exterior Horizontal Insulation Material Name defined
+   **   ~~~   ** Exterior Horizontal Insulation Width will not be used.
+   ** Warning ** Foundation:Kiva="SLAB DETAILS", no Footing Material Name defined
+   **   ~~~   ** Footing Depth will not be used.
+   ** Warning ** GetSurfaceData: Construction INTERIOR FLOOR of interzone surface DF56F9 does not have the same materials in the reverse order as the construction INTERIOR FLOOR of adjacent surface 316250
+   **   ~~~   ** or the properties of the reversed layers are not correct due to differing layer front and back side values
+   **   ~~~   ** ...but Nominal U values are similar, diff=[0.0000] ... simulation proceeds.
+   **   ~~~   ** ...if the two zones are expected to have significantly different temperatures, the proper "reverse" construction should be created.
+   **   ~~~   ** ...this problem for this pair will not be reported again.
+   ** Severe  ** CheckWindowShadingControlSimilarForWindow: Fenestration surface named "2653A6" has multiple WindowShadingContols that are not similar.
+   **   ~~~   ** for: "GROUNDUNIT_SHADING CONTROL and: 2NDFLOOR_SHADING CONTROL
+   ** Severe  ** CheckWindowShadingControlSimilarForWindow: Fenestration surface named "647F87" has multiple WindowShadingContols that are not similar.
+   **   ~~~   ** for: "GROUNDUNIT_SHADING CONTROL and: 2NDFLOOR_SHADING CONTROL
+   ** Severe  ** CheckWindowShadingControlSimilarForWindow: Fenestration surface named "96FA3F" has multiple WindowShadingContols that are not similar.
+   **   ~~~   ** for: "GROUNDUNIT_SHADING CONTROL and: 2NDFLOOR_SHADING CONTROL
+   ** Severe  ** CheckWindowShadingControlSimilarForWindow: Fenestration surface named "E51EF0" has multiple WindowShadingContols that are not similar.
+   **   ~~~   ** for: "GROUNDUNIT_SHADING CONTROL and: 2NDFLOOR_SHADING CONTROL
+   ** Severe  ** CheckWindowShadingControlSimilarForWindow: Fenestration surface named "527646" has multiple WindowShadingContols that are not similar.
+   **   ~~~   ** for: "GROUNDUNIT_SHADING CONTROL and: 2NDFLOOR_SHADING CONTROL
+   ** Severe  ** SurfaceProperty:ExposedFoundationPerimeter="SLAB", did not find matching surface
+   ** Warning ** SurfaceProperty:ExposedFoundationPerimeter: , surface is not a floor surface
+   **   ~~~   ** SurfaceProperty:ExposedFoundationPerimeter will not be used
+   **  Fatal  ** GetSurfaceData: Errors discovered, program terminates.
+   ...Summary of Errors that led to program termination:
+   ..... Reference severe error count=6
+   ..... Last severe error=SurfaceProperty:ExposedFoundationPerimeter="SLAB", did not find matching surface
+   ************* Warning:  Node connection errors not checked - most system input has not been read (see previous warning).
+   ************* Fatal error -- final processing.  Program exited before simulations began.  See previous error messages.
+   ************* EnergyPlus Warmup Error Summary. During Warmup: 0 Warning; 0 Severe Errors.
+   ************* EnergyPlus Sizing Error Summary. During Sizing: 6 Warning; 6 Severe Errors.
+   ************* EnergyPlus Terminated--Fatal Error Detected. 6 Warning; 6 Severe Errors; Elapsed Time=00hr 00min  0.19sec
