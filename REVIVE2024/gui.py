@@ -249,14 +249,14 @@ class SimulateTab(QWidget):
         err_string = simulate.validate_input(batch_name, idd_file, study_folder, run_list, db_dir)
 
         # run the simulation
-        try:
-            assert err_string == "", err_string
-            self.save_settings() # remember these inputs for next run
-            simulate.parallel_simulate(batch_name, idd_file, study_folder, run_list, db_dir, num_procs, show_graphs, gen_pdf_report, is_dummy_mode)
-        except Exception as err_msg:
-            self.parent.display_error(str(err_msg))
-        else:
-            self.parent.display_info("Analysis complete!")
+        # try:
+        assert err_string == "", err_string
+        self.save_settings() # remember these inputs for next run
+        simulate.parallel_simulate(batch_name, idd_file, study_folder, run_list, db_dir, num_procs, show_graphs, gen_pdf_report, is_dummy_mode)
+    # except Exception as err_msg:
+        #     self.parent.display_error(str(err_msg))
+        # else:
+        #     self.parent.display_info("Analysis complete!")
 
     
     def save_settings(self):

@@ -1,0 +1,21 @@
+Program Version,EnergyPlus, Version 9.5.0-de239b2e5f, YMD=2024.05.14 18:22,
+   ************* Beginning Zone Sizing Calculations
+   ** Warning ** SetUpDesignDay: Entered DesignDay Barometric Pressure=88606 differs by more than 10% from Standard Barometric Pressure=98934.
+   **   ~~~   ** ...occurs in DesignDay=GREAT FALLS INTL ARPT ANN HTG 99.6% CONDNS DB, Standard Pressure (based on elevation) will be used.
+   ** Warning ** ProcessScheduleInput: Schedule:Constant="COUNT", Schedule Type Limits Name="ANYNUMBER" not found -- will not be validated
+   ** Warning ** Foundation:Kiva="SLAB DETAILS", no Interior Horizontal Insulation Material Name defined
+   **   ~~~   ** Interior Horizontal Insulation Depth will not be used.
+   ** Warning ** Foundation:Kiva="SLAB DETAILS", no Exterior Horizontal Insulation Material Name defined
+   **   ~~~   ** Exterior Horizontal Insulation Width will not be used.
+   ** Warning ** Foundation:Kiva="SLAB DETAILS", no Footing Material Name defined
+   **   ~~~   ** Footing Depth will not be used.
+   ** Severe  ** WindowShadingControl="SHADING CONTROL" invalid Zone Name="ZONE 1" not found.
+   **  Fatal  ** GetSurfaceData: Errors discovered, program terminates.
+   ...Summary of Errors that led to program termination:
+   ..... Reference severe error count=1
+   ..... Last severe error=WindowShadingControl="SHADING CONTROL" invalid Zone Name="ZONE 1" not found.
+   ************* Warning:  Node connection errors not checked - most system input has not been read (see previous warning).
+   ************* Fatal error -- final processing.  Program exited before simulations began.  See previous error messages.
+   ************* EnergyPlus Warmup Error Summary. During Warmup: 0 Warning; 0 Severe Errors.
+   ************* EnergyPlus Sizing Error Summary. During Sizing: 5 Warning; 1 Severe Errors.
+   ************* EnergyPlus Terminated--Fatal Error Detected. 5 Warning; 1 Severe Errors; Elapsed Time=00hr 00min  0.23sec

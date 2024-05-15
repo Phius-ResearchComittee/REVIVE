@@ -191,7 +191,7 @@ def simulate(si: SimInputs, case_id: int):
     assert os.path.isfile(ddyName), "Cannot find specified DDY file."
 
     try:
-        zone_name = 'Zone 1'
+        # zone_name = 'Zone 1'
 
         icfa = runList['ICFA'][runCount]
         icfa_M  =icfa*0.09290304
@@ -383,10 +383,13 @@ def simulate(si: SimInputs, case_id: int):
         modeled_zones = idf1.idfobjects['ZONE']
         DHW_CombinedGPM = 0
 
+        unit_list = []
         for zone in modeled_zones:
             zone_name = zone.Name.split('|')
             zone_type = zone_name[1] if len(zone_name)>1 else ""
+            zone.Name = zone_name[0]
             if 'UNIT' in zone_type:
+                unit_list.append(zone_name[0])
                 occ = 1 + float(zone_name[2][0])
                 icfa_zone = zone.Floor_Area
                 Nbr_zone = float(zone_name[2][0])
@@ -414,22 +417,23 @@ def simulate(si: SimInputs, case_id: int):
 
                 sizingLoadSensible = G_0s + G_cfs*icfa_zone + G_ocs*occ
                 sizingLoadLatent = G_0l + G_cfl*icfa_zone + G_ocl*occ
-                internalHeatGains.People(idf1, zone_name, occ)
-                internalHeatGains.LightsMELsAppliances(idf1, zone_name, PhiusLights, PhiusMELs, fridge, rangeElec, 
+                internalHeatGains.People(idf1, zone_name[0], occ)
+                internalHeatGains.LightsMELsAppliances(idf1, zone_name[0], PhiusLights, PhiusMELs, fridge, rangeElec, 
                             clothesDryer,clothesWasher,dishWasher)
-                internalHeatGains.SizingLoads(idf1, zone_name, sizingLoadSensible, sizingLoadLatent)
-                internalHeatGains.ThermalMass(idf1, zone_name, icfa_zone)
+                internalHeatGains.SizingLoads(idf1, zone_name[0], sizingLoadSensible, sizingLoadLatent)
+                internalHeatGains.ThermalMass(idf1, zone_name[0], icfa_zone)
 
-                envelope.infiltration(idf1, zone_name, infiltration_rate)
+                envelope.infiltration(idf1, zone_name[0], infiltration_rate)
 
-                envelope.WindowVentilation(idf1, halfHeight, operableArea_N, operableArea_W, 
+                envelope.WindowVentilation(idf1, zone_name[0], halfHeight, operableArea_N, operableArea_W, 
                 operableArea_S, operableArea_E)
 
-                hvac.SizingSettings(idf1, zone_name)
-                hvac.HVACControls(idf1, zone_name)
-                hvac.ZoneMechConnections(idf1, zone_name)
-                hvac.HVACBuilder(idf1, zone_name, mechSystemType)
-                hvac.WaterHeater(idf1, zone_name, dhwFuel, DHW_CombinedGPM)
+                hvac.SizingSettings(idf1, zone_name[0])
+                hvac.HVACControls(idf1, zone_name[0])
+                hvac.ZoneMechConnections(idf1, zone_name[0])
+                hvac.HVACBuilder(idf1, zone_name[0], mechSystemType)
+                hvac.WaterHeater(idf1, zone_name[0], dhwFuel, DHW_CombinedGPM)
+                renewables.demand_limiting(idf1, zone_name[0])
 
             if 'STAIR' in zone_type:
                 print(str(zone_name[0]) + ' is some Stairs')
@@ -495,7 +499,9 @@ def simulate(si: SimInputs, case_id: int):
         # Sizing settings:
         hvac.Curves(idf1)
 
-        renewables.Renewables(idf1, zone_name, PV_SIZE, PV_TILT)
+        renewables.generators(idf1, PV_SIZE, PV_TILT)
+
+        internalHeatGains.ext_lights(idf1)
 
         outputs.SimulationOutputs(idf1)
         # ============================================================================
@@ -521,13 +527,10 @@ def simulate(si: SimInputs, case_id: int):
                     coolingOutageStart,coolingOutageEnd,NatVentAvail,
                     demandCoolingAvail,shadingAvail,outage1type)
         
-        schedules.ResilienceControls(idf1, NatVentType)
+        schedules.ResilienceControls(idf1, unit_list, NatVentType)
 
-        for zone in modeled_zones:
-            zone_name = zone.Name.split('|')
-            zone_type = zone_name[1] if len(zone_name)>1 else ""
-            if 'UNIT' in zone_type:
-                hvac.ResilienceERV(idf1, zone_name, occ, ervSense, ervLatent)
+        for zone in unit_list:
+            hvac.ResilienceERV(idf1, zone, occ, ervSense, ervLatent)
 
         weatherMorph.WeatherMorphSine(idf1, outage1start, outage1end, outage2start, outage2end,
                 MorphFactorDB1, MorphFactorDP1, MorphFactorDB2, MorphFactorDP2)
@@ -727,7 +730,7 @@ def simulate(si: SimInputs, case_id: int):
             zone_name = zone.Name.split('|')
             zone_type = zone_name[1] if len(zone_name)>1 else ""
             if 'UNIT' in zone_type:
-                hvac.AnnualERV(idf2, zone_name, occ, ervSense, ervLatent)
+                hvac.AnnualERV(idf2, zone_name[0], occ, ervSense, ervLatent)
 
         for item in range(constructions):
             

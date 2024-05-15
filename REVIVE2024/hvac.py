@@ -231,7 +231,7 @@ def HVACBuilder(idf, zone, mechSystemType):
             Zone_Equipment_1_Cooling_Sequence = 2,
             Zone_Equipment_1_Heating_or_NoLoad_Sequence = 2,
             Zone_Equipment_2_Object_Type = 'AirLoopHVAC:UnitarySystem',
-            Zone_Equipment_2_Name = 'GasHeatDXACFurnace',
+            Zone_Equipment_2_Name = (str(zone) +'_GasHeat_DXAC_Furnace'),
             Zone_Equipment_2_Cooling_Sequence = 1,
             Zone_Equipment_2_Heating_or_NoLoad_Sequence = 1
             #Zone_Equipment_1_Sequential_Cooling_Fraction_Schedule_Name = 

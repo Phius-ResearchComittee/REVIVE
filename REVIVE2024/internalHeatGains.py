@@ -124,7 +124,8 @@ def LightsMELsAppliances(idf, zone, PhiusLights, PhiusMELs, fridge, rangeElec, c
         Fraction_Radiant = 0.60,
         EndUse_Subcategory = 'Dishwasher'
         )
-
+def ext_lights(idf):
+    
     idf.newidfobject('Exterior:Lights',
         Name = 'PhiusExtLight',
         Schedule_Name = 'Always_On',

@@ -23,10 +23,10 @@ import subprocess
 import os
 from os import system
 
-def Renewables(idf, ZoneName, PV_SIZE, PV_TILT):
+def demand_limiting(idf, zone):
 
     idf.newidfobject('DemandManagerAssignmentList',
-        Name = 'Demand Limiting',
+        Name = (str(zone) + '_Demand Limiting'),
         Meter_Name = 'ElectricityNet:Facility',
         Demand_Limit_Schedule_Name = 'Always Off',
         Demand_Limit_Safety_Fraction = 0.95,
@@ -35,10 +35,11 @@ def Renewables(idf, ZoneName, PV_SIZE, PV_TILT):
         Demand_Window_Length = 10,
         Demand_Manager_Priority = 'All', 
         DemandManager_1_Object_Type = 'DemandManager:Thermostats',
-        DemandManager_1_Name = 'Set backs') 
+        DemandManager_1_Name = (str(zone) + '_Set backs') 
+        )
 
     idf.newidfobject('DemandManager:Thermostats',
-        Name = 'Set Backs',
+        Name = (str(zone) + '_Set backs'),
         Availability_Schedule_Name = 'Demand Control Cooling', 
         Reset_Control = 'Fixed',
         Minimum_Reset_Duration = 30,
@@ -47,7 +48,10 @@ def Renewables(idf, ZoneName, PV_SIZE, PV_TILT):
         # Reset_Step_Change = ,
         Selection_Control = 'All',
         # Rotation_Duration = ,
-        Thermostat_1_Name = 'Zone_1_Thermostat')
+        Thermostat_1_Name = (str(zone) + '_Thermostat')
+        )
+
+def generators(idf, PV_SIZE, PV_TILT):
 
     idf.newidfobject('Generator:PVWatts',
         Name = 'PV Array',
@@ -78,7 +82,7 @@ def Renewables(idf, ZoneName, PV_SIZE, PV_TILT):
     idf.newidfobject('ElectricLoadCenter:Storage:Simple',
         Name = 'Simple Battery',
         Availability_Schedule_Name = 'Always_On',
-        Zone_Name = str(ZoneName),
+        # Zone_Name = str(ZoneName),
         Radiative_Fraction_for_Zone_Heat_Gains = 0.9,
         Nominal_Energetic_Efficiency_for_Charging = 0.9,
         Nominal_Discharging_Energetic_Efficiency = 0.9,
@@ -91,7 +95,7 @@ def Renewables(idf, ZoneName, PV_SIZE, PV_TILT):
         Name = 'Transformer',
         Availability_Schedule_Name = 'Always_On',
         Transformer_Usage = 'LoadCenterPowerConditioning',
-        Zone_Name = str(ZoneName),
+        # Zone_Name = str(ZoneName),
         # Radiative_Fraction = ,
         # Rated_Capacity = ,
         Phase = 3,

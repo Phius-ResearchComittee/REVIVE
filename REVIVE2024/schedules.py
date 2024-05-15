@@ -72,12 +72,6 @@ def ResilienceSchedules(idf, outage1start, outage1end, outage2start, outage2end,
         Name = 'On/Off')
 
     idf.newidfobject('Schedule:Constant',
-        Name = 'WindowFraction2',
-        Schedule_Type_Limits_Name = 'Any Number',
-        Hourly_Value = 0
-        )
-
-    idf.newidfobject('Schedule:Constant',
         Name = 'HVAC_ALWAYS_4',
         Schedule_Type_Limits_Name = 'Any Number',
         Hourly_Value = 4
@@ -364,22 +358,60 @@ def ResilienceSchedules(idf, outage1start, outage1end, outage2start, outage2end,
         Field_6  ='Until: 24:00',
         Field_7 = 0)
     
-def ResilienceControls(idf, NatVentType):
+def ResilienceControls(idf, unit_list, NatVentType):
 
-    idf.newidfobject('EnergyManagementSystem:Sensor',
-        Name = 'IWB',
-        OutputVariable_or_OutputMeter_Index_Key_Name = 'Zone_1_Zone_Air_Node',
-        OutputVariable_or_OutputMeter_Name = 'System Node Wetbulb Temperature')
+    for zone in unit_list:
+        # zone = str(zone).replace(' ','_')
+
+        idf.newidfobject('EnergyManagementSystem:Sensor',
+            Name = (str(zone) + '_IWB'),
+            OutputVariable_or_OutputMeter_Index_Key_Name = (str(zone) + '_Zone_Air_Node'),
+            OutputVariable_or_OutputMeter_Name = 'System Node Wetbulb Temperature')
+        
+        idf.newidfobject('EnergyManagementSystem:Sensor',
+            Name = (str(zone) + '_IDB'),
+            OutputVariable_or_OutputMeter_Index_Key_Name = str(zone),
+            OutputVariable_or_OutputMeter_Name = 'Zone Air Temperature')
+        
+        idf.newidfobject('EnergyManagementSystem:Actuator',
+            Name = (str(zone) + 'WindowEconomizer'),
+            Actuated_Component_Unique_Name = (str(zone) + '_WindowFractionControl'),
+            Actuated_Component_Type = 'Schedule:Constant',
+            Actuated_Component_Control_Type = 'Schedule Value')
+        
+        idf.newidfobject('Schedule:Constant',
+            Name = (str(zone) + '_WindowFractionControl'),
+            Schedule_Type_Limits_Name = 'Any Number',
+            Hourly_Value = 0
+            )
+        
+        idf.newidfobject('EnergyManagementSystem:Program',
+            Name = (str(zone) +'_SummerVentWB'),
+            Program_Line_1 = ('IF ' + (str(zone) + '_IWB') + '> 1+ OWB && NatVentAvail > 0 && Clock > 0'),
+            Program_Line_2 = ('SET ' + (str(zone) + 'WindowEconomizer') + ' = 1'),
+            Program_Line_3 = 'SET DC_Coolings = 0',
+            Program_Line_4 = 'ELSE',
+            Program_Line_5 = ('SET ' + (str(zone) + 'WindowEconomizer') + ' = 0'),
+            Program_Line_6 = 'ENDIF')
+
+        idf.newidfobject('EnergyManagementSystem:Program',
+            Name = (str(zone) + '_SummerVentDB'),
+            Program_Line_1 = ('IF ' + (str(zone) + '_IDB') + '> 1+ ODB && NatVentAvail > 0 && Clock > 0'),
+            Program_Line_2 = ('SET ' + (str(zone) + 'WindowEconomizer') + ' = 1'),
+            Program_Line_3 = 'SET DC_Coolings = 0',
+            Program_Line_4 = 'ELSE',
+            Program_Line_5 = ('SET ' + (str(zone) + 'WindowEconomizer') + ' = 0'),
+            Program_Line_6 = 'ENDIF')
+        
+        idf.newidfobject('EnergyManagementSystem:ProgramCallingManager',
+            Name = 'Program Caller',
+            EnergyPlus_Model_Calling_Point  ='BeginZoneTimestepBeforeSetCurrentWeather',
+            Program_Name_1 = (str(zone) + '_SummerVentDB'))
 
     idf.newidfobject('EnergyManagementSystem:Sensor',
         Name = 'OWB',
         OutputVariable_or_OutputMeter_Index_Key_Name ='*',
         OutputVariable_or_OutputMeter_Name = 'Site Outdoor Air Wetbulb Temperature')
-
-    idf.newidfobject('EnergyManagementSystem:Sensor',
-        Name = 'IDB',
-        OutputVariable_or_OutputMeter_Index_Key_Name = 'Zone 1',
-        OutputVariable_or_OutputMeter_Name = 'Zone Air Temperature')
 
     idf.newidfobject('EnergyManagementSystem:Sensor',
         Name = 'ODB',
@@ -402,39 +434,10 @@ def ResilienceControls(idf, NatVentType):
         OutputVariable_or_OutputMeter_Name = 'Electric Load Center Produced Electricity Energy')
 
     idf.newidfobject('EnergyManagementSystem:Actuator',
-        Name = 'WindowEconomizer',
-        Actuated_Component_Unique_Name = 'WindowFraction2',
-        Actuated_Component_Type = 'Schedule:Constant',
-        Actuated_Component_Control_Type = 'Schedule Value')
-
-    idf.newidfobject('EnergyManagementSystem:Actuator',
         Name = 'DC_Coolings',
         Actuated_Component_Unique_Name = 'Demand Control Cooling',
         Actuated_Component_Type = 'Schedule:Compact',
         Actuated_Component_Control_Type = 'Schedule Value')
-
-    idf.newidfobject('EnergyManagementSystem:ProgramCallingManager',
-        Name = 'CO2Caller',
-        EnergyPlus_Model_Calling_Point  ='BeginZoneTimestepBeforeSetCurrentWeather',
-        Program_Name_1 = 'SummerVentDB')
-
-    idf.newidfobject('EnergyManagementSystem:Program',
-        Name = 'SummerVentWB',
-        Program_Line_1 = 'IF IWB> 1+ OWB && NatVentAvail > 0 && Clock > 0',
-        Program_Line_2 = 'SET WindowEconomizer = 1',
-        Program_Line_3 = 'SET DC_Coolings = 0',
-        Program_Line_4 = 'ELSE',
-        Program_Line_5 = 'SET WindowEconomizer = 0',
-        Program_Line_6 = 'ENDIF')
-
-    idf.newidfobject('EnergyManagementSystem:Program',
-        Name = 'SummerVentDB',
-        Program_Line_1 = 'IF IDB> 1+ ODB && NatVentAvail > 0 && Clock > 0',
-        Program_Line_2 = 'SET WindowEconomizer = 1',
-        Program_Line_3 = 'SET DC_Coolings = 0',
-        Program_Line_4 = 'ELSE',
-        Program_Line_5 = 'SET WindowEconomizer = 0',
-        Program_Line_6 = 'ENDIF')
     
 def AnnualSchedules(idf, outage1start, outage1end, outage2start, outage2end, 
                         coolingOutageStart,coolingOutageEnd,NatVentAvail,
