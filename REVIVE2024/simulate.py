@@ -347,6 +347,10 @@ def simulate(si: SimInputs, case_id: int):
 
         for srf in idfg.idfobjects['BuildingSurface:Detailed']:
             idf1.copyidfobject(srf)
+        
+        for srf in idf1.idfobjects['BuildingSurface:Detailed']:
+            zone_name = srf.Zone_Name.split('|')
+            srf.Zone_Name = zone_name[0]
 
         count = -1
         windowNames = []
@@ -428,6 +432,12 @@ def simulate(si: SimInputs, case_id: int):
                 envelope.WindowVentilation(idf1, zone_name[0], halfHeight, operableArea_N, operableArea_W, 
                 operableArea_S, operableArea_E)
 
+                windowNames_split = list(divide_chunks(windowNames, 10))
+
+                for i in range(len(windowNames_split)):
+                    windowNamesChunk = windowNames_split[i]
+                    envelope.WindowShadingControl(idf1, zone_name[0], windowNamesChunk)
+
                 hvac.SizingSettings(idf1, zone_name[0])
                 hvac.HVACControls(idf1, zone_name[0])
                 hvac.ZoneMechConnections(idf1, zone_name[0])
@@ -482,13 +492,6 @@ def simulate(si: SimInputs, case_id: int):
         envelope.SpecialMaterials(idf1)
         envelope.FoundationInterface(idf1,foundationList)
         envelope.ShadeMaterials(idf1)
-
-        windowNames_split = list(divide_chunks(windowNames, 10))
-
-        for i in range(len(windowNames_split)):
-            windowNamesChunk = windowNames_split[i]
-            envelope.WindowShadingControl(idf1, windowNamesChunk)
-
         envelope.AssignContructions(idf1, Ext_Wall1,Ext_Wall2,Ext_Wall3,
                 Ext_Roof1,Ext_Roof2,Ext_Roof3,
                 Ext_Floor1,Ext_Floor2,Ext_Floor3,

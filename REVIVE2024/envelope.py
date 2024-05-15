@@ -238,7 +238,7 @@ def WindowVentilation(idf, zone, halfHeight, operableArea_N, operableArea_W,
         Maximum_Wind_Speed = 10
         )
     
-def WindowShadingControl(idf, windowNames):
+def WindowShadingControl(idf, zone, windowNames):
     runs = windowNames
     params = [x for x in runs]
     values = {}
@@ -246,7 +246,7 @@ def WindowShadingControl(idf, windowNames):
         values['Fenestration_Surface_' + str(i+1) + '_Name'] = param
     idf.newidfobject('WindowShadingControl',
     Name = 'Shading Control',
-    Zone_Name = 'Zone 1',
+    Zone_Name = str(zone),
     Shading_Control_Sequence_Number = 1,
     Shading_Type = 'ExteriorShade',
     Shading_Control_Type = 'OnIfHighSolarOnWindow',

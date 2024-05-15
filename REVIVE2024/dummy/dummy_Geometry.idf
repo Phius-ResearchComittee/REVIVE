@@ -34,7 +34,7 @@ Site:Location,
     CHICAGO_IL_USA TMY2-94846,    !- Name
     41.78,                    !- Latitude
     -87.75,                   !- Longitude
-    -6,                       !- Time Zone
+    -6.0,                       !- Time Zone
     190;                      !- Elevation
 
 SizingPeriod:DesignDay,
@@ -3236,7 +3236,7 @@ GlobalGeometryRules,
     Relative;                 !- Coordinate System
 
 Zone,
-    Zone2|UNIT|3B|3R,                   !- Name
+    WholeHouse|UNIT|3B|2R,                   !- Name
     0,                        !- Direction of Relative North
     0,                        !- X Origin
     0,                        !- Y Origin
@@ -3245,7 +3245,7 @@ Zone,
     1,                        !- Multiplier
     ,                         !- Ceiling Height
     482.065996382208,         !- Volume
-    197.69766912,             !- Floor Area
+    222.97,             !- Floor Area
     ,                         !- Zone Inside Convection Algorithm
     ,                         !- Zone Outside Convection Algorithm
     Yes;                      !- Part of Total Floor Area
@@ -3254,265 +3254,265 @@ BuildingSurface:Detailed,
     Slab,                     !- Name
     Floor,                    !- Surface Type
     Ext_Floor1,     !- Construction Name
-    Zone2,                   !- Zone Name
+    WholeHouse|UNIT|3B|2R,                   !- Zone Name
     Foundation,               !- Outside Boundary Condition
     Slab Details,             !- Outside Boundary Condition Object
     NoSun,                    !- Sun Exposure
     NoWind,                   !- Wind Exposure
     0,                        !- View Factor to Ground
     4,                        !- Number of Vertices
-    0,                        !- Vertex 1 Xcoordinate
-    12.192,                   !- Vertex 1 Ycoordinate
-    -0.3048,                  !- Vertex 1 Zcoordinate
-    9.144,                    !- Vertex 2 Xcoordinate
-    12.192,                   !- Vertex 2 Ycoordinate
-    -0.3048,                  !- Vertex 2 Zcoordinate
-    9.144,                    !- Vertex 3 Xcoordinate
-    0,                        !- Vertex 3 Ycoordinate
-    -0.3048,                  !- Vertex 3 Zcoordinate
-    0,                        !- Vertex 4 Xcoordinate
-    0,                        !- Vertex 4 Ycoordinate
-    -0.3048;                  !- Vertex 4 Zcoordinate
+    0.000000000000,                        !- Vertex 1 Xcoordinate
+    12.192000000000,                   !- Vertex 1 Ycoordinate
+    -0.304800000000,                  !- Vertex 1 Zcoordinate
+    9.144000000000,                    !- Vertex 2 Xcoordinate
+    12.192000000000,                   !- Vertex 2 Ycoordinate
+    -0.304800000000,                  !- Vertex 2 Zcoordinate
+    9.144000000000,                    !- Vertex 3 Xcoordinate
+    0.000000000000,                        !- Vertex 3 Ycoordinate
+    -0.304800000000,                  !- Vertex 3 Zcoordinate
+    0.000000000000,                        !- Vertex 4 Xcoordinate
+    0.000000000000,                        !- Vertex 4 Ycoordinate
+    -0.304800000000;                  !- Vertex 4 Zcoordinate
 
 BuildingSurface:Detailed,
     Front Wall 1,             !- Name
     Wall,                     !- Surface Type
     Ext_Wall1,          !- Construction Name
-    Zone2,                   !- Zone Name
+    WholeHouse|UNIT|3B|2R,                   !- Zone Name
     Outdoors,                 !- Outside Boundary Condition
     ,                         !- Outside Boundary Condition Object
     SunExposed,               !- Sun Exposure
     WindExposed,              !- Wind Exposure
     ,                         !- View Factor to Ground
     4,                        !- Number of Vertices
-    9.144,                    !- Vertex 1 Xcoordinate
-    0,                        !- Vertex 1 Ycoordinate
-    2.7432,                   !- Vertex 1 Zcoordinate
-    9.144,                    !- Vertex 2 Xcoordinate
-    0,                        !- Vertex 2 Ycoordinate
-    -0.3048,                  !- Vertex 2 Zcoordinate
-    9.144,                    !- Vertex 3 Xcoordinate
-    12.192,                   !- Vertex 3 Ycoordinate
-    -0.3048,                  !- Vertex 3 Zcoordinate
-    9.144,                    !- Vertex 4 Xcoordinate
-    12.192,                   !- Vertex 4 Ycoordinate
-    2.7432;                   !- Vertex 4 Zcoordinate
+    9.144000000000,                    !- Vertex 1 Xcoordinate
+    0.000000000000,                        !- Vertex 1 Ycoordinate
+    2.743200000000,                   !- Vertex 1 Zcoordinate
+    9.144000000000,                    !- Vertex 2 Xcoordinate
+    0.000000000000,                        !- Vertex 2 Ycoordinate
+    -0.304800000000,                  !- Vertex 2 Zcoordinate
+    9.144000000000,                    !- Vertex 3 Xcoordinate
+    12.192000000000,                   !- Vertex 3 Ycoordinate
+    -0.304800000000,                  !- Vertex 3 Zcoordinate
+    9.144000000000,                    !- Vertex 4 Xcoordinate
+    12.192000000000,                   !- Vertex 4 Ycoordinate
+    2.743200000000;                   !- Vertex 4 Zcoordinate
 
 BuildingSurface:Detailed,
     Left Wall 1,              !- Name
     Wall,                     !- Surface Type
     Ext_Wall1,          !- Construction Name
-    Zone2,                   !- Zone Name
+    WholeHouse|UNIT|3B|2R,                   !- Zone Name
     Outdoors,                 !- Outside Boundary Condition
     ,                         !- Outside Boundary Condition Object
     SunExposed,               !- Sun Exposure
     WindExposed,              !- Wind Exposure
     ,                         !- View Factor to Ground
     4,                        !- Number of Vertices
-    0,                        !- Vertex 1 Xcoordinate
-    0,                        !- Vertex 1 Ycoordinate
-    2.7432,                   !- Vertex 1 Zcoordinate
-    0,                        !- Vertex 2 Xcoordinate
-    0,                        !- Vertex 2 Ycoordinate
-    -0.3048,                  !- Vertex 2 Zcoordinate
-    9.144,                    !- Vertex 3 Xcoordinate
-    0,                        !- Vertex 3 Ycoordinate
-    -0.3048,                  !- Vertex 3 Zcoordinate
-    9.144,                    !- Vertex 4 Xcoordinate
-    0,                        !- Vertex 4 Ycoordinate
-    2.7432;                   !- Vertex 4 Zcoordinate
+    0.000000000000,                        !- Vertex 1 Xcoordinate
+    0.000000000000,                        !- Vertex 1 Ycoordinate
+    2.743200000000,                   !- Vertex 1 Zcoordinate
+    0.000000000000,                        !- Vertex 2 Xcoordinate
+    0.000000000000,                        !- Vertex 2 Ycoordinate
+    -0.304800000000,                  !- Vertex 2 Zcoordinate
+    9.144000000000,                    !- Vertex 3 Xcoordinate
+    0.000000000000,                        !- Vertex 3 Ycoordinate
+    -0.304800000000,                  !- Vertex 3 Zcoordinate
+    9.144000000000,                    !- Vertex 4 Xcoordinate
+    0.000000000000,                        !- Vertex 4 Ycoordinate
+    2.743200000000;                   !- Vertex 4 Zcoordinate
 
 BuildingSurface:Detailed,
     Attic,                    !- Name
     Ceiling,                  !- Surface Type
     Ext_Roof1,      !- Construction Name
-    Zone2,                   !- Zone Name
+    WholeHouse|UNIT|3B|2R,                   !- Zone Name
     Outdoors,                 !- Outside Boundary Condition
     ,                         !- Outside Boundary Condition Object
     NoSun,                    !- Sun Exposure
     NoWind,                   !- Wind Exposure
     ,                         !- View Factor to Ground
     4,                        !- Number of Vertices
-    0,                        !- Vertex 1 Xcoordinate
-    0,                        !- Vertex 1 Ycoordinate
-    5.4864,                   !- Vertex 1 Zcoordinate
-    9.144,                    !- Vertex 2 Xcoordinate
-    0,                        !- Vertex 2 Ycoordinate
-    5.4864,                   !- Vertex 2 Zcoordinate
-    9.144,                    !- Vertex 3 Xcoordinate
-    12.192,                   !- Vertex 3 Ycoordinate
-    5.4864,                   !- Vertex 3 Zcoordinate
-    0,                        !- Vertex 4 Xcoordinate
-    12.192,                   !- Vertex 4 Ycoordinate
-    5.4864;                   !- Vertex 4 Zcoordinate
+    0.000000000000,                        !- Vertex 1 Xcoordinate
+    0.000000000000,                        !- Vertex 1 Ycoordinate
+    5.486400000000,                   !- Vertex 1 Zcoordinate
+    9.144000000000,                    !- Vertex 2 Xcoordinate
+    0.000000000000,                        !- Vertex 2 Ycoordinate
+    5.486400000000,                   !- Vertex 2 Zcoordinate
+    9.144000000000,                    !- Vertex 3 Xcoordinate
+    12.192000000000,                   !- Vertex 3 Ycoordinate
+    5.486400000000,                   !- Vertex 3 Zcoordinate
+    0.000000000000,                        !- Vertex 4 Xcoordinate
+    12.192000000000,                   !- Vertex 4 Ycoordinate
+    5.486400000000;                   !- Vertex 4 Zcoordinate
 
 BuildingSurface:Detailed,
     Right Wall 2,             !- Name
     Wall,                     !- Surface Type
     Ext_Wall1,          !- Construction Name
-    Zone2,                   !- Zone Name
+    WholeHouse|UNIT|3B|2R,                   !- Zone Name
     Outdoors,                 !- Outside Boundary Condition
     ,                         !- Outside Boundary Condition Object
     SunExposed,               !- Sun Exposure
     WindExposed,              !- Wind Exposure
     ,                         !- View Factor to Ground
     4,                        !- Number of Vertices
-    9.144,                    !- Vertex 1 Xcoordinate
-    12.192,                   !- Vertex 1 Ycoordinate
-    5.4864,                   !- Vertex 1 Zcoordinate
-    9.144,                    !- Vertex 2 Xcoordinate
-    12.192,                   !- Vertex 2 Ycoordinate
-    2.7432,                   !- Vertex 2 Zcoordinate
-    0,                        !- Vertex 3 Xcoordinate
-    12.192,                   !- Vertex 3 Ycoordinate
-    2.7432,                   !- Vertex 3 Zcoordinate
-    0,                        !- Vertex 4 Xcoordinate
-    12.192,                   !- Vertex 4 Ycoordinate
-    5.4864;                   !- Vertex 4 Zcoordinate
+    9.144000000000,                    !- Vertex 1 Xcoordinate
+    12.192000000000,                   !- Vertex 1 Ycoordinate
+    5.486400000000,                   !- Vertex 1 Zcoordinate
+    9.144000000000,                    !- Vertex 2 Xcoordinate
+    12.192000000000,                   !- Vertex 2 Ycoordinate
+    2.743200000000,                   !- Vertex 2 Zcoordinate
+    0.000000000000,                        !- Vertex 3 Xcoordinate
+    12.192000000000,                   !- Vertex 3 Ycoordinate
+    2.743200000000,                   !- Vertex 3 Zcoordinate
+    0.000000000000,                        !- Vertex 4 Xcoordinate
+    12.192000000000,                   !- Vertex 4 Ycoordinate
+    5.486400000000;                   !- Vertex 4 Zcoordinate
 
 BuildingSurface:Detailed,
     Back Wall 1,              !- Name
     Wall,                     !- Surface Type
     Ext_Wall1,          !- Construction Name
-    Zone2,                   !- Zone Name
+    WholeHouse|UNIT|3B|2R,                   !- Zone Name
     Outdoors,                 !- Outside Boundary Condition
     ,                         !- Outside Boundary Condition Object
     SunExposed,               !- Sun Exposure
     WindExposed,              !- Wind Exposure
     ,                         !- View Factor to Ground
     4,                        !- Number of Vertices
-    0,                        !- Vertex 1 Xcoordinate
-    12.192,                   !- Vertex 1 Ycoordinate
-    2.7432,                   !- Vertex 1 Zcoordinate
-    0,                        !- Vertex 2 Xcoordinate
-    12.192,                   !- Vertex 2 Ycoordinate
-    -0.3048,                  !- Vertex 2 Zcoordinate
-    0,                        !- Vertex 3 Xcoordinate
-    0,                        !- Vertex 3 Ycoordinate
-    -0.3048,                  !- Vertex 3 Zcoordinate
-    0,                        !- Vertex 4 Xcoordinate
-    0,                        !- Vertex 4 Ycoordinate
-    2.7432;                   !- Vertex 4 Zcoordinate
+    0.000000000000,                        !- Vertex 1 Xcoordinate
+    12.192000000000,                   !- Vertex 1 Ycoordinate
+    2.743200000000,                   !- Vertex 1 Zcoordinate
+    0.000000000000,                        !- Vertex 2 Xcoordinate
+    12.192000000000,                   !- Vertex 2 Ycoordinate
+    -0.304800000000,                  !- Vertex 2 Zcoordinate
+    0.000000000000,                        !- Vertex 3 Xcoordinate
+    0.000000000000,                        !- Vertex 3 Ycoordinate
+    -0.304800000000,                  !- Vertex 3 Zcoordinate
+    0.000000000000,                        !- Vertex 4 Xcoordinate
+    0.000000000000,                        !- Vertex 4 Ycoordinate
+    2.743200000000;                   !- Vertex 4 Zcoordinate
 
 BuildingSurface:Detailed,
     Right Wall 1,             !- Name
     Wall,                     !- Surface Type
     Ext_Wall1,          !- Construction Name
-    Zone2,                   !- Zone Name
+    WholeHouse|UNIT|3B|2R,                   !- Zone Name
     Outdoors,                 !- Outside Boundary Condition
     ,                         !- Outside Boundary Condition Object
     SunExposed,               !- Sun Exposure
     WindExposed,              !- Wind Exposure
     ,                         !- View Factor to Ground
     4,                        !- Number of Vertices
-    9.144,                    !- Vertex 1 Xcoordinate
-    12.192,                   !- Vertex 1 Ycoordinate
-    2.7432,                   !- Vertex 1 Zcoordinate
-    9.144,                    !- Vertex 2 Xcoordinate
-    12.192,                   !- Vertex 2 Ycoordinate
-    -0.3048,                  !- Vertex 2 Zcoordinate
-    0,                        !- Vertex 3 Xcoordinate
-    12.192,                   !- Vertex 3 Ycoordinate
-    -0.3048,                  !- Vertex 3 Zcoordinate
-    0,                        !- Vertex 4 Xcoordinate
-    12.192,                   !- Vertex 4 Ycoordinate
-    2.7432;                   !- Vertex 4 Zcoordinate
+    9.144000000000,                    !- Vertex 1 Xcoordinate
+    12.192000000000,                   !- Vertex 1 Ycoordinate
+    2.743200000000,                   !- Vertex 1 Zcoordinate
+    9.144000000000,                    !- Vertex 2 Xcoordinate
+    12.192000000000,                   !- Vertex 2 Ycoordinate
+    -0.304800000000,                  !- Vertex 2 Zcoordinate
+    0.000000000000,                        !- Vertex 3 Xcoordinate
+    12.192000000000,                   !- Vertex 3 Ycoordinate
+    -0.304800000000,                  !- Vertex 3 Zcoordinate
+    0.000000000000,                        !- Vertex 4 Xcoordinate
+    12.192000000000,                   !- Vertex 4 Ycoordinate
+    2.743200000000;                   !- Vertex 4 Zcoordinate
 
 BuildingSurface:Detailed,
     Front Wall 2,             !- Name
     Wall,                     !- Surface Type
     Ext_Wall1,          !- Construction Name
-    Zone2,                   !- Zone Name
+    WholeHouse|UNIT|3B|2R,                   !- Zone Name
     Outdoors,                 !- Outside Boundary Condition
     ,                         !- Outside Boundary Condition Object
     SunExposed,               !- Sun Exposure
     WindExposed,              !- Wind Exposure
     ,                         !- View Factor to Ground
     4,                        !- Number of Vertices
-    9.144,                    !- Vertex 1 Xcoordinate
-    0,                        !- Vertex 1 Ycoordinate
-    5.4864,                   !- Vertex 1 Zcoordinate
-    9.144,                    !- Vertex 2 Xcoordinate
-    0,                        !- Vertex 2 Ycoordinate
-    2.7432,                   !- Vertex 2 Zcoordinate
-    9.144,                    !- Vertex 3 Xcoordinate
-    12.192,                   !- Vertex 3 Ycoordinate
-    2.7432,                   !- Vertex 3 Zcoordinate
-    9.144,                    !- Vertex 4 Xcoordinate
-    12.192,                   !- Vertex 4 Ycoordinate
-    5.4864;                   !- Vertex 4 Zcoordinate
+    9.144000000000,                    !- Vertex 1 Xcoordinate
+    0.000000000000,                        !- Vertex 1 Ycoordinate
+    5.486400000000,                   !- Vertex 1 Zcoordinate
+    9.144000000000,                    !- Vertex 2 Xcoordinate
+    0.000000000000,                        !- Vertex 2 Ycoordinate
+    2.743200000000,                   !- Vertex 2 Zcoordinate
+    9.144000000000,                    !- Vertex 3 Xcoordinate
+    12.192000000000,                   !- Vertex 3 Ycoordinate
+    2.743200000000,                   !- Vertex 3 Zcoordinate
+    9.144000000000,                    !- Vertex 4 Xcoordinate
+    12.192000000000,                   !- Vertex 4 Ycoordinate
+    5.486400000000;                   !- Vertex 4 Zcoordinate
 
 BuildingSurface:Detailed,
     Left Wall 2,              !- Name
     Wall,                     !- Surface Type
     Ext_Wall1,          !- Construction Name
-    Zone2,                   !- Zone Name
+    WholeHouse|UNIT|3B|2R,                   !- Zone Name
     Outdoors,                 !- Outside Boundary Condition
     ,                         !- Outside Boundary Condition Object
     SunExposed,               !- Sun Exposure
     WindExposed,              !- Wind Exposure
     ,                         !- View Factor to Ground
     4,                        !- Number of Vertices
-    0,                        !- Vertex 1 Xcoordinate
-    0,                        !- Vertex 1 Ycoordinate
-    5.4864,                   !- Vertex 1 Zcoordinate
-    0,                        !- Vertex 2 Xcoordinate
-    0,                        !- Vertex 2 Ycoordinate
-    2.7432,                   !- Vertex 2 Zcoordinate
-    9.144,                    !- Vertex 3 Xcoordinate
-    0,                        !- Vertex 3 Ycoordinate
-    2.7432,                   !- Vertex 3 Zcoordinate
-    9.144,                    !- Vertex 4 Xcoordinate
-    0,                        !- Vertex 4 Ycoordinate
-    5.4864;                   !- Vertex 4 Zcoordinate
+    0.000000000000,                        !- Vertex 1 Xcoordinate
+    0.000000000000,                        !- Vertex 1 Ycoordinate
+    5.486400000000,                   !- Vertex 1 Zcoordinate
+    0.000000000000,                        !- Vertex 2 Xcoordinate
+    0.000000000000,                        !- Vertex 2 Ycoordinate
+    2.743200000000,                   !- Vertex 2 Zcoordinate
+    9.144000000000,                    !- Vertex 3 Xcoordinate
+    0.000000000000,                        !- Vertex 3 Ycoordinate
+    2.743200000000,                   !- Vertex 3 Zcoordinate
+    9.144000000000,                    !- Vertex 4 Xcoordinate
+    0.000000000000,                        !- Vertex 4 Ycoordinate
+    5.486400000000;                   !- Vertex 4 Zcoordinate
 
 BuildingSurface:Detailed,
     Inertstitail Floor,       !- Name
     Floor,                    !- Surface Type
     Int_Floor1,           !- Construction Name
-    Zone2,                   !- Zone Name
+    WholeHouse|UNIT|3B|2R,                   !- Zone Name
     Adiabatic,                !- Outside Boundary Condition
     ,                         !- Outside Boundary Condition Object
     NoSun,                    !- Sun Exposure
     NoWind,                   !- Wind Exposure
     0,                        !- View Factor to Ground
     4,                        !- Number of Vertices
-    0,                        !- Vertex 1 Xcoordinate
-    12.192,                   !- Vertex 1 Ycoordinate
-    2.7432,                   !- Vertex 1 Zcoordinate
-    9.144,                    !- Vertex 2 Xcoordinate
-    12.192,                   !- Vertex 2 Ycoordinate
-    2.7432,                   !- Vertex 2 Zcoordinate
-    9.144,                    !- Vertex 3 Xcoordinate
-    0,                        !- Vertex 3 Ycoordinate
-    2.7432,                   !- Vertex 3 Zcoordinate
-    0,                        !- Vertex 4 Xcoordinate
-    0,                        !- Vertex 4 Ycoordinate
-    2.7432;                   !- Vertex 4 Zcoordinate
+    0.000000000000,                        !- Vertex 1 Xcoordinate
+    12.192000000000,                   !- Vertex 1 Ycoordinate
+    2.743200000000,                   !- Vertex 1 Zcoordinate
+    9.144000000000,                    !- Vertex 2 Xcoordinate
+    12.192000000000,                   !- Vertex 2 Ycoordinate
+    2.743200000000,                   !- Vertex 2 Zcoordinate
+    9.144000000000,                    !- Vertex 3 Xcoordinate
+    0.000000000000,                        !- Vertex 3 Ycoordinate
+    2.743200000000,                   !- Vertex 3 Zcoordinate
+    0.000000000000,                        !- Vertex 4 Xcoordinate
+    0.000000000000,                        !- Vertex 4 Ycoordinate
+    2.743200000000;                   !- Vertex 4 Zcoordinate
 
 BuildingSurface:Detailed,
     Back Wall 2,              !- Name
     Wall,                     !- Surface Type
     Ext_Wall1,          !- Construction Name
-    Zone2,                   !- Zone Name
+    WholeHouse|UNIT|3B|2R,                   !- Zone Name
     Outdoors,                 !- Outside Boundary Condition
     ,                         !- Outside Boundary Condition Object
     SunExposed,               !- Sun Exposure
     WindExposed,              !- Wind Exposure
     ,                         !- View Factor to Ground
     4,                        !- Number of Vertices
-    0,                        !- Vertex 1 Xcoordinate
-    12.192,                   !- Vertex 1 Ycoordinate
-    5.4864,                   !- Vertex 1 Zcoordinate
-    0,                        !- Vertex 2 Xcoordinate
-    12.192,                   !- Vertex 2 Ycoordinate
-    2.7432,                   !- Vertex 2 Zcoordinate
-    0,                        !- Vertex 3 Xcoordinate
-    0,                        !- Vertex 3 Ycoordinate
-    2.7432,                   !- Vertex 3 Zcoordinate
-    0,                        !- Vertex 4 Xcoordinate
-    0,                        !- Vertex 4 Ycoordinate
-    5.4864;                   !- Vertex 4 Zcoordinate
+    0.000000000000,                        !- Vertex 1 Xcoordinate
+    12.192000000000,                   !- Vertex 1 Ycoordinate
+    5.486400000000,                   !- Vertex 1 Zcoordinate
+    0.000000000000,                        !- Vertex 2 Xcoordinate
+    12.192000000000,                   !- Vertex 2 Ycoordinate
+    2.743200000000,                   !- Vertex 2 Zcoordinate
+    0.000000000000,                        !- Vertex 3 Xcoordinate
+    0.000000000000,                        !- Vertex 3 Ycoordinate
+    2.743200000000,                   !- Vertex 3 Zcoordinate
+    0.000000000000,                        !- Vertex 4 Xcoordinate
+    0.000000000000,                        !- Vertex 4 Ycoordinate
+    5.486400000000;                   !- Vertex 4 Zcoordinate
 
 FenestrationSurface:Detailed,
     F-DR-1,                   !- Name
@@ -3524,18 +3524,18 @@ FenestrationSurface:Detailed,
     ,                         !- Frame and Divider Name
     ,                         !- Multiplier
     4,                        !- Number of Vertices
-    9.144,                    !- Vertex 1 Xcoordinate
-    0.6096,                   !- Vertex 1 Ycoordinate
-    2.1336,                   !- Vertex 1 Zcoordinate
-    9.144,                    !- Vertex 2 Xcoordinate
-    0.6096,                   !- Vertex 2 Ycoordinate
-    0,                        !- Vertex 2 Zcoordinate
-    9.144,                    !- Vertex 3 Xcoordinate
-    1.524,                    !- Vertex 3 Ycoordinate
-    0,                        !- Vertex 3 Zcoordinate
-    9.144,                    !- Vertex 4 Xcoordinate
-    1.524,                    !- Vertex 4 Ycoordinate
-    2.1336;                   !- Vertex 4 Zcoordinate
+    9.144000000000,                    !- Vertex 1 Xcoordinate
+    0.609600000000,                   !- Vertex 1 Ycoordinate
+    2.133600000000,                   !- Vertex 1 Zcoordinate
+    9.144000000000,                    !- Vertex 2 Xcoordinate
+    0.609600000000,                   !- Vertex 2 Ycoordinate
+    0.000000000000,                        !- Vertex 2 Zcoordinate
+    9.144000000000,                    !- Vertex 3 Xcoordinate
+    1.524000000000,                    !- Vertex 3 Ycoordinate
+    0.000000000000,                        !- Vertex 3 Zcoordinate
+    9.144000000000,                    !- Vertex 4 Xcoordinate
+    1.524000000000,                    !- Vertex 4 Ycoordinate
+    2.133600000000;                   !- Vertex 4 Zcoordinate
 
 FenestrationSurface:Detailed,
     F-WN-1,                   !- Name
@@ -3547,18 +3547,18 @@ FenestrationSurface:Detailed,
     ,                         !- Frame and Divider Name
     ,                         !- Multiplier
     4,                        !- Number of Vertices
-    9.144,                    !- Vertex 1 Xcoordinate
-    3.048,                    !- Vertex 1 Ycoordinate
-    2.1336,                   !- Vertex 1 Zcoordinate
-    9.144,                    !- Vertex 2 Xcoordinate
-    3.048,                    !- Vertex 2 Ycoordinate
-    0.6096,                   !- Vertex 2 Zcoordinate
-    9.144,                    !- Vertex 3 Xcoordinate
-    5.7912,                   !- Vertex 3 Ycoordinate
-    0.6096,                   !- Vertex 3 Zcoordinate
-    9.144,                    !- Vertex 4 Xcoordinate
-    5.7912,                   !- Vertex 4 Ycoordinate
-    2.1336;                   !- Vertex 4 Zcoordinate
+    9.144000000000,                    !- Vertex 1 Xcoordinate
+    3.048000000000,                    !- Vertex 1 Ycoordinate
+    2.133600000000,                   !- Vertex 1 Zcoordinate
+    9.144000000000,                    !- Vertex 2 Xcoordinate
+    3.048000000000,                    !- Vertex 2 Ycoordinate
+    0.609600000000,                   !- Vertex 2 Zcoordinate
+    9.144000000000,                    !- Vertex 3 Xcoordinate
+    5.791200000000,                   !- Vertex 3 Ycoordinate
+    0.609600000000,                   !- Vertex 3 Zcoordinate
+    9.144000000000,                    !- Vertex 4 Xcoordinate
+    5.791200000000,                   !- Vertex 4 Ycoordinate
+    2.133600000000;                   !- Vertex 4 Zcoordinate
 
 FenestrationSurface:Detailed,
     F-WN-2,                   !- Name
@@ -3570,18 +3570,18 @@ FenestrationSurface:Detailed,
     ,                         !- Frame and Divider Name
     ,                         !- Multiplier
     4,                        !- Number of Vertices
-    9.144,                    !- Vertex 1 Xcoordinate
-    3.048,                    !- Vertex 1 Ycoordinate
-    4.8768,                   !- Vertex 1 Zcoordinate
-    9.144,                    !- Vertex 2 Xcoordinate
-    3.048,                    !- Vertex 2 Ycoordinate
-    3.3528,                   !- Vertex 2 Zcoordinate
-    9.144,                    !- Vertex 3 Xcoordinate
-    5.7912,                   !- Vertex 3 Ycoordinate
-    3.3528,                   !- Vertex 3 Zcoordinate
-    9.144,                    !- Vertex 4 Xcoordinate
-    5.7912,                   !- Vertex 4 Ycoordinate
-    4.8768;                   !- Vertex 4 Zcoordinate
+    9.144000000000,                    !- Vertex 1 Xcoordinate
+    3.048000000000,                    !- Vertex 1 Ycoordinate
+    4.876800000000,                   !- Vertex 1 Zcoordinate
+    9.144000000000,                    !- Vertex 2 Xcoordinate
+    3.048000000000,                    !- Vertex 2 Ycoordinate
+    3.352800000000,                   !- Vertex 2 Zcoordinate
+    9.144000000000,                    !- Vertex 3 Xcoordinate
+    5.791200000000,                   !- Vertex 3 Ycoordinate
+    3.352800000000,                   !- Vertex 3 Zcoordinate
+    9.144000000000,                    !- Vertex 4 Xcoordinate
+    5.791200000000,                   !- Vertex 4 Ycoordinate
+    4.876800000000;                   !- Vertex 4 Zcoordinate
 
 FenestrationSurface:Detailed,
     R-WN-1,                   !- Name
@@ -3593,18 +3593,18 @@ FenestrationSurface:Detailed,
     ,                         !- Frame and Divider Name
     ,                         !- Multiplier
     4,                        !- Number of Vertices
-    5.9436,                   !- Vertex 1 Xcoordinate
-    12.192,                   !- Vertex 1 Ycoordinate
-    2.1336,                   !- Vertex 1 Zcoordinate
-    5.9436,                   !- Vertex 2 Xcoordinate
-    12.192,                   !- Vertex 2 Ycoordinate
-    0.6096,                   !- Vertex 2 Zcoordinate
-    3.2004,                   !- Vertex 3 Xcoordinate
-    12.192,                   !- Vertex 3 Ycoordinate
-    0.6096,                   !- Vertex 3 Zcoordinate
-    3.2004,                   !- Vertex 4 Xcoordinate
-    12.192,                   !- Vertex 4 Ycoordinate
-    2.1336;                   !- Vertex 4 Zcoordinate
+    5.943600000000,                   !- Vertex 1 Xcoordinate
+    12.192000000000,                   !- Vertex 1 Ycoordinate
+    2.133600000000,                   !- Vertex 1 Zcoordinate
+    5.943600000000,                   !- Vertex 2 Xcoordinate
+    12.192000000000,                   !- Vertex 2 Ycoordinate
+    0.609600000000,                   !- Vertex 2 Zcoordinate
+    3.200400000000,                   !- Vertex 3 Xcoordinate
+    12.192000000000,                   !- Vertex 3 Ycoordinate
+    0.609600000000,                   !- Vertex 3 Zcoordinate
+    3.200400000000,                   !- Vertex 4 Xcoordinate
+    12.192000000000,                   !- Vertex 4 Ycoordinate
+    2.133600000000;                   !- Vertex 4 Zcoordinate
 
 FenestrationSurface:Detailed,
     R-WN-2,                   !- Name
@@ -3616,18 +3616,18 @@ FenestrationSurface:Detailed,
     ,                         !- Frame and Divider Name
     ,                         !- Multiplier
     4,                        !- Number of Vertices
-    5.9436,                   !- Vertex 1 Xcoordinate
-    12.192,                   !- Vertex 1 Ycoordinate
-    4.8768,                   !- Vertex 1 Zcoordinate
-    5.9436,                   !- Vertex 2 Xcoordinate
-    12.192,                   !- Vertex 2 Ycoordinate
-    3.3528,                   !- Vertex 2 Zcoordinate
-    3.2004,                   !- Vertex 3 Xcoordinate
-    12.192,                   !- Vertex 3 Ycoordinate
-    3.3528,                   !- Vertex 3 Zcoordinate
-    3.2004,                   !- Vertex 4 Xcoordinate
-    12.192,                   !- Vertex 4 Ycoordinate
-    4.8768;                   !- Vertex 4 Zcoordinate
+    5.943600000000,                   !- Vertex 1 Xcoordinate
+    12.192000000000,                   !- Vertex 1 Ycoordinate
+    4.876800000000,                   !- Vertex 1 Zcoordinate
+    5.943600000000,                   !- Vertex 2 Xcoordinate
+    12.192000000000,                   !- Vertex 2 Ycoordinate
+    3.352800000000,                   !- Vertex 2 Zcoordinate
+    3.200400000000,                   !- Vertex 3 Xcoordinate
+    12.192000000000,                   !- Vertex 3 Ycoordinate
+    3.352800000000,                   !- Vertex 3 Zcoordinate
+    3.200400000000,                   !- Vertex 4 Xcoordinate
+    12.192000000000,                   !- Vertex 4 Ycoordinate
+    4.876800000000;                   !- Vertex 4 Zcoordinate
 
 FenestrationSurface:Detailed,
     B-WN-1,                   !- Name
@@ -3639,18 +3639,18 @@ FenestrationSurface:Detailed,
     ,                         !- Frame and Divider Name
     ,                         !- Multiplier
     4,                        !- Number of Vertices
-    0,                        !- Vertex 1 Xcoordinate
-    7.4676,                   !- Vertex 1 Ycoordinate
-    2.1336,                   !- Vertex 1 Zcoordinate
-    0,                        !- Vertex 2 Xcoordinate
-    7.4676,                   !- Vertex 2 Ycoordinate
-    0.6096,                   !- Vertex 2 Zcoordinate
-    0,                        !- Vertex 3 Xcoordinate
-    4.7244,                   !- Vertex 3 Ycoordinate
-    0.6096,                   !- Vertex 3 Zcoordinate
-    0,                        !- Vertex 4 Xcoordinate
-    4.7244,                   !- Vertex 4 Ycoordinate
-    2.1336;                   !- Vertex 4 Zcoordinate
+    0.000000000000,                        !- Vertex 1 Xcoordinate
+    7.467600000000,                   !- Vertex 1 Ycoordinate
+    2.133600000000,                   !- Vertex 1 Zcoordinate
+    0.000000000000,                        !- Vertex 2 Xcoordinate
+    7.467600000000,                   !- Vertex 2 Ycoordinate
+    0.609600000000,                   !- Vertex 2 Zcoordinate
+    0.000000000000,                        !- Vertex 3 Xcoordinate
+    4.724400000000,                   !- Vertex 3 Ycoordinate
+    0.609600000000,                   !- Vertex 3 Zcoordinate
+    0.000000000000,                        !- Vertex 4 Xcoordinate
+    4.724400000000,                   !- Vertex 4 Ycoordinate
+    2.133600000000;                   !- Vertex 4 Zcoordinate
 
 FenestrationSurface:Detailed,
     B-WN-2,                   !- Name
@@ -3662,18 +3662,18 @@ FenestrationSurface:Detailed,
     ,                         !- Frame and Divider Name
     ,                         !- Multiplier
     4,                        !- Number of Vertices
-    0,                        !- Vertex 1 Xcoordinate
-    7.4676,                   !- Vertex 1 Ycoordinate
-    4.8768,                   !- Vertex 1 Zcoordinate
-    0,                        !- Vertex 2 Xcoordinate
-    7.4676,                   !- Vertex 2 Ycoordinate
-    3.3528,                   !- Vertex 2 Zcoordinate
-    0,                        !- Vertex 3 Xcoordinate
-    4.7244,                   !- Vertex 3 Ycoordinate
-    3.3528,                   !- Vertex 3 Zcoordinate
-    0,                        !- Vertex 4 Xcoordinate
-    4.7244,                   !- Vertex 4 Ycoordinate
-    4.8768;                   !- Vertex 4 Zcoordinate
+    0.000000000000,                        !- Vertex 1 Xcoordinate
+    7.467600000000,                   !- Vertex 1 Ycoordinate
+    4.876800000000,                   !- Vertex 1 Zcoordinate
+    0.000000000000,                        !- Vertex 2 Xcoordinate
+    7.467600000000,                   !- Vertex 2 Ycoordinate
+    3.352800000000,                   !- Vertex 2 Zcoordinate
+    0.000000000000,                        !- Vertex 3 Xcoordinate
+    4.724400000000,                   !- Vertex 3 Ycoordinate
+    3.352800000000,                   !- Vertex 3 Zcoordinate
+    0.000000000000,                        !- Vertex 4 Xcoordinate
+    4.724400000000,                   !- Vertex 4 Ycoordinate
+    4.876800000000;                   !- Vertex 4 Zcoordinate
 
 FenestrationSurface:Detailed,
     L-WN-1,                   !- Name
@@ -3685,18 +3685,18 @@ FenestrationSurface:Detailed,
     ,                         !- Frame and Divider Name
     ,                         !- Multiplier
     4,                        !- Number of Vertices
-    3.2004,                   !- Vertex 1 Xcoordinate
-    0,                        !- Vertex 1 Ycoordinate
-    2.1336,                   !- Vertex 1 Zcoordinate
-    3.2004,                   !- Vertex 2 Xcoordinate
-    0,                        !- Vertex 2 Ycoordinate
-    0.6096,                   !- Vertex 2 Zcoordinate
-    5.9436,                   !- Vertex 3 Xcoordinate
-    0,                        !- Vertex 3 Ycoordinate
-    0.6096,                   !- Vertex 3 Zcoordinate
-    5.9436,                   !- Vertex 4 Xcoordinate
-    0,                        !- Vertex 4 Ycoordinate
-    2.1336;                   !- Vertex 4 Zcoordinate
+    3.200400000000,                   !- Vertex 1 Xcoordinate
+    0.000000000000,                        !- Vertex 1 Ycoordinate
+    2.133600000000,                   !- Vertex 1 Zcoordinate
+    3.200400000000,                   !- Vertex 2 Xcoordinate
+    0.000000000000,                        !- Vertex 2 Ycoordinate
+    0.609600000000,                   !- Vertex 2 Zcoordinate
+    5.943600000000,                   !- Vertex 3 Xcoordinate
+    0.000000000000,                        !- Vertex 3 Ycoordinate
+    0.609600000000,                   !- Vertex 3 Zcoordinate
+    5.943600000000,                   !- Vertex 4 Xcoordinate
+    0.000000000000,                        !- Vertex 4 Ycoordinate
+    2.133600000000;                   !- Vertex 4 Zcoordinate
 
 FenestrationSurface:Detailed,
     L-WN-2,                   !- Name
@@ -3708,22 +3708,22 @@ FenestrationSurface:Detailed,
     ,                         !- Frame and Divider Name
     ,                         !- Multiplier
     4,                        !- Number of Vertices
-    3.2004,                   !- Vertex 1 Xcoordinate
-    0,                        !- Vertex 1 Ycoordinate
-    4.8768,                   !- Vertex 1 Zcoordinate
-    3.2004,                   !- Vertex 2 Xcoordinate
-    0,                        !- Vertex 2 Ycoordinate
-    3.3528,                   !- Vertex 2 Zcoordinate
-    5.9436,                   !- Vertex 3 Xcoordinate
-    0,                        !- Vertex 3 Ycoordinate
-    3.3528,                   !- Vertex 3 Zcoordinate
-    5.9436,                   !- Vertex 4 Xcoordinate
-    0,                        !- Vertex 4 Ycoordinate
-    4.8768;                   !- Vertex 4 Zcoordinate
+    3.200400000000,                   !- Vertex 1 Xcoordinate
+    0.000000000000,                        !- Vertex 1 Ycoordinate
+    4.876800000000,                   !- Vertex 1 Zcoordinate
+    3.200400000000,                   !- Vertex 2 Xcoordinate
+    0.000000000000,                        !- Vertex 2 Ycoordinate
+    3.352800000000,                   !- Vertex 2 Zcoordinate
+    5.943600000000,                   !- Vertex 3 Xcoordinate
+    0.000000000000,                        !- Vertex 3 Ycoordinate
+    3.352800000000,                   !- Vertex 3 Zcoordinate
+    5.943600000000,                   !- Vertex 4 Xcoordinate
+    0.000000000000,                        !- Vertex 4 Ycoordinate
+    4.876800000000;                   !- Vertex 4 Zcoordinate
 
 WindowShadingControl,
     Shading Control,          !- Name
-    Zone2,                   !- Zone Name
+    WholeHouse|UNIT|3B|2R,                   !- Zone Name
     1,                        !- Shading Control Sequence Number
     ExteriorShade,            !- Shading Type
     ,                         !- Construction with Shading Name
@@ -3750,48 +3750,48 @@ WindowShadingControl,
 InternalMass,
     Zone TM,                  !- Name
     Thermal Mass,             !- Construction Name
-    Zone2,                   !- Zone or ZoneList Name
+    WholeHouse|UNIT|3B|2R,                   !- Zone or ZoneList Name
     197.69766912;             !- Surface Area
 
 InternalMass,
     Partitions,               !- Name
     Interior Wall,            !- Construction Name
-    Zone2,                   !- Zone or ZoneList Name
+    WholeHouse|UNIT|3B|2R,                   !- Zone or ZoneList Name
     197.69766912;             !- Surface Area
 
 Shading:Building:Detailed,
     R-Roof,                   !- Name
     ,                         !- Transmittance Schedule Name
     4,                        !- Number of Vertices
-    4.572,                    !- Vertex 1 Xcoordinate
-    -0.3048,                  !- Vertex 1 Ycoordinate
-    7.7724,                   !- Vertex 1 Zcoordinate
+    4.572000000000,                    !- Vertex 1 Xcoordinate
+    -0.304800000000,                  !- Vertex 1 Ycoordinate
+    7.772400000000,                   !- Vertex 1 Zcoordinate
     9.689242815634,           !- Vertex 2 Xcoordinate
-    -0.3048,                  !- Vertex 2 Ycoordinate
+    -0.304800000000,                  !- Vertex 2 Ycoordinate
     5.213778592183,           !- Vertex 2 Zcoordinate
     9.689242815634,           !- Vertex 3 Xcoordinate
-    12.4968,                  !- Vertex 3 Ycoordinate
+    12.496800000000,                  !- Vertex 3 Ycoordinate
     5.213778592183,           !- Vertex 3 Zcoordinate
-    4.572,                    !- Vertex 4 Xcoordinate
-    12.4968,                  !- Vertex 4 Ycoordinate
-    7.7724;                   !- Vertex 4 Zcoordinate
+    4.572000000000,                    !- Vertex 4 Xcoordinate
+    12.496800000000,                  !- Vertex 4 Ycoordinate
+    7.772400000000;                   !- Vertex 4 Zcoordinate
 
 Shading:Building:Detailed,
     F-ROOF,                   !- Name
     ,                         !- Transmittance Schedule Name
     4,                        !- Number of Vertices
-    4.572,                    !- Vertex 1 Xcoordinate
-    12.4968,                  !- Vertex 1 Ycoordinate
-    7.7724,                   !- Vertex 1 Zcoordinate
+    4.572000000000,                    !- Vertex 1 Xcoordinate
+    12.496800000000,                  !- Vertex 1 Ycoordinate
+    7.772400000000,                   !- Vertex 1 Zcoordinate
     -0.545242815634,          !- Vertex 2 Xcoordinate
-    12.4968,                  !- Vertex 2 Ycoordinate
+    12.496800000000,                  !- Vertex 2 Ycoordinate
     5.213778592183,           !- Vertex 2 Zcoordinate
     -0.545242815634,          !- Vertex 3 Xcoordinate
-    -0.3048,                  !- Vertex 3 Ycoordinate
+    -0.304800000000,                  !- Vertex 3 Ycoordinate
     5.213778592183,           !- Vertex 3 Zcoordinate
-    4.572,                    !- Vertex 4 Xcoordinate
-    -0.3048,                  !- Vertex 4 Ycoordinate
-    7.7724;                   !- Vertex 4 Zcoordinate
+    4.572000000000,                    !- Vertex 4 Xcoordinate
+    -0.304800000000,                  !- Vertex 4 Ycoordinate
+    7.772400000000;                   !- Vertex 4 Zcoordinate
 
 Foundation:Kiva,
     Slab Details,             !- Name
@@ -3821,7 +3821,7 @@ SurfaceProperty:ExposedFoundationPerimeter,
 
 People,
     Zone Occupants,           !- Name
-    Zone2,                   !- Zone or ZoneList Name
+    WholeHouse|UNIT|3B|2R,                   !- Zone or ZoneList Name
     Occupant Schedule,        !- Number of People Schedule Name
     People,                   !- Number of People Calculation Method
     4,                        !- Number of People
@@ -3843,7 +3843,7 @@ People,
 
 Lights,
     SizingLightsHW,           !- Name
-    Zone2,                   !- Zone or ZoneList Name
+    WholeHouse|UNIT|3B|2R,                   !- Zone or ZoneList Name
     SizingLoads,              !- Schedule Name
     Watts/Area,               !- Design Level Calculation Method
     ,                         !- Lighting Level
@@ -3858,7 +3858,7 @@ Lights,
 
 Lights,
     SizingLightsPlug,         !- Name
-    Zone2,                   !- Zone or ZoneList Name
+    WholeHouse|UNIT|3B|2R,                   !- Zone or ZoneList Name
     SizingLoads,              !- Schedule Name
     Watts/Area,               !- Design Level Calculation Method
     ,                         !- Lighting Level
@@ -3873,7 +3873,7 @@ Lights,
 
 ElectricEquipment,
     Fridge,                   !- Name
-    Zone2,                   !- Zone or ZoneList Name
+    WholeHouse|UNIT|3B|2R,                   !- Zone or ZoneList Name
     Sunfrost,                 !- Schedule Name
     EquipmentLevel,           !- Design Level Calculation Method
     33,                       !- Design Level
@@ -3886,7 +3886,7 @@ ElectricEquipment,
 
 ElectricEquipment,
     SizingElecEquip,          !- Name
-    Zone2,                   !- Zone or ZoneList Name
+    WholeHouse|UNIT|3B|2R,                   !- Zone or ZoneList Name
     SizingLoads,              !- Schedule Name
     Watts/Area,               !- Design Level Calculation Method
     ,                         !- Design Level
@@ -3899,7 +3899,7 @@ ElectricEquipment,
 
 ZoneInfiltration:FlowCoefficient,
     Zone Infiltration,        !- Name
-    Zone2,                   !- Zone Name
+    WholeHouse|UNIT|3B|2R,                   !- Zone Name
     Always On,                !- Schedule Name
     = $Infiltration,          !- Flow Coefficient
     0.078,                    !- Stack Coefficient
@@ -3909,7 +3909,7 @@ ZoneInfiltration:FlowCoefficient,
 
 ZoneVentilation:WindandStackOpenArea,
     Operable Windows N,       !- Name
-    Zone2,                   !- Zone Name
+    WholeHouse|UNIT|3B|2R,                   !- Zone Name
     0.650321280000001,        !- Opening Area
     WindowFraction2,          !- Opening Area Fraction Schedule Name
     autocalculate,            !- Opening Effectiveness
@@ -3930,7 +3930,7 @@ ZoneVentilation:WindandStackOpenArea,
 
 ZoneVentilation:WindandStackOpenArea,
     Operable Windows S,       !- Name
-    Zone2,                   !- Zone Name
+    WholeHouse|UNIT|3B|2R,                   !- Zone Name
     0.650321280000001,        !- Opening Area
     WindowFraction2,          !- Opening Area Fraction Schedule Name
     autocalculate,            !- Opening Effectiveness
@@ -3951,7 +3951,7 @@ ZoneVentilation:WindandStackOpenArea,
 
 ZoneVentilation:WindandStackOpenArea,
     Operable Windows E,       !- Name
-    Zone2,                   !- Zone Name
+    WholeHouse|UNIT|3B|2R,                   !- Zone Name
     0.650321280000001,        !- Opening Area
     WindowFraction2,          !- Opening Area Fraction Schedule Name
     autocalculate,            !- Opening Effectiveness
@@ -3972,7 +3972,7 @@ ZoneVentilation:WindandStackOpenArea,
 
 ZoneVentilation:WindandStackOpenArea,
     Operable Windows W,       !- Name
-    Zone2,                   !- Zone Name
+    WholeHouse|UNIT|3B|2R,                   !- Zone Name
     0.650321280000001,        !- Opening Area
     WindowFraction2,          !- Opening Area Fraction Schedule Name
     autocalculate,            !- Opening Effectiveness
@@ -3999,19 +3999,19 @@ Exterior:Lights,
     General;                  !- EndUse Subcategory
 
 DesignSpecification:OutdoorAir,
-    SZ DSOA Zone2,           !- Name
+    SZ DSOA Zone 1,           !- Name
     Flow/Zone,                !- Outdoor Air Method
     0.00944,                  !- Outdoor Air Flow per Person
     0,                        !- Outdoor Air Flow per Zone Floor Area
     0.00943894886400002;      !- Outdoor Air Flow per Zone
 
 DesignSpecification:ZoneAirDistribution,
-    SZ DSZAD Zone2,          !- Name
+    SZ DSZAD Zone 1,          !- Name
     1,                        !- Zone Air Distribution Effectiveness in Cooling Mode
     1;                        !- Zone Air Distribution Effectiveness in Heating Mode
 
 Sizing:Zone,
-    Zone2,                   !- Zone or ZoneList Name
+    WholeHouse|UNIT|3B|2R,                   !- Zone or ZoneList Name
     SupplyAirTemperature,     !- Zone Cooling Design Supply Air Temperature Input Method
     12.8,                     !- Zone Cooling Design Supply Air Temperature
     11.11,                    !- Zone Cooling Design Supply Air Temperature Difference
@@ -4020,7 +4020,7 @@ Sizing:Zone,
     30,                       !- Zone Heating Design Supply Air Temperature Difference
     0.008,                    !- Zone Cooling Design Supply Air Humidity Ratio
     0.008,                    !- Zone Heating Design Supply Air Humidity Ratio
-    SZ DSOA Zone2,           !- Design Specification Outdoor Air Object Name
+    SZ DSOA Zone 1,           !- Design Specification Outdoor Air Object Name
     ,                         !- Zone Heating Sizing Factor
     ,                         !- Zone Cooling Sizing Factor
     DesignDay,                !- Cooling Design Air Flow Method
@@ -4033,7 +4033,7 @@ Sizing:Zone,
     ,                         !- Heating Maximum Air Flow per Zone Floor Area
     ,                         !- Heating Maximum Air Flow
     0,                        !- Heating Maximum Air Flow Fraction
-    SZ DSZAD Zone2,          !- Design Specification Zone Air Distribution Object Name
+    SZ DSZAD Zone 1,          !- Design Specification Zone Air Distribution Object Name
     ,                         !- Account for Dedicated Outdoor Air System
     ,                         !- Dedicated Outdoor Air System Control Strategy
     ,                         !- Dedicated Outdoor Air Low Setpoint Temperature for Design
@@ -4079,13 +4079,13 @@ Sizing:System,
     OnOff;                    !- Central Cooling Capacity Control Method
 
 ZoneControl:Humidistat,
-    Zone2 Humidistat,        !- Name
-    Zone2,                   !- Zone Name
+    Zone 1 Humidistat,        !- Name
+    WholeHouse|UNIT|3B|2R,                   !- Zone Name
     Humidity Setpoint;        !- Humidifying Relative Humidity Setpoint Schedule Name
 
 ZoneControl:Thermostat,
-    Zone2 Thermostat,        !- Name
-    Zone2,                   !- Zone or ZoneList Name
+    Zone 1 Thermostat,        !- Name
+    WholeHouse|UNIT|3B|2R,                   !- Zone or ZoneList Name
     HVACTemplate-Always 4,    !- Control Type Schedule Name
     ThermostatSetpoint:DualSetpoint,    !- Control 1 Object Type
     HP Thermostat Dual SP Control;    !- Control 1 Name
@@ -4096,10 +4096,10 @@ ThermostatSetpoint:DualSetpoint,
     Cooling Setpoint;         !- Cooling Setpoint Temperature Schedule Name
 
 ZoneHVAC:Dehumidifier:DX,
-    Zone2 Dehumidifier,      !- Name
+    Zone 1 Dehumidifier,      !- Name
     =$DXDHSch,                !- Availability Schedule Name
-    Zone2 Dehumidifier Inlet,    !- Air Inlet Node Name
-    Zone2 Dehumidifier Outlet,    !- Air Outlet Node Name
+    Zone 1 Dehumidifier Inlet,    !- Air Inlet Node Name
+    Zone 1 Dehumidifier Outlet,    !- Air Outlet Node Name
     42.5858849999999,         !- Rated Water Removal
     2.88637665,               !- Rated Energy Factor
     0.1458317599488,          !- Rated Air Flow Rate
@@ -4137,23 +4137,23 @@ ZoneHVAC:EvaporativeCoolerUnit,
     EvapCoolerPad;            !- First Evaporative Cooler Object Name
 
 AirTerminal:SingleDuct:ConstantVolume:NoReheat,
-    Zone2 CV,                !- Name
+    Zone 1 CV,                !- Name
     ,                         !- Availability Schedule Name
-    Zone2 Zone Equip Inlet,    !- Air Inlet Node Name
-    Zone2 Supply Inlet,      !- Air Outlet Node Name
+    Zone 1 Zone Equip Inlet,    !- Air Inlet Node Name
+    Zone 1 Supply Inlet,      !- Air Outlet Node Name
     autosize;                 !- Maximum Air Flow Rate
 
 ZoneHVAC:AirDistributionUnit,
-    Zone2 ATU,               !- Name
-    Zone2 Supply Inlet,      !- Air Distribution Unit Outlet Node Name
+    Zone 1 ATU,               !- Name
+    Zone 1 Supply Inlet,      !- Air Distribution Unit Outlet Node Name
     AirTerminal:SingleDuct:ConstantVolume:NoReheat,    !- Air Terminal Object Type
-    Zone2 CV;                !- Air Terminal Name
+    Zone 1 CV;                !- Air Terminal Name
 
 ZoneHVAC:EquipmentList,
-    Zone2 Equipment,         !- Name
+    Zone 1 Equipment,         !- Name
     SequentialLoad,           !- Load Distribution Scheme
     ZoneHVAC:AirDistributionUnit,    !- Zone Equipment 1 Object Type
-    Zone2 ATU,               !- Zone Equipment 1 Name
+    Zone 1 ATU,               !- Zone Equipment 1 Name
     1,                        !- Zone Equipment 1 Cooling Sequence
     1,                        !- Zone Equipment 1 Heating or NoLoad Sequence
     ,                         !- Zone Equipment 1 Sequential Cooling Fraction Schedule Name
@@ -4165,7 +4165,7 @@ ZoneHVAC:EquipmentList,
     ,                         !- Zone Equipment 2 Sequential Cooling Fraction Schedule Name
     ,                         !- Zone Equipment 2 Sequential Heating Fraction Schedule Name
     ZoneHVAC:Dehumidifier:DX,    !- Zone Equipment 3 Object Type
-    Zone2 Dehumidifier,      !- Zone Equipment 3 Name
+    Zone 1 Dehumidifier,      !- Zone Equipment 3 Name
     3,                        !- Zone Equipment 3 Cooling Sequence
     3,                        !- Zone Equipment 3 Heating or NoLoad Sequence
     ,                         !- Zone Equipment 3 Sequential Cooling Fraction Schedule Name
@@ -4176,12 +4176,12 @@ ZoneHVAC:EquipmentList,
     4;                        !- Zone Equipment 4 Heating or NoLoad Sequence
 
 ZoneHVAC:EquipmentConnections,
-    Zone2,                   !- Zone Name
-    Zone2 Equipment,         !- Zone Conditioning Equipment List Name
-    Zone2 Inlets,            !- Zone Air Inlet Node or NodeList Name
-    Zone2 Exhausts,          !- Zone Air Exhaust Node or NodeList Name
-    Zone2 Zone Air Node,     !- Zone Air Node Name
-    Zone2 Returns;           !- Zone Return Air Node or NodeList Name
+    WholeHouse|UNIT|3B|2R,                   !- Zone Name
+    Zone 1 Equipment,         !- Zone Conditioning Equipment List Name
+    Zone 1 Inlets,            !- Zone Air Inlet Node or NodeList Name
+    Zone 1 Exhausts,          !- Zone Air Exhaust Node or NodeList Name
+    Zone 1 Zone Air Node,     !- Zone Air Node Name
+    Zone 1 Returns;           !- Zone Return Air Node or NodeList Name
 
 Fan:OnOff,
     ERV Supply Fan,           !- Name
@@ -4192,7 +4192,7 @@ Fan:OnOff,
     0.8,                      !- Motor Efficiency
     1,                        !- Motor In Airstream Fraction
     ERV Core Sup Out,         !- Air Inlet Node Name
-    Zone2 ERV Inlet,         !- Air Outlet Node Name
+    Zone 1 ERV Inlet,         !- Air Outlet Node Name
     ,                         !- Fan Power Ratio Function of Speed Ratio Curve Name
     ,                         !- Fan Efficiency Ratio Function of Speed Ratio Curve Name
     ERV Fan;                  !- EndUse Subcategory
@@ -4323,7 +4323,7 @@ HeatExchanger:AirToAir:SensibleAndLatent,
     0.5,                      !- Latent Effectiveness at 75 Cooling Air Flow
     OA 1,                     !- Supply Air Inlet Node Name
     ERV Core Sup Out,         !- Supply Air Outlet Node Name
-    Zone2 Exhaust Node,      !- Exhaust Air Inlet Node Name
+    Zone 1 Exhaust Node,      !- Exhaust Air Inlet Node Name
     ERV Core Exh Out,         !- Exhaust Air Outlet Node Name
     ,                         !- Nominal Electric Power
     No,                       !- Supply Air Outlet Temperature Control
@@ -4342,7 +4342,7 @@ AirLoopHVAC:UnitaryHeatPump:AirToAir,
     autosize,                 !- Cooling Supply Air Flow Rate
     autosize,                 !- Heating Supply Air Flow Rate
     autosize,                 !- No Load Supply Air Flow Rate
-    Zone2,                   !- Controlling Zone or Thermostat Location
+    WholeHouse|UNIT|3B|2R,                   !- Controlling Zone or Thermostat Location
     Fan:OnOff,                !- Supply Air Fan Object Type
     HP_MiniSplit Supply Fan,    !- Supply Air Fan Name
     Coil:Heating:DX:SingleSpeed,    !- Heating Coil Object Type
@@ -4412,7 +4412,7 @@ OutdoorAir:Mixer,
 AirLoopHVAC:ZoneSplitter,
     HP_MiniSplit Zone Splitter,    !- Name
     HP_MiniSplit Supply Path Inlet,    !- Inlet Node Name
-    Zone2 Zone Equip Inlet;    !- Outlet 1 Node Name
+    Zone 1 Zone Equip Inlet;    !- Outlet 1 Node Name
 
 AirLoopHVAC:SupplyPath,
     HP_MiniSplit Supply Path,    !- Name
@@ -4423,7 +4423,7 @@ AirLoopHVAC:SupplyPath,
 AirLoopHVAC:ZoneMixer,
     HP_MiniSplit Zone Mixer,    !- Name
     HP_MiniSplit Return Air Outlet,    !- Outlet Node Name
-    Zone2 Return Outlet;     !- Inlet 1 Node Name
+    Zone 1 Return Outlet;     !- Inlet 1 Node Name
 
 AirLoopHVAC:ReturnPath,
     HP_MiniSplit Return Path,    !- Name
@@ -4448,20 +4448,20 @@ BranchList,
     HP_MiniSplit Main Branch;    !- Branch 1 Name
 
 NodeList,
-    Zone2 Inlets,            !- Name
-    Zone2 ERV Inlet,         !- Node 1 Name
-    Zone2 Supply Inlet,      !- Node 2 Name
-    Zone2 Dehumidifier Outlet,    !- Node 3 Name
+    Zone 1 Inlets,            !- Name
+    Zone 1 ERV Inlet,         !- Node 1 Name
+    Zone 1 Supply Inlet,      !- Node 2 Name
+    Zone 1 Dehumidifier Outlet,    !- Node 3 Name
     EvapCoolerOUT;            !- Node 4 Name
 
 NodeList,
-    Zone2 Returns,           !- Name
-    Zone2 Return Outlet;     !- Node 1 Name
+    Zone 1 Returns,           !- Name
+    Zone 1 Return Outlet;     !- Node 1 Name
 
 NodeList,
-    Zone2 Exhausts,          !- Name
-    Zone2 Dehumidifier Inlet,    !- Node 1 Name
-    Zone2 Exhaust Node,      !- Node 2 Name
+    Zone 1 Exhausts,          !- Name
+    Zone 1 Dehumidifier Inlet,    !- Node 1 Name
+    Zone 1 Exhaust Node,      !- Node 2 Name
     EvapReliefEXHAUST;        !- Node 3 Name
 
 OutdoorAir:Node,
@@ -4495,7 +4495,7 @@ OutdoorAir:NodeList,
 
 EnergyManagementSystem:Sensor,
     IWB,                      !- Name
-    Zone2 Exhaust Node,      !- OutputVariable or OutputMeter Index Key Name
+    Zone 1 Exhaust Node,      !- OutputVariable or OutputMeter Index Key Name
     System Node Wetbulb Temperature;    !- OutputVariable or OutputMeter Name
 
 EnergyManagementSystem:Sensor,
@@ -4556,9 +4556,9 @@ SetpointManager:SingleZone:Cooling,
     Temperature,              !- Control Variable
     13,                       !- Minimum Supply Air Temperature
     45,                       !- Maximum Supply Air Temperature
-    Zone2,                   !- Control Zone Name
-    Zone2 Zone Air Node,     !- Zone Node Name
-    Zone2 Supply Inlet,      !- Zone Inlet Node Name
+    WholeHouse|UNIT|3B|2R,                   !- Control Zone Name
+    Zone 1 Zone Air Node,     !- Zone Node Name
+    Zone 1 Supply Inlet,      !- Zone Inlet Node Name
     HP_MiniSplit Air Loop Outlet;    !- Setpoint Node or NodeList Name
 
 SetpointManager:MixedAir,
@@ -4591,7 +4591,7 @@ DemandManager:Thermostats,
     ,                         !- Reset Step Change
     All,                      !- Selection Control
     ,                         !- Rotation Duration
-    Zone2 Thermostat;        !- Thermostat 1 Name
+    Zone 1 Thermostat;        !- Thermostat 1 Name
 
 Generator:PVWatts,
     3 kW PV,                  !- Name
@@ -4622,7 +4622,7 @@ ElectricLoadCenter:Generators,
 ElectricLoadCenter:Storage:Simple,
     Simple Battery,           !- Name
     Always On,                !- Availability Schedule Name
-    Zone2,                   !- Zone Name
+    WholeHouse|UNIT|3B|2R,                   !- Zone Name
     0.9,                      !- Radiative Fraction for Zone Heat Gains
     0.9,                      !- Nominal Energetic Efficiency for Charging
     0.9,                      !- Nominal Discharging Energetic Efficiency
@@ -4635,7 +4635,7 @@ ElectricLoadCenter:Transformer,
     Transformer,              !- Name
     Always On,                !- Availability Schedule Name
     LoadCenterPowerConditioning,    !- Transformer Usage
-    Zone2,                   !- Zone Name
+    WholeHouse|UNIT|3B|2R,                   !- Zone Name
     ,                         !- Radiative Fraction
     ,                         !- Rated Capacity
     3,                        !- Phase
@@ -5095,7 +5095,7 @@ LifeCycleCost:Parameters,
     0.39,                     !- Tax rate
     None;                     !- Depreciation Method
 
-PARAMETRIC:SETVALUEFORRUN,
+Parametric:SetValueForRun,
     $WindowConstruction,      !- Name
     Exterior Window 0.47,     !- Value for Run 1
     Exterior Window 0.47,     !- Value for Run 2
@@ -5110,7 +5110,7 @@ PARAMETRIC:SETVALUEFORRUN,
     Exterior Window 0.15,     !- Value for Run 11
     Exterior Window 0.15;     !- Value for Run 12
 
-PARAMETRIC:SETVALUEFORRUN,
+Parametric:SetValueForRun,
     $ExteriorWall,            !- Name
     Exterior Wall,            !- Value for Run 1
     Exterior Wall,            !- Value for Run 2
@@ -5125,7 +5125,7 @@ PARAMETRIC:SETVALUEFORRUN,
     Exterior Wall +6in EPS,    !- Value for Run 11
     Exterior Wall +6in EPS;    !- Value for Run 12
 
-PARAMETRIC:SETVALUEFORRUN,
+Parametric:SetValueForRun,
     $SHGC,                    !- Name
     0.4,                      !- Value for Run 1
     0.4,                      !- Value for Run 2
@@ -5140,7 +5140,7 @@ PARAMETRIC:SETVALUEFORRUN,
     0.4,                      !- Value for Run 11
     0.4;                      !- Value for Run 12
 
-PARAMETRIC:SETVALUEFORRUN,
+Parametric:SetValueForRun,
     $ERVSense,                !- Name
     0.75,                     !- Value for Run 1
     0.65,                     !- Value for Run 2
@@ -5155,7 +5155,7 @@ PARAMETRIC:SETVALUEFORRUN,
     0.81,                     !- Value for Run 11
     0.81;                     !- Value for Run 12
 
-PARAMETRIC:SETVALUEFORRUN,
+Parametric:SetValueForRun,
     $FloorConstruction,       !- Name
     Exterior Slab UnIns,      !- Value for Run 1
     Exterior Slab UnIns,      !- Value for Run 2
@@ -5170,7 +5170,7 @@ PARAMETRIC:SETVALUEFORRUN,
     Exterior Slab UnIns,      !- Value for Run 11
     Exterior Slab +4in EPS;    !- Value for Run 12
 
-PARAMETRIC:SETVALUEFORRUN,
+Parametric:SetValueForRun,
     $RoofConstruction,        !- Name
     Exterior Roof,            !- Value for Run 1
     Exterior Roof,            !- Value for Run 2
@@ -5185,7 +5185,7 @@ PARAMETRIC:SETVALUEFORRUN,
     Exterior Roof R-75,       !- Value for Run 11
     Exterior Roof R-75;       !- Value for Run 12
 
-PARAMETRIC:SETVALUEFORRUN,
+Parametric:SetValueForRun,
     $Infiltration,            !- Name
     0.148491082,              !- Value for Run 1
     0.14849,                  !- Value for Run 2
@@ -5200,7 +5200,7 @@ PARAMETRIC:SETVALUEFORRUN,
     0.00695,                  !- Value for Run 11
     0.00695;                  !- Value for Run 12
 
-PARAMETRIC:SETVALUEFORRUN,
+Parametric:SetValueForRun,
     $ERVSch,                  !- Name
     Always Off,               !- Value for Run 1
     Always On,                !- Value for Run 2
@@ -5215,7 +5215,7 @@ PARAMETRIC:SETVALUEFORRUN,
     Always Off,               !- Value for Run 11
     Always On;                !- Value for Run 12
 
-PARAMETRIC:SETVALUEFORRUN,
+Parametric:SetValueForRun,
     $NV,                      !- Name
     1,                        !- Value for Run 1
     1,                        !- Value for Run 2
@@ -5230,7 +5230,7 @@ PARAMETRIC:SETVALUEFORRUN,
     1,                        !- Value for Run 11
     1;                        !- Value for Run 12
 
-PARAMETRIC:SETVALUEFORRUN,
+Parametric:SetValueForRun,
     $SNV,                     !- Name
     1,                        !- Value for Run 1
     1,                        !- Value for Run 2
@@ -5245,7 +5245,7 @@ PARAMETRIC:SETVALUEFORRUN,
     1,                        !- Value for Run 11
     1;                        !- Value for Run 12
 
-PARAMETRIC:SETVALUEFORRUN,
+Parametric:SetValueForRun,
     $NatVentType,             !- Name
     Nat Vent,                 !- Value for Run 1
     Nat Vent,                 !- Value for Run 2
@@ -5260,7 +5260,7 @@ PARAMETRIC:SETVALUEFORRUN,
     Nat Vent,                 !- Value for Run 11
     Nat Vent;                 !- Value for Run 12
 
-PARAMETRIC:SETVALUEFORRUN,
+Parametric:SetValueForRun,
     $Shading,                 !- Name
     0,                        !- Value for Run 1
     0,                        !- Value for Run 2
@@ -5275,7 +5275,7 @@ PARAMETRIC:SETVALUEFORRUN,
     0,                        !- Value for Run 11
     0;                        !- Value for Run 12
 
-PARAMETRIC:SETVALUEFORRUN,
+Parametric:SetValueForRun,
     $ECSch,                   !- Name
     Always Off,               !- Value for Run 1
     Always Off,               !- Value for Run 2
@@ -5290,7 +5290,7 @@ PARAMETRIC:SETVALUEFORRUN,
     Always Off,               !- Value for Run 11
     Always Off;               !- Value for Run 12
 
-PARAMETRIC:SETVALUEFORRUN,
+Parametric:SetValueForRun,
     $HPSch,                   !- Name
     OutageAnnual,             !- Value for Run 1
     OutageAnnual,             !- Value for Run 2
@@ -5305,7 +5305,7 @@ PARAMETRIC:SETVALUEFORRUN,
     OutageAnnual,             !- Value for Run 11
     OutageAnnual;             !- Value for Run 12
 
-PARAMETRIC:SETVALUEFORRUN,
+Parametric:SetValueForRun,
     $DXDHSch,                 !- Name
     Always Off,               !- Value for Run 1
     Always Off,               !- Value for Run 2
@@ -5320,7 +5320,7 @@ PARAMETRIC:SETVALUEFORRUN,
     Always Off,               !- Value for Run 11
     Always Off;               !- Value for Run 12
 
-PARAMETRIC:SETVALUEFORRUN,
+Parametric:SetValueForRun,
     $Name,                    !- Name
     Package_0_Base House_,    !- Value for Run 1
     Package_1_Base House_HP,    !- Value for Run 2
@@ -5335,7 +5335,7 @@ PARAMETRIC:SETVALUEFORRUN,
     Package_4_Phius Retrofit_HP,    !- Value for Run 11
     Package_4_Phius Retrofit + Sublab_HP;    !- Value for Run 12
 
-PARAMETRIC:SETVALUEFORRUN,
+Parametric:SetValueForRun,
     $StemWall,                !- Name
     EPS 2in,                  !- Value for Run 1
     EPS 2in,                  !- Value for Run 2
@@ -5350,7 +5350,7 @@ PARAMETRIC:SETVALUEFORRUN,
     EPS 4in,                  !- Value for Run 11
     EPS 4in;                  !- Value for Run 12
 
-PARAMETRIC:SETVALUEFORRUN,
+Parametric:SetValueForRun,
     $OutStartH,               !- Name
     Through: 01/26,           !- Value for Run 1
     Through: 01/26,           !- Value for Run 2
@@ -5365,7 +5365,7 @@ PARAMETRIC:SETVALUEFORRUN,
     Through: 01/26,           !- Value for Run 11
     Through: 01/26;           !- Value for Run 12
 
-PARAMETRIC:SETVALUEFORRUN,
+Parametric:SetValueForRun,
     $OutStartC,               !- Name
     Through: 07/19,           !- Value for Run 1
     Through: 07/19,           !- Value for Run 2
@@ -5380,7 +5380,7 @@ PARAMETRIC:SETVALUEFORRUN,
     Through: 07/19,           !- Value for Run 11
     Through: 07/19;           !- Value for Run 12
 
-PARAMETRIC:SETVALUEFORRUN,
+Parametric:SetValueForRun,
     $OutEndH,                 !- Name
     Through: 02/02,           !- Value for Run 1
     Through: 02/02,           !- Value for Run 2
@@ -5395,7 +5395,7 @@ PARAMETRIC:SETVALUEFORRUN,
     Through: 02/02,           !- Value for Run 11
     Through: 02/02;           !- Value for Run 12
 
-PARAMETRIC:SETVALUEFORRUN,
+Parametric:SetValueForRun,
     $OutEndC,                 !- Name
     Through: 07/26,           !- Value for Run 1
     Through: 07/26,           !- Value for Run 2
@@ -5460,12 +5460,12 @@ Output:Variable,
     hourly;                   !- Reporting Frequency
 
 Output:Variable,
-    Zone2,                   !- Key Value
+    Zone 1,                   !- Key Value
     Zone Total Internal Total Heating Energy,    !- Variable Name
     Hourly;                   !- Reporting Frequency
 
 Output:Variable,
-    Zone2,                   !- Key Value
+    Zone 1,                   !- Key Value
     Zone Exfiltration Heat Transfer Rate,    !- Variable Name
     Hourly;                   !- Reporting Frequency
 
@@ -5550,7 +5550,7 @@ Output:Variable,
     Hourly;                   !- Reporting Frequency
 
 Output:Variable,
-    Zone2 Exhaust Node,      !- Key Value
+    Zone 1 Exhaust Node,      !- Key Value
     System Node Wetbulb Temperature,    !- Variable Name
     Hourly;                   !- Reporting Frequency
 

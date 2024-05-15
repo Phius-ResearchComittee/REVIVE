@@ -622,7 +622,7 @@ def ResilienceERV(idf, zone, occ, ervSense, ervLatent):
         Latent_Effectiveness_at_75_Cooling_Air_Flow =  (ervLatent * 1.1),
         Supply_Air_Inlet_Node_Name = 'OA_1',
         Supply_Air_Outlet_Node_Name = (str(zone) + '_ERV_Core_Sup_Out'),
-        Exhaust_Air_Inlet_Node_Name = (str(zone) + '_ERV_Exhaust'),
+        Exhaust_Air_Inlet_Node_Name = (str(zone) + '_Exhausts'),
         Exhaust_Air_Outlet_Node_Name = (str(zone) + '_ERV_Core_Exh_Out'),
         Supply_Air_Outlet_Temperature_Control = 'No',
         Heat_Exchanger_Type = 'Plate',
