@@ -10,7 +10,7 @@ import eppy as eppy
 from eppy import modeleditor
 from eppy.modeleditor import IDF
 from eppy.runner.run_functions import runIDFs
-from joblib import Parallel, delayed
+import multiprocessing as mp
 # from PIL import Image, ImageTk
 import os
 import gc
@@ -50,9 +50,6 @@ class SimInputs:
         # generate the implied input information
         self.generate_database_inputs()
 
-        # generate the results table format
-        self.generate_results_table()
-    
 
     def generate_database_inputs(self):
         # emissions and weather data
@@ -63,15 +60,21 @@ class SimInputs:
         self.weather_db = os.path.join(self.database_dir, weather_folder)
         self.construction_db = os.path.join(self.database_dir, construction_file)
 
+class ProgressManager:
+    def __init__(self, q, num_tasks, num_procs):
+        self.q = q
+        self.num_tasks = num_tasks
+        self.num_procs = num_procs
+        self.num_checkpoints = 4 # changes based on how many baked into code
+        self.increment_amt = 1 / (self.num_checkpoints * self.num_tasks * min(self.num_tasks, self.num_procs))
+    
+    def simulation_checkpoint(self):
+        if self.q is not None:
+            self.q.put(self.increment_amt)
 
-    def generate_results_table(self):
-        self.results_table = pd.DataFrame(columns=["Run Name","SET ≤ 12.2°C Hours (F)","Hours < 2°C [hr]",'Total Deadly Days','Min outdoor DB [°C]','Min outdoor DP [°C]',
-                                                    'Max outdoor DB [°C]','Max outdoor DP [°C]',"Caution (> 26.7, ≤ 32.2°C) [hr]","Extreme Caution (> 32.2, ≤ 39.4°C) [hr]",
-                                                    "Danger (> 39.4, ≤ 51.7°C) [hr]","Extreme Danger (> 51.7°C) [hr]", 'EUI','Peak Electric Demand [W]',
-                                                    'Heating Battery Size [kWh]', 'Cooling Battery Size [kWh]', 'Total ADORB Cost [$]','First Year Electric Cost [$]',
-                                                    'First Year Gas Cost [$]','First Cost [$]','Wall Cost [$]','Roof Cost [$]','Floor Cost [$]','Window Cost [$]',
-                                                    'Door Cost [$]','Air Sealing Cost [$]','Mechanical Cost [$]','Water Heater Cost [$]','Appliances Cost [$]','PV Cost [$]',
-                                                    'Battery Cost [$]','pv_dirEn_tot','pv_dirMR_tot','pv_opCO2_tot','pv_emCO2_tot','pv_eTrans_tot'])
+    def raise_exception(self, msg):
+        if self.q is not None:
+            self.q.put(msg)
 
 
 
@@ -131,25 +134,27 @@ def divide_chunks(l, n):
         yield l[i:i + n]
 
 
-def parallel_simulate(batch_name, idd_file, study_folder, run_list, database_dir, num_procs, graphs_enabled, pdf_enabled, is_dummy_mode):
-    # create simulation input object with all non-changing attributes
-    sim_inputs = SimInputs(batch_name, idd_file, study_folder, run_list, database_dir, graphs_enabled, pdf_enabled, is_dummy_mode)
+def parallel_simulate(sim_inputs: SimInputs, total_runs, num_procs, progress_queue=None):
     
     # move to study folder for all sims
-    if not is_dummy_mode:
+    if not sim_inputs.is_dummy_mode:
         os.chdir(sim_inputs.study_folder)
 
     # run the parallelized simulation
-    runList = pd.read_csv(run_list)
-    total_runs = runList.shape[0]
-    Parallel(n_jobs=int(num_procs))(delayed(simulate)(sim_inputs, case) for case in range(total_runs))
+    pm = ProgressManager(progress_queue, total_runs, num_procs)
+    with mp.Pool(processes=num_procs) as pool:
+        result_rows = pool.starmap(simulate, [(sim_inputs, case_id, pm) for case_id in range(total_runs)])
 
-    ResultsTable = sim_inputs.results_table
-    ResultsTable.to_csv(os.path.join(study_folder, batch_name + "_ResultsTable.csv"))
+    ResultsTable = pd.concat(result_rows)
+    ResultsTable.to_csv(os.path.join(sim_inputs.study_folder, sim_inputs.batch_name + "_ResultsTable.csv"))
     print('Saved Results')
 
 
-def simulate(si: SimInputs, case_id: int):
+def simulate(si: SimInputs, case_id: int, progress_mgr=None):
+    # runlist entry started... mark the checkpoint
+    if progress_mgr is not None:
+        progress_mgr.simulation_checkpoint()
+
     # retrieve cached information from simulation input
     is_dummy_mode = si.is_dummy_mode
     batchName = si.batch_name if not is_dummy_mode else "dummy"
@@ -550,6 +555,10 @@ def simulate(si: SimInputs, case_id: int):
             idf1.saveas(str(testingFile_BR))
             idf = IDF(str(testingFile_BR), str(epwFile))
             idf.run(readvars=True,output_prefix=str(str(BaseFileName) + "_BR"))
+        
+        # resilience simulation finished... mark the checkpoint
+        if progress_mgr is not None:
+            progress_mgr.simulation_checkpoint()
 
         fname = os.path.join(studyFolder, BaseFileName + '_BRtbl.htm')
 
@@ -795,6 +804,9 @@ def simulate(si: SimInputs, case_id: int):
             idf = IDF(str(testingFile_BA), str(epwFile))
             idf.run(readvars=True,output_prefix=str((str(BaseFileName) + '_BA')))
 
+        # annual simulation finished... mark the checkpoint
+        if progress_mgr is not None:
+            progress_mgr.simulation_checkpoint()
 
         filehandle = os.path.join(studyFolder, BaseFileName + '_BAout.csv')
         filehandleMTR = os.path.join(studyFolder, BaseFileName + '_BAmtr.csv')
@@ -1129,7 +1141,7 @@ def simulate(si: SimInputs, case_id: int):
 
         newResultRow.to_csv(os.path.join(studyFolder, caseName + "_Test_ResultsTable.csv"))
         
-        si.results_table = pd.concat([si.results_table, newResultRow], axis=0, ignore_index=True)#, ignore_index=True)
+        # si.results_table = pd.concat([si.results_table, newResultRow], axis=0, ignore_index=True)#, ignore_index=True)
 
         if pdfReport == True:
 
@@ -1137,6 +1149,13 @@ def simulate(si: SimInputs, case_id: int):
                     heatingBattery, coolingBattery, eui, peakElec, annualElec, annualGas,
                     firstCost, adorbCost, heatingGraphFile, coolingGraphFile, adorb.adorbWedgeGraph,
                     adorb.adorbBarGraph)
+
+        # runlist entry finished... mark the checkpoint
+        if progress_mgr is not None:
+            progress_mgr.simulation_checkpoint()
+
+        # return the resulting row
+        return newResultRow
 
     except Exception as e:
         # errorFile1= (str(studyFolder) + '\eplusout.err')
@@ -1184,6 +1203,13 @@ def simulate(si: SimInputs, case_id: int):
 
         newResultRow.to_csv(os.path.join(studyFolder, caseName + "_Test_ResultsTable.csv"))
         
-        si.results_table = pd.concat([si.results_table, newResultRow], axis=0, ignore_index=True)#, ignore_index=Truue
-        raise Exception(e)
+        # si.results_table = pd.concat([si.results_table, newResultRow], axis=0, ignore_index=True)#, ignore_index=Truue
+        
+        
+        ### NEED TO RUN TRY AND EXCEPT INSIDE PARALLEL
+        if progress_mgr is not None:
+            progress_mgr.raise_exception(str(e))
+            return newResultRow
+        else:
+            raise Exception(e)
         # print('Saved Results')

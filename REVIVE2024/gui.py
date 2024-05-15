@@ -2,6 +2,7 @@ from PySide6.QtCore import (
     QSettings,
     QDir,
     Qt,
+    QTimer,
     Slot
 )
 from PySide6.QtWidgets import (
@@ -20,9 +21,11 @@ from PySide6.QtWidgets import (
     QLabel,
     QStyle,
     QFileDialog,
-    QToolButton  
+    QToolButton 
 )
 from PySide6.QtGui import QIcon, QIconEngine
+import pandas as pd
+import multiprocessing as mp
 import os
 import sys
 import simulate
@@ -38,8 +41,10 @@ class MyWidget(QWidget):
         # set up app identity
         self.app_name = "REVIVE Calculator Tool"
         self.settings = QSettings("Phius", self.app_name)
+        self.home_dir = os.getcwd()
         self.icon = QIcon()
-        self.icon.addFile(os.path.join(getattr(sys, "_MEIPASS", os.getcwd()),"Phius-Logo-RGB__Color_Icon.ico"))
+        self.icon.addFile(os.path.join(getattr(sys, "_MEIPASS", self.home_dir),
+                          "Phius-Logo-RGB__Color_Icon.ico"))
 
         # customize window
         self.setWindowTitle(self.app_name)
@@ -99,6 +104,7 @@ class SimulateTab(QWidget):
         self.run_options_layout = QHBoxLayout()
         self.run_options_groupbox = QGroupBox("Run Options")
         self.sim_button = QPushButton("Simulate")
+        self.progress_bar = QProgressBar()
 
         # hard-code widget labels TODO: change this somehow?
         self.widget_labels = ["Batch Name",
@@ -120,12 +126,12 @@ class SimulateTab(QWidget):
         self.gen_graphs_option = QCheckBox(self.widget_labels[7])
         self.del_files_option = QCheckBox(self.widget_labels[8])
         self.num_parallel_procs = QComboBox()
-        self.progress_bar = QProgressBar()
 
         # add top-level widgets to main layout
         self.layout = QVBoxLayout()
         self.layout.addWidget(self.file_entry_groupbox)
         self.layout.addWidget(self.run_options_groupbox)
+        self.layout.addWidget(self.progress_bar)
         self.layout.addWidget(self.sim_button)
         
         # populate the top-level widgets with child widgets
@@ -135,6 +141,15 @@ class SimulateTab(QWidget):
         # enable the big simulate button
         self.sim_button.clicked.connect(self.simulate)
 
+        # initialize the progress bar attributes
+        self.progress_bar.setRange(0,100)
+        self.progress_bar.reset()
+        self.progress_manager = None
+        self.worker = None
+        self.timer = QTimer(self)
+        self.timer.timeout.connect(lambda : self.query_progress(self.progress_manager))
+        self.timer.start(500)
+        
         # set the layout
         self.setLayout(self.layout)
 
@@ -232,6 +247,39 @@ class SimulateTab(QWidget):
 
 
     @Slot()
+    def query_progress(self, manager):
+        # check to make sure queue is ready
+        if (self.progress_manager is None or 
+            self.worker is None or
+            self.progress_queue is None): 
+            return
+
+        # sim is still running
+        if (self.worker.is_alive() or not self.progress_queue.empty()):
+            # consume all messages in the queue
+            while not self.progress_queue.empty():
+                next_msg = self.progress_queue.get_nowait()
+                try:
+                    # accept the progress achieved in the checkpoint
+                    progress_achieved = float(next_msg) * 100
+                    new_progress = int(self.progress_bar.value() + progress_achieved)
+                    self.progress_bar.setValue(new_progress)
+                
+                # err string detected
+                except ValueError:
+                    # empty the queue and break out of function
+                    self.sim_cleanup(success=False, err_msg=next_msg)
+                    break
+
+        # sim is stopped and queue is empty 
+        else:
+            # get progress bar to 100
+            self.progress_bar.setValue(100)
+
+            # end the simulation
+            self.sim_cleanup(success=True)
+
+    @Slot()
     def simulate(self):
         # collect arguments to send to simulate function
         batch_name = self.batch_name.text()
@@ -239,7 +287,7 @@ class SimulateTab(QWidget):
         study_folder = self.file_entry_widgets[self.widget_labels[2]].text() # Study/output folder
         run_list = self.file_entry_widgets[self.widget_labels[3]].text() # Run list file
         db_dir = self.file_entry_widgets[self.widget_labels[4]].text() # Database directory
-        num_procs = self.num_parallel_procs.currentText()
+        num_procs = int(self.num_parallel_procs.currentText())
         show_graphs = self.gen_graphs_option.isChecked()
         gen_pdf_report = self.gen_pdf_option.isChecked()
         del_files = self.del_files_option.isChecked()
@@ -248,15 +296,64 @@ class SimulateTab(QWidget):
         # input validation
         err_string = simulate.validate_input(batch_name, idd_file, study_folder, run_list, db_dir)
 
-        # run the simulation
-        # try:
-        assert err_string == "", err_string
-        self.save_settings() # remember these inputs for next run
-        simulate.parallel_simulate(batch_name, idd_file, study_folder, run_list, db_dir, num_procs, show_graphs, gen_pdf_report, is_dummy_mode)
-    # except Exception as err_msg:
-        #     self.parent.display_error(str(err_msg))
-        # else:
-        #     self.parent.display_info("Analysis complete!")
+        # ensure no errs and prepare to run
+        try:
+            assert err_string == "", err_string
+            self.save_settings() # remember these inputs for next run
+            sim_inputs = simulate.SimInputs(batch_name, idd_file, study_folder, run_list, db_dir, show_graphs, gen_pdf_report, is_dummy_mode)
+            
+            # call the simulation in thread
+            self.sim_start(sim_inputs, num_procs)        
+        except Exception as err_msg:
+            self.parent.display_error(str(err_msg))
+
+    
+    def sim_start(self, sim_inputs, num_procs):
+        # create a progress manager to query progress later
+        self.progress_manager = mp.Manager()
+
+        # determine total number of runs
+        self.total_runs = pd.read_csv(sim_inputs.run_list).shape[0]
+        
+        # create the multiprocessing queue
+        self.progress_queue = self.progress_manager.Queue()
+
+        # assign work to worker thread
+        self.worker = mp.Process(target=simulate.parallel_simulate, 
+                                 args=(sim_inputs, self.total_runs, num_procs, self.progress_queue))
+        
+        # start the worker thread
+        self.worker.start()
+    
+    
+    def sim_cleanup(self, success=False, err_msg=""):
+        # notify the user
+        if success:
+            self.parent.display_info("Analysis complete!")
+        else:
+            self.parent.display_error(err_msg)
+        
+        # see if all threads have finished (continue running if not)
+        if self.worker.is_alive():
+            return
+        
+        # clear the queue
+        while not self.progress_queue.empty():
+            self.progress_queue.get_nowait()
+
+        # collect child process
+        self.worker.join()
+        self.worker = None
+
+        # shut down context
+        self.progress_manager.shutdown()
+        self.progress_manager = None
+
+        # reset progress bar
+        self.progress_bar.reset()
+        
+        # return to the home directory
+        os.chdir(self.parent.home_dir)
 
     
     def save_settings(self):
@@ -413,3 +510,6 @@ class MPAdorbTab(QWidget):
             self.parent.display_error(str(err_msg))
         else:
             self.parent.display_info("Computation complete!")
+        
+        # return to the home directory
+        os.chdir(self.parent.home_dir)
