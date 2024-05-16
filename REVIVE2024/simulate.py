@@ -353,9 +353,13 @@ def simulate(si: SimInputs, case_id: int, progress_mgr=None):
         for srf in idfg.idfobjects['BuildingSurface:Detailed']:
             idf1.copyidfobject(srf)
         
+        srf_dict = {}
         for srf in idf1.idfobjects['BuildingSurface:Detailed']:
             zone_name = srf.Zone_Name.split('|')
             srf.Zone_Name = zone_name[0]
+            extisting_list = srf_dict.get(zone_name[0],[])
+            srf_dict[zone_name[0]] = extisting_list + [srf.Name]
+        print(srf_dict)
 
         count = -1
         windowNames = []
@@ -437,8 +441,10 @@ def simulate(si: SimInputs, case_id: int, progress_mgr=None):
                 envelope.WindowVentilation(idf1, zone_name[0], halfHeight, operableArea_N, operableArea_W, 
                 operableArea_S, operableArea_E)
 
+                # insert window sorting here
                 windowNames_split = list(divide_chunks(windowNames, 10))
 
+                
                 for i in range(len(windowNames_split)):
                     windowNamesChunk = windowNames_split[i]
                     envelope.WindowShadingControl(idf1, zone_name[0], windowNamesChunk)

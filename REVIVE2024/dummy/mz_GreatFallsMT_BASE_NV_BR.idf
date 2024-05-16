@@ -1480,7 +1480,7 @@ Zone,
     74.32;                    !- Floor Area
 
 BuildingSurface:Detailed,
-    F8E9BF,                   !- Name
+    Slab,                     !- Name
     Floor,                    !- Surface Type
     Exterior Slab UnIns,      !- Construction Name
     GroundUnit,               !- Zone Name

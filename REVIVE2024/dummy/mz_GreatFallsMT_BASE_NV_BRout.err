@@ -1,4 +1,4 @@
-Program Version,EnergyPlus, Version 9.5.0-de239b2e5f, YMD=2024.05.15 14:59,
+Program Version,EnergyPlus, Version 9.5.0-de239b2e5f, YMD=2024.05.15 15:44,
    ************* Beginning Zone Sizing Calculations
    ** Warning ** ProcessScheduleInput: Schedule:Constant="COUNT", Schedule Type Limits Name="ANYNUMBER" not found -- will not be validated
    ** Warning ** Foundation:Kiva="SLAB DETAILS", no Interior Horizontal Insulation Material Name defined
@@ -22,15 +22,13 @@ Program Version,EnergyPlus, Version 9.5.0-de239b2e5f, YMD=2024.05.15 14:59,
    **   ~~~   ** for: "GROUNDUNIT_SHADING CONTROL and: 2NDFLOOR_SHADING CONTROL
    ** Severe  ** CheckWindowShadingControlSimilarForWindow: Fenestration surface named "527646" has multiple WindowShadingContols that are not similar.
    **   ~~~   ** for: "GROUNDUNIT_SHADING CONTROL and: 2NDFLOOR_SHADING CONTROL
-   ** Severe  ** SurfaceProperty:ExposedFoundationPerimeter="SLAB", did not find matching surface
-   ** Warning ** SurfaceProperty:ExposedFoundationPerimeter: , surface is not a floor surface
-   **   ~~~   ** SurfaceProperty:ExposedFoundationPerimeter will not be used
+   ** Warning ** SurfaceProperty:ExposedFoundationPerimeter: SLAB, TOTALEXPOSEDPERIMETER set as calculation method, but a value has been set for Exposed Perimeter Fraction. This value will be ignored.
    **  Fatal  ** GetSurfaceData: Errors discovered, program terminates.
    ...Summary of Errors that led to program termination:
-   ..... Reference severe error count=6
-   ..... Last severe error=SurfaceProperty:ExposedFoundationPerimeter="SLAB", did not find matching surface
+   ..... Reference severe error count=5
+   ..... Last severe error=CheckWindowShadingControlSimilarForWindow: Fenestration surface named "527646" has multiple WindowShadingContols that are not similar.
    ************* Warning:  Node connection errors not checked - most system input has not been read (see previous warning).
    ************* Fatal error -- final processing.  Program exited before simulations began.  See previous error messages.
    ************* EnergyPlus Warmup Error Summary. During Warmup: 0 Warning; 0 Severe Errors.
-   ************* EnergyPlus Sizing Error Summary. During Sizing: 6 Warning; 6 Severe Errors.
-   ************* EnergyPlus Terminated--Fatal Error Detected. 6 Warning; 6 Severe Errors; Elapsed Time=00hr 00min  0.19sec
+   ************* EnergyPlus Sizing Error Summary. During Sizing: 6 Warning; 5 Severe Errors.
+   ************* EnergyPlus Terminated--Fatal Error Detected. 6 Warning; 5 Severe Errors; Elapsed Time=00hr 00min  0.19sec

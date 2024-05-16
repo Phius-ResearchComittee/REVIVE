@@ -710,7 +710,7 @@
     74.32;                   !- Floor Area {m2}
 
   BuildingSurface:Detailed,
-    F8E9BF,                  !- Name
+    Slab,                  !- Name
     Floor,                   !- Surface Type
     Ext_Floor1,          !- Construction Name
     GroundUnit|UNIT|3B|3R,       !- Zone Name
