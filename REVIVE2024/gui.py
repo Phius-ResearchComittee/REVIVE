@@ -28,6 +28,8 @@ import pandas as pd
 import multiprocessing as mp
 import os
 import sys
+import psutil
+import signal
 import simulate
 import adorb
 
@@ -64,8 +66,10 @@ class MyWidget(QWidget):
 
         # create different pages
         self.tab_widget = QTabWidget()
-        self.tab_widget.addTab(SimulateTab(self), "Simulation")
-        self.tab_widget.addTab(MPAdorbTab(self), "Multi-phase ADORB")
+        self.sim_tab = SimulateTab(self)
+        self.mp_adorb_tab = MPAdorbTab(self)
+        self.tab_widget.addTab(self.sim_tab, "Simulation")
+        self.tab_widget.addTab(self.mp_adorb_tab, "Multi-phase ADORB")
 
         # attach tab widgets to main widget
         self.layout = QVBoxLayout()
@@ -89,6 +93,34 @@ class MyWidget(QWidget):
     def display_info(self, msg: str):
         self.info_msg_box.setText(msg)
         self.info_msg_box.exec_()
+
+
+    def closeEvent(self, event):
+        # first try to stop gracefully by sending signal
+        if self.sim_tab.stop_event is not None:
+            self.sim_tab.stop_event.set()
+        
+        # shut down the multiprocessing manager
+        if self.sim_tab.mp_manager is not None:
+            self.sim_tab.mp_manager.shutdown()
+            self.sim_tab.mp_manager = None
+                
+        # attempt to wait on the stop signal to be received
+        if self.sim_tab.worker is not None:
+            print("Shutting down simulation worker...")
+            self.sim_tab.worker.join(2)
+
+            # force kill if not exited in a few seconds
+            if self.sim_tab.worker.is_alive():
+                print("Force terminating simulation worker...")
+                for proc in psutil.process_iter():
+                    if "energyplus" in proc.name():
+                        os.kill(proc.pid, signal.SIGINT)
+                self.sim_tab.worker.terminate()
+                self.sim_tab.worker.join()
+
+        # proceed with regular shutdown
+        event.accept()
 
 
 
@@ -144,10 +176,12 @@ class SimulateTab(QWidget):
         # initialize the progress bar attributes
         self.progress_bar.setRange(0,100)
         self.progress_bar.reset()
-        self.progress_manager = None
+        self.mp_manager = None
+        self.progress_queue = None
+        self.stop_event = None
         self.worker = None
         self.timer = QTimer(self)
-        self.timer.timeout.connect(lambda : self.query_progress(self.progress_manager))
+        self.timer.timeout.connect(self.query_progress)
         self.timer.start(500)
         
         # set the layout
@@ -247,9 +281,9 @@ class SimulateTab(QWidget):
 
 
     @Slot()
-    def query_progress(self, manager):
+    def query_progress(self):
         # check to make sure queue is ready
-        if (self.progress_manager is None or 
+        if (self.mp_manager is None or 
             self.worker is None or
             self.progress_queue is None): 
             return
@@ -310,18 +344,18 @@ class SimulateTab(QWidget):
 
     
     def sim_start(self, sim_inputs, num_procs):
-        # create a progress manager to query progress later
-        self.progress_manager = mp.Manager()
+        # create the simulation manager objects
+        self.mp_manager = mp.Manager()
+        self.progress_queue = self.mp_manager.Queue()
+        self.stop_event = self.mp_manager.Event()
 
         # determine total number of runs
         self.total_runs = pd.read_csv(sim_inputs.run_list).shape[0]
-        
-        # create the multiprocessing queue
-        self.progress_queue = self.progress_manager.Queue()
 
         # assign work to worker thread
         self.worker = mp.Process(target=simulate.parallel_simulate, 
-                                 args=(sim_inputs, self.total_runs, num_procs, self.progress_queue))
+                                 args=(sim_inputs, self.total_runs, num_procs, 
+                                       self.progress_queue, self.stop_event))
         
         # start the worker thread
         self.worker.start()
@@ -345,10 +379,6 @@ class SimulateTab(QWidget):
         # collect child process
         self.worker.join()
         self.worker = None
-
-        # shut down context
-        self.progress_manager.shutdown()
-        self.progress_manager = None
 
         # reset progress bar
         self.progress_bar.reset()
