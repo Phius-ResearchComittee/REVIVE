@@ -297,15 +297,16 @@ class SimulateTab(QWidget):
         err_string = simulate.validate_input(batch_name, idd_file, study_folder, run_list, db_dir)
 
         # ensure no errs and prepare to run
-        try:
-            assert err_string == "", err_string
-            self.save_settings() # remember these inputs for next run
-            sim_inputs = simulate.SimInputs(batch_name, idd_file, study_folder, run_list, db_dir, show_graphs, gen_pdf_report, is_dummy_mode)
-            
-            # call the simulation in thread
-            self.sim_start(sim_inputs, num_procs)        
-        except Exception as err_msg:
-            self.parent.display_error(str(err_msg))
+        # Al comment out
+        # try:
+        assert err_string == "", err_string
+        self.save_settings() # remember these inputs for next run
+        sim_inputs = simulate.SimInputs(batch_name, idd_file, study_folder, run_list, db_dir, show_graphs, gen_pdf_report, is_dummy_mode)
+        
+        # call the simulation in thread
+        self.sim_start(sim_inputs, num_procs)        
+        # except Exception as err_msg:
+            # self.parent.display_error(str(err_msg))
 
     
     def sim_start(self, sim_inputs, num_procs):

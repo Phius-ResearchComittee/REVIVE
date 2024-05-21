@@ -1086,7 +1086,7 @@ GLOBALGEOMETRYRULES,
     Relative;                 !- Rectangular Surface Coordinate System
 
 Zone,
-    Zone2,                    !- Name
+    WholeHouse,               !- Name
     0,                        !- Direction of Relative North
     0,                        !- X Origin
     0,                        !- Y Origin
@@ -1095,7 +1095,7 @@ Zone,
     1,                        !- Multiplier
     ,                         !- Ceiling Height
     482.065996382208,         !- Volume
-    197.69766912,             !- Floor Area
+    222.97,                   !- Floor Area
     ,                         !- Zone Inside Convection Algorithm
     ,                         !- Zone Outside Convection Algorithm
     Yes;                      !- Part of Total Floor Area
@@ -1104,7 +1104,7 @@ BuildingSurface:Detailed,
     Slab,                     !- Name
     Floor,                    !- Surface Type
     Exterior Slab UnIns,      !- Construction Name
-    Zone2,                    !- Zone Name
+    WholeHouse,               !- Zone Name
     Foundation,               !- Outside Boundary Condition
     Slab Details,             !- Outside Boundary Condition Object
     NoSun,                    !- Sun Exposure
@@ -1128,7 +1128,7 @@ BuildingSurface:Detailed,
     Front Wall 1,             !- Name
     Wall,                     !- Surface Type
     Exterior Wall,            !- Construction Name
-    Zone2,                    !- Zone Name
+    WholeHouse,               !- Zone Name
     Outdoors,                 !- Outside Boundary Condition
     ,                         !- Outside Boundary Condition Object
     SunExposed,               !- Sun Exposure
@@ -1152,7 +1152,7 @@ BuildingSurface:Detailed,
     Left Wall 1,              !- Name
     Wall,                     !- Surface Type
     Exterior Wall,            !- Construction Name
-    Zone2,                    !- Zone Name
+    WholeHouse,               !- Zone Name
     Outdoors,                 !- Outside Boundary Condition
     ,                         !- Outside Boundary Condition Object
     SunExposed,               !- Sun Exposure
@@ -1176,7 +1176,7 @@ BuildingSurface:Detailed,
     Attic,                    !- Name
     Ceiling,                  !- Surface Type
     Exterior Roof,            !- Construction Name
-    Zone2,                    !- Zone Name
+    WholeHouse,               !- Zone Name
     Outdoors,                 !- Outside Boundary Condition
     ,                         !- Outside Boundary Condition Object
     NoSun,                    !- Sun Exposure
@@ -1200,7 +1200,7 @@ BuildingSurface:Detailed,
     Right Wall 2,             !- Name
     Wall,                     !- Surface Type
     Exterior Wall,            !- Construction Name
-    Zone2,                    !- Zone Name
+    WholeHouse,               !- Zone Name
     Outdoors,                 !- Outside Boundary Condition
     ,                         !- Outside Boundary Condition Object
     SunExposed,               !- Sun Exposure
@@ -1224,7 +1224,7 @@ BuildingSurface:Detailed,
     Back Wall 1,              !- Name
     Wall,                     !- Surface Type
     Exterior Wall,            !- Construction Name
-    Zone2,                    !- Zone Name
+    WholeHouse,               !- Zone Name
     Outdoors,                 !- Outside Boundary Condition
     ,                         !- Outside Boundary Condition Object
     SunExposed,               !- Sun Exposure
@@ -1248,7 +1248,7 @@ BuildingSurface:Detailed,
     Right Wall 1,             !- Name
     Wall,                     !- Surface Type
     Exterior Wall,            !- Construction Name
-    Zone2,                    !- Zone Name
+    WholeHouse,               !- Zone Name
     Outdoors,                 !- Outside Boundary Condition
     ,                         !- Outside Boundary Condition Object
     SunExposed,               !- Sun Exposure
@@ -1272,7 +1272,7 @@ BuildingSurface:Detailed,
     Front Wall 2,             !- Name
     Wall,                     !- Surface Type
     Exterior Wall,            !- Construction Name
-    Zone2,                    !- Zone Name
+    WholeHouse,               !- Zone Name
     Outdoors,                 !- Outside Boundary Condition
     ,                         !- Outside Boundary Condition Object
     SunExposed,               !- Sun Exposure
@@ -1296,7 +1296,7 @@ BuildingSurface:Detailed,
     Left Wall 2,              !- Name
     Wall,                     !- Surface Type
     Exterior Wall,            !- Construction Name
-    Zone2,                    !- Zone Name
+    WholeHouse,               !- Zone Name
     Outdoors,                 !- Outside Boundary Condition
     ,                         !- Outside Boundary Condition Object
     SunExposed,               !- Sun Exposure
@@ -1320,7 +1320,7 @@ BuildingSurface:Detailed,
     Inertstitail Floor,       !- Name
     Floor,                    !- Surface Type
     Interior Floor,           !- Construction Name
-    Zone2,                    !- Zone Name
+    WholeHouse,               !- Zone Name
     Adiabatic,                !- Outside Boundary Condition
     ,                         !- Outside Boundary Condition Object
     NoSun,                    !- Sun Exposure
@@ -1344,7 +1344,7 @@ BuildingSurface:Detailed,
     Back Wall 2,              !- Name
     Wall,                     !- Surface Type
     Exterior Wall,            !- Construction Name
-    Zone2,                    !- Zone Name
+    WholeHouse,               !- Zone Name
     Outdoors,                 !- Outside Boundary Condition
     ,                         !- Outside Boundary Condition Object
     SunExposed,               !- Sun Exposure
@@ -1572,8 +1572,8 @@ FenestrationSurface:Detailed,
     4.8768;                   !- Vertex 4 Zcoordinate
 
 WINDOWSHADINGCONTROL,
-    Shading Control,          !- Name
-    Zone 1,                   !- Zone Name
+    WholeHouse_Shading Control,    !- Name
+    WholeHouse,               !- Zone Name
     1,                        !- Shading Control Sequence Number
     ExteriorShade,            !- Shading Type
     ,                         !- Construction with Shading Name
@@ -1598,16 +1598,16 @@ WINDOWSHADINGCONTROL,
     L-WN-2;                   !- Fenestration Surface 8 Name
 
 INTERNALMASS,
-    Zone2 Zone1 TM,           !- Name
+    WholeHouse Zone1 TM,      !- Name
     Thermal Mass,             !- Construction Name
-    Zone2,                    !- Zone or ZoneList Name
-    197.69766912;             !- Surface Area
+    WholeHouse,               !- Zone or ZoneList Name
+    222.97;                   !- Surface Area
 
 INTERNALMASS,
-    Zone2 Partitions,         !- Name
+    WholeHouse Partitions,    !- Name
     Interior Wall,            !- Construction Name
-    Zone2,                    !- Zone or ZoneList Name
-    197.69766912;             !- Surface Area
+    WholeHouse,               !- Zone or ZoneList Name
+    222.97;                   !- Surface Area
 
 Shading:Building:Detailed,
     R-Roof,                   !- Name
@@ -1670,8 +1670,8 @@ SURFACEPROPERTY:EXPOSEDFOUNDATIONPERIMETER,
     Yes;                      !- Surface Segment 1 Exposed
 
 PEOPLE,
-    Zone2 Occupants,          !- Name
-    Zone2,                    !- Zone or ZoneList Name
+    WholeHouse Occupants,     !- Name
+    WholeHouse,               !- Zone or ZoneList Name
     OccupantSchedule,         !- Number of People Schedule Name
     People,                   !- Number of People Calculation Method
     4,                        !- Number of People
@@ -1692,11 +1692,11 @@ PEOPLE,
     Pierce;                   !- Thermal Comfort Model 1 Type
 
 LIGHTS,
-    Zone2 PhiusLights,        !- Name
-    Zone2,                    !- Zone or ZoneList Name
+    WholeHouse PhiusLights,    !- Name
+    WholeHouse,               !- Zone or ZoneList Name
     Phius_Lighting,           !- Schedule Name
     LightingLevel,            !- Design Level Calculation Method
-    3194.9647302391227,       !- Lighting Level
+    3517.2502186745655,       !- Lighting Level
     ,                         !- Watts per Zone Floor Area
     ,                         !- Watts per Person
     0,                        !- Return Air Fraction
@@ -1709,11 +1709,11 @@ LIGHTS,
     0;                        !- Return Air Fraction Function of Plenum Temperature Coefficient 2
 
 ELECTRICEQUIPMENT,
-    Zone2 PhiusMELs,          !- Name
-    Zone2,                    !- Zone or ZoneList Name
+    WholeHouse PhiusMELs,     !- Name
+    WholeHouse,               !- Zone or ZoneList Name
     Phius_MELs,               !- Schedule Name
     EquipmentLevel,           !- Design Level Calculation Method
-    5603.243671302768,        !- Design Level
+    6145.811291083836,        !- Design Level
     ,                         !- Watts per Zone Floor Area
     ,                         !- Watts per Person
     0,                        !- Fraction Latent
@@ -1722,8 +1722,8 @@ ELECTRICEQUIPMENT,
     MELs;                     !- EndUse Subcategory
 
 ELECTRICEQUIPMENT,
-    Zone2 Fridge,             !- Name
-    Zone2,                    !- Zone or ZoneList Name
+    WholeHouse Fridge,        !- Name
+    WholeHouse,               !- Zone or ZoneList Name
     Always_On,                !- Schedule Name
     EquipmentLevel,           !- Design Level Calculation Method
     369.8630136986301,        !- Design Level
@@ -1735,8 +1735,8 @@ ELECTRICEQUIPMENT,
     Fridge;                   !- EndUse Subcategory
 
 ELECTRICEQUIPMENT,
-    Zone2 Range,              !- Name
-    Zone2,                    !- Zone or ZoneList Name
+    WholeHouse Range,         !- Name
+    WholeHouse,               !- Zone or ZoneList Name
     BARangeSchedule,          !- Schedule Name
     EquipmentLevel,           !- Design Level Calculation Method
     1227.3972602739727,       !- Design Level
@@ -1748,8 +1748,8 @@ ELECTRICEQUIPMENT,
     Range;                    !- EndUse Subcategory
 
 ELECTRICEQUIPMENT,
-    Zone2 ClothesDryer,       !- Name
-    Zone2,                    !- Zone or ZoneList Name
+    WholeHouse ClothesDryer,    !- Name
+    WholeHouse,               !- Zone or ZoneList Name
     BAClothesDryerSchedule,    !- Schedule Name
     EquipmentLevel,           !- Design Level Calculation Method
     23110.027275259326,       !- Design Level
@@ -1761,8 +1761,8 @@ ELECTRICEQUIPMENT,
     ClothesDryer;             !- EndUse Subcategory
 
 ELECTRICEQUIPMENT,
-    Zone2 ClothesWasher,      !- Name
-    Zone2,                    !- Zone or ZoneList Name
+    WholeHouse ClothesWasher,    !- Name
+    WholeHouse,               !- Zone or ZoneList Name
     BAClothesWasherSchedule,    !- Schedule Name
     EquipmentLevel,           !- Design Level Calculation Method
     3945.205479452054,        !- Design Level
@@ -1774,8 +1774,8 @@ ELECTRICEQUIPMENT,
     ClothesWasher;            !- EndUse Subcategory
 
 ELECTRICEQUIPMENT,
-    Zone2 Dishwasher,         !- Name
-    Zone2,                    !- Zone or ZoneList Name
+    WholeHouse Dishwasher,    !- Name
+    WholeHouse,               !- Zone or ZoneList Name
     BADishwasherSchedule,     !- Schedule Name
     EquipmentLevel,           !- Design Level Calculation Method
     4346.396177126473,        !- Design Level
@@ -1787,11 +1787,11 @@ ELECTRICEQUIPMENT,
     Dishwasher;               !- EndUse Subcategory
 
 ELECTRICEQUIPMENT,
-    Zone2 SizingSensible,     !- Name
-    Zone2,                    !- Zone or ZoneList Name
+    WholeHouse SizingSensible,    !- Name
+    WholeHouse,               !- Zone or ZoneList Name
     SizingLoads,              !- Schedule Name
     EquipmentLevel,           !- Design Level Calculation Method
-    658.934872064,            !- Design Level
+    714.5340000000001,        !- Design Level
     ,                         !- Watts per Zone Floor Area
     ,                         !- Watts per Person
     0,                        !- Fraction Latent
@@ -1800,11 +1800,11 @@ ELECTRICEQUIPMENT,
     General;                  !- EndUse Subcategory
 
 ELECTRICEQUIPMENT,
-    Zone2 SizingLatent,       !- Name
-    Zone2,                    !- Zone or ZoneList Name
+    WholeHouse SizingLatent,    !- Name
+    WholeHouse,               !- Zone or ZoneList Name
     SizingLoads,              !- Schedule Name
     EquipmentLevel,           !- Design Level Calculation Method
-    111.4934872064,           !- Design Level
+    117.05340000000001,       !- Design Level
     ,                         !- Watts per Zone Floor Area
     ,                         !- Watts per Person
     1,                        !- Fraction Latent
@@ -1813,8 +1813,8 @@ ELECTRICEQUIPMENT,
     General;                  !- EndUse Subcategory
 
 ZONEINFILTRATION:DESIGNFLOWRATE,
-    Zone2 Infiltration,       !- Name
-    Zone2,                    !- Zone or ZoneList Name
+    WholeHouse Infiltration,    !- Name
+    WholeHouse,               !- Zone or ZoneList Name
     Always_On,                !- Schedule Name
     Flow/ExteriorArea,        !- Design Flow Rate Calculation Method
     0,                        !- Design Flow Rate
@@ -1827,10 +1827,10 @@ ZONEINFILTRATION:DESIGNFLOWRATE,
     0;                        !- Velocity Squared Term Coefficient
 
 ZONEVENTILATION:WINDANDSTACKOPENAREA,
-    Zone2_OperableWindows-N,    !- Name
-    Zone2,                    !- Zone Name
+    WholeHouse_OperableWindows-N,    !- Name
+    WholeHouse,               !- Zone Name
     4.1806368,                !- Opening Area
-    Zone2_WindowFractionControl,    !- Opening Area Fraction Schedule Name
+    WholeHouse_WindowFractionControl,    !- Opening Area Fraction Schedule Name
     autocalculate,            !- Opening Effectiveness
     0,                        !- Effective Angle
     1.524,                    !- Height Difference
@@ -1848,10 +1848,10 @@ ZONEVENTILATION:WINDANDSTACKOPENAREA,
     10;                       !- Maximum Wind Speed
 
 ZONEVENTILATION:WINDANDSTACKOPENAREA,
-    Zone2_OperableWindows-E,    !- Name
-    Zone2,                    !- Zone Name
+    WholeHouse_OperableWindows-E,    !- Name
+    WholeHouse,               !- Zone Name
     4.1806368,                !- Opening Area
-    Zone2_WindowFractionControl,    !- Opening Area Fraction Schedule Name
+    WholeHouse_WindowFractionControl,    !- Opening Area Fraction Schedule Name
     autocalculate,            !- Opening Effectiveness
     90,                       !- Effective Angle
     1.524,                    !- Height Difference
@@ -1869,10 +1869,10 @@ ZONEVENTILATION:WINDANDSTACKOPENAREA,
     10;                       !- Maximum Wind Speed
 
 ZONEVENTILATION:WINDANDSTACKOPENAREA,
-    Zone2_OperableWindows-S,    !- Name
-    Zone2,                    !- Zone Name
+    WholeHouse_OperableWindows-S,    !- Name
+    WholeHouse,               !- Zone Name
     4.1806368,                !- Opening Area
-    Zone2_WindowFractionControl,    !- Opening Area Fraction Schedule Name
+    WholeHouse_WindowFractionControl,    !- Opening Area Fraction Schedule Name
     autocalculate,            !- Opening Effectiveness
     180,                      !- Effective Angle
     1.524,                    !- Height Difference
@@ -1890,10 +1890,10 @@ ZONEVENTILATION:WINDANDSTACKOPENAREA,
     10;                       !- Maximum Wind Speed
 
 ZONEVENTILATION:WINDANDSTACKOPENAREA,
-    Zone2_OperableWindows-W,    !- Name
-    Zone2,                    !- Zone Name
+    WholeHouse_OperableWindows-W,    !- Name
+    WholeHouse,               !- Zone Name
     4.1806368,                !- Opening Area
-    Zone2_WindowFractionControl,    !- Opening Area Fraction Schedule Name
+    WholeHouse_WindowFractionControl,    !- Opening Area Fraction Schedule Name
     autocalculate,            !- Opening Effectiveness
     270,                      !- Effective Angle
     1.524,                    !- Height Difference
@@ -1918,7 +1918,7 @@ EXTERIOR:LIGHTS,
     General;                  !- EndUse Subcategory
 
 DESIGNSPECIFICATION:OUTDOORAIR,
-    Zone2_SZ_DSOA,            !- Name
+    WholeHouse_SZ_DSOA,       !- Name
     Flow/Person,              !- Outdoor Air Method
     0.00708000089,            !- Outdoor Air Flow per Person
     0,                        !- Outdoor Air Flow per Zone Floor Area
@@ -1926,7 +1926,7 @@ DESIGNSPECIFICATION:OUTDOORAIR,
     0;                        !- Outdoor Air Flow Air Changes per Hour
 
 DESIGNSPECIFICATION:ZONEAIRDISTRIBUTION,
-    Zone2_SZ_DSZAD,           !- Name
+    WholeHouse_SZ_DSZAD,      !- Name
     1,                        !- Zone Air Distribution Effectiveness in Cooling Mode
     1,                        !- Zone Air Distribution Effectiveness in Heating Mode
     ,                         !- Zone Air Distribution Effectiveness Schedule Name
@@ -1934,7 +1934,7 @@ DESIGNSPECIFICATION:ZONEAIRDISTRIBUTION,
     0;                        !- Minimum Zone Ventilation Efficiency
 
 SIZING:ZONE,
-    Zone2,                    !- Zone or ZoneList Name
+    WholeHouse,               !- Zone or ZoneList Name
     SupplyAirTemperature,     !- Zone Cooling Design Supply Air Temperature Input Method
     12.8,                     !- Zone Cooling Design Supply Air Temperature
     11.11,                    !- Zone Cooling Design Supply Air Temperature Difference
@@ -1943,7 +1943,7 @@ SIZING:ZONE,
     30,                       !- Zone Heating Design Supply Air Temperature Difference
     0.008,                    !- Zone Cooling Design Supply Air Humidity Ratio
     0.008,                    !- Zone Heating Design Supply Air Humidity Ratio
-    Zone2_SZ_DSOA,            !- Design Specification Outdoor Air Object Name
+    WholeHouse_SZ_DSOA,       !- Design Specification Outdoor Air Object Name
     2,                        !- Zone Heating Sizing Factor
     1.5,                      !- Zone Cooling Sizing Factor
     DesignDay,                !- Cooling Design Air Flow Method
@@ -1956,23 +1956,23 @@ SIZING:ZONE,
     0.002032,                 !- Heating Maximum Air Flow per Zone Floor Area
     0.1415762,                !- Heating Maximum Air Flow
     0.3,                      !- Heating Maximum Air Flow Fraction
-    Zone2_SZ_DSZAD,           !- Design Specification Zone Air Distribution Object Name
+    WholeHouse_SZ_DSZAD,      !- Design Specification Zone Air Distribution Object Name
     No,                       !- Account for Dedicated Outdoor Air System
     NeutralSupplyAir,         !- Dedicated Outdoor Air System Control Strategy
     autosize,                 !- Dedicated Outdoor Air Low Setpoint Temperature for Design
     autosize;                 !- Dedicated Outdoor Air High Setpoint Temperature for Design
 
 ZONECONTROL:HUMIDISTAT,
-    Zone2_Humidistat,         !- Name
-    Zone2,                    !- Zone Name
+    WholeHouse_Humidistat,    !- Name
+    WholeHouse,               !- Zone Name
     Humidity_Setpoint;        !- Humidifying Relative Humidity Setpoint Schedule Name
 
 ZONECONTROL:THERMOSTAT,
-    Zone2_Thermostat,         !- Name
-    Zone2,                    !- Zone or ZoneList Name
+    WholeHouse_Thermostat,    !- Name
+    WholeHouse,               !- Zone or ZoneList Name
     HVAC_Always_4,            !- Control Type Schedule Name
     ThermostatSetpoint:DualSetpoint,    !- Control 1 Object Type
-    Zone2_DSP_Thermostat,     !- Control 1 Name
+    WholeHouse_DSP_Thermostat,    !- Control 1 Name
     ,                         !- Control 2 Object Type
     ,                         !- Control 2 Name
     ,                         !- Control 3 Object Type
@@ -1982,56 +1982,56 @@ ZONECONTROL:THERMOSTAT,
     0;                        !- Temperature Difference Between Cutout And Setpoint
 
 THERMOSTATSETPOINT:DUALSETPOINT,
-    Zone2_DSP_Thermostat,     !- Name
+    WholeHouse_DSP_Thermostat,    !- Name
     Phius_68F,                !- Heating Setpoint Temperature Schedule Name
     Phius_77F;                !- Cooling Setpoint Temperature Schedule Name
 
 ZONEHVAC:EQUIPMENTLIST,
-    Zone2_Equipment,          !- Name
+    WholeHouse_Equipment,     !- Name
     SequentialLoad,           !- Load Distribution Scheme
     ZoneHVAC:EnergyRecoveryVentilator,    !- Zone Equipment 1 Object Type
-    Zone2 ERV,                !- Zone Equipment 1 Name
+    WholeHouse ERV,           !- Zone Equipment 1 Name
     2,                        !- Zone Equipment 1 Cooling Sequence
     2,                        !- Zone Equipment 1 Heating or NoLoad Sequence
     ,                         !- Zone Equipment 1 Sequential Cooling Fraction Schedule Name
     ,                         !- Zone Equipment 1 Sequential Heating Fraction Schedule Name
     AirLoopHVAC:UnitarySystem,    !- Zone Equipment 2 Object Type
-    Zone2_GasHeat_DXAC_Furnace,    !- Zone Equipment 2 Name
+    WholeHouse_GasHeat_DXAC_Furnace,    !- Zone Equipment 2 Name
     1,                        !- Zone Equipment 2 Cooling Sequence
     1;                        !- Zone Equipment 2 Heating or NoLoad Sequence
 
 ZONEHVAC:EQUIPMENTCONNECTIONS,
-    Zone2,                    !- Zone Name
-    Zone2_Equipment,          !- Zone Conditioning Equipment List Name
-    Zone2_Inlets,             !- Zone Air Inlet Node or NodeList Name
-    Zone2_Exhausts,           !- Zone Air Exhaust Node or NodeList Name
-    Zone2_Zone_Air_Node,      !- Zone Air Node Name
-    Zone2_Returns;            !- Zone Return Air Node or NodeList Name
+    WholeHouse,               !- Zone Name
+    WholeHouse_Equipment,     !- Zone Conditioning Equipment List Name
+    WholeHouse_Inlets,        !- Zone Air Inlet Node or NodeList Name
+    WholeHouse_Exhausts,      !- Zone Air Exhaust Node or NodeList Name
+    WholeHouse_Zone_Air_Node,    !- Zone Air Node Name
+    WholeHouse_Returns;       !- Zone Return Air Node or NodeList Name
 
 FAN:ONOFF,
-    Zone2Furnace_Blower,      !- Name
+    WholeHouseFurnace_Blower,    !- Name
     MechAvailable,            !- Availability Schedule Name
     0.7,                      !- Fan Total Efficiency
     225,                      !- Pressure Rise
     2,                        !- Maximum Flow Rate
     0.9,                      !- Motor Efficiency
     1,                        !- Motor In Airstream Fraction
-    Zone2_MECH_Air_Inlet,     !- Air Inlet Node Name
-    Zone2_DXAC_Coil_Air_Inlet,    !- Air Outlet Node Name
+    WholeHouse_MECH_Air_Inlet,    !- Air Inlet Node Name
+    WholeHouse_DXAC_Coil_Air_Inlet,    !- Air Outlet Node Name
     ,                         !- Fan Power Ratio Function of Speed Ratio Curve Name
     ,                         !- Fan Efficiency Ratio Function of Speed Ratio Curve Name
     General;                  !- EndUse Subcategory
 
 COIL:COOLING:DX:SINGLESPEED,
-    Zone2Furnace_DXAC_Coil,    !- Name
+    WholeHouseFurnace_DXAC_Coil,    !- Name
     MechAvailable,            !- Availability Schedule Name
     autosize,                 !- Gross Rated Total Cooling Capacity
     0.75,                     !- Gross Rated Sensible Heat Ratio
     3,                        !- Gross Rated Cooling COP
     autosize,                 !- Rated Air Flow Rate
     773.3,                    !- Rated Evaporator Fan Power Per Volume Flow Rate
-    Zone2_DXAC_Coil_Air_Inlet,    !- Air Inlet Node Name
-    Zone2_Heating_Coil_Air_Inlet,    !- Air Outlet Node Name
+    WholeHouse_DXAC_Coil_Air_Inlet,    !- Air Inlet Node Name
+    WholeHouse_Heating_Coil_Air_Inlet,    !- Air Outlet Node Name
     HPACCoolCapFT,            !- Total Cooling Capacity Function of Temperature Curve Name
     HPACCoolCapFFF,           !- Total Cooling Capacity Function of Flow Fraction Curve Name
     HPACEIRFT,                !- Energy Input Ratio Function of Temperature Curve Name
@@ -2059,31 +2059,31 @@ COIL:COOLING:DX:SINGLESPEED,
     No;                       !- Report ASHRAE Standard 127 Performance Ratings
 
 COIL:HEATING:FUEL,
-    Zone2Furnace_Heating_Coil,    !- Name
+    WholeHouseFurnace_Heating_Coil,    !- Name
     MechAvailable,            !- Availability Schedule Name
     NaturalGas,               !- Fuel Type
     0.8,                      !- Burner Efficiency
     autosize,                 !- Nominal Capacity
-    Zone2_Heating_Coil_Air_Inlet,    !- Air Inlet Node Name
-    Zone2_MECH_Air_Outlet;    !- Air Outlet Node Name
+    WholeHouse_Heating_Coil_Air_Inlet,    !- Air Inlet Node Name
+    WholeHouse_MECH_Air_Outlet;    !- Air Outlet Node Name
 
 AIRLOOPHVAC:UNITARYSYSTEM,
-    Zone2_GasHeat_DXAC_Furnace,    !- Name
+    WholeHouse_GasHeat_DXAC_Furnace,    !- Name
     Load,                     !- Control Type
-    Zone2,                    !- Controlling Zone or Thermostat Location
+    WholeHouse,               !- Controlling Zone or Thermostat Location
     None,                     !- Dehumidification Control Type
     MechAvailable,            !- Availability Schedule Name
-    Zone2_MECH_Air_Inlet,     !- Air Inlet Node Name
-    Zone2_MECH_Air_Outlet,    !- Air Outlet Node Name
+    WholeHouse_MECH_Air_Inlet,    !- Air Inlet Node Name
+    WholeHouse_MECH_Air_Outlet,    !- Air Outlet Node Name
     Fan:OnOff,                !- Supply Fan Object Type
-    Zone2Furnace_Blower,      !- Supply Fan Name
+    WholeHouseFurnace_Blower,    !- Supply Fan Name
     BlowThrough,              !- Fan Placement
     ,                         !- Supply Air Fan Operating Mode Schedule Name
     Coil:Heating:Fuel,        !- Heating Coil Object Type
-    Zone2Furnace_Heating_Coil,    !- Heating Coil Name
+    WholeHouseFurnace_Heating_Coil,    !- Heating Coil Name
     1,                        !- DX Heating Coil Sizing Ratio
     Coil:Cooling:DX:SingleSpeed,    !- Cooling Coil Object Type
-    Zone2Furnace_DXAC_Coil,    !- Cooling Coil Name
+    WholeHouseFurnace_DXAC_Coil,    !- Cooling Coil Name
     No,                       !- Use DOAS DX Cooling Coil
     2,                        !- Minimum Supply Air Temperature
     SensibleOnlyLoadControl,    !- Latent Load Control
@@ -2119,21 +2119,21 @@ AIRLOOPHVAC:UNITARYSYSTEM,
     80;                       !- Maximum Temperature for Heat Recovery
 
 NODELIST,
-    Zone2_Inlets,             !- Name
-    Zone2_ERV_Supply,         !- Node 1 Name
-    Zone2_MECH_Air_Outlet;    !- Node 2 Name
+    WholeHouse_Inlets,        !- Name
+    WholeHouse_ERV_Supply,    !- Node 1 Name
+    WholeHouse_MECH_Air_Outlet;    !- Node 2 Name
 
 NODELIST,
-    Zone2_Returns,            !- Name
-    Zone2_Return;             !- Node 1 Name
+    WholeHouse_Returns,       !- Name
+    WholeHouse_Return;        !- Node 1 Name
 
 NODELIST,
-    Zone2Exhausts,            !- Name
-    Zone2ERV_Exhaust,         !- Node 1 Name
-    Zone2_MECH_Air_Inlet;     !- Node 2 Name
+    WholeHouse_Exhausts,      !- Name
+    WholeHouse_ERV_Exhaust,    !- Node 1 Name
+    WholeHouse_MECH_Air_Inlet;    !- Node 2 Name
 
 WATERHEATER:MIXED,
-    Zone2_ElectricWaterHeater_50Gal,    !- Name
+    WholeHouse_ElectricWaterHeater_50Gal,    !- Name
     0.1892706,                !- Tank Volume
     DHW_122F,                 !- Setpoint Temperature Schedule Name
     0,                        !- Deadband Temperature Difference
@@ -2154,7 +2154,7 @@ WATERHEATER:MIXED,
     0,                        !- On Cycle Parasitic Heat Fraction to Tank
     ZONE,                     !- Ambient Temperature Indicator
     ,                         !- Ambient Temperature Schedule Name
-    Zone2,                    !- Ambient Temperature Zone Name
+    WholeHouse,               !- Ambient Temperature Zone Name
     ,                         !- Ambient Temperature Outdoor Air Node Name
     2.36,                     !- Off Cycle Loss Coefficient to Ambient Temperature
     1,                        !- Off Cycle Loss Fraction to Zone
@@ -2177,7 +2177,7 @@ WATERHEATER:MIXED,
     General;                  !- EndUse Subcategory
 
 DEMANDMANAGERASSIGNMENTLIST,
-    Zone2_Demand Limiting,    !- Name
+    WholeHouse_Demand Limiting,    !- Name
     ElectricityNet:Facility,    !- Meter Name
     Always Off,               !- Demand Limit Schedule Name
     0.95,                     !- Demand Limit Safety Fraction
@@ -2186,10 +2186,10 @@ DEMANDMANAGERASSIGNMENTLIST,
     10,                       !- Demand Window Length
     All,                      !- Demand Manager Priority
     DemandManager:Thermostats,    !- DemandManager 1 Object Type
-    Zone2_Set backs;          !- DemandManager 1 Name
+    WholeHouse_Set backs;     !- DemandManager 1 Name
 
 DEMANDMANAGER:THERMOSTATS,
-    Zone2_Set backs,          !- Name
+    WholeHouse_Set backs,     !- Name
     Demand Control Cooling,    !- Availability Schedule Name
     Fixed,                    !- Reset Control
     30,                       !- Minimum Reset Duration
@@ -2198,7 +2198,7 @@ DEMANDMANAGER:THERMOSTATS,
     ,                         !- Reset Step Change
     All,                      !- Selection Control
     ,                         !- Rotation Duration
-    Zone2_Thermostat;         !- Thermostat 1 Name
+    WholeHouse_Thermostat;    !- Thermostat 1 Name
 
 GENERATOR:PVWATTS,
     PV Array,                 !- Name

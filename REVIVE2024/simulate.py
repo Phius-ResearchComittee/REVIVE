@@ -357,18 +357,22 @@ def simulate(si: SimInputs, case_id: int, progress_mgr=None):
         for srf in idf1.idfobjects['BuildingSurface:Detailed']:
             zone_name = srf.Zone_Name.split('|')
             srf.Zone_Name = zone_name[0]
-            extisting_list = srf_dict.get(zone_name[0],[])
-            srf_dict[zone_name[0]] = extisting_list + [srf.Name]
-        print(srf_dict)
+            srf_dict[srf.Name] = zone_name[0]
+        
 
         count = -1
         windowNames = []
+        windows_by_zone = {}
         for fen in idfg.idfobjects['FenestrationSurface:Detailed']:
             idf1.copyidfobject(fen)
             count += 1
             windows = idf1.idfobjects['FenestrationSurface:Detailed'][count]
             if windows.Surface_Type == 'Window':
                 windowNames.append(windows.Name)
+                srf_name = windows.Building_Surface_Name
+                window_zone = srf_dict[srf_name]
+                extisting_list = windows_by_zone.get(zone_name[0],[])
+                windows_by_zone[window_zone] = extisting_list + [windows.Name]
 
         # site shading
 
@@ -442,9 +446,9 @@ def simulate(si: SimInputs, case_id: int, progress_mgr=None):
                 operableArea_S, operableArea_E)
 
                 # insert window sorting here
-                windowNames_split = list(divide_chunks(windowNames, 10))
 
-                
+                zone_windows = windows_by_zone[zone_name[0]]
+                windowNames_split = list(divide_chunks(zone_windows, 10))
                 for i in range(len(windowNames_split)):
                     windowNamesChunk = windowNames_split[i]
                     envelope.WindowShadingControl(idf1, zone_name[0], windowNamesChunk)
@@ -629,8 +633,8 @@ def simulate(si: SimInputs, case_id: int, progress_mgr=None):
         number_zones = (len(unit_list))
 
         if number_zones > 1:
-            heating_sorted_keys = sorted(heating_outage_unit_results.keys,key=lambda x: heating_outage_unit_results[x])
-            cooling_sorted_keys = sorted(cooling_outage_unit_results.keys,key=lambda x: cooling_outage_unit_results[x])
+            heating_sorted_keys = sorted(heating_outage_unit_results.keys(),key=lambda x: heating_outage_unit_results[x])
+            cooling_sorted_keys = sorted(cooling_outage_unit_results.keys(),key=lambda x: cooling_outage_unit_results[x])
 
             heating_min_unit = heating_sorted_keys[0]
             heating_max_unit = heating_sorted_keys[-1]
@@ -647,27 +651,29 @@ def simulate(si: SimInputs, case_id: int, progress_mgr=None):
             if number_zones == 1:
                 ax['temperature'].plot(x,hourlyHeat[(str(unit).upper() + ':Zone Air Temperature [C](Hourly)')], label=(str(unit)+ ' Zone Dry Bulb [C]'),color='black',linewidth=2)
                 ax['temperature'].set_ylim(((min(min(hourlyHeat["Environment:Site Outdoor Air Drybulb Temperature [C](Hourly)"]), min(hourlyHeat[(str(unit).upper()+ ':Zone Air Temperature [C](Hourly)')])))-5),((max(max(hourlyHeat["Environment:Site Outdoor Air Drybulb Temperature [C](Hourly)"]), max(hourlyHeat[(str(unit).upper()+ ':Zone Air Temperature [C](Hourly)')])))+5))
-            
+                ax['rh'].plot(x,hourlyHeat[str(unit).upper()+ ':Zone Air Relative Humidity [%](Hourly)'], label=(str(unit)+ ' Zone RH'),color='black',linewidth=2)
+                ax['SET'].plot(x,hourlyHeat[str(unit).upper() + ' OCCUPANTS:Zone Thermal Comfort Pierce Model Standard Effective Temperature [C](Hourly)'], label=((str(unit)+ ' Zone SET')),color='black',linewidth=2)
+                ax['SET'].set_ylim((min(hourlyHeat[str(unit).upper() + ' OCCUPANTS:Zone Thermal Comfort Pierce Model Standard Effective Temperature [C](Hourly)'])-5),(max(hourlyHeat[str(unit).upper() + ' OCCUPANTS:Zone Thermal Comfort Pierce Model Standard Effective Temperature [C](Hourly)'])+5))
+
             if number_zones > 1:
-                ax['temperature'].plot(x,hourlyHeat[(str(unit).upper()+ ':Zone Air Temperature [C](Hourly)')], label=(str(unit)+ ' Zone Dry Bulb [C]'),color='black',linewidth=2)
-                ax['temperature'].set_ylim(((min(min(hourlyHeat["Environment:Site Outdoor Air Drybulb Temperature [C](Hourly)"]), min(hourlyHeat[(str(unit).upper()+ ':Zone Air Temperature [C](Hourly)')])))-5),((max(max(hourlyHeat["Environment:Site Outdoor Air Drybulb Temperature [C](Hourly)"]), max(hourlyHeat[(str(unit).upper()+ ':Zone Air Temperature [C](Hourly)')])))+5))
-            
+                ax['temperature'].plot(x,hourlyHeat[(str(heating_min_unit).upper()+ ':Zone Air Temperature [C](Hourly)')], label=(str(heating_min_unit)+ ' Zone Dry Bulb [C]'),color='tab:orange',linewidth=2)
+                ax['temperature'].plot(x,hourlyHeat[(str(heating_max_unit).upper()+ ':Zone Air Temperature [C](Hourly)')], label=(str(heating_max_unit)+ ' Zone Dry Bulb [C]'),color='tab:green',linewidth=2)
+                ax['rh'].plot(x,hourlyHeat[str(heating_min_unit).upper()+ ':Zone Air Relative Humidity [%](Hourly)'], label=(str(heating_min_unit)+ ' Zone RH'),color='tab:orange',linewidth=2)
+                ax['rh'].plot(x,hourlyHeat[str(heating_max_unit).upper()+ ':Zone Air Relative Humidity [%](Hourly)'], label=(str(heating_max_unit)+ ' Zone RH'),color='tab:green',linewidth=2, linestyle='dashdot')
+                ax['temperature'].set_ylim(((min(min(hourlyHeat["Environment:Site Outdoor Air Drybulb Temperature [C](Hourly)"]), min(hourlyHeat[(str(heating_min_unit).upper()+ ':Zone Air Temperature [C](Hourly)')])))-5),((max(max(hourlyHeat["Environment:Site Outdoor Air Drybulb Temperature [C](Hourly)"]), max(hourlyHeat[(str(heating_max_unit).upper()+ ':Zone Air Temperature [C](Hourly)')])))+5))
+                ax['SET'].plot(x,hourlyHeat[str(heating_min_unit).upper() + ' OCCUPANTS:Zone Thermal Comfort Pierce Model Standard Effective Temperature [C](Hourly)'], label=((str(heating_min_unit)+ ' Zone SET')),color='tab:orange',linewidth=2)
+                ax['SET'].plot(x,hourlyHeat[str(heating_max_unit).upper() + ' OCCUPANTS:Zone Thermal Comfort Pierce Model Standard Effective Temperature [C](Hourly)'], label=((str(heating_max_unit)+ ' Zone SET')),color='tab:green',linewidth=2)
+                ax['SET'].set_ylim((min(hourlyHeat[str(heating_min_unit).upper() + ' OCCUPANTS:Zone Thermal Comfort Pierce Model Standard Effective Temperature [C](Hourly)'])-5),(max(hourlyHeat[str(heating_max_unit).upper() + ' OCCUPANTS:Zone Thermal Comfort Pierce Model Standard Effective Temperature [C](Hourly)'])+5))
 
             ax['temperature'].set_ylabel('Temperature [C]')
             ax['temperature'].legend(ncol=2, loc='lower left', borderaxespad=0, fontsize='x-small')
             ax['temperature'].grid(True)
-
-            if number_zones == 1:
-                ax['rh'].plot(x,hourlyHeat[str(unit).upper()+ ':Zone Air Relative Humidity [%](Hourly)'], label=(str(unit)+ ' Zone RH'),color='black',linewidth=2)
-            
+          
             ax['rh'].set_ylabel('Relative Humidity [%]')
             ax['rh'].set_ylim(0,100)
             ax['rh'].legend(ncol=2, loc='lower left', borderaxespad=0, fontsize='x-small')
             ax['rh'].grid(True)
 
-            if number_zones == 1:
-                ax['SET'].plot(x,hourlyHeat[str(unit).upper() + ' OCCUPANTS:Zone Thermal Comfort Pierce Model Standard Effective Temperature [C](Hourly)'], label=((str(unit)+ ' Zone SET')),color='black',linewidth=2)
-                ax['SET'].set_ylim((min(hourlyHeat[str(unit).upper() + ' OCCUPANTS:Zone Thermal Comfort Pierce Model Standard Effective Temperature [C](Hourly)'])-5),(max(hourlyHeat[str(unit).upper() + ' OCCUPANTS:Zone Thermal Comfort Pierce Model Standard Effective Temperature [C](Hourly)'])+5))
             ax['SET'].grid(True)
             ax['SET'].legend(ncol=2, loc='lower left', borderaxespad=0, fontsize='x-small')
             ax['SET'].set_xlabel('Date')
@@ -688,20 +694,29 @@ def simulate(si: SimInputs, case_id: int, progress_mgr=None):
             if number_zones == 1:
                 ax['temperature'].plot(x,hourlyCool[(str(unit).upper() + ':Zone Air Temperature [C](Hourly)')], label=(str(unit)+ ' Zone Dry Bulb [C]'),color='black',linewidth=2)
                 ax['temperature'].set_ylim(((min(min(hourlyCool["Environment:Site Outdoor Air Drybulb Temperature [C](Hourly)"]), min(hourlyCool[(str(unit).upper() + ':Zone Air Temperature [C](Hourly)')])))-5),((max(max(hourlyCool["Environment:Site Outdoor Air Drybulb Temperature [C](Hourly)"]), max(hourlyCool[(str(unit).upper() + ':Zone Air Temperature [C](Hourly)')])))+5))
+                ax['rh'].plot(x,hourlyCool[(str(unit).upper() + ':Zone Air Relative Humidity [%](Hourly)')], label=(str(unit)+ ' Zone RH'),color='black',linewidth=2)
+                ax['HI'].plot(x,hourlyCool[(str(unit).upper() + ':Zone Heat Index [C](Hourly)')], label=((str(unit)+ ' Zone HI')),color='black',linewidth=2)
+                ax['HI'].set_ylim((min(hourlyCool[(str(unit).upper() + ':Zone Heat Index [C](Hourly)')])-5),(max(hourlyCool[(str(unit).upper() + ':Zone Heat Index [C](Hourly)')])+5))
+            
+            if number_zones > 1:
+                ax['temperature'].plot(x,hourlyCool[(str(cooling_min_unit).upper()+ ':Zone Air Temperature [C](Hourly)')], label=(str(cooling_min_unit)+ ' Zone Dry Bulb [C]'),color='tab:orange',linewidth=2)
+                ax['temperature'].plot(x,hourlyCool[(str(cooling_max_unit).upper()+ ':Zone Air Temperature [C](Hourly)')], label=(str(cooling_max_unit)+ ' Zone Dry Bulb [C]'),color='tab:green',linewidth=2)
+                ax['rh'].plot(x,hourlyCool[str(cooling_min_unit).upper()+ ':Zone Air Relative Humidity [%](Hourly)'], label=(str(cooling_min_unit)+ ' Zone RH'),color='tab:orange',linewidth=2)
+                ax['rh'].plot(x,hourlyCool[str(cooling_max_unit).upper()+ ':Zone Air Relative Humidity [%](Hourly)'], label=(str(cooling_max_unit)+ ' Zone RH'),color='tab:green',linewidth=2)
+                ax['temperature'].set_ylim(((min(min(hourlyCool["Environment:Site Outdoor Air Drybulb Temperature [C](Hourly)"]), min(hourlyCool[(str(cooling_min_unit).upper()+ ':Zone Air Temperature [C](Hourly)')])))-5),((max(max(hourlyCool["Environment:Site Outdoor Air Drybulb Temperature [C](Hourly)"]), max(hourlyCool[(str(cooling_max_unit).upper()+ ':Zone Air Temperature [C](Hourly)')])))+5))
+                ax['HI'].plot(x,hourlyCool[(str(cooling_max_unit).upper() + ':Zone Heat Index [C](Hourly)')], label=((str(cooling_max_unit)+ ' Zone HI')),color='tab:orange',linewidth=2)
+                ax['HI'].plot(x,hourlyCool[(str(cooling_min_unit).upper() + ':Zone Heat Index [C](Hourly)')], label=((str(cooling_min_unit)+ ' Zone HI')),color='tab:green',linewidth=2)
+                ax['HI'].set_ylim((min(hourlyCool[(str(unit).upper() + ':Zone Heat Index [C](Hourly)')])-5),(max(hourlyCool[(str(unit).upper() + ':Zone Heat Index [C](Hourly)')])+5))
+
             ax['temperature'].set_ylabel('Temperature [C]')
             ax['temperature'].legend(ncol=2, loc='lower left', borderaxespad=0, fontsize='x-small')
             ax['temperature'].grid(True)
 
-            if number_zones == 1:
-                ax['rh'].plot(x,hourlyCool[(str(unit).upper() + ':Zone Air Relative Humidity [%](Hourly)')], label=(str(unit)+ ' Zone RH'),color='black',linewidth=2)
             ax['rh'].set_ylabel('Relative Humidity [%]')
             ax['rh'].set_ylim(0,100)
             ax['rh'].legend(ncol=2, loc='lower left', borderaxespad=0, fontsize='x-small')
             ax['rh'].grid(True)
-            
-            if number_zones == 1:
-                ax['HI'].plot(x,hourlyCool[(str(unit).upper() + ':Zone Heat Index [C](Hourly)')], label=((str(unit)+ ' Zone HI')),color='black',linewidth=2)
-                ax['HI'].set_ylim((min(hourlyCool[(str(unit).upper() + ':Zone Heat Index [C](Hourly)')])-5),(max(hourlyCool[(str(unit).upper() + ':Zone Heat Index [C](Hourly)')])+5))
+
             ax['HI'].grid(True)
             ax['HI'].legend(ncol=2, loc='lower left', borderaxespad=0, fontsize='x-small')
             ax['HI'].set_xlabel('Date')
@@ -741,7 +756,8 @@ def simulate(si: SimInputs, case_id: int, progress_mgr=None):
                 if (mean(TEMPdays[day])-((49.593 - 48.580*np.array(mean(RHdays[day])*0.01) +25.887*np.array(mean(RHdays[day])*0.01)**2))) > 0:
                     moraTotalDays = moraTotalDays+1
             mora_days_units[str(unit)] = moraTotalDays
-            
+        
+        print(mora_days_units)
         # Battery Sizing
         heatingBattery = (hourlyHeat['Whole Building:Facility Total Purchased Electricity Energy [J](Hourly)'].sum())*0.0000002778
         coolingBattery = (hourlyCool['Whole Building:Facility Total Purchased Electricity Energy [J](Hourly)'].sum())*0.0000002778
@@ -1213,9 +1229,9 @@ def simulate(si: SimInputs, case_id: int, progress_mgr=None):
         
         
         ### NEED TO RUN TRY AND EXCEPT INSIDE PARALLEL
-        if progress_mgr is not None:
-            progress_mgr.raise_exception(str(e))
-            return newResultRow
-        else:
-            raise Exception(e)
+        # if progress_mgr is not None:
+        #     progress_mgr.raise_exception(str(e))
+        #     return newResultRow
+        # else:
+        raise Exception(e)
         # print('Saved Results')

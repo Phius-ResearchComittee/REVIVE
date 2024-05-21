@@ -517,7 +517,12 @@ SCHEDULE:CONSTANT,
     0;                        !- Hourly Value
 
 SCHEDULE:CONSTANT,
-    2ndFloor_WindowFractionControl,    !- Name
+    Floor3_WindowFractionControl,    !- Name
+    Any Number,               !- Schedule Type Limits Name
+    0;                        !- Hourly Value
+
+SCHEDULE:CONSTANT,
+    Floor2_WindowFractionControl,    !- Name
     Any Number,               !- Schedule Type Limits Name
     0;                        !- Hourly Value
 
@@ -1468,7 +1473,7 @@ Zone,
     74.32;                    !- Floor Area
 
 Zone,
-    2ndFloor,                 !- Name
+    Floor3,                   !- Name
     0,                        !- Direction of Relative North
     0,                        !- X Origin
     0,                        !- Y Origin
@@ -1478,6 +1483,21 @@ Zone,
     ,                         !- Ceiling Height
     ,                         !- Volume
     74.32;                    !- Floor Area
+
+Zone,
+    Floor2,                   !- Name
+    0,                        !- Direction of Relative North
+    10.219095,                !- X Origin
+    10.334992,                !- Y Origin
+    0,                        !- Z Origin
+    ,                         !- Type
+    1,                        !- Multiplier
+    ,                         !- Ceiling Height
+    ,                         !- Volume
+    74.32,                    !- Floor Area
+    ,                         !- Zone Inside Convection Algorithm
+    ,                         !- Zone Outside Convection Algorithm
+    Yes;                      !- Part of Total Floor Area
 
 BuildingSurface:Detailed,
     Slab,                     !- Name
@@ -1627,7 +1647,7 @@ BuildingSurface:Detailed,
     316250,                   !- Name
     Floor,                    !- Surface Type
     Interior Floor,           !- Construction Name
-    2ndFloor,                 !- Zone Name
+    Floor3,                   !- Zone Name
     Surface,                  !- Outside Boundary Condition
     DF56F9,                   !- Outside Boundary Condition Object
     NoSun,                    !- Sun Exposure
@@ -1651,7 +1671,7 @@ BuildingSurface:Detailed,
     A37CDB,                   !- Name
     Wall,                     !- Surface Type
     Exterior Wall,            !- Construction Name
-    2ndFloor,                 !- Zone Name
+    Floor3,                   !- Zone Name
     Outdoors,                 !- Outside Boundary Condition
     ,                         !- Outside Boundary Condition Object
     SunExposed,               !- Sun Exposure
@@ -1675,7 +1695,7 @@ BuildingSurface:Detailed,
     30DC42,                   !- Name
     Wall,                     !- Surface Type
     Exterior Wall,            !- Construction Name
-    2ndFloor,                 !- Zone Name
+    Floor3,                   !- Zone Name
     Outdoors,                 !- Outside Boundary Condition
     ,                         !- Outside Boundary Condition Object
     SunExposed,               !- Sun Exposure
@@ -1697,14 +1717,14 @@ BuildingSurface:Detailed,
 
 BuildingSurface:Detailed,
     BF4D1B,                   !- Name
-    Roof,                     !- Surface Type
-    Exterior Roof,            !- Construction Name
-    2ndFloor,                 !- Zone Name
-    Outdoors,                 !- Outside Boundary Condition
-    ,                         !- Outside Boundary Condition Object
-    SunExposed,               !- Sun Exposure
-    WindExposed,              !- Wind Exposure
-    ,                         !- View Factor to Ground
+    Ceiling,                  !- Surface Type
+    Interior Floor,           !- Construction Name
+    Floor3,                   !- Zone Name
+    Surface,                  !- Outside Boundary Condition
+    EEC689,                   !- Outside Boundary Condition Object
+    NoSun,                    !- Sun Exposure
+    NoWind,                   !- Wind Exposure
+    0,                        !- View Factor to Ground
     4,                        !- Number of Vertices
     0,                        !- Vertex 1 Xcoordinate
     12.192,                   !- Vertex 1 Ycoordinate
@@ -1723,7 +1743,7 @@ BuildingSurface:Detailed,
     B15239,                   !- Name
     Wall,                     !- Surface Type
     Exterior Wall,            !- Construction Name
-    2ndFloor,                 !- Zone Name
+    Floor3,                   !- Zone Name
     Outdoors,                 !- Outside Boundary Condition
     ,                         !- Outside Boundary Condition Object
     SunExposed,               !- Sun Exposure
@@ -1747,7 +1767,7 @@ BuildingSurface:Detailed,
     B6AE6F,                   !- Name
     Wall,                     !- Surface Type
     Exterior Wall,            !- Construction Name
-    2ndFloor,                 !- Zone Name
+    Floor3,                   !- Zone Name
     Outdoors,                 !- Outside Boundary Condition
     ,                         !- Outside Boundary Condition Object
     SunExposed,               !- Sun Exposure
@@ -1766,6 +1786,150 @@ BuildingSurface:Detailed,
     0,                        !- Vertex 4 Xcoordinate
     0,                        !- Vertex 4 Ycoordinate
     3.21564;                  !- Vertex 4 Zcoordinate
+
+BuildingSurface:Detailed,
+    EEC689,                   !- Name
+    Floor,                    !- Surface Type
+    Interior Floor,           !- Construction Name
+    Floor2,                   !- Zone Name
+    Surface,                  !- Outside Boundary Condition
+    BF4D1B,                   !- Outside Boundary Condition Object
+    NoSun,                    !- Sun Exposure
+    NoWind,                   !- Wind Exposure
+    0,                        !- View Factor to Ground
+    4,                        !- Number of Vertices
+    -4.123095,                !- Vertex 1 Xcoordinate
+    1.857008,                 !- Vertex 1 Ycoordinate
+    6.26364,                  !- Vertex 1 Zcoordinate
+    -4.123095,                !- Vertex 2 Xcoordinate
+    -10.334992,               !- Vertex 2 Ycoordinate
+    6.26364,                  !- Vertex 2 Zcoordinate
+    -10.219095,               !- Vertex 3 Xcoordinate
+    -10.334992,               !- Vertex 3 Ycoordinate
+    6.26364,                  !- Vertex 3 Zcoordinate
+    -10.219095,               !- Vertex 4 Xcoordinate
+    1.857008,                 !- Vertex 4 Ycoordinate
+    6.26364;                  !- Vertex 4 Zcoordinate
+
+BuildingSurface:Detailed,
+    A845A6,                   !- Name
+    Wall,                     !- Surface Type
+    Exterior Wall,            !- Construction Name
+    Floor2,                   !- Zone Name
+    Outdoors,                 !- Outside Boundary Condition
+    ,                         !- Outside Boundary Condition Object
+    SunExposed,               !- Sun Exposure
+    WindExposed,              !- Wind Exposure
+    ,                         !- View Factor to Ground
+    4,                        !- Number of Vertices
+    -10.219095,               !- Vertex 1 Xcoordinate
+    -10.334992,               !- Vertex 1 Ycoordinate
+    9.92124,                  !- Vertex 1 Zcoordinate
+    -10.219095,               !- Vertex 2 Xcoordinate
+    -10.334992,               !- Vertex 2 Ycoordinate
+    6.26364,                  !- Vertex 2 Zcoordinate
+    -4.123095,                !- Vertex 3 Xcoordinate
+    -10.334992,               !- Vertex 3 Ycoordinate
+    6.26364,                  !- Vertex 3 Zcoordinate
+    -4.123095,                !- Vertex 4 Xcoordinate
+    -10.334992,               !- Vertex 4 Ycoordinate
+    9.92124;                  !- Vertex 4 Zcoordinate
+
+BuildingSurface:Detailed,
+    ADD2EF,                   !- Name
+    Wall,                     !- Surface Type
+    Exterior Wall,            !- Construction Name
+    Floor2,                   !- Zone Name
+    Outdoors,                 !- Outside Boundary Condition
+    ,                         !- Outside Boundary Condition Object
+    SunExposed,               !- Sun Exposure
+    WindExposed,              !- Wind Exposure
+    ,                         !- View Factor to Ground
+    4,                        !- Number of Vertices
+    -4.123095,                !- Vertex 1 Xcoordinate
+    -10.334992,               !- Vertex 1 Ycoordinate
+    9.92124,                  !- Vertex 1 Zcoordinate
+    -4.123095,                !- Vertex 2 Xcoordinate
+    -10.334992,               !- Vertex 2 Ycoordinate
+    6.26364,                  !- Vertex 2 Zcoordinate
+    -4.123095,                !- Vertex 3 Xcoordinate
+    1.857008,                 !- Vertex 3 Ycoordinate
+    6.26364,                  !- Vertex 3 Zcoordinate
+    -4.123095,                !- Vertex 4 Xcoordinate
+    1.857008,                 !- Vertex 4 Ycoordinate
+    9.92124;                  !- Vertex 4 Zcoordinate
+
+BuildingSurface:Detailed,
+    17BBE2,                   !- Name
+    Roof,                     !- Surface Type
+    Exterior Roof,            !- Construction Name
+    Floor2,                   !- Zone Name
+    Outdoors,                 !- Outside Boundary Condition
+    ,                         !- Outside Boundary Condition Object
+    SunExposed,               !- Sun Exposure
+    WindExposed,              !- Wind Exposure
+    ,                         !- View Factor to Ground
+    4,                        !- Number of Vertices
+    -10.219095,               !- Vertex 1 Xcoordinate
+    1.857008,                 !- Vertex 1 Ycoordinate
+    9.92124,                  !- Vertex 1 Zcoordinate
+    -10.219095,               !- Vertex 2 Xcoordinate
+    -10.334992,               !- Vertex 2 Ycoordinate
+    9.92124,                  !- Vertex 2 Zcoordinate
+    -4.123095,                !- Vertex 3 Xcoordinate
+    -10.334992,               !- Vertex 3 Ycoordinate
+    9.92124,                  !- Vertex 3 Zcoordinate
+    -4.123095,                !- Vertex 4 Xcoordinate
+    1.857008,                 !- Vertex 4 Ycoordinate
+    9.92124;                  !- Vertex 4 Zcoordinate
+
+BuildingSurface:Detailed,
+    DE1E9A,                   !- Name
+    Wall,                     !- Surface Type
+    Exterior Wall,            !- Construction Name
+    Floor2,                   !- Zone Name
+    Outdoors,                 !- Outside Boundary Condition
+    ,                         !- Outside Boundary Condition Object
+    SunExposed,               !- Sun Exposure
+    WindExposed,              !- Wind Exposure
+    ,                         !- View Factor to Ground
+    4,                        !- Number of Vertices
+    -4.123095,                !- Vertex 1 Xcoordinate
+    1.857008,                 !- Vertex 1 Ycoordinate
+    9.92124,                  !- Vertex 1 Zcoordinate
+    -4.123095,                !- Vertex 2 Xcoordinate
+    1.857008,                 !- Vertex 2 Ycoordinate
+    6.26364,                  !- Vertex 2 Zcoordinate
+    -10.219095,               !- Vertex 3 Xcoordinate
+    1.857008,                 !- Vertex 3 Ycoordinate
+    6.26364,                  !- Vertex 3 Zcoordinate
+    -10.219095,               !- Vertex 4 Xcoordinate
+    1.857008,                 !- Vertex 4 Ycoordinate
+    9.92124;                  !- Vertex 4 Zcoordinate
+
+BuildingSurface:Detailed,
+    CE51E0,                   !- Name
+    Wall,                     !- Surface Type
+    Exterior Wall,            !- Construction Name
+    Floor2,                   !- Zone Name
+    Outdoors,                 !- Outside Boundary Condition
+    ,                         !- Outside Boundary Condition Object
+    SunExposed,               !- Sun Exposure
+    WindExposed,              !- Wind Exposure
+    ,                         !- View Factor to Ground
+    4,                        !- Number of Vertices
+    -10.219095,               !- Vertex 1 Xcoordinate
+    1.857008,                 !- Vertex 1 Ycoordinate
+    9.92124,                  !- Vertex 1 Zcoordinate
+    -10.219095,               !- Vertex 2 Xcoordinate
+    1.857008,                 !- Vertex 2 Ycoordinate
+    6.26364,                  !- Vertex 2 Zcoordinate
+    -10.219095,               !- Vertex 3 Xcoordinate
+    -10.334992,               !- Vertex 3 Ycoordinate
+    6.26364,                  !- Vertex 3 Zcoordinate
+    -10.219095,               !- Vertex 4 Xcoordinate
+    -10.334992,               !- Vertex 4 Ycoordinate
+    9.92124;                  !- Vertex 4 Zcoordinate
 
 FenestrationSurface:Detailed,
     2653A6,                   !- Name
@@ -1882,6 +2046,121 @@ FenestrationSurface:Detailed,
     9.576032369649,           !- Vertex 4 Ycoordinate
     2.149266898421;           !- Vertex 4 Zcoordinate
 
+FenestrationSurface:Detailed,
+    7F033B,                   !- Name
+    Window,                   !- Surface Type
+    WINDOW_U-0.5 g=0.4,       !- Construction Name
+    A845A6,                   !- Building Surface Name
+    ,                         !- Outside Boundary Condition Object
+    ,                         !- View Factor to Ground
+    ,                         !- Frame and Divider Name
+    ,                         !- Multiplier
+    4,                        !- Number of Vertices
+    -7.829321268059,          !- Vertex 1 Xcoordinate
+    -10.334992,               !- Vertex 1 Ycoordinate
+    8.727216650989,           !- Vertex 1 Zcoordinate
+    -7.829321268059,          !- Vertex 2 Xcoordinate
+    -10.334992,               !- Vertex 2 Ycoordinate
+    7.029480650989,           !- Vertex 2 Zcoordinate
+    -5.869457268059,          !- Vertex 3 Xcoordinate
+    -10.334992,               !- Vertex 3 Ycoordinate
+    7.029480650989,           !- Vertex 3 Zcoordinate
+    -5.869457268059,          !- Vertex 4 Xcoordinate
+    -10.334992,               !- Vertex 4 Ycoordinate
+    8.727216650989;           !- Vertex 4 Zcoordinate
+
+FenestrationSurface:Detailed,
+    C218CB,                   !- Name
+    Window,                   !- Surface Type
+    WINDOW_U-0.5 g=0.4,       !- Construction Name
+    ADD2EF,                   !- Building Surface Name
+    ,                         !- Outside Boundary Condition Object
+    ,                         !- View Factor to Ground
+    ,                         !- Frame and Divider Name
+    ,                         !- Multiplier
+    4,                        !- Number of Vertices
+    -4.123095,                !- Vertex 1 Xcoordinate
+    -8.758469647188,          !- Vertex 1 Ycoordinate
+    9.254135015703,           !- Vertex 1 Zcoordinate
+    -4.123095,                !- Vertex 2 Xcoordinate
+    -8.758469647188,          !- Vertex 2 Ycoordinate
+    7.315607015703,           !- Vertex 2 Zcoordinate
+    -4.123095,                !- Vertex 3 Xcoordinate
+    -8.072669647188,          !- Vertex 3 Ycoordinate
+    7.315607015703,           !- Vertex 3 Zcoordinate
+    -4.123095,                !- Vertex 4 Xcoordinate
+    -8.072669647188,          !- Vertex 4 Ycoordinate
+    9.254135015703;           !- Vertex 4 Zcoordinate
+
+FenestrationSurface:Detailed,
+    49CBAE,                   !- Name
+    Window,                   !- Surface Type
+    WINDOW_U-0.5 g=0.4,       !- Construction Name
+    ADD2EF,                   !- Building Surface Name
+    ,                         !- Outside Boundary Condition Object
+    ,                         !- View Factor to Ground
+    ,                         !- Frame and Divider Name
+    ,                         !- Multiplier
+    4,                        !- Number of Vertices
+    -4.123095,                !- Vertex 1 Xcoordinate
+    -3.89130076397,           !- Vertex 1 Ycoordinate
+    8.919593130615,           !- Vertex 1 Zcoordinate
+    -4.123095,                !- Vertex 2 Xcoordinate
+    -3.89130076397,           !- Vertex 2 Ycoordinate
+    6.962777130615,           !- Vertex 2 Zcoordinate
+    -4.123095,                !- Vertex 3 Xcoordinate
+    0.35761123603,            !- Vertex 3 Ycoordinate
+    6.962777130615,           !- Vertex 3 Zcoordinate
+    -4.123095,                !- Vertex 4 Xcoordinate
+    0.35761123603,            !- Vertex 4 Ycoordinate
+    8.919593130615;           !- Vertex 4 Zcoordinate
+
+FenestrationSurface:Detailed,
+    5065B7,                   !- Name
+    Window,                   !- Surface Type
+    WINDOW_U-0.5 g=0.4,       !- Construction Name
+    CE51E0,                   !- Building Surface Name
+    ,                         !- Outside Boundary Condition Object
+    ,                         !- View Factor to Ground
+    ,                         !- Frame and Divider Name
+    ,                         !- Multiplier
+    4,                        !- Number of Vertices
+    -10.219095,               !- Vertex 1 Xcoordinate
+    -0.360462239866,          !- Vertex 1 Ycoordinate
+    8.927635531915,           !- Vertex 1 Zcoordinate
+    -10.219095,               !- Vertex 2 Xcoordinate
+    -0.360462239866,          !- Vertex 2 Ycoordinate
+    7.745011531915,           !- Vertex 2 Zcoordinate
+    -10.219095,               !- Vertex 3 Xcoordinate
+    -8.690646239866,          !- Vertex 3 Ycoordinate
+    7.745011531915,           !- Vertex 3 Zcoordinate
+    -10.219095,               !- Vertex 4 Xcoordinate
+    -8.690646239866,          !- Vertex 4 Ycoordinate
+    8.927635531915;           !- Vertex 4 Zcoordinate
+
+FenestrationSurface:Detailed,
+    C37F06,                   !- Name
+    Window,                   !- Surface Type
+    WINDOW_U-0.5 g=0.4,       !- Construction Name
+    DE1E9A,                   !- Building Surface Name
+    ,                         !- Outside Boundary Condition Object
+    ,                         !- View Factor to Ground
+    ,                         !- Frame and Divider Name
+    ,                         !- Multiplier
+    4,                        !- Number of Vertices
+    -6.04731070729,           !- Vertex 1 Xcoordinate
+    1.857008,                 !- Vertex 1 Ycoordinate
+    8.862391035855,           !- Vertex 1 Zcoordinate
+    -6.04731070729,           !- Vertex 2 Xcoordinate
+    1.857008,                 !- Vertex 2 Ycoordinate
+    7.658431035855,           !- Vertex 2 Zcoordinate
+    -8.58019870729,           !- Vertex 3 Xcoordinate
+    1.857008,                 !- Vertex 3 Ycoordinate
+    7.658431035855,           !- Vertex 3 Zcoordinate
+    -8.58019870729,           !- Vertex 4 Xcoordinate
+    1.857008,                 !- Vertex 4 Ycoordinate
+    8.862391035855;           !- Vertex 4 Zcoordinate
+
 WINDOWSHADINGCONTROL,
     GroundUnit_Shading Control,    !- Name
     GroundUnit,               !- Zone Name
@@ -1899,15 +2178,11 @@ WINDOWSHADINGCONTROL,
     ,                         !- Setpoint 2
     ,                         !- Daylighting Control Object Name
     Sequential,               !- Multiple Surface Control Type
-    2653A6,                   !- Fenestration Surface 1 Name
-    647F87,                   !- Fenestration Surface 2 Name
-    96FA3F,                   !- Fenestration Surface 3 Name
-    E51EF0,                   !- Fenestration Surface 4 Name
-    527646;                   !- Fenestration Surface 5 Name
+    647F87;                   !- Fenestration Surface 1 Name
 
 WINDOWSHADINGCONTROL,
-    2ndFloor_Shading Control,    !- Name
-    2ndFloor,                 !- Zone Name
+    Floor3_Shading Control,    !- Name
+    Floor3,                   !- Zone Name
     1,                        !- Shading Control Sequence Number
     ExteriorShade,            !- Shading Type
     ,                         !- Construction with Shading Name
@@ -1922,11 +2197,30 @@ WINDOWSHADINGCONTROL,
     ,                         !- Setpoint 2
     ,                         !- Daylighting Control Object Name
     Sequential,               !- Multiple Surface Control Type
-    2653A6,                   !- Fenestration Surface 1 Name
-    647F87,                   !- Fenestration Surface 2 Name
-    96FA3F,                   !- Fenestration Surface 3 Name
-    E51EF0,                   !- Fenestration Surface 4 Name
-    527646;                   !- Fenestration Surface 5 Name
+    527646;                   !- Fenestration Surface 1 Name
+
+WINDOWSHADINGCONTROL,
+    Floor2_Shading Control,    !- Name
+    Floor2,                   !- Zone Name
+    1,                        !- Shading Control Sequence Number
+    ExteriorShade,            !- Shading Type
+    ,                         !- Construction with Shading Name
+    OnIfHighSolarOnWindow,    !- Shading Control Type
+    ShadingAvailable,         !- Schedule Name
+    100,                      !- Setpoint
+    Yes,                      !- Shading Control Is Scheduled
+    No,                       !- Glare Control Is Active
+    HIGH REFLECT - LOW TRANS SHADE,    !- Shading Device Material Name
+    FixedSlatAngle,           !- Type of Slat Angle Control for Blinds
+    ,                         !- Slat Angle Schedule Name
+    ,                         !- Setpoint 2
+    ,                         !- Daylighting Control Object Name
+    Sequential,               !- Multiple Surface Control Type
+    7F033B,                   !- Fenestration Surface 1 Name
+    C218CB,                   !- Fenestration Surface 2 Name
+    49CBAE,                   !- Fenestration Surface 3 Name
+    5065B7,                   !- Fenestration Surface 4 Name
+    C37F06;                   !- Fenestration Surface 5 Name
 
 INTERNALMASS,
     GroundUnit Zone1 TM,      !- Name
@@ -1941,16 +2235,45 @@ INTERNALMASS,
     74.32;                    !- Surface Area
 
 INTERNALMASS,
-    2ndFloor Zone1 TM,        !- Name
+    Floor3 Zone1 TM,          !- Name
     Thermal Mass,             !- Construction Name
-    2ndFloor,                 !- Zone or ZoneList Name
+    Floor3,                   !- Zone or ZoneList Name
     74.32;                    !- Surface Area
 
 INTERNALMASS,
-    2ndFloor Partitions,      !- Name
+    Floor3 Partitions,        !- Name
     Interior Wall,            !- Construction Name
-    2ndFloor,                 !- Zone or ZoneList Name
+    Floor3,                   !- Zone or ZoneList Name
     74.32;                    !- Surface Area
+
+INTERNALMASS,
+    Floor2 Zone1 TM,          !- Name
+    Thermal Mass,             !- Construction Name
+    Floor2,                   !- Zone or ZoneList Name
+    74.32;                    !- Surface Area
+
+INTERNALMASS,
+    Floor2 Partitions,        !- Name
+    Interior Wall,            !- Construction Name
+    Floor2,                   !- Zone or ZoneList Name
+    74.32;                    !- Surface Area
+
+Shading:Building:Detailed,
+    94B3DF,                   !- Name
+    ,                         !- Transmittance Schedule Name
+    4,                        !- Number of Vertices
+    12.192,                   !- Vertex 1 Xcoordinate
+    0,                        !- Vertex 1 Ycoordinate
+    11.265408,                !- Vertex 1 Zcoordinate
+    12.192,                   !- Vertex 2 Xcoordinate
+    0,                        !- Vertex 2 Ycoordinate
+    0,                        !- Vertex 2 Zcoordinate
+    12.192,                   !- Vertex 3 Xcoordinate
+    12.192,                   !- Vertex 3 Ycoordinate
+    0,                        !- Vertex 3 Zcoordinate
+    12.192,                   !- Vertex 4 Xcoordinate
+    12.192,                   !- Vertex 4 Ycoordinate
+    11.265408;                !- Vertex 4 Zcoordinate
 
 FOUNDATION:KIVA,
     Slab Details,             !- Name
@@ -2001,8 +2324,30 @@ PEOPLE,
     Pierce;                   !- Thermal Comfort Model 1 Type
 
 PEOPLE,
-    2ndFloor Occupants,       !- Name
-    2ndFloor,                 !- Zone or ZoneList Name
+    Floor3 Occupants,         !- Name
+    Floor3,                   !- Zone or ZoneList Name
+    OccupantSchedule,         !- Number of People Schedule Name
+    People,                   !- Number of People Calculation Method
+    3,                        !- Number of People
+    ,                         !- People per Zone Floor Area
+    ,                         !- Zone Floor Area per Person
+    0.3,                      !- Fraction Radiant
+    autocalculate,            !- Sensible Heat Fraction
+    Occupant_Activity_Schedule,    !- Activity Level Schedule Name
+    3.82e-08,                 !- Carbon Dioxide Generation Rate
+    No,                       !- Enable ASHRAE 55 Comfort Warnings
+    ZoneAveraged,             !- Mean Radiant Temperature Calculation Type
+    ,                         !- Surface NameAngle Factor List Name
+    Occupant_Eff_Schedule,    !- Work Efficiency Schedule Name
+    ClothingInsulationSchedule,    !- Clothing Insulation Calculation Method
+    Occupant_Clothing_Schedule,    !- Clothing Insulation Calculation Method Schedule Name
+    Occupant_Clothing_Schedule,    !- Clothing Insulation Schedule Name
+    AirVelocitySch,           !- Air Velocity Schedule Name
+    Pierce;                   !- Thermal Comfort Model 1 Type
+
+PEOPLE,
+    Floor2 Occupants,         !- Name
+    Floor2,                   !- Zone or ZoneList Name
     OccupantSchedule,         !- Number of People Schedule Name
     People,                   !- Number of People Calculation Method
     3,                        !- Number of People
@@ -2040,8 +2385,25 @@ LIGHTS,
     0;                        !- Return Air Fraction Function of Plenum Temperature Coefficient 2
 
 LIGHTS,
-    2ndFloor PhiusLights,     !- Name
-    2ndFloor,                 !- Zone or ZoneList Name
+    Floor3 PhiusLights,       !- Name
+    Floor3,                   !- Zone or ZoneList Name
+    Phius_Lighting,           !- Schedule Name
+    LightingLevel,            !- Design Level Calculation Method
+    1621.5905708404293,       !- Lighting Level
+    ,                         !- Watts per Zone Floor Area
+    ,                         !- Watts per Person
+    0,                        !- Return Air Fraction
+    0.6,                      !- Fraction Radiant
+    0.2,                      !- Fraction Visible
+    1,                        !- Fraction Replaceable
+    InteriorLights,           !- EndUse Subcategory
+    No,                       !- Return Air Fraction Calculated from Plenum Temperature
+    0,                        !- Return Air Fraction Function of Plenum Temperature Coefficient 1
+    0;                        !- Return Air Fraction Function of Plenum Temperature Coefficient 2
+
+LIGHTS,
+    Floor2 PhiusLights,       !- Name
+    Floor2,                   !- Zone or ZoneList Name
     Phius_Lighting,           !- Schedule Name
     LightingLevel,            !- Design Level Calculation Method
     1621.5905708404293,       !- Lighting Level
@@ -2161,8 +2523,8 @@ ELECTRICEQUIPMENT,
     General;                  !- EndUse Subcategory
 
 ELECTRICEQUIPMENT,
-    2ndFloor PhiusMELs,       !- Name
-    2ndFloor,                 !- Zone or ZoneList Name
+    Floor3 PhiusMELs,         !- Name
+    Floor3,                   !- Zone or ZoneList Name
     Phius_MELs,               !- Schedule Name
     EquipmentLevel,           !- Design Level Calculation Method
     2803.2353972427395,       !- Design Level
@@ -2174,8 +2536,8 @@ ELECTRICEQUIPMENT,
     MELs;                     !- EndUse Subcategory
 
 ELECTRICEQUIPMENT,
-    2ndFloor Fridge,          !- Name
-    2ndFloor,                 !- Zone or ZoneList Name
+    Floor3 Fridge,            !- Name
+    Floor3,                   !- Zone or ZoneList Name
     Always_On,                !- Schedule Name
     EquipmentLevel,           !- Design Level Calculation Method
     369.8630136986301,        !- Design Level
@@ -2187,8 +2549,8 @@ ELECTRICEQUIPMENT,
     Fridge;                   !- EndUse Subcategory
 
 ELECTRICEQUIPMENT,
-    2ndFloor Range,           !- Name
-    2ndFloor,                 !- Zone or ZoneList Name
+    Floor3 Range,             !- Name
+    Floor3,                   !- Zone or ZoneList Name
     BARangeSchedule,          !- Schedule Name
     EquipmentLevel,           !- Design Level Calculation Method
     1120.5479452054794,       !- Design Level
@@ -2200,8 +2562,8 @@ ELECTRICEQUIPMENT,
     Range;                    !- EndUse Subcategory
 
 ELECTRICEQUIPMENT,
-    2ndFloor ClothesDryer,    !- Name
-    2ndFloor,                 !- Zone or ZoneList Name
+    Floor3 ClothesDryer,      !- Name
+    Floor3,                   !- Zone or ZoneList Name
     BAClothesDryerSchedule,    !- Schedule Name
     EquipmentLevel,           !- Design Level Calculation Method
     23110.027275259326,       !- Design Level
@@ -2213,8 +2575,8 @@ ELECTRICEQUIPMENT,
     ClothesDryer;             !- EndUse Subcategory
 
 ELECTRICEQUIPMENT,
-    2ndFloor ClothesWasher,    !- Name
-    2ndFloor,                 !- Zone or ZoneList Name
+    Floor3 ClothesWasher,     !- Name
+    Floor3,                   !- Zone or ZoneList Name
     BAClothesWasherSchedule,    !- Schedule Name
     EquipmentLevel,           !- Design Level Calculation Method
     3945.205479452054,        !- Design Level
@@ -2226,8 +2588,8 @@ ELECTRICEQUIPMENT,
     ClothesWasher;            !- EndUse Subcategory
 
 ELECTRICEQUIPMENT,
-    2ndFloor Dishwasher,      !- Name
-    2ndFloor,                 !- Zone or ZoneList Name
+    Floor3 Dishwasher,        !- Name
+    Floor3,                   !- Zone or ZoneList Name
     BADishwasherSchedule,     !- Schedule Name
     EquipmentLevel,           !- Design Level Calculation Method
     4346.396177126473,        !- Design Level
@@ -2239,8 +2601,8 @@ ELECTRICEQUIPMENT,
     Dishwasher;               !- EndUse Subcategory
 
 ELECTRICEQUIPMENT,
-    2ndFloor SizingSensible,    !- Name
-    2ndFloor,                 !- Zone or ZoneList Name
+    Floor3 SizingSensible,    !- Name
+    Floor3,                   !- Zone or ZoneList Name
     SizingLoads,              !- Schedule Name
     EquipmentLevel,           !- Design Level Calculation Method
     365.504,                  !- Design Level
@@ -2252,8 +2614,112 @@ ELECTRICEQUIPMENT,
     General;                  !- EndUse Subcategory
 
 ELECTRICEQUIPMENT,
-    2ndFloor SizingLatent,    !- Name
-    2ndFloor,                 !- Zone or ZoneList Name
+    Floor3 SizingLatent,      !- Name
+    Floor3,                   !- Zone or ZoneList Name
+    SizingLoads,              !- Schedule Name
+    EquipmentLevel,           !- Design Level Calculation Method
+    72.3504,                  !- Design Level
+    ,                         !- Watts per Zone Floor Area
+    ,                         !- Watts per Person
+    1,                        !- Fraction Latent
+    0,                        !- Fraction Radiant
+    0,                        !- Fraction Lost
+    General;                  !- EndUse Subcategory
+
+ELECTRICEQUIPMENT,
+    Floor2 PhiusMELs,         !- Name
+    Floor2,                   !- Zone or ZoneList Name
+    Phius_MELs,               !- Schedule Name
+    EquipmentLevel,           !- Design Level Calculation Method
+    2803.2353972427395,       !- Design Level
+    ,                         !- Watts per Zone Floor Area
+    ,                         !- Watts per Person
+    0,                        !- Fraction Latent
+    0,                        !- Fraction Radiant
+    0,                        !- Fraction Lost
+    MELs;                     !- EndUse Subcategory
+
+ELECTRICEQUIPMENT,
+    Floor2 Fridge,            !- Name
+    Floor2,                   !- Zone or ZoneList Name
+    Always_On,                !- Schedule Name
+    EquipmentLevel,           !- Design Level Calculation Method
+    369.8630136986301,        !- Design Level
+    ,                         !- Watts per Zone Floor Area
+    ,                         !- Watts per Person
+    0,                        !- Fraction Latent
+    1,                        !- Fraction Radiant
+    0,                        !- Fraction Lost
+    Fridge;                   !- EndUse Subcategory
+
+ELECTRICEQUIPMENT,
+    Floor2 Range,             !- Name
+    Floor2,                   !- Zone or ZoneList Name
+    BARangeSchedule,          !- Schedule Name
+    EquipmentLevel,           !- Design Level Calculation Method
+    1120.5479452054794,       !- Design Level
+    ,                         !- Watts per Zone Floor Area
+    ,                         !- Watts per Person
+    0.3,                      !- Fraction Latent
+    0.4,                      !- Fraction Radiant
+    0,                        !- Fraction Lost
+    Range;                    !- EndUse Subcategory
+
+ELECTRICEQUIPMENT,
+    Floor2 ClothesDryer,      !- Name
+    Floor2,                   !- Zone or ZoneList Name
+    BAClothesDryerSchedule,    !- Schedule Name
+    EquipmentLevel,           !- Design Level Calculation Method
+    23110.027275259326,       !- Design Level
+    ,                         !- Watts per Zone Floor Area
+    ,                         !- Watts per Person
+    0.05,                     !- Fraction Latent
+    0.15,                     !- Fraction Radiant
+    0,                        !- Fraction Lost
+    ClothesDryer;             !- EndUse Subcategory
+
+ELECTRICEQUIPMENT,
+    Floor2 ClothesWasher,     !- Name
+    Floor2,                   !- Zone or ZoneList Name
+    BAClothesWasherSchedule,    !- Schedule Name
+    EquipmentLevel,           !- Design Level Calculation Method
+    3945.205479452054,        !- Design Level
+    ,                         !- Watts per Zone Floor Area
+    ,                         !- Watts per Person
+    0,                        !- Fraction Latent
+    0.8,                      !- Fraction Radiant
+    0,                        !- Fraction Lost
+    ClothesWasher;            !- EndUse Subcategory
+
+ELECTRICEQUIPMENT,
+    Floor2 Dishwasher,        !- Name
+    Floor2,                   !- Zone or ZoneList Name
+    BADishwasherSchedule,     !- Schedule Name
+    EquipmentLevel,           !- Design Level Calculation Method
+    4346.396177126473,        !- Design Level
+    ,                         !- Watts per Zone Floor Area
+    ,                         !- Watts per Person
+    0.15,                     !- Fraction Latent
+    0.6,                      !- Fraction Radiant
+    0,                        !- Fraction Lost
+    Dishwasher;               !- EndUse Subcategory
+
+ELECTRICEQUIPMENT,
+    Floor2 SizingSensible,    !- Name
+    Floor2,                   !- Zone or ZoneList Name
+    SizingLoads,              !- Schedule Name
+    EquipmentLevel,           !- Design Level Calculation Method
+    365.504,                  !- Design Level
+    ,                         !- Watts per Zone Floor Area
+    ,                         !- Watts per Person
+    0,                        !- Fraction Latent
+    0,                        !- Fraction Radiant
+    0,                        !- Fraction Lost
+    General;                  !- EndUse Subcategory
+
+ELECTRICEQUIPMENT,
+    Floor2 SizingLatent,      !- Name
+    Floor2,                   !- Zone or ZoneList Name
     SizingLoads,              !- Schedule Name
     EquipmentLevel,           !- Design Level Calculation Method
     72.3504,                  !- Design Level
@@ -2271,24 +2737,38 @@ ZONEINFILTRATION:DESIGNFLOWRATE,
     Flow/ExteriorArea,        !- Design Flow Rate Calculation Method
     0,                        !- Design Flow Rate
     0,                        !- Flow per Zone Floor Area
-    2.503312e-06,             !- Flow per Exterior Surface Area
+    0.0002687731,             !- Flow per Exterior Surface Area
     0,                        !- Air Changes per Hour
     0,                        !- Constant Term Coefficient
-    0,                        !- Temperature Term Coefficient
+    0.015,                    !- Temperature Term Coefficient
     0.224,                    !- Velocity Term Coefficient
     0;                        !- Velocity Squared Term Coefficient
 
 ZONEINFILTRATION:DESIGNFLOWRATE,
-    2ndFloor Infiltration,    !- Name
-    2ndFloor,                 !- Zone or ZoneList Name
+    Floor3 Infiltration,      !- Name
+    Floor3,                   !- Zone or ZoneList Name
     Always_On,                !- Schedule Name
     Flow/ExteriorArea,        !- Design Flow Rate Calculation Method
     0,                        !- Design Flow Rate
     0,                        !- Flow per Zone Floor Area
-    2.503312e-06,             !- Flow per Exterior Surface Area
+    0.0002687731,             !- Flow per Exterior Surface Area
     0,                        !- Air Changes per Hour
     0,                        !- Constant Term Coefficient
-    0,                        !- Temperature Term Coefficient
+    0.015,                    !- Temperature Term Coefficient
+    0.224,                    !- Velocity Term Coefficient
+    0;                        !- Velocity Squared Term Coefficient
+
+ZONEINFILTRATION:DESIGNFLOWRATE,
+    Floor2 Infiltration,      !- Name
+    Floor2,                   !- Zone or ZoneList Name
+    Always_On,                !- Schedule Name
+    Flow/ExteriorArea,        !- Design Flow Rate Calculation Method
+    0,                        !- Design Flow Rate
+    0,                        !- Flow per Zone Floor Area
+    0.0002687731,             !- Flow per Exterior Surface Area
+    0,                        !- Air Changes per Hour
+    0,                        !- Constant Term Coefficient
+    0.015,                    !- Temperature Term Coefficient
     0.224,                    !- Velocity Term Coefficient
     0;                        !- Velocity Squared Term Coefficient
 
@@ -2377,10 +2857,10 @@ ZONEVENTILATION:WINDANDSTACKOPENAREA,
     10;                       !- Maximum Wind Speed
 
 ZONEVENTILATION:WINDANDSTACKOPENAREA,
-    2ndFloor_OperableWindows-N,    !- Name
-    2ndFloor,                 !- Zone Name
+    Floor3_OperableWindows-N,    !- Name
+    Floor3,                   !- Zone Name
     4.1806368,                !- Opening Area
-    2ndFloor_WindowFractionControl,    !- Opening Area Fraction Schedule Name
+    Floor3_WindowFractionControl,    !- Opening Area Fraction Schedule Name
     autocalculate,            !- Opening Effectiveness
     0,                        !- Effective Angle
     1.524,                    !- Height Difference
@@ -2398,10 +2878,10 @@ ZONEVENTILATION:WINDANDSTACKOPENAREA,
     10;                       !- Maximum Wind Speed
 
 ZONEVENTILATION:WINDANDSTACKOPENAREA,
-    2ndFloor_OperableWindows-E,    !- Name
-    2ndFloor,                 !- Zone Name
+    Floor3_OperableWindows-E,    !- Name
+    Floor3,                   !- Zone Name
     4.1806368,                !- Opening Area
-    2ndFloor_WindowFractionControl,    !- Opening Area Fraction Schedule Name
+    Floor3_WindowFractionControl,    !- Opening Area Fraction Schedule Name
     autocalculate,            !- Opening Effectiveness
     90,                       !- Effective Angle
     1.524,                    !- Height Difference
@@ -2419,10 +2899,10 @@ ZONEVENTILATION:WINDANDSTACKOPENAREA,
     10;                       !- Maximum Wind Speed
 
 ZONEVENTILATION:WINDANDSTACKOPENAREA,
-    2ndFloor_OperableWindows-S,    !- Name
-    2ndFloor,                 !- Zone Name
+    Floor3_OperableWindows-S,    !- Name
+    Floor3,                   !- Zone Name
     4.1806368,                !- Opening Area
-    2ndFloor_WindowFractionControl,    !- Opening Area Fraction Schedule Name
+    Floor3_WindowFractionControl,    !- Opening Area Fraction Schedule Name
     autocalculate,            !- Opening Effectiveness
     180,                      !- Effective Angle
     1.524,                    !- Height Difference
@@ -2440,10 +2920,94 @@ ZONEVENTILATION:WINDANDSTACKOPENAREA,
     10;                       !- Maximum Wind Speed
 
 ZONEVENTILATION:WINDANDSTACKOPENAREA,
-    2ndFloor_OperableWindows-W,    !- Name
-    2ndFloor,                 !- Zone Name
+    Floor3_OperableWindows-W,    !- Name
+    Floor3,                   !- Zone Name
     4.1806368,                !- Opening Area
-    2ndFloor_WindowFractionControl,    !- Opening Area Fraction Schedule Name
+    Floor3_WindowFractionControl,    !- Opening Area Fraction Schedule Name
+    autocalculate,            !- Opening Effectiveness
+    270,                      !- Effective Angle
+    1.524,                    !- Height Difference
+    autocalculate,            !- Discharge Coefficient for Opening
+    15,                       !- Minimum Indoor Temperature
+    ,                         !- Minimum Indoor Temperature Schedule Name
+    100,                      !- Maximum Indoor Temperature
+    ,                         !- Maximum Indoor Temperature Schedule Name
+    -100,                     !- Delta Temperature
+    ,                         !- Delta Temperature Schedule Name
+    -100,                     !- Minimum Outdoor Temperature
+    ,                         !- Minimum Outdoor Temperature Schedule Name
+    100,                      !- Maximum Outdoor Temperature
+    ,                         !- Maximum Outdoor Temperature Schedule Name
+    10;                       !- Maximum Wind Speed
+
+ZONEVENTILATION:WINDANDSTACKOPENAREA,
+    Floor2_OperableWindows-N,    !- Name
+    Floor2,                   !- Zone Name
+    4.1806368,                !- Opening Area
+    Floor2_WindowFractionControl,    !- Opening Area Fraction Schedule Name
+    autocalculate,            !- Opening Effectiveness
+    0,                        !- Effective Angle
+    1.524,                    !- Height Difference
+    autocalculate,            !- Discharge Coefficient for Opening
+    15,                       !- Minimum Indoor Temperature
+    ,                         !- Minimum Indoor Temperature Schedule Name
+    100,                      !- Maximum Indoor Temperature
+    ,                         !- Maximum Indoor Temperature Schedule Name
+    -100,                     !- Delta Temperature
+    ,                         !- Delta Temperature Schedule Name
+    -100,                     !- Minimum Outdoor Temperature
+    ,                         !- Minimum Outdoor Temperature Schedule Name
+    100,                      !- Maximum Outdoor Temperature
+    ,                         !- Maximum Outdoor Temperature Schedule Name
+    10;                       !- Maximum Wind Speed
+
+ZONEVENTILATION:WINDANDSTACKOPENAREA,
+    Floor2_OperableWindows-E,    !- Name
+    Floor2,                   !- Zone Name
+    4.1806368,                !- Opening Area
+    Floor2_WindowFractionControl,    !- Opening Area Fraction Schedule Name
+    autocalculate,            !- Opening Effectiveness
+    90,                       !- Effective Angle
+    1.524,                    !- Height Difference
+    autocalculate,            !- Discharge Coefficient for Opening
+    15,                       !- Minimum Indoor Temperature
+    ,                         !- Minimum Indoor Temperature Schedule Name
+    100,                      !- Maximum Indoor Temperature
+    ,                         !- Maximum Indoor Temperature Schedule Name
+    -100,                     !- Delta Temperature
+    ,                         !- Delta Temperature Schedule Name
+    -100,                     !- Minimum Outdoor Temperature
+    ,                         !- Minimum Outdoor Temperature Schedule Name
+    100,                      !- Maximum Outdoor Temperature
+    ,                         !- Maximum Outdoor Temperature Schedule Name
+    10;                       !- Maximum Wind Speed
+
+ZONEVENTILATION:WINDANDSTACKOPENAREA,
+    Floor2_OperableWindows-S,    !- Name
+    Floor2,                   !- Zone Name
+    4.1806368,                !- Opening Area
+    Floor2_WindowFractionControl,    !- Opening Area Fraction Schedule Name
+    autocalculate,            !- Opening Effectiveness
+    180,                      !- Effective Angle
+    1.524,                    !- Height Difference
+    autocalculate,            !- Discharge Coefficient for Opening
+    15,                       !- Minimum Indoor Temperature
+    ,                         !- Minimum Indoor Temperature Schedule Name
+    100,                      !- Maximum Indoor Temperature
+    ,                         !- Maximum Indoor Temperature Schedule Name
+    -100,                     !- Delta Temperature
+    ,                         !- Delta Temperature Schedule Name
+    -100,                     !- Minimum Outdoor Temperature
+    ,                         !- Minimum Outdoor Temperature Schedule Name
+    100,                      !- Maximum Outdoor Temperature
+    ,                         !- Maximum Outdoor Temperature Schedule Name
+    10;                       !- Maximum Wind Speed
+
+ZONEVENTILATION:WINDANDSTACKOPENAREA,
+    Floor2_OperableWindows-W,    !- Name
+    Floor2,                   !- Zone Name
+    4.1806368,                !- Opening Area
+    Floor2_WindowFractionControl,    !- Opening Area Fraction Schedule Name
     autocalculate,            !- Opening Effectiveness
     270,                      !- Effective Angle
     1.524,                    !- Height Difference
@@ -2476,7 +3040,15 @@ DESIGNSPECIFICATION:OUTDOORAIR,
     0;                        !- Outdoor Air Flow Air Changes per Hour
 
 DESIGNSPECIFICATION:OUTDOORAIR,
-    2ndFloor_SZ_DSOA,         !- Name
+    Floor3_SZ_DSOA,           !- Name
+    Flow/Person,              !- Outdoor Air Method
+    0.00708000089,            !- Outdoor Air Flow per Person
+    0,                        !- Outdoor Air Flow per Zone Floor Area
+    0.01179868608,            !- Outdoor Air Flow per Zone
+    0;                        !- Outdoor Air Flow Air Changes per Hour
+
+DESIGNSPECIFICATION:OUTDOORAIR,
+    Floor2_SZ_DSOA,           !- Name
     Flow/Person,              !- Outdoor Air Method
     0.00708000089,            !- Outdoor Air Flow per Person
     0,                        !- Outdoor Air Flow per Zone Floor Area
@@ -2492,7 +3064,15 @@ DESIGNSPECIFICATION:ZONEAIRDISTRIBUTION,
     0;                        !- Minimum Zone Ventilation Efficiency
 
 DESIGNSPECIFICATION:ZONEAIRDISTRIBUTION,
-    2ndFloor_SZ_DSZAD,        !- Name
+    Floor3_SZ_DSZAD,          !- Name
+    1,                        !- Zone Air Distribution Effectiveness in Cooling Mode
+    1,                        !- Zone Air Distribution Effectiveness in Heating Mode
+    ,                         !- Zone Air Distribution Effectiveness Schedule Name
+    0,                        !- Zone Secondary Recirculation Fraction
+    0;                        !- Minimum Zone Ventilation Efficiency
+
+DESIGNSPECIFICATION:ZONEAIRDISTRIBUTION,
+    Floor2_SZ_DSZAD,          !- Name
     1,                        !- Zone Air Distribution Effectiveness in Cooling Mode
     1,                        !- Zone Air Distribution Effectiveness in Heating Mode
     ,                         !- Zone Air Distribution Effectiveness Schedule Name
@@ -2529,7 +3109,7 @@ SIZING:ZONE,
     autosize;                 !- Dedicated Outdoor Air High Setpoint Temperature for Design
 
 SIZING:ZONE,
-    2ndFloor,                 !- Zone or ZoneList Name
+    Floor3,                   !- Zone or ZoneList Name
     SupplyAirTemperature,     !- Zone Cooling Design Supply Air Temperature Input Method
     12.8,                     !- Zone Cooling Design Supply Air Temperature
     11.11,                    !- Zone Cooling Design Supply Air Temperature Difference
@@ -2538,7 +3118,7 @@ SIZING:ZONE,
     30,                       !- Zone Heating Design Supply Air Temperature Difference
     0.008,                    !- Zone Cooling Design Supply Air Humidity Ratio
     0.008,                    !- Zone Heating Design Supply Air Humidity Ratio
-    2ndFloor_SZ_DSOA,         !- Design Specification Outdoor Air Object Name
+    Floor3_SZ_DSOA,           !- Design Specification Outdoor Air Object Name
     2,                        !- Zone Heating Sizing Factor
     1.5,                      !- Zone Cooling Sizing Factor
     DesignDay,                !- Cooling Design Air Flow Method
@@ -2551,7 +3131,36 @@ SIZING:ZONE,
     0.002032,                 !- Heating Maximum Air Flow per Zone Floor Area
     0.1415762,                !- Heating Maximum Air Flow
     0.3,                      !- Heating Maximum Air Flow Fraction
-    2ndFloor_SZ_DSZAD,        !- Design Specification Zone Air Distribution Object Name
+    Floor3_SZ_DSZAD,          !- Design Specification Zone Air Distribution Object Name
+    No,                       !- Account for Dedicated Outdoor Air System
+    NeutralSupplyAir,         !- Dedicated Outdoor Air System Control Strategy
+    autosize,                 !- Dedicated Outdoor Air Low Setpoint Temperature for Design
+    autosize;                 !- Dedicated Outdoor Air High Setpoint Temperature for Design
+
+SIZING:ZONE,
+    Floor2,                   !- Zone or ZoneList Name
+    SupplyAirTemperature,     !- Zone Cooling Design Supply Air Temperature Input Method
+    12.8,                     !- Zone Cooling Design Supply Air Temperature
+    11.11,                    !- Zone Cooling Design Supply Air Temperature Difference
+    SupplyAirTemperature,     !- Zone Heating Design Supply Air Temperature Input Method
+    50,                       !- Zone Heating Design Supply Air Temperature
+    30,                       !- Zone Heating Design Supply Air Temperature Difference
+    0.008,                    !- Zone Cooling Design Supply Air Humidity Ratio
+    0.008,                    !- Zone Heating Design Supply Air Humidity Ratio
+    Floor2_SZ_DSOA,           !- Design Specification Outdoor Air Object Name
+    2,                        !- Zone Heating Sizing Factor
+    1.5,                      !- Zone Cooling Sizing Factor
+    DesignDay,                !- Cooling Design Air Flow Method
+    0,                        !- Cooling Design Air Flow Rate
+    0.000762,                 !- Cooling Minimum Air Flow per Zone Floor Area
+    0,                        !- Cooling Minimum Air Flow
+    0.2,                      !- Cooling Minimum Air Flow Fraction
+    DesignDay,                !- Heating Design Air Flow Method
+    0,                        !- Heating Design Air Flow Rate
+    0.002032,                 !- Heating Maximum Air Flow per Zone Floor Area
+    0.1415762,                !- Heating Maximum Air Flow
+    0.3,                      !- Heating Maximum Air Flow Fraction
+    Floor2_SZ_DSZAD,          !- Design Specification Zone Air Distribution Object Name
     No,                       !- Account for Dedicated Outdoor Air System
     NeutralSupplyAir,         !- Dedicated Outdoor Air System Control Strategy
     autosize,                 !- Dedicated Outdoor Air Low Setpoint Temperature for Design
@@ -2563,8 +3172,13 @@ ZONECONTROL:HUMIDISTAT,
     Humidity_Setpoint;        !- Humidifying Relative Humidity Setpoint Schedule Name
 
 ZONECONTROL:HUMIDISTAT,
-    2ndFloor_Humidistat,      !- Name
-    2ndFloor,                 !- Zone Name
+    Floor3_Humidistat,        !- Name
+    Floor3,                   !- Zone Name
+    Humidity_Setpoint;        !- Humidifying Relative Humidity Setpoint Schedule Name
+
+ZONECONTROL:HUMIDISTAT,
+    Floor2_Humidistat,        !- Name
+    Floor2,                   !- Zone Name
     Humidity_Setpoint;        !- Humidifying Relative Humidity Setpoint Schedule Name
 
 ZONECONTROL:THERMOSTAT,
@@ -2582,11 +3196,25 @@ ZONECONTROL:THERMOSTAT,
     0;                        !- Temperature Difference Between Cutout And Setpoint
 
 ZONECONTROL:THERMOSTAT,
-    2ndFloor_Thermostat,      !- Name
-    2ndFloor,                 !- Zone or ZoneList Name
+    Floor3_Thermostat,        !- Name
+    Floor3,                   !- Zone or ZoneList Name
     HVAC_Always_4,            !- Control Type Schedule Name
     ThermostatSetpoint:DualSetpoint,    !- Control 1 Object Type
-    2ndFloor_DSP_Thermostat,    !- Control 1 Name
+    Floor3_DSP_Thermostat,    !- Control 1 Name
+    ,                         !- Control 2 Object Type
+    ,                         !- Control 2 Name
+    ,                         !- Control 3 Object Type
+    ,                         !- Control 3 Name
+    ,                         !- Control 4 Object Type
+    ,                         !- Control 4 Name
+    0;                        !- Temperature Difference Between Cutout And Setpoint
+
+ZONECONTROL:THERMOSTAT,
+    Floor2_Thermostat,        !- Name
+    Floor2,                   !- Zone or ZoneList Name
+    HVAC_Always_4,            !- Control Type Schedule Name
+    ThermostatSetpoint:DualSetpoint,    !- Control 1 Object Type
+    Floor2_DSP_Thermostat,    !- Control 1 Name
     ,                         !- Control 2 Object Type
     ,                         !- Control 2 Name
     ,                         !- Control 3 Object Type
@@ -2601,7 +3229,12 @@ THERMOSTATSETPOINT:DUALSETPOINT,
     Phius_77F;                !- Cooling Setpoint Temperature Schedule Name
 
 THERMOSTATSETPOINT:DUALSETPOINT,
-    2ndFloor_DSP_Thermostat,    !- Name
+    Floor3_DSP_Thermostat,    !- Name
+    Phius_68F,                !- Heating Setpoint Temperature Schedule Name
+    Phius_77F;                !- Cooling Setpoint Temperature Schedule Name
+
+THERMOSTATSETPOINT:DUALSETPOINT,
+    Floor2_DSP_Thermostat,    !- Name
     Phius_68F,                !- Heating Setpoint Temperature Schedule Name
     Phius_77F;                !- Cooling Setpoint Temperature Schedule Name
 
@@ -2615,13 +3248,22 @@ ZONEHVAC:ENERGYRECOVERYVENTILATOR,
     GroundUnit ERV_Exhaust_Fan;    !- Exhaust Air Fan Name
 
 ZONEHVAC:ENERGYRECOVERYVENTILATOR,
-    2ndFloor ERV,             !- Name
+    Floor3 ERV,               !- Name
     ERVAvailable,             !- Availability Schedule Name
-    2ndFloor ERV_Core,        !- Heat Exchanger Name
+    Floor3 ERV_Core,          !- Heat Exchanger Name
     0.00707921175,            !- Supply Air Flow Rate
     0.00707921175,            !- Exhaust Air Flow Rate
-    2ndFloor ERV_Supply_Fan,    !- Supply Air Fan Name
-    2ndFloor ERV_Exhaust_Fan;    !- Exhaust Air Fan Name
+    Floor3 ERV_Supply_Fan,    !- Supply Air Fan Name
+    Floor3 ERV_Exhaust_Fan;    !- Exhaust Air Fan Name
+
+ZONEHVAC:ENERGYRECOVERYVENTILATOR,
+    Floor2 ERV,               !- Name
+    ERVAvailable,             !- Availability Schedule Name
+    Floor2 ERV_Core,          !- Heat Exchanger Name
+    0.00707921175,            !- Supply Air Flow Rate
+    0.00707921175,            !- Exhaust Air Flow Rate
+    Floor2 ERV_Supply_Fan,    !- Supply Air Fan Name
+    Floor2 ERV_Exhaust_Fan;    !- Exhaust Air Fan Name
 
 ZONEHVAC:EQUIPMENTLIST,
     GroundUnit_Equipment,     !- Name
@@ -2638,16 +3280,30 @@ ZONEHVAC:EQUIPMENTLIST,
     1;                        !- Zone Equipment 2 Heating or NoLoad Sequence
 
 ZONEHVAC:EQUIPMENTLIST,
-    2ndFloor_Equipment,       !- Name
+    Floor3_Equipment,         !- Name
     SequentialLoad,           !- Load Distribution Scheme
     ZoneHVAC:EnergyRecoveryVentilator,    !- Zone Equipment 1 Object Type
-    2ndFloor ERV,             !- Zone Equipment 1 Name
+    Floor3 ERV,               !- Zone Equipment 1 Name
     2,                        !- Zone Equipment 1 Cooling Sequence
     2,                        !- Zone Equipment 1 Heating or NoLoad Sequence
     ,                         !- Zone Equipment 1 Sequential Cooling Fraction Schedule Name
     ,                         !- Zone Equipment 1 Sequential Heating Fraction Schedule Name
     AirLoopHVAC:UnitarySystem,    !- Zone Equipment 2 Object Type
-    2ndFloor_GasHeat_DXAC_Furnace,    !- Zone Equipment 2 Name
+    Floor3_GasHeat_DXAC_Furnace,    !- Zone Equipment 2 Name
+    1,                        !- Zone Equipment 2 Cooling Sequence
+    1;                        !- Zone Equipment 2 Heating or NoLoad Sequence
+
+ZONEHVAC:EQUIPMENTLIST,
+    Floor2_Equipment,         !- Name
+    SequentialLoad,           !- Load Distribution Scheme
+    ZoneHVAC:EnergyRecoveryVentilator,    !- Zone Equipment 1 Object Type
+    Floor2 ERV,               !- Zone Equipment 1 Name
+    2,                        !- Zone Equipment 1 Cooling Sequence
+    2,                        !- Zone Equipment 1 Heating or NoLoad Sequence
+    ,                         !- Zone Equipment 1 Sequential Cooling Fraction Schedule Name
+    ,                         !- Zone Equipment 1 Sequential Heating Fraction Schedule Name
+    AirLoopHVAC:UnitarySystem,    !- Zone Equipment 2 Object Type
+    Floor2_GasHeat_DXAC_Furnace,    !- Zone Equipment 2 Name
     1,                        !- Zone Equipment 2 Cooling Sequence
     1;                        !- Zone Equipment 2 Heating or NoLoad Sequence
 
@@ -2660,12 +3316,20 @@ ZONEHVAC:EQUIPMENTCONNECTIONS,
     GroundUnit_Returns;       !- Zone Return Air Node or NodeList Name
 
 ZONEHVAC:EQUIPMENTCONNECTIONS,
-    2ndFloor,                 !- Zone Name
-    2ndFloor_Equipment,       !- Zone Conditioning Equipment List Name
-    2ndFloor_Inlets,          !- Zone Air Inlet Node or NodeList Name
-    2ndFloor_Exhausts,        !- Zone Air Exhaust Node or NodeList Name
-    2ndFloor_Zone_Air_Node,    !- Zone Air Node Name
-    2ndFloor_Returns;         !- Zone Return Air Node or NodeList Name
+    Floor3,                   !- Zone Name
+    Floor3_Equipment,         !- Zone Conditioning Equipment List Name
+    Floor3_Inlets,            !- Zone Air Inlet Node or NodeList Name
+    Floor3_Exhausts,          !- Zone Air Exhaust Node or NodeList Name
+    Floor3_Zone_Air_Node,     !- Zone Air Node Name
+    Floor3_Returns;           !- Zone Return Air Node or NodeList Name
+
+ZONEHVAC:EQUIPMENTCONNECTIONS,
+    Floor2,                   !- Zone Name
+    Floor2_Equipment,         !- Zone Conditioning Equipment List Name
+    Floor2_Inlets,            !- Zone Air Inlet Node or NodeList Name
+    Floor2_Exhausts,          !- Zone Air Exhaust Node or NodeList Name
+    Floor2_Zone_Air_Node,     !- Zone Air Node Name
+    Floor2_Returns;           !- Zone Return Air Node or NodeList Name
 
 FAN:ONOFF,
     GroundUnitFurnace_Blower,    !- Name
@@ -2682,15 +3346,29 @@ FAN:ONOFF,
     General;                  !- EndUse Subcategory
 
 FAN:ONOFF,
-    2ndFloorFurnace_Blower,    !- Name
+    Floor3Furnace_Blower,     !- Name
     MechAvailable,            !- Availability Schedule Name
     0.7,                      !- Fan Total Efficiency
     225,                      !- Pressure Rise
     2,                        !- Maximum Flow Rate
     0.9,                      !- Motor Efficiency
     1,                        !- Motor In Airstream Fraction
-    2ndFloor_MECH_Air_Inlet,    !- Air Inlet Node Name
-    2ndFloor_DXAC_Coil_Air_Inlet,    !- Air Outlet Node Name
+    Floor3_MECH_Air_Inlet,    !- Air Inlet Node Name
+    Floor3_DXAC_Coil_Air_Inlet,    !- Air Outlet Node Name
+    ,                         !- Fan Power Ratio Function of Speed Ratio Curve Name
+    ,                         !- Fan Efficiency Ratio Function of Speed Ratio Curve Name
+    General;                  !- EndUse Subcategory
+
+FAN:ONOFF,
+    Floor2Furnace_Blower,     !- Name
+    MechAvailable,            !- Availability Schedule Name
+    0.7,                      !- Fan Total Efficiency
+    225,                      !- Pressure Rise
+    2,                        !- Maximum Flow Rate
+    0.9,                      !- Motor Efficiency
+    1,                        !- Motor In Airstream Fraction
+    Floor2_MECH_Air_Inlet,    !- Air Inlet Node Name
+    Floor2_DXAC_Coil_Air_Inlet,    !- Air Outlet Node Name
     ,                         !- Fan Power Ratio Function of Speed Ratio Curve Name
     ,                         !- Fan Efficiency Ratio Function of Speed Ratio Curve Name
     General;                  !- EndUse Subcategory
@@ -2724,29 +3402,57 @@ FAN:ONOFF,
     ERV_Fan;                  !- EndUse Subcategory
 
 FAN:ONOFF,
-    2ndFloor ERV_Supply_Fan,    !- Name
+    Floor3 ERV_Supply_Fan,    !- Name
     ERVAvailable,             !- Availability Schedule Name
     0.6,                      !- Fan Total Efficiency
     200,                      !- Pressure Rise
     autosize,                 !- Maximum Flow Rate
     0.8,                      !- Motor Efficiency
     1,                        !- Motor In Airstream Fraction
-    2ndFloor_ERV_Core_Sup_Out,    !- Air Inlet Node Name
-    2ndFloor_ERV_Supply,      !- Air Outlet Node Name
+    Floor3_ERV_Core_Sup_Out,    !- Air Inlet Node Name
+    Floor3_ERV_Supply,        !- Air Outlet Node Name
     ,                         !- Fan Power Ratio Function of Speed Ratio Curve Name
     ,                         !- Fan Efficiency Ratio Function of Speed Ratio Curve Name
     ERV_Fan;                  !- EndUse Subcategory
 
 FAN:ONOFF,
-    2ndFloor ERV_Exhaust_Fan,    !- Name
+    Floor3 ERV_Exhaust_Fan,    !- Name
     ERVAvailable,             !- Availability Schedule Name
     0.6,                      !- Fan Total Efficiency
     200,                      !- Pressure Rise
     autosize,                 !- Maximum Flow Rate
     0.8,                      !- Motor Efficiency
     1,                        !- Motor In Airstream Fraction
-    2ndFloor_ERV_Core_Exh_Out,    !- Air Inlet Node Name
-    2ndFloor_ERV_Exhaust,     !- Air Outlet Node Name
+    Floor3_ERV_Core_Exh_Out,    !- Air Inlet Node Name
+    Floor3_ERV_Exhaust,       !- Air Outlet Node Name
+    ,                         !- Fan Power Ratio Function of Speed Ratio Curve Name
+    ,                         !- Fan Efficiency Ratio Function of Speed Ratio Curve Name
+    ERV_Fan;                  !- EndUse Subcategory
+
+FAN:ONOFF,
+    Floor2 ERV_Supply_Fan,    !- Name
+    ERVAvailable,             !- Availability Schedule Name
+    0.6,                      !- Fan Total Efficiency
+    200,                      !- Pressure Rise
+    autosize,                 !- Maximum Flow Rate
+    0.8,                      !- Motor Efficiency
+    1,                        !- Motor In Airstream Fraction
+    Floor2_ERV_Core_Sup_Out,    !- Air Inlet Node Name
+    Floor2_ERV_Supply,        !- Air Outlet Node Name
+    ,                         !- Fan Power Ratio Function of Speed Ratio Curve Name
+    ,                         !- Fan Efficiency Ratio Function of Speed Ratio Curve Name
+    ERV_Fan;                  !- EndUse Subcategory
+
+FAN:ONOFF,
+    Floor2 ERV_Exhaust_Fan,    !- Name
+    ERVAvailable,             !- Availability Schedule Name
+    0.6,                      !- Fan Total Efficiency
+    200,                      !- Pressure Rise
+    autosize,                 !- Maximum Flow Rate
+    0.8,                      !- Motor Efficiency
+    1,                        !- Motor In Airstream Fraction
+    Floor2_ERV_Core_Exh_Out,    !- Air Inlet Node Name
+    Floor2_ERV_Exhaust,       !- Air Outlet Node Name
     ,                         !- Fan Power Ratio Function of Speed Ratio Curve Name
     ,                         !- Fan Efficiency Ratio Function of Speed Ratio Curve Name
     ERV_Fan;                  !- EndUse Subcategory
@@ -2788,15 +3494,51 @@ COIL:COOLING:DX:SINGLESPEED,
     No;                       !- Report ASHRAE Standard 127 Performance Ratings
 
 COIL:COOLING:DX:SINGLESPEED,
-    2ndFloorFurnace_DXAC_Coil,    !- Name
+    Floor3Furnace_DXAC_Coil,    !- Name
     MechAvailable,            !- Availability Schedule Name
     autosize,                 !- Gross Rated Total Cooling Capacity
     0.75,                     !- Gross Rated Sensible Heat Ratio
     3,                        !- Gross Rated Cooling COP
     autosize,                 !- Rated Air Flow Rate
     773.3,                    !- Rated Evaporator Fan Power Per Volume Flow Rate
-    2ndFloor_DXAC_Coil_Air_Inlet,    !- Air Inlet Node Name
-    2ndFloor_Heating_Coil_Air_Inlet,    !- Air Outlet Node Name
+    Floor3_DXAC_Coil_Air_Inlet,    !- Air Inlet Node Name
+    Floor3_Heating_Coil_Air_Inlet,    !- Air Outlet Node Name
+    HPACCoolCapFT,            !- Total Cooling Capacity Function of Temperature Curve Name
+    HPACCoolCapFFF,           !- Total Cooling Capacity Function of Flow Fraction Curve Name
+    HPACEIRFT,                !- Energy Input Ratio Function of Temperature Curve Name
+    HPACEIRFFF,               !- Energy Input Ratio Function of Flow Fraction Curve Name
+    HPACPLFFPLR,              !- Part Load Fraction Correlation Curve Name
+    -25,                      !- Minimum Outdoor DryBulb Temperature for Compressor Operation
+    0,                        !- Nominal Time for Condensate Removal to Begin
+    0,                        !- Ratio of Initial Moisture Evaporation Rate and Steady State Latent Capacity
+    0,                        !- Maximum Cycling Rate
+    0,                        !- Latent Capacity Time Constant
+    ,                         !- Condenser Air Inlet Node Name
+    AirCooled,                !- Condenser Type
+    0.9,                      !- Evaporative Condenser Effectiveness
+    ,                         !- Evaporative Condenser Air Flow Rate
+    0,                        !- Evaporative Condenser Pump Rated Power Consumption
+    0,                        !- Crankcase Heater Capacity
+    10,                       !- Maximum Outdoor DryBulb Temperature for Crankcase Heater Operation
+    ,                         !- Supply Water Storage Tank Name
+    ,                         !- Condensate Collection Water Storage Tank Name
+    0,                        !- Basin Heater Capacity
+    2,                        !- Basin Heater Setpoint Temperature
+    ,                         !- Basin Heater Operating Schedule Name
+    ,                         !- Sensible Heat Ratio Function of Temperature Curve Name
+    ,                         !- Sensible Heat Ratio Function of Flow Fraction Curve Name
+    No;                       !- Report ASHRAE Standard 127 Performance Ratings
+
+COIL:COOLING:DX:SINGLESPEED,
+    Floor2Furnace_DXAC_Coil,    !- Name
+    MechAvailable,            !- Availability Schedule Name
+    autosize,                 !- Gross Rated Total Cooling Capacity
+    0.75,                     !- Gross Rated Sensible Heat Ratio
+    3,                        !- Gross Rated Cooling COP
+    autosize,                 !- Rated Air Flow Rate
+    773.3,                    !- Rated Evaporator Fan Power Per Volume Flow Rate
+    Floor2_DXAC_Coil_Air_Inlet,    !- Air Inlet Node Name
+    Floor2_Heating_Coil_Air_Inlet,    !- Air Outlet Node Name
     HPACCoolCapFT,            !- Total Cooling Capacity Function of Temperature Curve Name
     HPACCoolCapFFF,           !- Total Cooling Capacity Function of Flow Fraction Curve Name
     HPACEIRFT,                !- Energy Input Ratio Function of Temperature Curve Name
@@ -2833,13 +3575,22 @@ COIL:HEATING:FUEL,
     GroundUnit_MECH_Air_Outlet;    !- Air Outlet Node Name
 
 COIL:HEATING:FUEL,
-    2ndFloorFurnace_Heating_Coil,    !- Name
+    Floor3Furnace_Heating_Coil,    !- Name
     MechAvailable,            !- Availability Schedule Name
     NaturalGas,               !- Fuel Type
     0.8,                      !- Burner Efficiency
     autosize,                 !- Nominal Capacity
-    2ndFloor_Heating_Coil_Air_Inlet,    !- Air Inlet Node Name
-    2ndFloor_MECH_Air_Outlet;    !- Air Outlet Node Name
+    Floor3_Heating_Coil_Air_Inlet,    !- Air Inlet Node Name
+    Floor3_MECH_Air_Outlet;    !- Air Outlet Node Name
+
+COIL:HEATING:FUEL,
+    Floor2Furnace_Heating_Coil,    !- Name
+    MechAvailable,            !- Availability Schedule Name
+    NaturalGas,               !- Fuel Type
+    0.8,                      !- Burner Efficiency
+    autosize,                 !- Nominal Capacity
+    Floor2_Heating_Coil_Air_Inlet,    !- Air Inlet Node Name
+    Floor2_MECH_Air_Outlet;    !- Air Outlet Node Name
 
 HEATEXCHANGER:AIRTOAIR:SENSIBLEANDLATENT,
     GroundUnit ERV_Core,      !- Name
@@ -2867,7 +3618,7 @@ HEATEXCHANGER:AIRTOAIR:SENSIBLEANDLATENT,
     Yes;                      !- Economizer Lockout
 
 HEATEXCHANGER:AIRTOAIR:SENSIBLEANDLATENT,
-    2ndFloor ERV_Core,        !- Name
+    Floor3 ERV_Core,          !- Name
     ERVAvailable,             !- Availability Schedule Name
     0.047,                    !- Nominal Supply Air Flow Rate
     0,                        !- Sensible Effectiveness at 100 Heating Air Flow
@@ -2878,10 +3629,35 @@ HEATEXCHANGER:AIRTOAIR:SENSIBLEANDLATENT,
     0,                        !- Latent Effectiveness at 100 Cooling Air Flow
     0,                        !- Sensible Effectiveness at 75 Cooling Air Flow
     0,                        !- Latent Effectiveness at 75 Cooling Air Flow
-    2ndFloor_OA_1,            !- Supply Air Inlet Node Name
-    2ndFloor_ERV_Core_Sup_Out,    !- Supply Air Outlet Node Name
-    2ndFloor_ERV_Exhaust,     !- Exhaust Air Inlet Node Name
-    2ndFloor_ERV_Core_Exh_Out,    !- Exhaust Air Outlet Node Name
+    Floor3_OA_1,              !- Supply Air Inlet Node Name
+    Floor3_ERV_Core_Sup_Out,    !- Supply Air Outlet Node Name
+    Floor3_ERV_Exhaust,       !- Exhaust Air Inlet Node Name
+    Floor3_ERV_Core_Exh_Out,    !- Exhaust Air Outlet Node Name
+    0,                        !- Nominal Electric Power
+    No,                       !- Supply Air Outlet Temperature Control
+    Plate,                    !- Heat Exchanger Type
+    ExhaustAirRecirculation,    !- Frost Control Type
+    -10,                      !- Threshold Temperature
+    0.083,                    !- Initial Defrost Time Fraction
+    0.012,                    !- Rate of Defrost Time Fraction Increase
+    Yes;                      !- Economizer Lockout
+
+HEATEXCHANGER:AIRTOAIR:SENSIBLEANDLATENT,
+    Floor2 ERV_Core,          !- Name
+    ERVAvailable,             !- Availability Schedule Name
+    0.047,                    !- Nominal Supply Air Flow Rate
+    0,                        !- Sensible Effectiveness at 100 Heating Air Flow
+    0,                        !- Latent Effectiveness at 100 Heating Air Flow
+    0,                        !- Sensible Effectiveness at 75 Heating Air Flow
+    0,                        !- Latent Effectiveness at 75 Heating Air Flow
+    0,                        !- Sensible Effectiveness at 100 Cooling Air Flow
+    0,                        !- Latent Effectiveness at 100 Cooling Air Flow
+    0,                        !- Sensible Effectiveness at 75 Cooling Air Flow
+    0,                        !- Latent Effectiveness at 75 Cooling Air Flow
+    Floor2_OA_1,              !- Supply Air Inlet Node Name
+    Floor2_ERV_Core_Sup_Out,    !- Supply Air Outlet Node Name
+    Floor2_ERV_Exhaust,       !- Exhaust Air Inlet Node Name
+    Floor2_ERV_Core_Exh_Out,    !- Exhaust Air Outlet Node Name
     0,                        !- Nominal Electric Power
     No,                       !- Supply Air Outlet Temperature Control
     Plate,                    !- Heat Exchanger Type
@@ -2943,22 +3719,73 @@ AIRLOOPHVAC:UNITARYSYSTEM,
     80;                       !- Maximum Temperature for Heat Recovery
 
 AIRLOOPHVAC:UNITARYSYSTEM,
-    2ndFloor_GasHeat_DXAC_Furnace,    !- Name
+    Floor3_GasHeat_DXAC_Furnace,    !- Name
     Load,                     !- Control Type
-    2ndFloor,                 !- Controlling Zone or Thermostat Location
+    Floor3,                   !- Controlling Zone or Thermostat Location
     None,                     !- Dehumidification Control Type
     MechAvailable,            !- Availability Schedule Name
-    2ndFloor_MECH_Air_Inlet,    !- Air Inlet Node Name
-    2ndFloor_MECH_Air_Outlet,    !- Air Outlet Node Name
+    Floor3_MECH_Air_Inlet,    !- Air Inlet Node Name
+    Floor3_MECH_Air_Outlet,    !- Air Outlet Node Name
     Fan:OnOff,                !- Supply Fan Object Type
-    2ndFloorFurnace_Blower,    !- Supply Fan Name
+    Floor3Furnace_Blower,     !- Supply Fan Name
     BlowThrough,              !- Fan Placement
     ,                         !- Supply Air Fan Operating Mode Schedule Name
     Coil:Heating:Fuel,        !- Heating Coil Object Type
-    2ndFloorFurnace_Heating_Coil,    !- Heating Coil Name
+    Floor3Furnace_Heating_Coil,    !- Heating Coil Name
     1,                        !- DX Heating Coil Sizing Ratio
     Coil:Cooling:DX:SingleSpeed,    !- Cooling Coil Object Type
-    2ndFloorFurnace_DXAC_Coil,    !- Cooling Coil Name
+    Floor3Furnace_DXAC_Coil,    !- Cooling Coil Name
+    No,                       !- Use DOAS DX Cooling Coil
+    2,                        !- Minimum Supply Air Temperature
+    SensibleOnlyLoadControl,    !- Latent Load Control
+    ,                         !- Supplemental Heating Coil Object Type
+    ,                         !- Supplemental Heating Coil Name
+    ,                         !- Cooling Supply Air Flow Rate Method
+    autosize,                 !- Cooling Supply Air Flow Rate
+    ,                         !- Cooling Supply Air Flow Rate Per Floor Area
+    ,                         !- Cooling Fraction of Autosized Cooling Supply Air Flow Rate
+    ,                         !- Cooling Supply Air Flow Rate Per Unit of Capacity
+    ,                         !- Heating Supply Air Flow Rate Method
+    autosize,                 !- Heating Supply Air Flow Rate
+    ,                         !- Heating Supply Air Flow Rate Per Floor Area
+    ,                         !- Heating Fraction of Autosized Heating Supply Air Flow Rate
+    ,                         !- Heating Supply Air Flow Rate Per Unit of Capacity
+    ,                         !- No Load Supply Air Flow Rate Method
+    0,                        !- No Load Supply Air Flow Rate
+    ,                         !- No Load Supply Air Flow Rate Per Floor Area
+    ,                         !- No Load Fraction of Autosized Cooling Supply Air Flow Rate
+    ,                         !- No Load Fraction of Autosized Heating Supply Air Flow Rate
+    ,                         !- No Load Supply Air Flow Rate Per Unit of Capacity During Cooling Operation
+    ,                         !- No Load Supply Air Flow Rate Per Unit of Capacity During Heating Operation
+    50,                       !- Maximum Supply Air Temperature
+    21,                       !- Maximum Outdoor DryBulb Temperature for Supplemental Heater Operation
+    ,                         !- Outdoor DryBulb Temperature Sensor Node Name
+    2.5,                      !- Maximum Cycling Rate
+    60,                       !- Heat Pump Time Constant
+    0.01,                     !- Fraction of OnCycle Power Use
+    60,                       !- Heat Pump Fan Delay Time
+    0,                        !- Ancillary OnCycle Electric Power
+    0,                        !- Ancillary OffCycle Electric Power
+    0,                        !- Design Heat Recovery Water Flow Rate
+    80;                       !- Maximum Temperature for Heat Recovery
+
+AIRLOOPHVAC:UNITARYSYSTEM,
+    Floor2_GasHeat_DXAC_Furnace,    !- Name
+    Load,                     !- Control Type
+    Floor2,                   !- Controlling Zone or Thermostat Location
+    None,                     !- Dehumidification Control Type
+    MechAvailable,            !- Availability Schedule Name
+    Floor2_MECH_Air_Inlet,    !- Air Inlet Node Name
+    Floor2_MECH_Air_Outlet,    !- Air Outlet Node Name
+    Fan:OnOff,                !- Supply Fan Object Type
+    Floor2Furnace_Blower,     !- Supply Fan Name
+    BlowThrough,              !- Fan Placement
+    ,                         !- Supply Air Fan Operating Mode Schedule Name
+    Coil:Heating:Fuel,        !- Heating Coil Object Type
+    Floor2Furnace_Heating_Coil,    !- Heating Coil Name
+    1,                        !- DX Heating Coil Sizing Ratio
+    Coil:Cooling:DX:SingleSpeed,    !- Cooling Coil Object Type
+    Floor2Furnace_DXAC_Coil,    !- Cooling Coil Name
     No,                       !- Use DOAS DX Cooling Coil
     2,                        !- Minimum Supply Air Temperature
     SensibleOnlyLoadControl,    !- Latent Load Control
@@ -3008,18 +3835,32 @@ NODELIST,
     GroundUnit_MECH_Air_Inlet;    !- Node 2 Name
 
 NODELIST,
-    2ndFloor_Inlets,          !- Name
-    2ndFloor_ERV_Supply,      !- Node 1 Name
-    2ndFloor_MECH_Air_Outlet;    !- Node 2 Name
+    Floor3_Inlets,            !- Name
+    Floor3_ERV_Supply,        !- Node 1 Name
+    Floor3_MECH_Air_Outlet;    !- Node 2 Name
 
 NODELIST,
-    2ndFloor_Returns,         !- Name
-    2ndFloor_Return;          !- Node 1 Name
+    Floor3_Returns,           !- Name
+    Floor3_Return;            !- Node 1 Name
 
 NODELIST,
-    2ndFloor_Exhausts,        !- Name
-    2ndFloor_ERV_Exhaust,     !- Node 1 Name
-    2ndFloor_MECH_Air_Inlet;    !- Node 2 Name
+    Floor3_Exhausts,          !- Name
+    Floor3_ERV_Exhaust,       !- Node 1 Name
+    Floor3_MECH_Air_Inlet;    !- Node 2 Name
+
+NODELIST,
+    Floor2_Inlets,            !- Name
+    Floor2_ERV_Supply,        !- Node 1 Name
+    Floor2_MECH_Air_Outlet;    !- Node 2 Name
+
+NODELIST,
+    Floor2_Returns,           !- Name
+    Floor2_Return;            !- Node 1 Name
+
+NODELIST,
+    Floor2_Exhausts,          !- Name
+    Floor2_ERV_Exhaust,       !- Node 1 Name
+    Floor2_MECH_Air_Inlet;    !- Node 2 Name
 
 OUTDOORAIR:NODE,
     GroundUnit_OA_1,          !- Name
@@ -3044,7 +3885,7 @@ OUTDOORAIR:NODE,
     Absolute;                 !- Wind Angle Type
 
 OUTDOORAIR:NODE,
-    2ndFloor_OA_1,            !- Name
+    Floor3_OA_1,              !- Name
     3.048,                    !- Height Above Ground
     ,                         !- Drybulb Temperature Schedule Name
     ,                         !- Wetbulb Temperature Schedule Name
@@ -3055,7 +3896,29 @@ OUTDOORAIR:NODE,
     Absolute;                 !- Wind Angle Type
 
 OUTDOORAIR:NODE,
-    2ndFloor_OA_2,            !- Name
+    Floor3_OA_2,              !- Name
+    3.048,                    !- Height Above Ground
+    ,                         !- Drybulb Temperature Schedule Name
+    ,                         !- Wetbulb Temperature Schedule Name
+    ,                         !- Wind Speed Schedule Name
+    ,                         !- Wind Direction Schedule Name
+    ,                         !- Wind Pressure Coefficient Curve Name
+    No,                       !- Symmetric Wind Pressure Coefficient Curve
+    Absolute;                 !- Wind Angle Type
+
+OUTDOORAIR:NODE,
+    Floor2_OA_1,              !- Name
+    3.048,                    !- Height Above Ground
+    ,                         !- Drybulb Temperature Schedule Name
+    ,                         !- Wetbulb Temperature Schedule Name
+    ,                         !- Wind Speed Schedule Name
+    ,                         !- Wind Direction Schedule Name
+    ,                         !- Wind Pressure Coefficient Curve Name
+    No,                       !- Symmetric Wind Pressure Coefficient Curve
+    Absolute;                 !- Wind Angle Type
+
+OUTDOORAIR:NODE,
+    Floor2_OA_2,              !- Name
     3.048,                    !- Height Above Ground
     ,                         !- Drybulb Temperature Schedule Name
     ,                         !- Wetbulb Temperature Schedule Name
@@ -3110,7 +3973,7 @@ WATERHEATER:MIXED,
     General;                  !- EndUse Subcategory
 
 WATERHEATER:MIXED,
-    2ndFloor_ElectricWaterHeater_50Gal,    !- Name
+    Floor3_ElectricWaterHeater_50Gal,    !- Name
     0.1892706,                !- Tank Volume
     DHW_122F,                 !- Setpoint Temperature Schedule Name
     0,                        !- Deadband Temperature Difference
@@ -3131,7 +3994,51 @@ WATERHEATER:MIXED,
     0,                        !- On Cycle Parasitic Heat Fraction to Tank
     ZONE,                     !- Ambient Temperature Indicator
     ,                         !- Ambient Temperature Schedule Name
-    2ndFloor,                 !- Ambient Temperature Zone Name
+    Floor3,                   !- Ambient Temperature Zone Name
+    ,                         !- Ambient Temperature Outdoor Air Node Name
+    2.36,                     !- Off Cycle Loss Coefficient to Ambient Temperature
+    1,                        !- Off Cycle Loss Fraction to Zone
+    ,                         !- On Cycle Loss Coefficient to Ambient Temperature
+    1,                        !- On Cycle Loss Fraction to Zone
+    1.8974111e-06,            !- Peak Use Flow Rate
+    CombinedDHWSchedule,      !- Use Flow Rate Fraction Schedule Name
+    ,                         !- Cold Water Supply Temperature Schedule Name
+    ,                         !- Use Side Inlet Node Name
+    ,                         !- Use Side Outlet Node Name
+    1,                        !- Use Side Effectiveness
+    ,                         !- Source Side Inlet Node Name
+    ,                         !- Source Side Outlet Node Name
+    1,                        !- Source Side Effectiveness
+    autosize,                 !- Use Side Design Flow Rate
+    autosize,                 !- Source Side Design Flow Rate
+    1.5,                      !- Indirect Water Heating Recovery Time
+    IndirectHeatPrimarySetpoint,    !- Source Side Flow Control Mode
+    ,                         !- Indirect Alternate Setpoint Temperature Schedule Name
+    General;                  !- EndUse Subcategory
+
+WATERHEATER:MIXED,
+    Floor2_ElectricWaterHeater_50Gal,    !- Name
+    0.1892706,                !- Tank Volume
+    DHW_122F,                 !- Setpoint Temperature Schedule Name
+    0,                        !- Deadband Temperature Difference
+    82.2222,                  !- Maximum Temperature Limit
+    MODULATE,                 !- Heater Control Type
+    11712,                    !- Heater Maximum Capacity
+    0,                        !- Heater Minimum Capacity
+    0,                        !- Heater Ignition Minimum Flow Rate
+    0,                        !- Heater Ignition Delay
+    NaturalGas,               !- Heater Fuel Type
+    0.95,                     !- Heater Thermal Efficiency
+    ,                         !- Part Load Factor Curve Name
+    10,                       !- Off Cycle Parasitic Fuel Consumption Rate
+    ELECTRICITY,              !- Off Cycle Parasitic Fuel Type
+    0,                        !- Off Cycle Parasitic Heat Fraction to Tank
+    30,                       !- On Cycle Parasitic Fuel Consumption Rate
+    ELECTRICITY,              !- On Cycle Parasitic Fuel Type
+    0,                        !- On Cycle Parasitic Heat Fraction to Tank
+    ZONE,                     !- Ambient Temperature Indicator
+    ,                         !- Ambient Temperature Schedule Name
+    Floor2,                   !- Ambient Temperature Zone Name
     ,                         !- Ambient Temperature Outdoor Air Node Name
     2.36,                     !- Off Cycle Loss Coefficient to Ambient Temperature
     1,                        !- Off Cycle Loss Fraction to Zone
@@ -3164,13 +4071,23 @@ ENERGYMANAGEMENTSYSTEM:SENSOR,
     Zone Air Temperature;     !- OutputVariable or OutputMeter Name
 
 ENERGYMANAGEMENTSYSTEM:SENSOR,
-    2ndFloor_IWB,             !- Name
-    2ndFloor_Zone_Air_Node,    !- OutputVariable or OutputMeter Index Key Name
+    Floor3_IWB,               !- Name
+    Floor3_Zone_Air_Node,     !- OutputVariable or OutputMeter Index Key Name
     System Node Wetbulb Temperature;    !- OutputVariable or OutputMeter Name
 
 ENERGYMANAGEMENTSYSTEM:SENSOR,
-    2ndFloor_IDB,             !- Name
-    2ndFloor,                 !- OutputVariable or OutputMeter Index Key Name
+    Floor3_IDB,               !- Name
+    Floor3,                   !- OutputVariable or OutputMeter Index Key Name
+    Zone Air Temperature;     !- OutputVariable or OutputMeter Name
+
+ENERGYMANAGEMENTSYSTEM:SENSOR,
+    Floor2_IWB,               !- Name
+    Floor2_Zone_Air_Node,     !- OutputVariable or OutputMeter Index Key Name
+    System Node Wetbulb Temperature;    !- OutputVariable or OutputMeter Name
+
+ENERGYMANAGEMENTSYSTEM:SENSOR,
+    Floor2_IDB,               !- Name
+    Floor2,                   !- OutputVariable or OutputMeter Index Key Name
     Zone Air Temperature;     !- OutputVariable or OutputMeter Name
 
 ENERGYMANAGEMENTSYSTEM:SENSOR,
@@ -3220,8 +4137,14 @@ ENERGYMANAGEMENTSYSTEM:ACTUATOR,
     Schedule Value;           !- Actuated Component Control Type
 
 ENERGYMANAGEMENTSYSTEM:ACTUATOR,
-    2ndFloorWindowEconomizer,    !- Name
-    2ndFloor_WindowFractionControl,    !- Actuated Component Unique Name
+    Floor3WindowEconomizer,    !- Name
+    Floor3_WindowFractionControl,    !- Actuated Component Unique Name
+    Schedule:Constant,        !- Actuated Component Type
+    Schedule Value;           !- Actuated Component Control Type
+
+ENERGYMANAGEMENTSYSTEM:ACTUATOR,
+    Floor2WindowEconomizer,    !- Name
+    Floor2_WindowFractionControl,    !- Actuated Component Unique Name
     Schedule:Constant,        !- Actuated Component Type
     Schedule Value;           !- Actuated Component Control Type
 
@@ -3255,9 +4178,14 @@ ENERGYMANAGEMENTSYSTEM:PROGRAMCALLINGMANAGER,
     GroundUnit_SummerVentDB;    !- Program Name 1
 
 ENERGYMANAGEMENTSYSTEM:PROGRAMCALLINGMANAGER,
-    2ndFloor_Program Caller,    !- Name
+    Floor3_Program Caller,    !- Name
     BeginZoneTimestepBeforeSetCurrentWeather,    !- EnergyPlus Model Calling Point
-    2ndFloor_SummerVentDB;    !- Program Name 1
+    Floor3_SummerVentDB;      !- Program Name 1
+
+ENERGYMANAGEMENTSYSTEM:PROGRAMCALLINGMANAGER,
+    Floor2_Program Caller,    !- Name
+    BeginZoneTimestepBeforeSetCurrentWeather,    !- EnergyPlus Model Calling Point
+    Floor2_SummerVentDB;      !- Program Name 1
 
 ENERGYMANAGEMENTSYSTEM:PROGRAMCALLINGMANAGER,
     WeatherMorph,             !- Name
@@ -3284,21 +4212,39 @@ ENERGYMANAGEMENTSYSTEM:PROGRAM,
     ENDIF;                    !- Program Line 6
 
 ENERGYMANAGEMENTSYSTEM:PROGRAM,
-    2ndFloor_SummerVentWB,    !- Name
-    IF 2ndFloor_IWB> 1+ OWB && NatVentAvail > 0 && Clock > 0,    !- Program Line 1
-    SET 2ndFloorWindowEconomizer = 1,    !- Program Line 2
+    Floor3_SummerVentWB,      !- Name
+    IF Floor3_IWB> 1+ OWB && NatVentAvail > 0 && Clock > 0,    !- Program Line 1
+    SET Floor3WindowEconomizer = 1,    !- Program Line 2
     SET DC_Coolings = 0,      !- Program Line 3
     ELSE,                     !- Program Line 4
-    SET 2ndFloorWindowEconomizer = 0,    !- Program Line 5
+    SET Floor3WindowEconomizer = 0,    !- Program Line 5
     ENDIF;                    !- Program Line 6
 
 ENERGYMANAGEMENTSYSTEM:PROGRAM,
-    2ndFloor_SummerVentDB,    !- Name
-    IF 2ndFloor_IDB> 1+ ODB && NatVentAvail > 0 && Clock > 0,    !- Program Line 1
-    SET 2ndFloorWindowEconomizer = 1,    !- Program Line 2
+    Floor3_SummerVentDB,      !- Name
+    IF Floor3_IDB> 1+ ODB && NatVentAvail > 0 && Clock > 0,    !- Program Line 1
+    SET Floor3WindowEconomizer = 1,    !- Program Line 2
     SET DC_Coolings = 0,      !- Program Line 3
     ELSE,                     !- Program Line 4
-    SET 2ndFloorWindowEconomizer = 0,    !- Program Line 5
+    SET Floor3WindowEconomizer = 0,    !- Program Line 5
+    ENDIF;                    !- Program Line 6
+
+ENERGYMANAGEMENTSYSTEM:PROGRAM,
+    Floor2_SummerVentWB,      !- Name
+    IF Floor2_IWB> 1+ OWB && NatVentAvail > 0 && Clock > 0,    !- Program Line 1
+    SET Floor2WindowEconomizer = 1,    !- Program Line 2
+    SET DC_Coolings = 0,      !- Program Line 3
+    ELSE,                     !- Program Line 4
+    SET Floor2WindowEconomizer = 0,    !- Program Line 5
+    ENDIF;                    !- Program Line 6
+
+ENERGYMANAGEMENTSYSTEM:PROGRAM,
+    Floor2_SummerVentDB,      !- Name
+    IF Floor2_IDB> 1+ ODB && NatVentAvail > 0 && Clock > 0,    !- Program Line 1
+    SET Floor2WindowEconomizer = 1,    !- Program Line 2
+    SET DC_Coolings = 0,      !- Program Line 3
+    ELSE,                     !- Program Line 4
+    SET Floor2WindowEconomizer = 0,    !- Program Line 5
     ENDIF;                    !- Program Line 6
 
 ENERGYMANAGEMENTSYSTEM:PROGRAM,
@@ -3342,7 +4288,7 @@ DEMANDMANAGERASSIGNMENTLIST,
     GroundUnit_Set backs;     !- DemandManager 1 Name
 
 DEMANDMANAGERASSIGNMENTLIST,
-    2ndFloor_Demand Limiting,    !- Name
+    Floor3_Demand Limiting,    !- Name
     ElectricityNet:Facility,    !- Meter Name
     Always Off,               !- Demand Limit Schedule Name
     0.95,                     !- Demand Limit Safety Fraction
@@ -3351,7 +4297,19 @@ DEMANDMANAGERASSIGNMENTLIST,
     10,                       !- Demand Window Length
     All,                      !- Demand Manager Priority
     DemandManager:Thermostats,    !- DemandManager 1 Object Type
-    2ndFloor_Set backs;       !- DemandManager 1 Name
+    Floor3_Set backs;         !- DemandManager 1 Name
+
+DEMANDMANAGERASSIGNMENTLIST,
+    Floor2_Demand Limiting,    !- Name
+    ElectricityNet:Facility,    !- Meter Name
+    Always Off,               !- Demand Limit Schedule Name
+    0.95,                     !- Demand Limit Safety Fraction
+    ,                         !- Billing Period Schedule Name
+    ,                         !- Peak Period Schedule Name
+    10,                       !- Demand Window Length
+    All,                      !- Demand Manager Priority
+    DemandManager:Thermostats,    !- DemandManager 1 Object Type
+    Floor2_Set backs;         !- DemandManager 1 Name
 
 DEMANDMANAGER:THERMOSTATS,
     GroundUnit_Set backs,     !- Name
@@ -3366,7 +4324,7 @@ DEMANDMANAGER:THERMOSTATS,
     GroundUnit_Thermostat;    !- Thermostat 1 Name
 
 DEMANDMANAGER:THERMOSTATS,
-    2ndFloor_Set backs,       !- Name
+    Floor3_Set backs,         !- Name
     Demand Control Cooling,    !- Availability Schedule Name
     Fixed,                    !- Reset Control
     30,                       !- Minimum Reset Duration
@@ -3375,7 +4333,19 @@ DEMANDMANAGER:THERMOSTATS,
     ,                         !- Reset Step Change
     All,                      !- Selection Control
     ,                         !- Rotation Duration
-    2ndFloor_Thermostat;      !- Thermostat 1 Name
+    Floor3_Thermostat;        !- Thermostat 1 Name
+
+DEMANDMANAGER:THERMOSTATS,
+    Floor2_Set backs,         !- Name
+    Demand Control Cooling,    !- Availability Schedule Name
+    Fixed,                    !- Reset Control
+    30,                       !- Minimum Reset Duration
+    20,                       !- Maximum Heating Setpoint Reset
+    27,                       !- Maximum Cooling Setpoint Reset
+    ,                         !- Reset Step Change
+    All,                      !- Selection Control
+    ,                         !- Rotation Duration
+    Floor2_Thermostat;        !- Thermostat 1 Name
 
 GENERATOR:PVWATTS,
     PV Array,                 !- Name

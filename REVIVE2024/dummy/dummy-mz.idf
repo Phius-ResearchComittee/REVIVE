@@ -792,7 +792,7 @@
   BuildingSurface:Detailed,
     DF56F9,                  !- Name
     Ceiling,                    !- Surface Type
-    Int_Floor1,           !- Construction Name
+    Interior Floor,           !- Construction Name
     GroundUnit|UNIT|3B|3R,       !- Zone Name
     Surface,                !- Outside Boundary Condition
     316250,                        !- Outside Boundary Condition Object
@@ -836,7 +836,7 @@
     6.096000000000,9.272452711189,1.676719275358;  !- X,Y,Z ==> Vertex 4 {m}
 
   Zone,
-    2ndFloor|UNIT|2B|1R,       !- Name
+    Floor3|UNIT|2B|1R,       !- Name
     0.0,                     !- Direction of Relative North {deg}
     0.0,                     !- X Origin {m}
     0.0,                     !- Y Origin {m}
@@ -850,8 +850,8 @@
   BuildingSurface:Detailed,
     316250,                  !- Name
     Floor,                   !- Surface Type
-    Int_Floor1,          !- Construction Name
-    2ndFloor|UNIT|2B|1R,       !- Zone Name
+    Interior Floor,          !- Construction Name
+    Floor3|UNIT|2B|1R,       !- Zone Name
     Surface,                  !- Outside Boundary Condition
     DF56F9,                        !- Outside Boundary Condition Object
     NoSun,                   !- Sun Exposure
@@ -867,7 +867,7 @@
     A37CDB,                  !- Name
     Wall,                    !- Surface Type
     Ext_Wall1,           !- Construction Name
-    2ndFloor|UNIT|2B|1R,       !- Zone Name
+    Floor3|UNIT|2B|1R,       !- Zone Name
     Outdoors,                !- Outside Boundary Condition
     ,                        !- Outside Boundary Condition Object
     SunExposed,              !- Sun Exposure
@@ -883,7 +883,7 @@
     30DC42,                  !- Name
     Wall,                    !- Surface Type
     Ext_Wall1,           !- Construction Name
-    2ndFloor|UNIT|2B|1R,       !- Zone Name
+    Floor3|UNIT|2B|1R,       !- Zone Name
     Outdoors,                !- Outside Boundary Condition
     ,                        !- Outside Boundary Condition Object
     SunExposed,              !- Sun Exposure
@@ -897,14 +897,14 @@
 
   BuildingSurface:Detailed,
     BF4D1B,                  !- Name
-    Roof,                    !- Surface Type
-    Ext_Roof1,           !- Construction Name
-    2ndFloor|UNIT|2B|1R,       !- Zone Name
-    Outdoors,                !- Outside Boundary Condition
-    ,                        !- Outside Boundary Condition Object
-    SunExposed,              !- Sun Exposure
-    WindExposed,             !- Wind Exposure
-    ,                        !- View Factor to Ground
+    Ceiling,                    !- Surface Type
+    Interior Floor,           !- Construction Name
+    Floor3|UNIT|2B|1R,       !- Zone Name
+    Surface,                !- Outside Boundary Condition
+    EEC689,                        !- Outside Boundary Condition Object
+    NoSun,              !- Sun Exposure
+    NoWind,             !- Wind Exposure
+    0.0,                        !- View Factor to Ground
     4,                       !- Number of Vertices
     0.000000000000,12.192000000000,3.215640000000,  !- X,Y,Z ==> Vertex 1 {m}
     0.000000000000,0.000000000000,3.215640000000,  !- X,Y,Z ==> Vertex 2 {m}
@@ -915,7 +915,7 @@
     B15239,                  !- Name
     Wall,                    !- Surface Type
     Ext_Wall1,           !- Construction Name
-    2ndFloor|UNIT|2B|1R,       !- Zone Name
+    Floor3|UNIT|2B|1R,       !- Zone Name
     Outdoors,                !- Outside Boundary Condition
     ,                        !- Outside Boundary Condition Object
     SunExposed,              !- Sun Exposure
@@ -976,7 +976,7 @@
     B6AE6F,                  !- Name
     Wall,                    !- Surface Type
     Ext_Wall1,           !- Construction Name
-    2ndFloor|UNIT|2B|1R,       !- Zone Name
+    Floor3|UNIT|2B|1R,       !- Zone Name
     Outdoors,                !- Outside Boundary Condition
     ,                        !- Outside Boundary Condition Object
     SunExposed,              !- Sun Exposure
@@ -987,3 +987,294 @@
     0.000000000000,12.192000000000,0.000000000000,  !- X,Y,Z ==> Vertex 2 {m}
     0.000000000000,0.000000000000,0.000000000000,  !- X,Y,Z ==> Vertex 3 {m}
     0.000000000000,0.000000000000,3.215640000000;  !- X,Y,Z ==> Vertex 4 {m}
+
+  Zone,
+    Floor2|UNIT|2B|1R,  !- Name
+    0.0,  !- Direction of Relative North {deg}
+    10.219095,  !- X Origin {m}
+    10.334992,  !- Y Origin {m}
+    0.0,  !- Z Origin {m}
+    ,  !- Type
+    1,  !- Multiplier
+    ,  !- Ceiling Height {m}
+    ,  !- Volume {m3}
+    74.32,  !- Floor Area {m2}
+    ,  !- Zone Inside Convection Algorithm
+    ,  !- Zone Outside Convection Algorithm
+    Yes;  !- Part of Total Floor Area
+
+  BuildingSurface:Detailed,
+    EEC689,  !- Name
+    Floor,  !- Surface Type
+    Interior Floor,  !- Construction Name
+    Floor2|UNIT|2B|1R,  !- Zone Name
+    Surface,  !- Outside Boundary Condition
+    BF4D1B,  !- Outside Boundary Condition Object
+    NoSun,  !- Sun Exposure
+    NoWind,  !- Wind Exposure
+    0.0,  !- View Factor to Ground
+    4,  !- Number of Vertices
+    -4.123095000000,  !- Vertex 1 X-coordinate {m}
+    1.857008000000,  !- Vertex 1 Y-coordinate {m}
+    6.263640000000,  !- Vertex 1 Z-coordinate {m}
+    -4.123095000000,  !- Vertex 2 X-coordinate {m}
+    -10.334992000000,  !- Vertex 2 Y-coordinate {m}
+    6.263640000000,  !- Vertex 2 Z-coordinate {m}
+    -10.219095000000,  !- Vertex 3 X-coordinate {m}
+    -10.334992000000,  !- Vertex 3 Y-coordinate {m}
+    6.263640000000,  !- Vertex 3 Z-coordinate {m}
+    -10.219095000000,  !- Vertex 4 X-coordinate {m}
+    1.857008000000,  !- Vertex 4 Y-coordinate {m}
+    6.263640000000;  !- Vertex 4 Z-coordinate {m}
+
+  BuildingSurface:Detailed,
+    A845A6,  !- Name
+    Wall,  !- Surface Type
+    Ext_Wall1,  !- Construction Name
+    Floor2|UNIT|2B|1R,  !- Zone Name
+    Outdoors,  !- Outside Boundary Condition
+    ,  !- Outside Boundary Condition Object
+    SunExposed,  !- Sun Exposure
+    WindExposed,  !- Wind Exposure
+    ,  !- View Factor to Ground
+    4,  !- Number of Vertices
+    -10.219095000000,  !- Vertex 1 X-coordinate {m}
+    -10.334992000000,  !- Vertex 1 Y-coordinate {m}
+    9.921240000000,  !- Vertex 1 Z-coordinate {m}
+    -10.219095000000,  !- Vertex 2 X-coordinate {m}
+    -10.334992000000,  !- Vertex 2 Y-coordinate {m}
+    6.263640000000,  !- Vertex 2 Z-coordinate {m}
+    -4.123095000000,  !- Vertex 3 X-coordinate {m}
+    -10.334992000000,  !- Vertex 3 Y-coordinate {m}
+    6.263640000000,  !- Vertex 3 Z-coordinate {m}
+    -4.123095000000,  !- Vertex 4 X-coordinate {m}
+    -10.334992000000,  !- Vertex 4 Y-coordinate {m}
+    9.921240000000;  !- Vertex 4 Z-coordinate {m}
+
+  BuildingSurface:Detailed,
+    ADD2EF,  !- Name
+    Wall,  !- Surface Type
+    Ext_Wall1,  !- Construction Name
+    Floor2|UNIT|2B|1R,  !- Zone Name
+    Outdoors,  !- Outside Boundary Condition
+    ,  !- Outside Boundary Condition Object
+    SunExposed,  !- Sun Exposure
+    WindExposed,  !- Wind Exposure
+    ,  !- View Factor to Ground
+    4,  !- Number of Vertices
+    -4.123095000000,  !- Vertex 1 X-coordinate {m}
+    -10.334992000000,  !- Vertex 1 Y-coordinate {m}
+    9.921240000000,  !- Vertex 1 Z-coordinate {m}
+    -4.123095000000,  !- Vertex 2 X-coordinate {m}
+    -10.334992000000,  !- Vertex 2 Y-coordinate {m}
+    6.263640000000,  !- Vertex 2 Z-coordinate {m}
+    -4.123095000000,  !- Vertex 3 X-coordinate {m}
+    1.857008000000,  !- Vertex 3 Y-coordinate {m}
+    6.263640000000,  !- Vertex 3 Z-coordinate {m}
+    -4.123095000000,  !- Vertex 4 X-coordinate {m}
+    1.857008000000,  !- Vertex 4 Y-coordinate {m}
+    9.921240000000;  !- Vertex 4 Z-coordinate {m}
+
+  BuildingSurface:Detailed,
+    17BBE2,  !- Name
+    Roof,  !- Surface Type
+    Ext_Roof1,  !- Construction Name
+    Floor2|UNIT|2B|1R,  !- Zone Name
+    Outdoors,  !- Outside Boundary Condition
+    ,  !- Outside Boundary Condition Object
+    SunExposed,  !- Sun Exposure
+    WindExposed,  !- Wind Exposure
+    ,  !- View Factor to Ground
+    4,  !- Number of Vertices
+    -10.219095000000,  !- Vertex 1 X-coordinate {m}
+    1.857008000000,  !- Vertex 1 Y-coordinate {m}
+    9.921240000000,  !- Vertex 1 Z-coordinate {m}
+    -10.219095000000,  !- Vertex 2 X-coordinate {m}
+    -10.334992000000,  !- Vertex 2 Y-coordinate {m}
+    9.921240000000,  !- Vertex 2 Z-coordinate {m}
+    -4.123095000000,  !- Vertex 3 X-coordinate {m}
+    -10.334992000000,  !- Vertex 3 Y-coordinate {m}
+    9.921240000000,  !- Vertex 3 Z-coordinate {m}
+    -4.123095000000,  !- Vertex 4 X-coordinate {m}
+    1.857008000000,  !- Vertex 4 Y-coordinate {m}
+    9.921240000000;  !- Vertex 4 Z-coordinate {m}
+
+  BuildingSurface:Detailed,
+    DE1E9A,  !- Name
+    Wall,  !- Surface Type
+    Ext_Wall1,  !- Construction Name
+    Floor2|UNIT|2B|1R,  !- Zone Name
+    Outdoors,  !- Outside Boundary Condition
+    ,  !- Outside Boundary Condition Object
+    SunExposed,  !- Sun Exposure
+    WindExposed,  !- Wind Exposure
+    ,  !- View Factor to Ground
+    4,  !- Number of Vertices
+    -4.123095000000,  !- Vertex 1 X-coordinate {m}
+    1.857008000000,  !- Vertex 1 Y-coordinate {m}
+    9.921240000000,  !- Vertex 1 Z-coordinate {m}
+    -4.123095000000,  !- Vertex 2 X-coordinate {m}
+    1.857008000000,  !- Vertex 2 Y-coordinate {m}
+    6.263640000000,  !- Vertex 2 Z-coordinate {m}
+    -10.219095000000,  !- Vertex 3 X-coordinate {m}
+    1.857008000000,  !- Vertex 3 Y-coordinate {m}
+    6.263640000000,  !- Vertex 3 Z-coordinate {m}
+    -10.219095000000,  !- Vertex 4 X-coordinate {m}
+    1.857008000000,  !- Vertex 4 Y-coordinate {m}
+    9.921240000000;  !- Vertex 4 Z-coordinate {m}
+
+  BuildingSurface:Detailed,
+    CE51E0,  !- Name
+    Wall,  !- Surface Type
+    Ext_Wall1,  !- Construction Name
+    Floor2|UNIT|2B|1R,  !- Zone Name
+    Outdoors,  !- Outside Boundary Condition
+    ,  !- Outside Boundary Condition Object
+    SunExposed,  !- Sun Exposure
+    WindExposed,  !- Wind Exposure
+    ,  !- View Factor to Ground
+    4,  !- Number of Vertices
+    -10.219095000000,  !- Vertex 1 X-coordinate {m}
+    1.857008000000,  !- Vertex 1 Y-coordinate {m}
+    9.921240000000,  !- Vertex 1 Z-coordinate {m}
+    -10.219095000000,  !- Vertex 2 X-coordinate {m}
+    1.857008000000,  !- Vertex 2 Y-coordinate {m}
+    6.263640000000,  !- Vertex 2 Z-coordinate {m}
+    -10.219095000000,  !- Vertex 3 X-coordinate {m}
+    -10.334992000000,  !- Vertex 3 Y-coordinate {m}
+    6.263640000000,  !- Vertex 3 Z-coordinate {m}
+    -10.219095000000,  !- Vertex 4 X-coordinate {m}
+    -10.334992000000,  !- Vertex 4 Y-coordinate {m}
+    9.921240000000;  !- Vertex 4 Z-coordinate {m}
+
+  FenestrationSurface:Detailed,
+    7F033B,  !- Name
+    Window,  !- Surface Type
+    Ext_Window1,  !- Construction Name
+    A845A6,  !- Building Surface Name
+    ,  !- Outside Boundary Condition Object
+    ,  !- View Factor to Ground
+    ,  !- Frame and Divider Name
+    ,  !- Multiplier
+    4,  !- Number of Vertices
+    -7.829321268059,  !- Vertex 1 X-coordinate {m}
+    -10.334992000000,  !- Vertex 1 Y-coordinate {m}
+    8.727216650989,  !- Vertex 1 Z-coordinate {m}
+    -7.829321268059,  !- Vertex 2 X-coordinate {m}
+    -10.334992000000,  !- Vertex 2 Y-coordinate {m}
+    7.029480650989,  !- Vertex 2 Z-coordinate {m}
+    -5.869457268059,  !- Vertex 3 X-coordinate {m}
+    -10.334992000000,  !- Vertex 3 Y-coordinate {m}
+    7.029480650989,  !- Vertex 3 Z-coordinate {m}
+    -5.869457268059,  !- Vertex 4 X-coordinate {m}
+    -10.334992000000,  !- Vertex 4 Y-coordinate {m}
+    8.727216650989;  !- Vertex 4 Z-coordinate {m}
+
+  FenestrationSurface:Detailed,
+    C218CB,  !- Name
+    Window,  !- Surface Type
+    Ext_Window1,  !- Construction Name
+    ADD2EF,  !- Building Surface Name
+    ,  !- Outside Boundary Condition Object
+    ,  !- View Factor to Ground
+    ,  !- Frame and Divider Name
+    ,  !- Multiplier
+    4,  !- Number of Vertices
+    -4.123095000000,  !- Vertex 1 X-coordinate {m}
+    -8.758469647188,  !- Vertex 1 Y-coordinate {m}
+    9.254135015703,  !- Vertex 1 Z-coordinate {m}
+    -4.123095000000,  !- Vertex 2 X-coordinate {m}
+    -8.758469647188,  !- Vertex 2 Y-coordinate {m}
+    7.315607015703,  !- Vertex 2 Z-coordinate {m}
+    -4.123095000000,  !- Vertex 3 X-coordinate {m}
+    -8.072669647188,  !- Vertex 3 Y-coordinate {m}
+    7.315607015703,  !- Vertex 3 Z-coordinate {m}
+    -4.123095000000,  !- Vertex 4 X-coordinate {m}
+    -8.072669647188,  !- Vertex 4 Y-coordinate {m}
+    9.254135015703;  !- Vertex 4 Z-coordinate {m}
+
+  FenestrationSurface:Detailed,
+    49CBAE,  !- Name
+    Window,  !- Surface Type
+    Ext_Window1,  !- Construction Name
+    ADD2EF,  !- Building Surface Name
+    ,  !- Outside Boundary Condition Object
+    ,  !- View Factor to Ground
+    ,  !- Frame and Divider Name
+    ,  !- Multiplier
+    4,  !- Number of Vertices
+    -4.123095000000,  !- Vertex 1 X-coordinate {m}
+    -3.891300763970,  !- Vertex 1 Y-coordinate {m}
+    8.919593130615,  !- Vertex 1 Z-coordinate {m}
+    -4.123095000000,  !- Vertex 2 X-coordinate {m}
+    -3.891300763970,  !- Vertex 2 Y-coordinate {m}
+    6.962777130615,  !- Vertex 2 Z-coordinate {m}
+    -4.123095000000,  !- Vertex 3 X-coordinate {m}
+    0.357611236030,  !- Vertex 3 Y-coordinate {m}
+    6.962777130615,  !- Vertex 3 Z-coordinate {m}
+    -4.123095000000,  !- Vertex 4 X-coordinate {m}
+    0.357611236030,  !- Vertex 4 Y-coordinate {m}
+    8.919593130615;  !- Vertex 4 Z-coordinate {m}
+
+  FenestrationSurface:Detailed,
+    5065B7,  !- Name
+    Window,  !- Surface Type
+    Ext_Window1,  !- Construction Name
+    CE51E0,  !- Building Surface Name
+    ,  !- Outside Boundary Condition Object
+    ,  !- View Factor to Ground
+    ,  !- Frame and Divider Name
+    ,  !- Multiplier
+    4,  !- Number of Vertices
+    -10.219095000000,  !- Vertex 1 X-coordinate {m}
+    -0.360462239866,  !- Vertex 1 Y-coordinate {m}
+    8.927635531915,  !- Vertex 1 Z-coordinate {m}
+    -10.219095000000,  !- Vertex 2 X-coordinate {m}
+    -0.360462239866,  !- Vertex 2 Y-coordinate {m}
+    7.745011531915,  !- Vertex 2 Z-coordinate {m}
+    -10.219095000000,  !- Vertex 3 X-coordinate {m}
+    -8.690646239866,  !- Vertex 3 Y-coordinate {m}
+    7.745011531915,  !- Vertex 3 Z-coordinate {m}
+    -10.219095000000,  !- Vertex 4 X-coordinate {m}
+    -8.690646239866,  !- Vertex 4 Y-coordinate {m}
+    8.927635531915;  !- Vertex 4 Z-coordinate {m}
+
+  FenestrationSurface:Detailed,
+    C37F06,  !- Name
+    Window,  !- Surface Type
+    Ext_Window1,  !- Construction Name
+    DE1E9A,  !- Building Surface Name
+    ,  !- Outside Boundary Condition Object
+    ,  !- View Factor to Ground
+    ,  !- Frame and Divider Name
+    ,  !- Multiplier
+    4,  !- Number of Vertices
+    -6.047310707290,  !- Vertex 1 X-coordinate {m}
+    1.857008000000,  !- Vertex 1 Y-coordinate {m}
+    8.862391035855,  !- Vertex 1 Z-coordinate {m}
+    -6.047310707290,  !- Vertex 2 X-coordinate {m}
+    1.857008000000,  !- Vertex 2 Y-coordinate {m}
+    7.658431035855,  !- Vertex 2 Z-coordinate {m}
+    -8.580198707290,  !- Vertex 3 X-coordinate {m}
+    1.857008000000,  !- Vertex 3 Y-coordinate {m}
+    7.658431035855,  !- Vertex 3 Z-coordinate {m}
+    -8.580198707290,  !- Vertex 4 X-coordinate {m}
+    1.857008000000,  !- Vertex 4 Y-coordinate {m}
+    8.862391035855;  !- Vertex 4 Z-coordinate {m}
+
+  Shading:Building:Detailed,
+    94B3DF,  !- Name
+    ,  !- Transmittance Schedule Name
+    4,  !- Number of Vertices
+    12.192000000000,  !- Vertex 1 X-coordinate {m}
+    0.000000000000,  !- Vertex 1 Y-coordinate {m}
+    11.265408000000,  !- Vertex 1 Z-coordinate {m}
+    12.192000000000,  !- Vertex 2 X-coordinate {m}
+    0.000000000000,  !- Vertex 2 Y-coordinate {m}
+    0.000000000000,  !- Vertex 2 Z-coordinate {m}
+    12.192000000000,  !- Vertex 3 X-coordinate {m}
+    12.192000000000,  !- Vertex 3 Y-coordinate {m}
+    0.000000000000,  !- Vertex 3 Z-coordinate {m}
+    12.192000000000,  !- Vertex 4 X-coordinate {m}
+    12.192000000000,  !- Vertex 4 Y-coordinate {m}
+    11.265408000000;  !- Vertex 4 Z-coordinate {m}

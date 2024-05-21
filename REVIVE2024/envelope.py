@@ -72,7 +72,7 @@ def glazingBuilder(idf, name, uFactor, shgc):
 
 def infiltration(idf, zone, infiltration_rate):
     
-    infiltration_rate_4pa = infiltration_rate * 8.0752E-6
+    infiltration_rate_4pa = infiltration_rate * 8.6701E-04
 
     idf.newidfobject('ZoneInfiltration:DesignFlowRate',
         Name = (str(zone) + ' Infiltration'),
@@ -84,7 +84,7 @@ def infiltration(idf, zone, infiltration_rate):
         Flow_per_Exterior_Surface_Area = infiltration_rate_4pa,
         Air_Changes_per_Hour = 0,
         Constant_Term_Coefficient = 0,
-        Temperature_Term_Coefficient = 0,
+        Temperature_Term_Coefficient = 0.015,
         Velocity_Term_Coefficient = 0.224,
         Velocity_Squared_Term_Coefficient = 0
         )
