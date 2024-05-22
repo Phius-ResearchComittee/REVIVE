@@ -462,7 +462,7 @@ class MPAdorbTab(QWidget):
 
         # create delete button
         del_button = QToolButton()
-        icon = qApp.style().standardIcon(QStyle.SP_TrashIcon)
+        icon = qApp.style().standardIcon(QStyle.SP_DialogDiscardButton)
         del_button.setIcon(icon)
         del_button.setAutoRaise(True)
         del_button.setToolButtonStyle(Qt.ToolButtonIconOnly)
