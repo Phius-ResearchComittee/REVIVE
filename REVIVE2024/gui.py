@@ -163,8 +163,8 @@ class SimulateTab(QWidget):
         self.layout = QVBoxLayout()
         self.layout.addWidget(self.file_entry_groupbox)
         self.layout.addWidget(self.run_options_groupbox)
-        self.layout.addWidget(self.progress_bar)
         self.layout.addWidget(self.sim_button)
+        self.layout.addWidget(self.progress_bar)
         
         # populate the top-level widgets with child widgets
         self.create_file_entry_widgets()
@@ -174,8 +174,11 @@ class SimulateTab(QWidget):
         self.sim_button.clicked.connect(self.simulate)
 
         # initialize the progress bar attributes
+        self.progress_bar.setVisible(False)
         self.progress_bar.setRange(0,100)
         self.progress_bar.reset()
+
+        # initialize the threading mechanisms
         self.mp_manager = None
         self.progress_queue = None
         self.stop_event = None
@@ -315,6 +318,15 @@ class SimulateTab(QWidget):
 
     @Slot()
     def simulate(self):
+        # signal that simulation is starting (disable sim button)
+        self.sim_button.setText("Running simulation...")
+        self.sim_button.setFlat(True)
+        self.sim_button.setEnabled(False)
+
+        # show the progress bar
+        self.progress_bar.setValue(0)
+        self.progress_bar.setVisible(True)
+
         # collect arguments to send to simulate function
         batch_name = self.batch_name.text()
         idd_file = self.file_entry_widgets[self.widget_labels[1]].text() # IDD File
@@ -327,20 +339,20 @@ class SimulateTab(QWidget):
         del_files = self.del_files_option.isChecked()
         is_dummy_mode = self.parent.is_dummy_mode
 
-        # input validation
-        err_string = simulate.validate_input(batch_name, idd_file, study_folder, run_list, db_dir)
+        try:
+            # input validation
+            err_string = simulate.validate_input(batch_name, idd_file, study_folder, run_list, db_dir)
+            assert err_string == "", err_string
 
-        # ensure no errs and prepare to run
-        # Al comment out
-        # try:
-        assert err_string == "", err_string
-        self.save_settings() # remember these inputs for next run
-        sim_inputs = simulate.SimInputs(batch_name, idd_file, study_folder, run_list, db_dir, show_graphs, gen_pdf_report, is_dummy_mode)
+            # prepare inputs and save for next run
+            self.save_settings()
+            sim_inputs = simulate.SimInputs(batch_name, idd_file, study_folder, run_list, db_dir, show_graphs, gen_pdf_report, is_dummy_mode)
+            
+            # call the simulation in thread
+            self.sim_start(sim_inputs, num_procs)
         
-        # call the simulation in thread
-        self.sim_start(sim_inputs, num_procs)        
-        # except Exception as err_msg:
-            # self.parent.display_error(str(err_msg))
+        except Exception as err_msg:
+            self.sim_cleanup(success=False, err_msg=str(err_msg))
 
     
     def sim_start(self, sim_inputs, num_procs):
@@ -369,19 +381,26 @@ class SimulateTab(QWidget):
             self.parent.display_error(err_msg)
         
         # see if all threads have finished (continue running if not)
-        if self.worker.is_alive():
+        if self.worker is not None and self.worker.is_alive():
             return
         
         # clear the queue
-        while not self.progress_queue.empty():
+        while self.progress_queue is not None and not self.progress_queue.empty():
             self.progress_queue.get_nowait()
 
         # collect child process
-        self.worker.join()
-        self.worker = None
+        if self.worker is not None:
+            self.worker.join()
+            self.worker = None
 
+        # reset simulate button
+        self.sim_button.setText("Simulate")
+        self.sim_button.setFlat(False)
+        self.sim_button.setEnabled(True)
+        
         # reset progress bar
         self.progress_bar.reset()
+        self.progress_bar.setVisible(False)
         
         # return to the home directory
         os.chdir(self.parent.home_dir)
