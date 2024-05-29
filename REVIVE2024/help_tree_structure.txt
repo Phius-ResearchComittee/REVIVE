@@ -1,0 +1,18 @@
+Building
+-Simulation Duration
+Weather
+-Morph
+-EPW
+-DDY
+Envelope
+-Walls
+-Roofing
+Mechanicals
+-System
+-PV
+-Fuel
+Resilience
+-Outages
+--Outage Start
+--Outage End
+-Shading

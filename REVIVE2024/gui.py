@@ -17,6 +17,7 @@ from PySide6.QtGui import QIcon
 # custom imports
 import gui_simulate_tab
 import gui_adorb_tab
+import gui_help_tab
 
 class MyWidget(QWidget):
 
@@ -27,6 +28,7 @@ class MyWidget(QWidget):
 
         # set up app identity
         self.app_name = "REVIVE Calculator Tool"
+        self.version_no = "24.2"
         self.settings = QSettings("Phius", self.app_name)
         self.home_dir = os.getcwd()
         self.icon = QIcon()
@@ -34,7 +36,7 @@ class MyWidget(QWidget):
                           "Phius-Logo-RGB__Color_Icon.ico"))
 
         # customize window
-        self.setWindowTitle(self.app_name)
+        self.setWindowTitle(f"{self.app_name} v{self.version_no}")
         self.setWindowIcon(self.icon)
 
         # create a message box for error popups
@@ -51,8 +53,10 @@ class MyWidget(QWidget):
 
         # create different pages
         self.tab_widget = QTabWidget()
+        self.help_tab = gui_help_tab.HelpTab(self)
         self.sim_tab = gui_simulate_tab.SimulateTab(self)
         self.mp_adorb_tab = gui_adorb_tab.MPAdorbTab(self)
+        self.tab_widget.addTab(self.help_tab, "Help")
         self.tab_widget.addTab(self.sim_tab, "Simulation")
         self.tab_widget.addTab(self.mp_adorb_tab, "Multi-phase ADORB")
 
