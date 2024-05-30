@@ -1,6 +1,11 @@
+# native imports
+import json
+
 # dependency imports
+from PySide6.QtGui import QCursor
 from PySide6.QtCore import (
-    Qt
+    Qt,
+    Slot
 )
 from PySide6.QtWidgets import (
     QWidget,
@@ -29,14 +34,26 @@ class HelpTab(QWidget):
         self.layout.addWidget(self.help_page_header)
         self.layout.addLayout(self.help_content_layout)
         
-        # create help tree widget and display widget
+        # build content tree widget
         self.content_tree = QTreeWidget()
         self.content_tree.setColumnCount(1)
         self.content_tree.setHeaderLabels(["Topics"])
+
+        # build content display widget
         self.content_display = QPlainTextEdit()
+        self.content_display.setReadOnly(True)
+        self.content_display.cursorPositionChanged.connect(lambda : self.content_display.viewport().setCursor(self.parent.cursor()))
+        self.content_display.setFocusPolicy(Qt.NoFocus)
+
+        # assign external content file handles
+        self.help_tree_struc_file = "help_tree_structure.txt"
+        self.help_content_file = "help_tree_content.json"
 
         # populate content 
-        self.populate_content_tree("help_tree_structure.txt")
+        self.populate_content_tree()
+
+        # enable action to display content when selected
+        self.content_tree.itemSelectionChanged.connect(self.display_content)
 
         # add inner level widgets to horizontal layout
         self.help_content_layout.addWidget(self.content_tree)
@@ -50,10 +67,10 @@ class HelpTab(QWidget):
         self.setLayout(self.layout)
 
 
-    def populate_content_tree(self, tree_struc_file):
+    def populate_content_tree(self):
         self.top_level_items = []
         self.all_items = [] # items to be tuple of (item, level)
-        with open(tree_struc_file, "r") as reader:
+        with open(self.help_tree_struc_file, "r") as reader:
             for line in reader:
                 # find the beginning of the word
                 level = 0
@@ -85,3 +102,16 @@ class HelpTab(QWidget):
 
         # place top level items in tree
         self.content_tree.insertTopLevelItems(0, self.top_level_items)
+    
+
+    @Slot()
+    def display_content(self):
+        # get current selected topic
+        current_topic = self.content_tree.selectedItems()[0]
+        key = current_topic.text(0)
+
+        # read content regarding current topic
+        with open(self.help_content_file, "r") as json_reader:
+            content_dict = json.load(json_reader)
+            topic_content = content_dict.get(key, "")
+            self.content_display.setPlainText(topic_content)
