@@ -11,6 +11,7 @@ from eppy import modeleditor
 from eppy.modeleditor import IDF
 from eppy.runner.run_functions import runIDFs
 import multiprocessing as mp
+import multiprocessing.pool as mp_pool
 # from PIL import Image, ImageTk
 import os
 import gc
@@ -60,22 +61,33 @@ class SimInputs:
         self.weather_db = os.path.join(self.database_dir, weather_folder)
         self.construction_db = os.path.join(self.database_dir, construction_file)
 
-class ProgressManager:
-    def __init__(self, q, num_tasks, num_procs):
+class SimulationManager:
+    def __init__(self, q, num_tasks, stop_event):
+        # init the progress queue
         self.q = q
-        self.num_tasks = num_tasks
-        self.num_procs = num_procs
-        self.num_checkpoints = 4 # changes based on how many baked into code
-        self.increment_amt = 1 / (self.num_checkpoints * self.num_tasks * min(self.num_tasks, self.num_procs))
+
+        # compute the increment amount
+        self.num_checkpoints = 10 # changes based on how many baked into code
+        self.increment_amt = 1 / (self.num_checkpoints * num_tasks)
+
+        # init the stop event
+        self.stop_event = stop_event
+
     
-    def simulation_checkpoint(self):
+    def send_progress(self):
         if self.q is not None:
             self.q.put(self.increment_amt)
 
     def raise_exception(self, msg):
         if self.q is not None:
-            self.q.put(msg)
-
+            try:
+                self.q.put(msg)
+            except BrokenPipeError:
+                print(f"Failed to send message: \"{msg}\"")
+    
+    def check_if_stopped(self):
+        return self.stop_event.is_set()
+        
 
 
 def validate_input(batch_name, idd_file, study_folder, run_list, db_dir):
@@ -134,26 +146,44 @@ def divide_chunks(l, n):
         yield l[i:i + n]
 
 
-def parallel_simulate(sim_inputs: SimInputs, total_runs, num_procs, progress_queue=None):
+def checkpoint(sm: SimulationManager):
+    """Returns true if program received stop signal, otherwise sends progress update and returns false"""
+    # gui not enabled, exit
+    if sm is None: return False
+
+    # check for stop signal
+    if sm.check_if_stopped(): return True
+    
+    else:
+        # all clear, update progress
+        sm.send_progress()
+        return False
+
+
+
+def parallel_simulate(sim_inputs: SimInputs, total_runs, num_procs, progress_queue=None, stop_event=None):
     
     # move to study folder for all sims
     if not sim_inputs.is_dummy_mode:
         os.chdir(sim_inputs.study_folder)
 
     # run the parallelized simulation
-    pm = ProgressManager(progress_queue, total_runs, num_procs)
-    with mp.Pool(processes=num_procs) as pool:
-        result_rows = pool.starmap(simulate, [(sim_inputs, case_id, pm) for case_id in range(total_runs)])
+    sm = SimulationManager(progress_queue, total_runs, stop_event)
+    with mp_pool.ThreadPool(processes=num_procs) as pool:
+        result_rows = pool.starmap(simulate, [(sim_inputs, case_id, sm) for case_id in range(total_runs)])
 
+    # return immediately if script terminated early
+    if any(x is None for x in result_rows):
+        print("Shutting down simulation manager...")
     ResultsTable = pd.concat(result_rows)
     ResultsTable.to_csv(os.path.join(sim_inputs.study_folder, sim_inputs.batch_name + "_ResultsTable.csv"))
     print('Saved Results')
 
 
-def simulate(si: SimInputs, case_id: int, progress_mgr=None):
-    # runlist entry started... mark the checkpoint
-    if progress_mgr is not None:
-        progress_mgr.simulation_checkpoint()
+def simulate(si: SimInputs, case_id: int, simulation_mgr=None):
+        
+    # CHECKPOINT: runlist entry started
+    if checkpoint(simulation_mgr): return        
 
     # retrieve cached information from simulation input
     is_dummy_mode = si.is_dummy_mode
@@ -345,6 +375,9 @@ def simulate(si: SimInputs, case_id: int, progress_mgr=None):
         ddy = IDF(ddyName)
         idf1 = IDF(str(testingFile_BR))
 
+        # CHECKPOINT: IDFs constructed
+        if checkpoint(simulation_mgr): return 
+
         # Copy in geometry from input file
 
         for zone in idfg.idfobjects['Zone']:
@@ -386,6 +419,9 @@ def simulate(si: SimInputs, case_id: int, progress_mgr=None):
 
         for bldg in ddy.idfobjects['SizingPeriod:DesignDay']:
             idf1.copyidfobject(bldg)
+        
+        # CHECKPOINT: Geomtries copied in
+        if checkpoint(simulation_mgr): return 
 
         
         # High level model information
@@ -533,6 +569,9 @@ def simulate(si: SimInputs, case_id: int, progress_mgr=None):
         # ============================================================================
 
         idf1 = IDF(str(passIDF))
+        
+        # CHECKPOINT: before resilience schedules
+        if checkpoint(simulation_mgr): return 
 
         schedules.zeroSch(idf1, 'BARangeSchedule')
         schedules.zeroSch(idf1, 'Phius_Lighting')
@@ -546,13 +585,15 @@ def simulate(si: SimInputs, case_id: int, progress_mgr=None):
                     demandCoolingAvail,shadingAvail,outage1type)
         
         schedules.ResilienceControls(idf1, unit_list, NatVentType)
-
+        
+        # CHECKPOINT: resilience schedules finished
+        if checkpoint(simulation_mgr): return 
+        
         for zone in unit_list:
             hvac.ResilienceERV(idf1, zone, occ, ervSense, ervLatent)
 
         weatherMorph.WeatherMorphSine(idf1, outage1start, outage1end, outage2start, outage2end,
                 MorphFactorDB1, MorphFactorDP1, MorphFactorDB2, MorphFactorDP2)
-
 
         # ==================================================================================================================================
         # Run Resilience Simulation and Collect Results
@@ -560,15 +601,17 @@ def simulate(si: SimInputs, case_id: int, progress_mgr=None):
 
         # add the index in from the for loop for the number of runs to make this table happen faster
 
+        # CHECKPOINT: before resilience simulation starts
+        if checkpoint(simulation_mgr): return
+
         # run the simulation or generate dummy files for speed
         if not is_dummy_mode:
             idf1.saveas(str(testingFile_BR))
             idf = IDF(str(testingFile_BR), str(epwFile))
             idf.run(readvars=True,output_prefix=str(str(BaseFileName) + "_BR"))
         
-        # resilience simulation finished... mark the checkpoint
-        if progress_mgr is not None:
-            progress_mgr.simulation_checkpoint()
+        # CHECKPOINT: resilience simulation finished
+        if checkpoint(simulation_mgr): return
 
         fname = os.path.join(studyFolder, BaseFileName + '_BRtbl.htm')
 
@@ -586,6 +629,9 @@ def simulate(si: SimInputs, case_id: int, progress_mgr=None):
         ExtremeCaution = float(heating_index_hours_table[1][1][3])
         Danger = float(heating_index_hours_table[1][1][4])
         ExtremeDanger = float(heating_index_hours_table[1][1][5])
+
+        # CHECKPOINT: table lookup finished
+        if checkpoint(simulation_mgr): return
 
         # Resilience Graphs
                 
@@ -826,9 +872,8 @@ def simulate(si: SimInputs, case_id: int, progress_mgr=None):
             idf = IDF(str(testingFile_BA), str(epwFile))
             idf.run(readvars=True,output_prefix=str((str(BaseFileName) + '_BA')))
 
-        # annual simulation finished... mark the checkpoint
-        if progress_mgr is not None:
-            progress_mgr.simulation_checkpoint()
+        # CHECKPOINT: annual simulation finished
+        if checkpoint(simulation_mgr): return
 
         filehandle = os.path.join(studyFolder, BaseFileName + '_BAout.csv')
         filehandleMTR = os.path.join(studyFolder, BaseFileName + '_BAmtr.csv')
@@ -1172,9 +1217,8 @@ def simulate(si: SimInputs, case_id: int, progress_mgr=None):
                     firstCost, adorbCost, heatingGraphFile, coolingGraphFile, adorb.adorbWedgeGraph,
                     adorb.adorbBarGraph)
 
-        # runlist entry finished... mark the checkpoint
-        if progress_mgr is not None:
-            progress_mgr.simulation_checkpoint()
+        # CHECKPOINT: runlist entry finished
+        if checkpoint(simulation_mgr): return
 
         # return the resulting row
         return newResultRow
@@ -1229,9 +1273,9 @@ def simulate(si: SimInputs, case_id: int, progress_mgr=None):
         
         
         ### NEED TO RUN TRY AND EXCEPT INSIDE PARALLEL
-        # if progress_mgr is not None:
-        #     progress_mgr.raise_exception(str(e))
-        #     return newResultRow
-        # else:
-        raise Exception(e)
+        if simulation_mgr is not None:
+            simulation_mgr.raise_exception(str(e))
+            return newResultRow
+        else:
+            raise Exception(e)
         # print('Saved Results')

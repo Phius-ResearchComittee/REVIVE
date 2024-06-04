@@ -1,35 +1,23 @@
+# native imports
+import os
+import sys
+
+# dependency imports
 from PySide6.QtCore import (
     QSettings,
-    QDir,
-    Qt,
-    QTimer,
-    Slot
 )
 from PySide6.QtWidgets import (
     QWidget,
     QMessageBox,
     QTabWidget,
     QVBoxLayout,
-    QHBoxLayout,
-    QGridLayout,
-    QGroupBox,
-    QPushButton,
-    QLineEdit,
-    QCheckBox,
-    QComboBox,
-    QProgressBar,
-    QLabel,
-    QStyle,
-    QFileDialog,
-    QToolButton 
 )
-from PySide6.QtGui import QIcon, QIconEngine
-import pandas as pd
-import multiprocessing as mp
-import os
-import sys
-import simulate
-import adorb
+from PySide6.QtGui import QIcon
+
+# custom imports
+import gui_simulate_tab
+import gui_adorb_tab
+import gui_help_tab
 
 class MyWidget(QWidget):
 
@@ -40,6 +28,7 @@ class MyWidget(QWidget):
 
         # set up app identity
         self.app_name = "REVIVE Calculator Tool"
+        self.version_no = "24.2"
         self.settings = QSettings("Phius", self.app_name)
         self.home_dir = os.getcwd()
         self.icon = QIcon()
@@ -47,7 +36,7 @@ class MyWidget(QWidget):
                           "Phius-Logo-RGB__Color_Icon.ico"))
 
         # customize window
-        self.setWindowTitle(self.app_name)
+        self.setWindowTitle(f"{self.app_name} v{self.version_no}")
         self.setWindowIcon(self.icon)
 
         # create a message box for error popups
@@ -64,8 +53,12 @@ class MyWidget(QWidget):
 
         # create different pages
         self.tab_widget = QTabWidget()
-        self.tab_widget.addTab(SimulateTab(self), "Simulation")
-        self.tab_widget.addTab(MPAdorbTab(self), "Multi-phase ADORB")
+        self.help_tab = gui_help_tab.HelpTab(self)
+        self.sim_tab = gui_simulate_tab.SimulateTab(self)
+        self.mp_adorb_tab = gui_adorb_tab.MPAdorbTab(self)
+        self.tab_widget.addTab(self.help_tab, "Help")
+        self.tab_widget.addTab(self.sim_tab, "Simulation")
+        self.tab_widget.addTab(self.mp_adorb_tab, "Multi-phase ADORB")
 
         # attach tab widgets to main widget
         self.layout = QVBoxLayout()
@@ -91,426 +84,9 @@ class MyWidget(QWidget):
         self.info_msg_box.exec_()
 
 
-
-class SimulateTab(QWidget):
-    def __init__(self, parent):
-        # init the widget
-        super().__init__(parent)
-        self.parent = parent
-
-        # create top-level widgets
-        self.file_entry_layout = QGridLayout()
-        self.file_entry_groupbox = QGroupBox("File Entry")
-        self.run_options_layout = QHBoxLayout()
-        self.run_options_groupbox = QGroupBox("Run Options")
-        self.sim_button = QPushButton("Simulate")
-        self.progress_bar = QProgressBar()
-
-        # hard-code widget labels TODO: change this somehow?
-        self.widget_labels = ["Batch Name",
-                              "IDD File Name",
-                              "Study/Output Folder",
-                              "Run List File",
-                              "Database Directory",
-                              "Parallel Processes",
-                              "Generate PDF?",
-                              "Generate Graphs?",
-                              "Delete Unnecessary Files?"]
-
-        # create all inner-level widgets
-        self.batch_name = QLineEdit()
-        self.file_entry_widgets = {}
-        for field in self.widget_labels[1:5]:
-            self.file_entry_widgets[field] = QLineEdit()
-        self.gen_pdf_option = QCheckBox(self.widget_labels[6])
-        self.gen_graphs_option = QCheckBox(self.widget_labels[7])
-        self.del_files_option = QCheckBox(self.widget_labels[8])
-        self.num_parallel_procs = QComboBox()
-
-        # add top-level widgets to main layout
-        self.layout = QVBoxLayout()
-        self.layout.addWidget(self.file_entry_groupbox)
-        self.layout.addWidget(self.run_options_groupbox)
-        self.layout.addWidget(self.progress_bar)
-        self.layout.addWidget(self.sim_button)
-        
-        # populate the top-level widgets with child widgets
-        self.create_file_entry_widgets()
-        self.create_run_options_widgets()
-        
-        # enable the big simulate button
-        self.sim_button.clicked.connect(self.simulate)
-
-        # initialize the progress bar attributes
-        self.progress_bar.setRange(0,100)
-        self.progress_bar.reset()
-        self.progress_manager = None
-        self.worker = None
-        self.timer = QTimer(self)
-        self.timer.timeout.connect(lambda : self.query_progress(self.progress_manager))
-        self.timer.start(500)
-        
-        # set the layout
-        self.setLayout(self.layout)
-
-
-    def create_file_entry_widgets(self):
-        # preface file entry area with batch name widget
-        batch_label = QLabel()
-        batch_label.setText(self.widget_labels[0])
-        self.file_entry_layout.addWidget(batch_label, 0, 0)
-        self.file_entry_layout.addWidget(self.batch_name, 0, 1)
-
-        # add file explorer widgets to layout
-        self._open_file_explorer_actions = {}
-        for i, (widget_key, qline) in enumerate(self.file_entry_widgets.items()):
-
-            # create the actions
-            self._open_file_explorer_actions[widget_key] = qline.addAction(
-                qApp.style().standardIcon(QStyle.SP_DirOpenIcon),  # noqa: F821
-                QLineEdit.TrailingPosition)
-            
-            # populate fields with last used information, blank string as default
-            qline.setText(self.parent.get_setting(widget_key))
-            
-            # add to layout
-            qlabel = QLabel()
-            qlabel.setText(widget_key)
-            self.file_entry_layout.addWidget(qlabel, i+1, 0)
-            self.file_entry_layout.addWidget(qline, i+1, 1)
-
-        # connect the actions
-        self._open_file_explorer_actions[self.widget_labels[1]].triggered.connect( # IDD file
-            lambda _ : self.on_open_file(self.widget_labels[1], "*.idd"))
-        self._open_file_explorer_actions[self.widget_labels[2]].triggered.connect( # Study/output folder
-            lambda _ : self.on_open_folder(self.widget_labels[2]))
-        self._open_file_explorer_actions[self.widget_labels[3]].triggered.connect( # Run list file
-            lambda _ : self.on_open_file(self.widget_labels[3], "*.csv"))
-        self._open_file_explorer_actions[self.widget_labels[4]].triggered.connect( # Database folder
-            lambda _ : self.on_open_folder(self.widget_labels[4]))
-            
-        # apply layout to groupbox widget
-        self.file_entry_groupbox.setLayout(self.file_entry_layout)
-
-    
-    def create_run_options_widgets(self):
-        # label and add option items for parallel processes
-        qlabel = QLabel()
-        qlabel.setText(self.widget_labels[5]) # Parallel processes
-        self.num_parallel_procs.addItems([str(x) for x in [1,2,4,8,12,16,20,24,28,32]])
-
-        # build the left half with parallel process selection
-        left_half = QVBoxLayout(alignment=Qt.AlignHCenter)
-        left_half.addStretch()
-        left_half.addWidget(qlabel)
-        left_half.addWidget(self.num_parallel_procs)
-        left_half.addStretch()
-
-        # build the right half with with checkbox options
-        right_half = QVBoxLayout(alignment=Qt.AlignHCenter)
-        right_half.addStretch()
-        right_half.addWidget(self.gen_pdf_option, Qt.AlignHCenter)
-        right_half.addWidget(self.gen_graphs_option, Qt.AlignHCenter)
-        right_half.addWidget(self.del_files_option, Qt.AlignHCenter)
-        right_half.addStretch()
-
-        # incorporate both left and right halves
-        self.run_options_layout.addLayout(left_half)
-        self.run_options_layout.addLayout(right_half)
-
-        # apply layout to groupbox widget
-        self.run_options_groupbox.setLayout(self.run_options_layout)
-
-
-    @Slot()
-    def on_open_folder(self, widget_key):
-        qline = self.file_entry_widgets[widget_key]
-        prompt = f"Select Folder: {widget_key}"
-        
-        path = QFileDialog.getExistingDirectory(
-            self, prompt, QDir.homePath(), QFileDialog.ShowDirsOnly
-        )
-        dest = QDir(path)
-        qline.setText(QDir.fromNativeSeparators(dest.path()))
-
-
-    @Slot()
-    def on_open_file(self, widget_key, file_ext):
-        qline = self.file_entry_widgets[widget_key]
-        prompt = f"Select File: {widget_key}"
-        
-        path, _ = QFileDialog.getOpenFileName(
-                self, prompt, QDir.homePath(), file_ext)
-
-        dest = QDir(path)
-        qline.setText(QDir.fromNativeSeparators(dest.path()))
-
-
-    @Slot()
-    def query_progress(self, manager):
-        # check to make sure queue is ready
-        if (self.progress_manager is None or 
-            self.worker is None or
-            self.progress_queue is None): 
-            return
-
-        # sim is still running
-        if (self.worker.is_alive() or not self.progress_queue.empty()):
-            # consume all messages in the queue
-            while not self.progress_queue.empty():
-                next_msg = self.progress_queue.get_nowait()
-                try:
-                    # accept the progress achieved in the checkpoint
-                    progress_achieved = float(next_msg) * 100
-                    new_progress = int(self.progress_bar.value() + progress_achieved)
-                    self.progress_bar.setValue(new_progress)
-                
-                # err string detected
-                except ValueError:
-                    # empty the queue and break out of function
-                    self.sim_cleanup(success=False, err_msg=next_msg)
-                    break
-
-        # sim is stopped and queue is empty 
-        else:
-            # get progress bar to 100
-            self.progress_bar.setValue(100)
-
-            # end the simulation
-            self.sim_cleanup(success=True)
-
-    @Slot()
-    def simulate(self):
-        # collect arguments to send to simulate function
-        batch_name = self.batch_name.text()
-        idd_file = self.file_entry_widgets[self.widget_labels[1]].text() # IDD File
-        study_folder = self.file_entry_widgets[self.widget_labels[2]].text() # Study/output folder
-        run_list = self.file_entry_widgets[self.widget_labels[3]].text() # Run list file
-        db_dir = self.file_entry_widgets[self.widget_labels[4]].text() # Database directory
-        num_procs = int(self.num_parallel_procs.currentText())
-        show_graphs = self.gen_graphs_option.isChecked()
-        gen_pdf_report = self.gen_pdf_option.isChecked()
-        del_files = self.del_files_option.isChecked()
-        is_dummy_mode = self.parent.is_dummy_mode
-
-        # input validation
-        err_string = simulate.validate_input(batch_name, idd_file, study_folder, run_list, db_dir)
-
-        # ensure no errs and prepare to run
-        # Al comment out
-        # try:
-        assert err_string == "", err_string
-        self.save_settings() # remember these inputs for next run
-        sim_inputs = simulate.SimInputs(batch_name, idd_file, study_folder, run_list, db_dir, show_graphs, gen_pdf_report, is_dummy_mode)
-        
-        # call the simulation in thread
-        self.sim_start(sim_inputs, num_procs)        
-        # except Exception as err_msg:
-            # self.parent.display_error(str(err_msg))
-
-    
-    def sim_start(self, sim_inputs, num_procs):
-        # create a progress manager to query progress later
-        self.progress_manager = mp.Manager()
-
-        # determine total number of runs
-        self.total_runs = pd.read_csv(sim_inputs.run_list).shape[0]
-        
-        # create the multiprocessing queue
-        self.progress_queue = self.progress_manager.Queue()
-
-        # assign work to worker thread
-        self.worker = mp.Process(target=simulate.parallel_simulate, 
-                                 args=(sim_inputs, self.total_runs, num_procs, self.progress_queue))
-        
-        # start the worker thread
-        self.worker.start()
-    
-    
-    def sim_cleanup(self, success=False, err_msg=""):
-        # notify the user
-        if success:
-            self.parent.display_info("Analysis complete!")
-        else:
-            self.parent.display_error(err_msg)
-        
-        # see if all threads have finished (continue running if not)
-        if self.worker.is_alive():
-            return
-        
-        # clear the queue
-        while not self.progress_queue.empty():
-            self.progress_queue.get_nowait()
-
-        # collect child process
-        self.worker.join()
-        self.worker = None
-
-        # shut down context
-        self.progress_manager.shutdown()
-        self.progress_manager = None
-
-        # reset progress bar
-        self.progress_bar.reset()
-        
-        # return to the home directory
-        os.chdir(self.parent.home_dir)
-
-    
-    def save_settings(self):
-        for widget_key, qline in self.file_entry_widgets.items():
-            self.parent.set_setting(widget_key, qline.text())
-
-
-
-class MPAdorbTab(QWidget):
-    def __init__(self, parent):
-        
-        # call widget init
-        super().__init__()
-        self.parent = parent
-
-        # create top-level widgets
-        self.layout = QVBoxLayout()
-        self.phases_layout = QVBoxLayout()
-        self.add_phase_button = QPushButton("Add additional phase")
-        self.compute_button = QPushButton("Compute Multiphase ADORB")
-
-        # add widgets to main layout
-        self.layout.addLayout(self.phases_layout)
-        self.layout.addWidget(self.add_phase_button)
-        self.layout.addStretch()
-        self.layout.addWidget(self.compute_button)
-        
-        # init adorb constants
-        self.phase_count = 1
-        self.max_phases = 5
-        self.num_sim_years = 70
-
-        # store the results of the phases
-        self.file_entries = []
-        self.year_entries = []
-
-        # keep track of current phase widgets
-        self.phase_widgets = []
-        
-        # set up phase entries
-        for _ in range(3):
-            self.spawn_phase_entry_widget()
-
-        # enable the buttons
-        self.add_phase_button.clicked.connect(self.spawn_phase_entry_widget)
-        self.compute_button.clicked.connect(self.compute_mp_adorb)
-
-        # set the layout
-        self.setLayout(self.layout)
-
-
-    @Slot()
-    def spawn_phase_entry_widget(self):
-        # check to make sure we haven't exceded capacity
-        if self.phase_count > self.max_phases:
-            self.parent.display_error(f"Max number of phases reached: {self.max_phases}.")
-            return
-
-        # create box for labels, file entry, and year entry
-        phase_layout = QHBoxLayout()
-
-        # create file entry boxes
-        file_entry_box = QLineEdit()
-        self.file_entries.append(file_entry_box)
-
-        # create year dropdown box
-        year_start_box = QComboBox()
-        year_start_box.addItems([str(x) for x in range(self.num_sim_years)])
-        year_start_box.resize(200,100)
-        self.year_entries.append(year_start_box)
-
-        # create labels
-        file_entry_label = QLabel("ADORB Results File:")
-        year_start_label = QLabel("Year:")
-
-        # create delete button
-        del_button = QToolButton()
-        icon = qApp.style().standardIcon(QStyle.SP_TrashIcon)
-        del_button.setIcon(icon)
-        del_button.setAutoRaise(True)
-        del_button.setToolButtonStyle(Qt.ToolButtonIconOnly)
-
-        # add new widgets to hbox
-        phase_layout.addWidget(file_entry_label)
-        phase_layout.addWidget(file_entry_box)
-        phase_layout.addWidget(year_start_label)
-        phase_layout.addWidget(year_start_box)
-        phase_layout.addWidget(del_button)
-
-        # add to layout
-        new_phase_widget = QGroupBox(f"Phase {self.phase_count}")
-        new_phase_widget.setLayout(phase_layout)
-        self.phases_layout.addWidget(new_phase_widget)
-        self.phase_widgets.append(new_phase_widget)
-        self.phase_count += 1
-        
-        # connect delete button
-        del_button.clicked.connect(lambda _ : self.delete_phase_entry_widget(new_phase_widget))
-
-        # connect browse files button
-        action = file_entry_box.addAction(
-            qApp.style().standardIcon(QStyle.SP_DirOpenIcon),  # noqa: F821
-            QLineEdit.TrailingPosition)
-        action.triggered.connect(
-            lambda _ : self.on_open_file(new_phase_widget)
-        )
-
-
-    @Slot()
-    def delete_phase_entry_widget(self, widget):
-        # remove the widget from the window
-        self.phases_layout.removeWidget(widget)
-        widget.deleteLater()
-
-        # decrement titles
-        idx = self.phase_widgets.index(widget)
-        for i in range(len(self.phase_widgets)-1, idx, -1):
-            self.phase_widgets[i].setTitle(self.phase_widgets[i-1].title())
-        
-        # remove widget and entries from list
-        self.phase_widgets.pop(idx)
-        self.file_entries.pop(idx)
-        self.year_entries.pop(idx)
-        self.phase_count -= 1
-
-
-    @Slot()
-    def on_open_file(self, groupbox: QGroupBox):
-        phase_id = self.phase_widgets.index(groupbox)
-        qline = self.file_entries[phase_id]
-        prompt = f"Select File: Phase {phase_id+1}"
-        
-        path, _ = QFileDialog.getOpenFileName(
-                self, prompt, QDir.homePath(), "*.csv")
-
-        dest = QDir(path)
-        qline.setText(QDir.fromNativeSeparators(dest.path()))
-
-
-    @Slot()
-    def compute_mp_adorb(self):
-        # collect arguments to send to simulate function
-        adorb_paths = [x.text() for x in self.file_entries]
-        year_starts = [int(x.currentText()) for x in self.year_entries]
-        
-        # input validation
-        err_string = adorb.validate_input(adorb_paths, year_starts, self.num_sim_years)
-
-        # run the computation
-        try:
-            assert err_string == "", err_string
-            adorb.multiphaseADORB(adorb_paths, year_starts, self.num_sim_years)
-        except Exception as err_msg:
-            self.parent.display_error(str(err_msg))
-        else:
-            self.parent.display_info("Computation complete!")
-        
-        # return to the home directory
-        os.chdir(self.parent.home_dir)
+    def closeEvent(self, event):
+        # shut down simulation tab if sim is running
+        self.sim_tab.shutdown_simulation()
+
+        # proceed with regular shutdown
+        event.accept()
