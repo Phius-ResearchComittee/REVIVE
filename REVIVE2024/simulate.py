@@ -333,9 +333,9 @@ def resilience_simulation_prep(si: SimInputs, case_id: int, simulation_mgr=None)
     constructionList = pd.read_csv(constructionDatabase, index_col="Name")
     appliance_list = list(runList['APPLIANCE_LIST'][runCount].split(', '))
 
-    total_appliance_cost = fridge = dishWasher = clothesWasher = clothesDryer = lights_cost = 0
     ihg_dict = {}
     for Nbr in range(9):
+        total_appliance_cost = fridge = dishWasher = clothesWasher = clothesDryer = lights_cost = 0
         for appliance_name, row in constructionList.filter(items=appliance_list, axis=0).iterrows():
             rating = float(row["Appliance_Rating"]) # must be float for fractional efficiency
             cost = int(row["Mechanical Cost"])
@@ -520,13 +520,13 @@ def resilience_simulation_prep(si: SimInputs, case_id: int, simulation_mgr=None)
     modeled_zones = idf1.idfobjects['ZONE']
     DHW_CombinedGPM = 0
 
-    unit_list = []
+    unit_bedroom_list = []
     for zone in modeled_zones:
         zone_name = zone.Name.split('|')
         zone_type = zone_name[1] if len(zone_name)>1 else ""
         zone.Name = zone_name[0]
         if 'UNIT' in zone_type:
-            unit_list.append(zone_name[0])
+            unit_bedroom_list.append([zone_name[0],int(zone_name[2][0])])
             occ = 1 + float(zone_name[2][0])
             icfa_zone = zone.Floor_Area
             Nbr_zone = float(zone_name[2][0])
@@ -552,6 +552,14 @@ def resilience_simulation_prep(si: SimInputs, case_id: int, simulation_mgr=None)
             G_ocs = 22  #in W
             G_ocl = 12  #in W
 
+            # retrieve appliance IHG for each zone depending on number of bedrooms
+            Nbr = int(Nbr_zone)
+            fridge = ihg_dict[Nbr]["fridge"]
+            dishWasher = ihg_dict[Nbr]["dishwasher"]
+            clothesWasher = ihg_dict[Nbr]["clotheswasher"]
+            clothesDryer = ihg_dict[Nbr]["clothesdryer"] 
+
+            # compute interal heat gains
             sizingLoadSensible = G_0s + G_cfs*icfa_zone + G_ocs*occ
             sizingLoadLatent = G_0l + G_cfl*icfa_zone + G_ocl*occ
             internalHeatGains.People(idf1, zone_name[0], occ)
@@ -585,9 +593,10 @@ def resilience_simulation_prep(si: SimInputs, case_id: int, simulation_mgr=None)
         if 'CORRIDOR' in zone_type:
             print(str(zone_name[0]) + ' is some a Corridor')
     
-    # export unit list for use in annual simulation
-    with open(os.path.join(studyFolder, f"{BaseFileName}_UnitList.json"), "w") as fp:
-        json.dump(unit_list, fp)
+    # export map of units to # beds for use in annual simulation
+    unit_list = [unit for unit, _ in unit_bedroom_list]
+    with open(os.path.join(studyFolder, f"{BaseFileName}_UnitBedrooms.json"), "w") as fp:
+        json.dump(unit_bedroom_list, fp)
 
     # Materials and constructions
     materials = pd.read_csv(os.path.join(databaseDir, 'Material Database.csv'))
@@ -799,8 +808,9 @@ def annual_simulation_prep(si: SimInputs, case_id: int, simulation_mgr=None):
         hvac.AnnualERV(idf2, zone_name, occ, ervSense, ervLatent)
         
     # create schedules for units with windows
-    with open(os.path.join(studyFolder, f"{BaseFileName}_UnitList.json"), "r") as fp:
-        unit_list = json.load(fp)
+    with open(os.path.join(studyFolder, f"{BaseFileName}_UnitBedrooms.json"), "r") as fp:
+        unit_bedroom_list = json.load(fp)
+        unit_list = [unit for unit, _ in unit_bedroom_list]
     schedules.AnnualControls(idf2, unit_list)
 
     # get envelope information
@@ -848,11 +858,11 @@ def annual_simulation_prep(si: SimInputs, case_id: int, simulation_mgr=None):
     with open(os.path.join(studyFolder, f"{BaseFileName}_IHGDict.json"), "r") as fp:
         ihg_dict = json.load(fp)
     
-    num_beds = runList['BEDROOMS'][runCount]
-    total_appliance_cost = ihg_dict[str(num_beds)]["applianceCost"]
-    lights_cost = ihg_dict[str(num_beds)]["lightsCost"]
-    envelope.costBuilder(idf2, 'APPLIANCES','','General',0,0,total_appliance_cost,'',1)
-    envelope.costBuilder(idf2, 'LIGHTS','','General',0,0,lights_cost,'',1)
+    for _, num_beds in unit_bedroom_list:
+        total_appliance_cost = ihg_dict[str(num_beds)]["applianceCost"]
+        lights_cost = ihg_dict[str(num_beds)]["lightsCost"]
+        envelope.costBuilder(idf2, 'APPLIANCES','','General',0,0,total_appliance_cost,'',1)
+        envelope.costBuilder(idf2, 'LIGHTS','','General',0,0,lights_cost,'',1)
 
     # CHECKPOINT: before annual simulation starts
     checkpoint(simulation_mgr)
@@ -1098,7 +1108,7 @@ def collect_individual_simulation_results(si: SimInputs, case_id: int, simulatio
     ba_hourly_path = os.path.join(studyFolder, f"{BaseFileName}_BAHourly.csv")
     ba_mtr_path = os.path.join(studyFolder, f"{BaseFileName}_BAmtr.csv")
     adorb_results_path = os.path.join(studyFolder, f"{BaseFileName}_ADORBresults.csv")
-    unit_list_path = os.path.join(studyFolder, f"{BaseFileName}_UnitList.json")
+    unit_list_path = os.path.join(studyFolder, f"{BaseFileName}_UnitBedrooms.json")
 
     # info from BR htm tables
     try:
@@ -1131,7 +1141,7 @@ def collect_individual_simulation_results(si: SimInputs, case_id: int, simulatio
     # info from hourly cool
     try:
         with open(unit_list_path, "r") as fp:
-            unit_list = json.load(fp)
+            unit_bedroom_list = json.load(fp)
         
         hourlyCool = pd.read_csv(br_hourly_cool_path)
 
@@ -1140,7 +1150,7 @@ def collect_individual_simulation_results(si: SimInputs, case_id: int, simulatio
         
         # compute total mora days
         mora_days_units = {}
-        for unit in unit_list:
+        for unit, _ in unit_bedroom_list:
             RH = hourlyCool[(str(unit).upper()+ ':Zone Air Relative Humidity [%](Hourly)')].tolist()
             Temp = hourlyCool[(str(unit).upper()+ ':Zone Air Temperature [C](Hourly)')].tolist()
 
@@ -1160,7 +1170,7 @@ def collect_individual_simulation_results(si: SimInputs, case_id: int, simulatio
                 moraPF.append(mean(TEMPdays[day])-((49.593 - 48.580*np.array(mean(RHdays[day])*0.01) +25.887*np.array(mean(RHdays[day])*0.01)**2)))
                 if (mean(TEMPdays[day])-((49.593 - 48.580*np.array(mean(RHdays[day])*0.01) +25.887*np.array(mean(RHdays[day])*0.01)**2))) > 0:
                     moraTotalDays = moraTotalDays+1
-            mora_days_units[str(unit)] = moraTotalDays
+            mora_days_units[str(unit)] = moraTotalDays # TODO: ENSURE THAT UNIT IS A UNIQUE NAME
         
         # compute max drybulb and dewpoint temp for cooling outage
         MaxDBOut = max(hourlyCool['Environment:Site Outdoor Air Drybulb Temperature [C](Hourly)'].tolist())
