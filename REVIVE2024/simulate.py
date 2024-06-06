@@ -34,6 +34,7 @@ import renewables
 import schedules
 import simControl
 import weatherMorph
+# TODO: CLEAN UP IMPORTS
 
 """Class to hold all inputs that do not vary from run to run""" 
 class SimInputs:
@@ -221,15 +222,21 @@ def simulate_with_gui_communication(si: SimInputs, sm: SimulationManager):
         idfs_batch1 = parallel_runner(resilience_simulation_prep, si, sm)
         batch_simulation(si, idfs_batch1, "BR")
 
-        # process intermediate results
+        # process resilience results
         parallel_runner(process_resilience_simulation_output, si, sm)
 
         # generate the idfs for annual simulation
         idfs_batch2 = parallel_runner(annual_simulation_prep, si, sm)
         batch_simulation(si, idfs_batch2, "BA")
 
+        # process annual results
+        parallel_runner(process_annual_simulation_output, si, sm)
+
+        # with the two simulations done, compute adorb costs
+        parallel_runner(compute_adorb_costs, si, sm)
+
         # collect the results here
-        ##################################
+        parallel_runner(collect_individual_simulation_results, si, sm)
 
         # optional generate graphs/cleanup here
         ##################################
@@ -355,7 +362,7 @@ def resilience_simulation_prep(si: SimInputs, case_id: int, simulation_mgr=None)
     # export IHG dictionary to json for use in annual simulation
     # TODO: ASSIGN TO VARIABLE IN SIMULATION MANAGER
     # TODO: DELETE TEMPORARY FILES LIKE THIS UPON COMPLETION/EXIT
-    with open(os.path.join(studyFolder, "ihg_dict.json"), "w") as fp:
+    with open(os.path.join(studyFolder, f"{BaseFileName}_IHGDict.json"), "w") as fp:
         json.dump(ihg_dict, fp)
     
     # TODO: REMOVE LATER
@@ -578,7 +585,7 @@ def resilience_simulation_prep(si: SimInputs, case_id: int, simulation_mgr=None)
             print(str(zone_name[0]) + ' is some a Corridor')
     
     # export unit list for use in annual simulation
-    with open(os.path.join(studyFolder, "unit_list.json"), "w") as fp:
+    with open(os.path.join(studyFolder, f"{BaseFileName}_UnitList.json"), "w") as fp:
         json.dump(unit_list, fp)
 
     # Materials and constructions
@@ -722,8 +729,8 @@ def process_resilience_simulation_output(si: SimInputs, case_id: int, simulation
     hourlyCool = hourly.loc[maskc]
 
     # export results
-    hourlyHeat.to_csv(os.path.join(studyFolder, f"{BaseFileName}_HourlyHeat.csv"))
-    hourlyCool.to_csv(os.path.join(studyFolder, f"{BaseFileName}_HourlyCool.csv"))
+    hourlyHeat.to_csv(os.path.join(studyFolder, f"{BaseFileName}_BRHourlyHeat.csv"))
+    hourlyCool.to_csv(os.path.join(studyFolder, f"{BaseFileName}_BRHourlyCool.csv"))
 
     # CHECKPOINT: intermediate processing finished
     checkpoint(simulation_mgr)
@@ -747,11 +754,14 @@ def annual_simulation_prep(si: SimInputs, case_id: int, simulation_mgr=None):
     prev_sim_htm_results = os.path.join(studyFolder, f"{BaseFileName}_BRtbl.htm")
     prev_sim_idf = os.path.join(studyFolder, f"{BaseFileName}_BR.idf")
     prev_sim_temp_results = os.path.join(studyFolder, f"{BaseFileName}_BRout.csv")
-    prev_sim_hourly_heat = os.path.join(studyFolder, f"{BaseFileName}_HourlyHeat.csv")
-    prev_sim_hourly_cool = os.path.join(studyFolder, f"{BaseFileName}_HourlyCool.csv")
+    prev_sim_hourly_heat = os.path.join(studyFolder, f"{BaseFileName}_BRHourlyHeat.csv")
+    prev_sim_hourly_cool = os.path.join(studyFolder, f"{BaseFileName}_BRHourlyCool.csv")
     if (not os.path.isfile(prev_sim_htm_results) or 
         not os.path.isfile(prev_sim_idf) or
-        not os.path.isfile(prev_sim_temp_results)): 
+        not os.path.isfile(prev_sim_temp_results) or
+        not os.path.isfile(prev_sim_hourly_heat) or
+        not os.path.isfile(prev_sim_hourly_cool)):
+        print("WARNING: Could not locate all outputs from resilience simulation.")
         return
 
     # initialize idfs for simulation
@@ -788,7 +798,7 @@ def annual_simulation_prep(si: SimInputs, case_id: int, simulation_mgr=None):
         hvac.AnnualERV(idf2, zone_name, occ, ervSense, ervLatent)
         
     # create schedules for units with windows
-    with open(os.path.join(studyFolder, "unit_list.json"), "r") as fp:
+    with open(os.path.join(studyFolder, f"{BaseFileName}_UnitList.json"), "r") as fp:
         unit_list = json.load(fp)
     schedules.AnnualControls(idf2, unit_list)
 
@@ -834,7 +844,7 @@ def annual_simulation_prep(si: SimInputs, case_id: int, simulation_mgr=None):
             envelope.costBuilder(idf2, name,'' ,'General',0,0,(costPV*PV_SIZE),'',1)
 
     # factor in appliances and lights cost to envelope
-    with open(os.path.join(studyFolder, "ihg_dict.json"), "r") as fp:
+    with open(os.path.join(studyFolder, f"{BaseFileName}_IHGDict.json"), "r") as fp:
         ihg_dict = json.load(fp)
     
     num_beds = runList['BEDROOMS'][runCount]
@@ -850,6 +860,37 @@ def annual_simulation_prep(si: SimInputs, case_id: int, simulation_mgr=None):
     idf2.saveas(testingFile_BA)
     idf = IDF(testingFile_BA, epwFile)
     return idf
+
+
+def process_annual_simulation_output(si: SimInputs, case_id: int, simulation_mgr=None):
+    """Collects intermediate information and exports it for easier access in annual simulation."""
+
+    # infer case run details
+    runList = si.run_list_df
+    runCount = case_id
+    studyFolder = si.study_folder
+    BaseFileName = f"{si.batch_name}_{runList['CASE_NAME'][runCount]}"
+    
+    # load the results
+    annual_sim_temp_results = os.path.join(studyFolder, f"{BaseFileName}_BAout.csv")
+    hourly = pd.read_csv(annual_sim_temp_results)
+
+    # combine columns
+    hourly.rename(columns = {'Date/Time':'DateTime'}, inplace = True)
+    hourly[['Date2','Time']] = hourly.DateTime.str.split(expand=True)
+    hourly['Date'] = hourly['Date2'].map(str)
+    hourly['Time'] = (pd.to_numeric(hourly['Time'].str.split(':').str[0])-1).astype(str).apply(lambda x: f'0{x}' if len(x)==1 else x) + hourly['Time'].str[2:]
+    hourly['DateTime'] = hourly['Date'] + ' ' + hourly['Time']
+    hourly['DateTime'] = pd.to_datetime(hourly['DateTime'], format="%m/%d %H:%M:%S", exact=True)
+
+    # drop the warmup
+    endWarmup = hourly[hourly['DateTime'] == '1900-01-01 00:00:00'].index[0]
+    dropWarmup = [*range(0, endWarmup,1)]
+    hourly = hourly.drop(index = dropWarmup)
+    hourly = hourly.reset_index()
+
+    # export results
+    hourly.to_csv(os.path.join(studyFolder, f"{BaseFileName}_BAHourly.csv"))
 
 
 def batch_simulation(si: SimInputs, idfs, label: str):
@@ -878,9 +919,358 @@ def batch_simulation(si: SimInputs, idfs, label: str):
     runIDFs([x for x in runs], processors=si.num_procs)
 
 
-def collect_simulation_results():
+def compute_adorb_costs(si: SimInputs, case_id: int, simulation_mgr=None):
+    """Prepare embodied carbon costs and other various inputs to compute adorb costs."""
+
+    # infer run information
+    runList = si.run_list_df
+    runCount = case_id
+    case_name = runList["CASE_NAME"][runCount]
+    studyFolder = si.study_folder
+    BaseFileName = f"{si.batch_name}_{case_name}"
+    databaseDir = si.database_dir
+
+    # get explicit information from run list
+    duration = int(runList['ANALYSIS_DURATION'][runCount])
+    elecPrice = float(runList['ELEC_PRICE_[$/kWh]'][runCount])
+    elec_sellback_price = float(runList['SELLBACK_PRICE_[$/kWh]'][runCount])
+    natGasPresent = runList["NATURAL_GAS"][runCount]
+    gasPrice = runList['GAS_PRICE_[$/THERM]'][runCount]
+    gridRegion = runList['GRID_REGION'][runCount]
+    carbonMeasures = runList["CARBON_MEASURES"][runCount].split(", ")
+    appliance_list = runList['APPLIANCE_LIST'][runCount].split(', ')
+    case_country = runList['ENVELOPE_COUNTRY'][runCount]
+
+    # gather files to use
+    ba_htm_path = os.path.join(studyFolder, f"{BaseFileName}_BAtbl.htm")
+    ba_hourly_path = os.path.join(studyFolder, f"{BaseFileName}_BAHourly.csv")
+    ba_mtr_path = os.path.join(studyFolder, f"{BaseFileName}_BAmtr.csv")
+    if (not os.path.isfile(ba_htm_path) or
+        not os.path.isfile(ba_hourly_path) or 
+        not os.path.isfile(ba_mtr_path)):
+        print("WARNING: Could not locate all outputs from annual simulation.")
+        return
+
+    # load tables for lookup later
+    construction_cost_est_table = fasthtml.tablebyname(open(ba_htm_path, "r") , "Construction Cost Estimate Summary")
+    cost_line_item_detail_table = fasthtml.tablebyname(open(ba_htm_path, "r") , "Cost Line Item Details")
+    annual_peak_values_table = fasthtml.tablebyname(open(ba_htm_path, "r") , "Annual and Peak Values - Electricity")
+
+    # load info for annual electric and gas
+    hourly = pd.read_csv(ba_hourly_path)
+    monthlyMTR = pd.read_csv(ba_mtr_path)
+    
+    # compute annual electric consumption and CO2 emissions
+    annualElec = ((hourly['Whole Building:Facility Total Purchased Electricity Energy [J](Hourly)'].sum()*0.0000002778*elecPrice)-
+                    (hourly['Whole Building:Facility Total Surplus Electricity Energy [J](Hourly)'].sum()*0.0000002778*elec_sellback_price)
+                    +100)
+    MWH = hourly['Whole Building:Facility Total Purchased Electricity Energy [J](Hourly)']*0.0000000002778
+    CO2_Elec_List = []
+    for filename in os.listdir(os.path.join(databaseDir, 'CambiumFactors')):
+        if filename.endswith('.csv'):
+            hourlyBAEmissions = pd.read_csv(os.path.join(databaseDir, 'CambiumFactors', filename))
+            emissions = hourlyBAEmissions[str(gridRegion)]
+            CO2_Elec = sum(MWH*emissions)
+            CO2_Elec_List.append((CO2_Elec))
+    annualCO2Elec = CO2_Elec_List    
+
+    # compute annual gas consumption and CO2 emissions
+    if natGasPresent == 1:
+        monthlyMTR = monthlyMTR.drop(index=[0,1,2,3,4,5,6,7])
+        annualGas = (((sum(monthlyMTR['NaturalGas:Facility [J](Monthly) ']*9.478169879E-9))*gasPrice)+(40*12))
+        annualCO2Gas = (sum(monthlyMTR['NaturalGas:Facility [J](Monthly) ']*9.478169879E-9))*12.7
+    else:
+        annualCO2Gas = annualGas = 0
+
+    # compute carbon measure cost by year
+    carbonDatabase = pd.read_csv(os.path.join(databaseDir, 'Carbon Correction Database.csv'))
+    countryEmissionsDatabase = pd.read_csv(os.path.join(databaseDir, 'Country Emission Database.csv'))
+    firstCost = [float(construction_cost_est_table[1][9][2]),0]
+    carbonMeasureCost, emCO2 = [], []
+
+    # TODO: CLEAN UP LOOPS
+    for measure in range(carbonDatabase.shape[0]):
+        if carbonDatabase['Name'][measure] in carbonMeasures:
+            carbonMeasureCost.append([carbonDatabase['Cost'][measure], carbonDatabase['Year'][measure]])
+    carbonMeasureCost.append(firstCost)
+
+    for measure in range(carbonDatabase.shape[0]):
+        if carbonDatabase['Name'][measure] in carbonMeasures:
+            for country in range(countryEmissionsDatabase.shape[0]):
+                if str(countryEmissionsDatabase['COUNTRY'][country]) == str(carbonDatabase['Country'][1]):
+                    ef = countryEmissionsDatabase['EF [kg/$]'][country]
+                if str(countryEmissionsDatabase['COUNTRY'][country]) == 'USA':
+                    efUSA = countryEmissionsDatabase['EF [kg/$]'][country]
+            emCO2.append([(carbonDatabase['Cost'][measure]*ef*(1-carbonDatabase['Labor Fraction'][measure])) + 
+                            ((carbonDatabase['Cost'][measure]*efUSA*(carbonDatabase['Labor Fraction'][measure]))), carbonDatabase['Year'][measure]])
+            # Labor fraction should be subtracted out and have USA EF applied
+
+    for country in range(countryEmissionsDatabase.shape[0]):
+        if str(countryEmissionsDatabase['COUNTRY'][country]) == str(runList['ENVELOPE_COUNTRY'][runCount]):
+            efENV = countryEmissionsDatabase['EF [kg/$]'][country]
+            emCO2first = ((firstCost[0] * (1-runList['ENVELOPE_LABOR_FRACTION'][runCount]) * efENV) + 
+                (firstCost[0] * (runList['ENVELOPE_LABOR_FRACTION'][runCount]) * efUSA))
+            emCO2firstCost = [emCO2first,0]
+    emCO2.append(emCO2firstCost)
+
+    # compute direct maintenance and embodied C02 for appliances
+    dirMR = carbonMeasureCost
+    constructionList = pd.read_csv(si.construction_db)
+    constructionList['Name'] = constructionList['Name'].apply(lambda x: x.lower())
+    constructionList = constructionList.set_index("Name")
+    countryEmissionsDatabase = countryEmissionsDatabase.set_index("COUNTRY")
+    price_of_carbon = 0.25 # units: $/kg according to spec
+    # TODO: AVOID HARDCODING CARBON MULTIPLE TIMES
+
+    # define routine to compute the embodied CO2 and direct maintenance costs for ADORB
+    def add_item_to_adorb_inputs(name, cost=None):
+        emissions_factor = countryEmissionsDatabase.loc[case_country, 'EF [kg/$]']
+        try:
+            # cross-reference with construction list if item exists
+            labor_fraction = constructionList.loc[name, "Labor_Fraction"]
+            lifetime = int(constructionList.loc[name, "Lifetime"])
+            if cost==None: cost = constructionList.loc[name, "Mechanical Cost"]
+        except KeyError:
+            print(f"WARNING: Could not find \"{name}\" in construction database.")
+            return
+        embodied_carbon_calc = (cost * (1 - labor_fraction)) * (emissions_factor * price_of_carbon)
+        
+        # add cost anytime item needs installed or replaced
+        if lifetime != 0:
+            for year in range(0, duration, lifetime):
+                dirMR.append([cost, year])
+                emCO2.append([embodied_carbon_calc, year])
+        else:
+            dirMR.append([cost, 0])
+            emCO2.append([embodied_carbon_calc, 0])
+    
+
+    # extract cost line item subtotals
+    cost_line_df = pd.DataFrame(cost_line_item_detail_table[1][1:],
+                                columns=cost_line_item_detail_table[1][0]).iloc[:-1] # drop the last summation row
+
+    # compute emCO2 and dirMR per non-zero line item
+    cost_line_df_subgroup = cost_line_df[cost_line_df["Quantity."] > 0]
+    for _, row in cost_line_df_subgroup.iterrows():
+
+        # extract basic information
+        item_name = row["Item Name"].lower()
+        item_cost = row["SubTotal $"]
+
+        # strip any mechanical labels if neccessary
+        if item_name[:5] == "mech_": item_name = item_name[5:]
+
+        # handle appliance breakdown after loop
+        if item_name == "appliances" or item_name == "lights":
+            continue
+        
+        # for all normal entries compute and add to emCO2 and dirMR list
+        else:
+            add_item_to_adorb_inputs(item_name, item_cost)
+    
+    # compute emCO2 and dirMR per each appliance/lights 
+    for appliance_name in appliance_list:
+        add_item_to_adorb_inputs(appliance_name.lower())
+
+    # retrieve peak electric from table
+    eTrans = float(annual_peak_values_table[1][1][4])
+
+    # compute adorb cost
+    adorb.adorb(BaseFileName, studyFolder, duration, annualElec, annualGas, annualCO2Elec, annualCO2Gas, dirMR, emCO2, eTrans, si.graphs_enabled)
+
+
+def collect_individual_simulation_results(si: SimInputs, case_id: int, simulation_mgr=None):
     """Collect all output files from simulation and packs them into one report."""
-    pass
+    
+    # infer run information
+    runList = si.run_list_df
+    runCount = case_id
+    case_name = runList["CASE_NAME"][runCount]
+    studyFolder = si.study_folder
+    BaseFileName = f"{si.batch_name}_{case_name}"
+
+    # find all relevant files for this run
+    br_htm_path = os.path.join(studyFolder, f"{BaseFileName}_BRtbl.htm")
+    br_hourly_heat_path = os.path.join(studyFolder, f"{BaseFileName}_BRHourlyHeat.csv")
+    br_hourly_cool_path = os.path.join(studyFolder, f"{BaseFileName}_BRHourlyCool.csv")
+    ba_htm_path = os.path.join(studyFolder, f"{BaseFileName}_BAtbl.htm")
+    ba_hourly_path = os.path.join(studyFolder, f"{BaseFileName}_BAHourly.csv")
+    ba_mtr_path = os.path.join(studyFolder, f"{BaseFileName}_BAmtr.csv")
+    adorb_results_path = os.path.join(studyFolder, f"{BaseFileName}_ADORBresults.csv")
+    unit_list_path = os.path.join(studyFolder, f"{BaseFileName}_UnitList.json")
+
+    # info from BR htm tables
+    try:
+        heating_set_hours_table = fasthtml.tablebyname(open(br_htm_path, "r"), "Heating SET Hours")
+        time_bin_table = fasthtml.tablebyname(open(br_htm_path, "r"), "Time Bin Results")
+        heating_index_hours_table = fasthtml.tablebyname(open(br_htm_path, "r"), "Heat Index Hours")
+            
+        HeatingSET = float(heating_set_hours_table[1][1][1])
+        Below2C = float(time_bin_table[1][39][2])
+        Caution = float(heating_index_hours_table[1][1][2])
+        ExtremeCaution = float(heating_index_hours_table[1][1][3])
+        Danger = float(heating_index_hours_table[1][1][4])
+        ExtremeDanger = float(heating_index_hours_table[1][1][5])
+    except FileNotFoundError:
+        HeatingSET = Below2C = Caution = ExtremeCaution = Danger = ExtremeDanger = "ERROR"
+
+    # info from hourly heat
+    try:
+        hourlyHeat = pd.read_csv(br_hourly_heat_path)
+
+        # save heating battery value
+        heatingBattery = (hourlyHeat['Whole Building:Facility Total Purchased Electricity Energy [J](Hourly)'].sum())*0.0000002778
+        
+        # compute min drybulb and dewpoint temp for heating outage
+        MinDBOut = min(hourlyHeat['Environment:Site Outdoor Air Drybulb Temperature [C](Hourly)'].tolist())
+        MinDPOut = min(hourlyHeat['Environment:Site Outdoor Air Dewpoint Temperature [C](Hourly)'].tolist())
+    except FileNotFoundError:
+        heatingBattery = MinDBOut = MinDPOut = "ERROR"
+    
+    # info from hourly cool
+    try:
+        with open(unit_list_path, "r") as fp:
+            unit_list = json.load(fp)
+        
+        hourlyCool = pd.read_csv(br_hourly_cool_path)
+
+        # save cooling battery value
+        coolingBattery = (hourlyCool['Whole Building:Facility Total Purchased Electricity Energy [J](Hourly)'].sum())*0.0000002778
+        
+        # compute total mora days
+        mora_days_units = {}
+        for unit in unit_list:
+            RH = hourlyCool[(str(unit).upper()+ ':Zone Air Relative Humidity [%](Hourly)')].tolist()
+            Temp = hourlyCool[(str(unit).upper()+ ':Zone Air Temperature [C](Hourly)')].tolist()
+
+            RHdays = [RH[x:x+24] for x in range(0, len(RH), 24)]
+            TEMPdays = [Temp[x:x+24] for x in range(0, len(Temp), 24)]
+
+            # TODO: ALL LISTS BELOW ARE UNUSED ONCE BUILT
+            avgRH = []
+            avgTemp = []
+            moraDays = []
+            moraPF = []
+            moraTotalDays = 0
+            for day in range(7):
+                avgRH.append(mean(RHdays[day]))
+                avgTemp.append(mean(TEMPdays[day]))
+                moraDays.append((49.593 - 48.580*np.array(mean(RHdays[day])*0.01) +25.887*np.array(mean(RHdays[day])*0.01)**2))
+                moraPF.append(mean(TEMPdays[day])-((49.593 - 48.580*np.array(mean(RHdays[day])*0.01) +25.887*np.array(mean(RHdays[day])*0.01)**2)))
+                if (mean(TEMPdays[day])-((49.593 - 48.580*np.array(mean(RHdays[day])*0.01) +25.887*np.array(mean(RHdays[day])*0.01)**2))) > 0:
+                    moraTotalDays = moraTotalDays+1
+            mora_days_units[str(unit)] = moraTotalDays
+        
+        # compute max drybulb and dewpoint temp for cooling outage
+        MaxDBOut = max(hourlyCool['Environment:Site Outdoor Air Drybulb Temperature [C](Hourly)'].tolist())
+        MaxDPOut = max(hourlyCool['Environment:Site Outdoor Air Dewpoint Temperature [C](Hourly)'].tolist())
+    except FileNotFoundError:
+        coolingBattery = moraTotalDays = MaxDBOut = MaxDPOut = "ERROR"
+
+    # info from BA htm tables
+    items_list = ["WALL", "ROOF", "FLOOR", "WINDOW", "DOOR", 
+                    "AIR SEALING", "MECH", "DHW", "APPLIANCES", 
+                    "LIGHTS", "PV COST", "BATTERY COST"] # to be used for cost map keys
+    try:
+        site_source_energy_table = fasthtml.tablebyname(open(ba_htm_path, "r"), "Site and Source Energy")
+        annual_peak_values_table = fasthtml.tablebyname(open(ba_htm_path, "r"), "Annual and Peak Values - Electricity")
+        construction_cost_est_table = fasthtml.tablebyname(open(ba_htm_path, "r"), "Construction Cost Estimate Summary")
+        cost_line_item_detail_table = fasthtml.tablebyname(open(ba_htm_path, "r"), "Cost Line Item Details")
+                    
+        eui = float(site_source_energy_table[1][1][2])
+        peakElec = float(annual_peak_values_table[1][1][4])
+        firstCost = float(construction_cost_est_table[1][9][2])
+        item_cost_dict = {key:0 for key in items_list}
+        
+        for row in range(len(cost_line_item_detail_table[1])):
+            item_name = cost_line_item_detail_table[1][row][2]
+            item_cost = cost_line_item_detail_table[1][row][6]
+            for key in items_list:
+                if key in item_name:
+                    item_cost_dict[key] = item_cost_dict[key] + item_cost
+
+    except FileNotFoundError:
+        eui = peakElec = "ERROR"
+        item_cost_dict = {item:"ERROR" for item in items_list}
+
+
+    # info from BA hourly dataset
+    try:
+        hourly = pd.read_csv(ba_hourly_path)
+        elecPrice = float(runList['ELEC_PRICE_[$/kWh]'][runCount])
+        elec_sellback_price = float(runList['SELLBACK_PRICE_[$/kWh]'][runCount])
+        annualElec = ((hourly['Whole Building:Facility Total Purchased Electricity Energy [J](Hourly)'].sum()*0.0000002778*elecPrice)-
+                        (hourly['Whole Building:Facility Total Surplus Electricity Energy [J](Hourly)'].sum()*0.0000002778*elec_sellback_price)
+                        +100)
+    except FileNotFoundError:
+        annualElec = "ERROR"
+
+    # info from BA mtr dataset
+    try:
+        monthlyMTR = pd.read_csv(ba_mtr_path)
+        natGasPresent = runList['NATURAL_GAS'][runCount]
+        gasPrice = runList['GAS_PRICE_[$/THERM]'][runCount]
+        if natGasPresent == 1:
+            monthlyMTR = monthlyMTR.drop(index=[0,1,2,3,4,5,6,7])
+            annualGas = ((sum(monthlyMTR['NaturalGas:Facility [J](Monthly) ']*9.478169879E-9))*gasPrice)+(40*12)
+        else:
+            annualGas = 0
+    except FileNotFoundError:
+        annualGas = "ERROR"
+    
+    try:
+        adorb_results_df = pd.read_csv(adorb_results_path)
+        pv_dirEn_tot = adorb_results_df['pv_dirEn'].sum()
+        pv_dirMR_tot = adorb_results_df['pv_dirMR'].sum()
+        pv_opCO2_tot = adorb_results_df['pv_opCO2'].sum()
+        pv_emCO2_tot = adorb_results_df['pv_emCO2'].sum()
+        pv_eTrans_tot = adorb_results_df['pv_eTrans'].sum()
+        adorbCost = pv_dirEn_tot + pv_dirMR_tot + pv_opCO2_tot + pv_emCO2_tot + pv_eTrans_tot
+    except FileNotFoundError:
+        adorbCost = pv_dirEn_tot = pv_dirMR_tot = pv_opCO2_tot = pv_emCO2_tot = pv_eTrans_tot = "ERROR"
+    
+    # collect results into dictionary
+    results_dict = {
+        "Run Name":case_name,
+        "SET ≤ 12.2°C Hours (F)":HeatingSET,
+        "Hours < 2°C [hr]":Below2C,
+        "Total Deadly Days":moraTotalDays,
+        "Min outdoor DB [°C]":MinDBOut,
+        "Min outdoor DP [°C]":MinDPOut,
+        "Max outdoor DB [°C]":MaxDBOut,
+        "Max outdoor DP [°C]":MaxDPOut,
+        "Caution (> 26.7, ≤ 32.2°C) [hr]":Caution,
+        "Extreme Caution (> 32.2, ≤ 39.4°C) [hr]":ExtremeCaution,
+        "Danger (> 39.4, ≤ 51.7°C) [hr]":Danger,
+        "Extreme Danger (> 51.7°C) [hr]":ExtremeDanger,
+        "EUI":eui,
+        "Peak Electric Demand [W]":peakElec,
+        "Heating Battery Size [kWh]":heatingBattery, 
+        "Cooling Battery Size [kWh]":coolingBattery,
+        "First Year Electric Cost [$]" : annualElec,
+        "First Year Gas Cost [$]":annualGas,
+        "First Cost [$]":firstCost,
+        "Wall Cost [$]":item_cost_dict["WALL"],
+        "Roof Cost [$]":item_cost_dict["ROOF"],
+        "Floor Cost [$]":item_cost_dict["FLOOR"],
+        "Window Cost [$]":item_cost_dict["WINDOW"],
+        "Door Cost [$]":item_cost_dict["DOOR"],
+        "Air Sealing Cost [$]":item_cost_dict["AIR SEALING"],
+        "Mechanical Cost [$]":item_cost_dict["MECH"],
+        "Water Heater Cost [$]":item_cost_dict["DHW"],
+        "Appliances Cost [$]":item_cost_dict["APPLIANCES"],
+        "PV Cost [$]":item_cost_dict["PV COST"],
+        "Battery Cost [$]":item_cost_dict["BATTERY COST"],
+        "Total ADORB Cost [$]":adorbCost,
+        "pv_dirEn_tot":pv_dirEn_tot,
+        "pv_dirMR_tot":pv_dirMR_tot,
+        "pv_opCO2_tot":pv_opCO2_tot,
+        "pv_emCO2_tot":pv_emCO2_tot,
+        "pv_eTrans_tot":pv_eTrans_tot
+    }
+
+    results_df = pd.DataFrame(results_dict, index=[0])
+    results_df.to_csv(os.path.join(studyFolder, f"{BaseFileName}_ResultsTable.csv"))
 
 
 def generate_graphs():
