@@ -236,7 +236,8 @@ def simulate_with_gui_communication(si: SimInputs, sm: SimulationManager):
         parallel_runner(compute_adorb_costs, si, sm)
 
         # collect the results here
-        parallel_runner(collect_individual_simulation_results, si, sm)
+        output_file_names = parallel_runner(collect_individual_simulation_results, si, sm)
+        collect_all_results(si, output_file_names)
 
         # optional generate graphs/cleanup here
         ##################################
@@ -1272,7 +1273,14 @@ def collect_individual_simulation_results(si: SimInputs, case_id: int, simulatio
     }
 
     results_df = pd.DataFrame(results_dict, index=[0])
-    results_df.to_csv(os.path.join(studyFolder, f"{BaseFileName}_ResultsTable.csv"))
+    result_file_name = os.path.join(studyFolder, f"{BaseFileName}_ResultsTable.csv")
+    results_df.to_csv(result_file_name)
+    return result_file_name
+
+
+def collect_all_results(si: SimInputs, file_list):
+    df = pd.concat(map(pd.read_csv, file_list), ignore_index=True)
+    df.to_csv(f"{si.batch_name}_ResultsTable.csv")
 
 
 def generate_graphs():
