@@ -254,7 +254,7 @@ class SimulateTab(QWidget):
 
             # prepare inputs and save for next run
             self.save_settings()
-            sim_inputs = simulate.SimInputs(batch_name, idd_file, study_folder, run_list, db_dir, show_graphs, gen_pdf_report, is_dummy_mode)
+            sim_inputs = simulate.SimInputs(batch_name, idd_file, study_folder, run_list, db_dir, num_procs, show_graphs, gen_pdf_report, is_dummy_mode)
             
             # call the simulation in thread
             self.sim_start(sim_inputs, num_procs)
@@ -274,8 +274,7 @@ class SimulateTab(QWidget):
 
         # assign work to worker thread
         self.worker = mp.Process(target=simulate.parallel_simulate, 
-                                 args=(sim_inputs, self.total_runs, num_procs, 
-                                       self.progress_queue, self.stop_event))
+                                 args=(sim_inputs, self.progress_queue, self.stop_event))
         
         # start the worker thread
         self.worker.start()
