@@ -1179,18 +1179,20 @@ def collect_individual_simulation_results(si: SimInputs, case_id: int, simulatio
                     
         eui = float(site_source_energy_table[1][1][2])
         peakElec = float(annual_peak_values_table[1][1][4])
-        firstCost = float(construction_cost_est_table[1][9][2])
+        firstCost = 0
         item_cost_dict = {key:0 for key in items_list}
         
-        for row in range(len(cost_line_item_detail_table[1])):
-            item_name = cost_line_item_detail_table[1][row][2]
-            item_cost = cost_line_item_detail_table[1][row][6]
-            for key in items_list:
-                if key in item_name:
-                    item_cost_dict[key] = item_cost_dict[key] + item_cost
+        if "BASE" not in case_name:
+            firstCost = float(construction_cost_est_table[1][9][2])
+            for row in range(len(cost_line_item_detail_table[1])):
+                item_name = cost_line_item_detail_table[1][row][2]
+                item_cost = cost_line_item_detail_table[1][row][6]
+                for key in items_list:
+                    if key in item_name:
+                        item_cost_dict[key] = item_cost_dict[key] + item_cost
 
     except FileNotFoundError:
-        eui = peakElec = "ERROR"
+        eui = peakElec = firstCost = "ERROR"
         item_cost_dict = {item:"ERROR" for item in items_list}
 
 
