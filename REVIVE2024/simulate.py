@@ -279,6 +279,8 @@ def simulate(si: SimInputs, case_id: int, simulation_mgr=None):
         # Envelope
 
         infiltration_rate = runList['INFILTRATION_RATE'][runCount]
+        tb = runList['CHI_VALUE'[runCount]]
+
         Ext_Window1 = runList['EXT_WINDOW_1'][runCount]
         Ext_Window2 = runList['EXT_WINDOW_2'][runCount]
         Ext_Window3 = runList['EXT_WINDOW_3'][runCount]
@@ -472,7 +474,7 @@ def simulate(si: SimInputs, case_id: int, simulation_mgr=None):
                 sizingLoadLatent = G_0l + G_cfl*icfa_zone + G_ocl*occ
                 internalHeatGains.People(idf1, zone_name[0], occ)
                 internalHeatGains.LightsMELsAppliances(idf1, zone_name[0], PhiusLights, PhiusMELs, fridge, rangeElec, 
-                            clothesDryer,clothesWasher,dishWasher)
+                            clothesDryer,clothesWasher,dishWasher,tb)
                 internalHeatGains.SizingLoads(idf1, zone_name[0], sizingLoadSensible, sizingLoadLatent)
                 internalHeatGains.ThermalMass(idf1, zone_name[0], icfa_zone)
 

@@ -48,7 +48,7 @@ def People(idf, zone, occ):
     Thermal_Comfort_Model_1_Type = 'Pierce'
     )
 
-def LightsMELsAppliances(idf, zone, PhiusLights, PhiusMELs, fridge, rangeElec, clothesDryer,clothesWasher,dishWasher):
+def LightsMELsAppliances(idf, zone, PhiusLights, PhiusMELs, fridge, rangeElec, clothesDryer,clothesWasher,dishWasher, tb):
 
     idf.newidfobject('Lights',
         Name = (str(zone) + ' PhiusLights'),
@@ -124,6 +124,16 @@ def LightsMELsAppliances(idf, zone, PhiusLights, PhiusMELs, fridge, rangeElec, c
         Fraction_Radiant = 0.60,
         EndUse_Subcategory = 'Dishwasher'
         )
+    
+    idf.newidfobject('OtherEquipment',
+        Name = (str(zone) + ' TB'),
+        Fuel_Type = 'None',
+        Zone_or_ZoneList_Name = str(zone),
+        Schedule_Name = (str(zone) + '_TB Schedule'),
+        Design_Level_Calculation_Method = 'EquipmentLevel',
+        Design_Level = tb
+        )
+
 def ext_lights(idf):
     
     idf.newidfobject('Exterior:Lights',

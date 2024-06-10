@@ -394,9 +394,21 @@ def ResilienceControls(idf, unit_list, NatVentType):
             Actuated_Component_Type = 'Schedule:Constant',
             Actuated_Component_Control_Type = 'Schedule Value')
         
+        idf.newidfobject('EnergyManagementSystem:Actuator',
+            Name = (str(zone) + '_tbTemp'),
+            Actuated_Component_Unique_Name = (str(zone) + '_TB Schedule'),
+            Actuated_Component_Type = 'Schedule:Constant',
+            Actuated_Component_Control_Type = 'Schedule Value')
+                
         idf.newidfobject('Schedule:Constant',
             Name = (str(zone) + '_WindowFractionControl'),
             Schedule_Type_Limits_Name = 'Any Number',
+            Hourly_Value = 0
+            )
+        
+        idf.newidfobject('Schedule:Constant',
+            Name = (str(zone) + '_TB Schedule'),
+            Schedule_Type_Limits_Name = 'Fraction',
             Hourly_Value = 0
             )
         
@@ -417,6 +429,14 @@ def ResilienceControls(idf, unit_list, NatVentType):
             Program_Line_4 = 'ELSE',
             Program_Line_5 = ('SET ' + (str(zone) + 'WindowEconomizer') + ' = 0'),
             Program_Line_6 = 'ENDIF')
+        
+        idf.newidfobject('EnergyManagementSystem:Program',
+            Name = (str(zone) + '_TBDelta'),
+            Program_Line_1 = ('IF ODB == ' + (str(zone) + '_IDB')),
+            Program_Line_2 = ('SET ' + (str(zone) + '_tbTemp') + ' = 0'),
+            Program_Line_3 = 'ELSE',
+            Program_Line_4 = ('SET ' + (str(zone) + '_tbTemp') + ' = ' + 'ODB - ' + (str(zone) + '_IDB')),
+            Program_Line_5 = 'ENDIF')
         
         idf.newidfobject('EnergyManagementSystem:ProgramCallingManager',
             Name = (str(zone) + '_Program Caller'),
