@@ -18,6 +18,7 @@ from PySide6.QtGui import QIcon
 import gui_simulate_tab
 import gui_adorb_tab
 import gui_help_tab
+import gui_morph_tab
 
 class MyWidget(QWidget):
 
@@ -56,9 +57,11 @@ class MyWidget(QWidget):
         self.help_tab = gui_help_tab.HelpTab(self)
         self.sim_tab = gui_simulate_tab.SimulateTab(self)
         self.mp_adorb_tab = gui_adorb_tab.MPAdorbTab(self)
+        self.morph_tab = gui_morph_tab.MorphTab(self)
         self.tab_widget.addTab(self.help_tab, "Help")
         self.tab_widget.addTab(self.sim_tab, "Simulation")
         self.tab_widget.addTab(self.mp_adorb_tab, "Multi-phase ADORB")
+        self.tab_widget.addTab(self.morph_tab, "Weather Morphing")
 
         # attach tab widgets to main widget
         self.layout = QVBoxLayout()
