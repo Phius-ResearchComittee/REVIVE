@@ -139,135 +139,135 @@
   OnMeter=ElectricityProduced:Plant [J]
   OnMeter=Photovoltaic:ElectricityProduced [J]
 
- Meters for 634,WHOLEHOUSE_PTHP_FAN:Fan Electricity Energy [J]
+ Meters for 635,WHOLEHOUSE_PTHP_FAN:Fan Electricity Energy [J]
   OnMeter=Electricity:Facility [J]
   OnMeter=Electricity:HVAC [J]
   OnMeter=Fans:Electricity [J]
   OnMeter=General:Fans:Electricity [J]
 
- Meters for 659,WHOLEHOUSE_PTHP_DX_COOL_COIL:Cooling Coil Total Cooling Energy [J]
+ Meters for 660,WHOLEHOUSE_PTHP_DX_COOL_COIL:Cooling Coil Total Cooling Energy [J]
   OnMeter=EnergyTransfer:Facility [J]
   OnMeter=EnergyTransfer:HVAC [J]
   OnMeter=CoolingCoils:EnergyTransfer [J]
 
- Meters for 684,WHOLEHOUSE_PTHP_DX_COOL_COIL:Cooling Coil Electricity Energy [J]
+ Meters for 685,WHOLEHOUSE_PTHP_DX_COOL_COIL:Cooling Coil Electricity Energy [J]
   OnMeter=Electricity:Facility [J]
   OnMeter=Electricity:HVAC [J]
   OnMeter=Cooling:Electricity [J]
   OnMeter=General:Cooling:Electricity [J]
 
- Meters for 709,WHOLEHOUSE_PTHP_DX_HEAT_COIL:Heating Coil Heating Energy [J]
+ Meters for 710,WHOLEHOUSE_PTHP_DX_HEAT_COIL:Heating Coil Heating Energy [J]
   OnMeter=EnergyTransfer:Facility [J]
   OnMeter=EnergyTransfer:HVAC [J]
   OnMeter=HeatingCoils:EnergyTransfer [J]
 
- Meters for 722,WHOLEHOUSE_PTHP_DX_HEAT_COIL:Heating Coil Electricity Energy [J]
+ Meters for 723,WHOLEHOUSE_PTHP_DX_HEAT_COIL:Heating Coil Electricity Energy [J]
   OnMeter=Electricity:Facility [J]
   OnMeter=Electricity:HVAC [J]
   OnMeter=Heating:Electricity [J]
   OnMeter=General:Heating:Electricity [J]
 
- Meters for 747,WHOLEHOUSE_PTHP_DX_HEAT_COIL:Heating Coil Defrost Electricity Energy [J]
+ Meters for 748,WHOLEHOUSE_PTHP_DX_HEAT_COIL:Heating Coil Defrost Electricity Energy [J]
   OnMeter=Electricity:Facility [J]
   OnMeter=Electricity:HVAC [J]
   OnMeter=Heating:Electricity [J]
   OnMeter=General:Heating:Electricity [J]
 
- Meters for 748,WHOLEHOUSE_PTHP_DX_HEAT_COIL:Heating Coil Crankcase Heater Electricity Energy [J]
+ Meters for 749,WHOLEHOUSE_PTHP_DX_HEAT_COIL:Heating Coil Crankcase Heater Electricity Energy [J]
   OnMeter=Electricity:Facility [J]
   OnMeter=Electricity:HVAC [J]
   OnMeter=Heating:Electricity [J]
   OnMeter=General:Heating:Electricity [J]
 
- Meters for 749,WHOLEHOUSE_PTHP_SUP_HEATER:Heating Coil Heating Energy [J]
+ Meters for 750,WHOLEHOUSE_PTHP_SUP_HEATER:Heating Coil Heating Energy [J]
   OnMeter=EnergyTransfer:Facility [J]
   OnMeter=EnergyTransfer:HVAC [J]
   OnMeter=HeatingCoils:EnergyTransfer [J]
 
- Meters for 750,WHOLEHOUSE_PTHP_SUP_HEATER:Heating Coil Electricity Energy [J]
+ Meters for 751,WHOLEHOUSE_PTHP_SUP_HEATER:Heating Coil Electricity Energy [J]
   OnMeter=Electricity:Facility [J]
   OnMeter=Electricity:HVAC [J]
   OnMeter=Heating:Electricity [J]
   OnMeter=General:Heating:Electricity [J]
 
- Meters for 751,WHOLEHOUSE ERV_CORE:Heat Exchanger Total Heating Energy [J]
+ Meters for 752,WHOLEHOUSE ERV_CORE:Heat Exchanger Total Heating Energy [J]
   OnMeter=EnergyTransfer:Facility [J]
   OnMeter=EnergyTransfer:HVAC [J]
   OnMeter=HeatRecoveryForHeating:EnergyTransfer [J]
 
- Meters for 764,WHOLEHOUSE ERV_CORE:Heat Exchanger Total Cooling Energy [J]
+ Meters for 765,WHOLEHOUSE ERV_CORE:Heat Exchanger Total Cooling Energy [J]
   OnMeter=EnergyTransfer:Facility [J]
   OnMeter=EnergyTransfer:HVAC [J]
   OnMeter=HeatRecoveryForCooling:EnergyTransfer [J]
 
- Meters for 777,WHOLEHOUSE ERV_CORE:Heat Exchanger Electricity Energy [J]
+ Meters for 778,WHOLEHOUSE ERV_CORE:Heat Exchanger Electricity Energy [J]
   OnMeter=Electricity:Facility [J]
   OnMeter=Electricity:HVAC [J]
   OnMeter=HeatRecovery:Electricity [J]
   OnMeter=General:HeatRecovery:Electricity [J]
 
- Meters for 802,WHOLEHOUSE ERV_SUPPLY_FAN:Fan Electricity Energy [J]
+ Meters for 803,WHOLEHOUSE ERV_SUPPLY_FAN:Fan Electricity Energy [J]
   OnMeter=Electricity:Facility [J]
   OnMeter=Electricity:HVAC [J]
   OnMeter=Fans:Electricity [J]
   OnMeter=ERV_Fan:Fans:Electricity [J]
 
- Meters for 815,WHOLEHOUSE ERV_EXHAUST_FAN:Fan Electricity Energy [J]
+ Meters for 816,WHOLEHOUSE ERV_EXHAUST_FAN:Fan Electricity Energy [J]
   OnMeter=Electricity:Facility [J]
   OnMeter=Electricity:HVAC [J]
   OnMeter=Fans:Electricity [J]
   OnMeter=ERV_Fan:Fans:Electricity [J]
 
- Meters for 816,PHIUSEXTLIGHT:Exterior Lights Electricity Energy [J]
+ Meters for 817,PHIUSEXTLIGHT:Exterior Lights Electricity Energy [J]
   OnMeter=Electricity:Facility [J]
   OnMeter=ExteriorLights:Electricity [J]
   OnMeter=General:ExteriorLights:Electricity [J]
 
- Meters for 841,WHOLEHOUSE_ELECTRICWATERHEATER_50GAL:Water Heater Source Side Heat Transfer Energy [J]
+ Meters for 842,WHOLEHOUSE_ELECTRICWATERHEATER_50GAL:Water Heater Source Side Heat Transfer Energy [J]
   OnMeter=PlantLoopHeatingDemand:Facility [J]
   OnMeter=PlantLoopHeatingDemand:Plant [J]
   OnMeter=WaterSystems:PlantLoopHeatingDemand [J]
   OnMeter=General:WaterSystems:PlantLoopHeatingDemand [J]
 
- Meters for 890,WHOLEHOUSE_ELECTRICWATERHEATER_50GAL:Water Heater Electricity Energy [J]
+ Meters for 891,WHOLEHOUSE_ELECTRICWATERHEATER_50GAL:Water Heater Electricity Energy [J]
   OnMeter=Electricity:Facility [J]
   OnMeter=Electricity:Plant [J]
   OnMeter=WaterSystems:Electricity [J]
   OnMeter=General:WaterSystems:Electricity [J]
 
- Meters for 915,WHOLEHOUSE_ELECTRICWATERHEATER_50GAL:Water Heater Off Cycle Parasitic Electricity Energy [J]
+ Meters for 916,WHOLEHOUSE_ELECTRICWATERHEATER_50GAL:Water Heater Off Cycle Parasitic Electricity Energy [J]
   OnMeter=Electricity:Facility [J]
   OnMeter=Electricity:Plant [J]
   OnMeter=WaterSystems:Electricity [J]
   OnMeter=General:WaterSystems:Electricity [J]
 
- Meters for 916,WHOLEHOUSE_ELECTRICWATERHEATER_50GAL:Water Heater On Cycle Parasitic Electricity Energy [J]
+ Meters for 917,WHOLEHOUSE_ELECTRICWATERHEATER_50GAL:Water Heater On Cycle Parasitic Electricity Energy [J]
   OnMeter=Electricity:Facility [J]
   OnMeter=Electricity:Plant [J]
   OnMeter=WaterSystems:Electricity [J]
   OnMeter=General:WaterSystems:Electricity [J]
 
- Meters for 917,WHOLEHOUSE_ELECTRICWATERHEATER_50GAL:Water Heater Water Volume [m3]
+ Meters for 918,WHOLEHOUSE_ELECTRICWATERHEATER_50GAL:Water Heater Water Volume [m3]
   OnMeter=Water:Facility [m3]
   OnMeter=Water:Plant [m3]
   OnMeter=WaterSystems:Water [m3]
   OnMeter=General:WaterSystems:Water [m3]
 
- Meters for 966,WHOLEHOUSE_ELECTRICWATERHEATER_50GAL:Water Heater Mains Water Volume [m3]
+ Meters for 967,WHOLEHOUSE_ELECTRICWATERHEATER_50GAL:Water Heater Mains Water Volume [m3]
   OnMeter=MainsWater:Facility [m3]
   OnMeter=MainsWater:Plant [m3]
   OnMeter=WaterSystems:MainsWater [m3]
   OnMeter=General:WaterSystems:MainsWater [m3]
 
- Meters for 1016,Site:Environmental Impact Total N2O Emissions Carbon Equivalent Mass [kg]
+ Meters for 1017,Site:Environmental Impact Total N2O Emissions Carbon Equivalent Mass [kg]
   OnMeter=Carbon Equivalent:Facility [kg]
   OnMeter=CarbonEquivalentEmissions:Carbon Equivalent [kg]
 
- Meters for 1041,Site:Environmental Impact Total CH4 Emissions Carbon Equivalent Mass [kg]
+ Meters for 1042,Site:Environmental Impact Total CH4 Emissions Carbon Equivalent Mass [kg]
   OnMeter=Carbon Equivalent:Facility [kg]
   OnMeter=CarbonEquivalentEmissions:Carbon Equivalent [kg]
 
- Meters for 1042,Site:Environmental Impact Total CO2 Emissions Carbon Equivalent Mass [kg]
+ Meters for 1043,Site:Environmental Impact Total CO2 Emissions Carbon Equivalent Mass [kg]
   OnMeter=Carbon Equivalent:Facility [kg]
   OnMeter=CarbonEquivalentEmissions:Carbon Equivalent [kg]
 
@@ -571,44 +571,4 @@
 
  For Meter=WaterSystems:Electricity [J], ResourceType=Electricity, EndUse=WaterSystems, contents are:
   WHOLEHOUSE_ELECTRICWATERHEATER_50GAL:Water Heater Electricity Energy
-  WHOLEHOUSE_ELECTRICWATERHEATER_50GAL:Water Heater Off Cycle Parasitic Electricity Energy
-  WHOLEHOUSE_ELECTRICWATERHEATER_50GAL:Water Heater On Cycle Parasitic Electricity Energy
-
- For Meter=General:WaterSystems:Electricity [J], ResourceType=Electricity, EndUse=WaterSystems, contents are:
-  WHOLEHOUSE_ELECTRICWATERHEATER_50GAL:Water Heater Electricity Energy
-  WHOLEHOUSE_ELECTRICWATERHEATER_50GAL:Water Heater Off Cycle Parasitic Electricity Energy
-  WHOLEHOUSE_ELECTRICWATERHEATER_50GAL:Water Heater On Cycle Parasitic Electricity Energy
-
- For Meter=Water:Facility [m3], ResourceType=Water, contents are:
-  WHOLEHOUSE_ELECTRICWATERHEATER_50GAL:Water Heater Water Volume
-
- For Meter=Water:Plant [m3], ResourceType=Water, Group=Plant, contents are:
-  WHOLEHOUSE_ELECTRICWATERHEATER_50GAL:Water Heater Water Volume
-
- For Meter=WaterSystems:Water [m3], ResourceType=Water, EndUse=WaterSystems, contents are:
-  WHOLEHOUSE_ELECTRICWATERHEATER_50GAL:Water Heater Water Volume
-
- For Meter=General:WaterSystems:Water [m3], ResourceType=Water, EndUse=WaterSystems, contents are:
-  WHOLEHOUSE_ELECTRICWATERHEATER_50GAL:Water Heater Water Volume
-
- For Meter=MainsWater:Facility [m3], ResourceType=MainsWater, contents are:
-  WHOLEHOUSE_ELECTRICWATERHEATER_50GAL:Water Heater Mains Water Volume
-
- For Meter=MainsWater:Plant [m3], ResourceType=MainsWater, Group=Plant, contents are:
-  WHOLEHOUSE_ELECTRICWATERHEATER_50GAL:Water Heater Mains Water Volume
-
- For Meter=WaterSystems:MainsWater [m3], ResourceType=MainsWater, EndUse=WaterSystems, contents are:
-  WHOLEHOUSE_ELECTRICWATERHEATER_50GAL:Water Heater Mains Water Volume
-
- For Meter=General:WaterSystems:MainsWater [m3], ResourceType=MainsWater, EndUse=WaterSystems, contents are:
-  WHOLEHOUSE_ELECTRICWATERHEATER_50GAL:Water Heater Mains Water Volume
-
- For Meter=Carbon Equivalent:Facility [kg], ResourceType=Carbon Equivalent, contents are:
-  Site:Environmental Impact Total N2O Emissions Carbon Equivalent Mass
-  Site:Environmental Impact Total CH4 Emissions Carbon Equivalent Mass
-  Site:Environmental Impact Total CO2 Emissions Carbon Equivalent Mass
-
- For Meter=CarbonEquivalentEmissions:Carbon Equivalent [kg], ResourceType=Carbon Equivalent, EndUse=CarbonEquivalentEmissions, contents are:
-  Site:Environmental Impact Total N2O Emissions Carbon Equivalent Mass
-  Site:Environmental Impact Total CH4 Emissions Carbon Equivalent Mass
-  Site:Environmental Impact Total CO2 Emissions Carbon Equivalent Mass
+  WHOLEHOUSE_ELECTRIC

@@ -581,7 +581,7 @@ def resilience_simulation_prep(si: SimInputs, case_id: int, simulation_mgr=None)
             hvac.HVACBuilder(idf1, zone_name[0], mechSystemType)
             hvac.WaterHeater(idf1, zone_name[0], dhwFuel, DHW_CombinedGPM)
             renewables.demand_limiting(idf1, zone_name[0])
-
+        # Al to do
         if 'STAIR' in zone_type:
             print(str(zone_name[0]) + ' is some Stairs')
         if 'CORRIDOR' in zone_type:
@@ -857,6 +857,8 @@ def annual_simulation_prep(si: SimInputs, case_id: int, simulation_mgr=None):
         lights_cost = ihg_dict[str(num_beds)]["lightsCost"]
         envelope.costBuilder(idf2, 'APPLIANCES','','General',0,0,total_appliance_cost,'',1)
         envelope.costBuilder(idf2, 'LIGHTS','','General',0,0,lights_cost,'',1)
+
+    schedules.TBschedules(idf2, unit_list)
 
     # CHECKPOINT: before annual simulation starts
     checkpoint(simulation_mgr)

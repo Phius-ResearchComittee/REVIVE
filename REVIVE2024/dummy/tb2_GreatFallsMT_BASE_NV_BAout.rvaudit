@@ -1,0 +1,16 @@
+ ReadVarsESO
+ processing:C:\Users\amitc_crl\OneDrive\Documents\GitHub\REVIVE\REVIVE2024\dummy\multi_runs\idf_0\in.rvi
+ input file:C:\Users\amitc_crl\OneDrive\Documents\GitHub\REVIVE\REVIVE2024\dummy\tb2_GreatFallsMT_BASE_NV_BAout.eso
+ output file:C:\Users\amitc_crl\OneDrive\Documents\GitHub\REVIVE\REVIVE2024\dummy\tb2_GreatFallsMT_BASE_NV_BAout.csv
+ getting all vars from:C:\Users\amitc_crl\OneDrive\Documents\GitHub\REVIVE\REVIVE2024\dummy\tb2_GreatFallsMT_BASE_NV_BAout.eso
+  number variables requested for output=          50
+ ReadVars Run Time=00hr 00min  0.88sec
+ ReadVarsESO program completed successfully.
+ ReadVarsESO
+ processing:C:\Users\amitc_crl\OneDrive\Documents\GitHub\REVIVE\REVIVE2024\dummy\multi_runs\idf_0\in.mvi
+ input file:C:\Users\amitc_crl\OneDrive\Documents\GitHub\REVIVE\REVIVE2024\dummy\tb2_GreatFallsMT_BASE_NV_BAout.mtr
+ output file:C:\Users\amitc_crl\OneDrive\Documents\GitHub\REVIVE\REVIVE2024\dummy\tb2_GreatFallsMT_BASE_NV_BAmtr.csv
+ getting all vars from:C:\Users\amitc_crl\OneDrive\Documents\GitHub\REVIVE\REVIVE2024\dummy\tb2_GreatFallsMT_BASE_NV_BAout.mtr
+  number variables requested for output=           7
+ ReadVars Run Time=00hr 00min  0.00sec
+ ReadVarsESO program completed successfully.

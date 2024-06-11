@@ -809,6 +809,11 @@ SCHEDULE:CONSTANT,
     Any Number,               !- Schedule Type Limits Name
     0;                        !- Hourly Value
 
+SCHEDULE:CONSTANT,
+    WholeHouse_TB Schedule,    !- Name
+    Fraction,                 !- Schedule Type Limits Name
+    0;                        !- Hourly Value
+
 MATERIAL,
     M01 100mm brick,          !- Name
     MediumRough,              !- Roughness
@@ -2379,7 +2384,7 @@ ELECTRICEQUIPMENT,
     WholeHouse,               !- Zone or ZoneList Name
     Always_On,                !- Schedule Name
     EquipmentLevel,           !- Design Level Calculation Method
-    369.8630136986301,        !- Design Level
+    41.0958904109589,         !- Design Level
     ,                         !- Watts per Zone Floor Area
     ,                         !- Watts per Person
     0,                        !- Fraction Latent
@@ -2405,7 +2410,7 @@ ELECTRICEQUIPMENT,
     WholeHouse,               !- Zone or ZoneList Name
     BAClothesDryerSchedule,    !- Schedule Name
     EquipmentLevel,           !- Design Level Calculation Method
-    23110.027275259326,       !- Design Level
+    3932.3728950917466,       !- Design Level
     ,                         !- Watts per Zone Floor Area
     ,                         !- Watts per Person
     0.05,                     !- Fraction Latent
@@ -2418,7 +2423,7 @@ ELECTRICEQUIPMENT,
     WholeHouse,               !- Zone or ZoneList Name
     BAClothesWasherSchedule,    !- Schedule Name
     EquipmentLevel,           !- Design Level Calculation Method
-    3945.205479452054,        !- Design Level
+    438.35616438356163,       !- Design Level
     ,                         !- Watts per Zone Floor Area
     ,                         !- Watts per Person
     0,                        !- Fraction Latent
@@ -2431,7 +2436,7 @@ ELECTRICEQUIPMENT,
     WholeHouse,               !- Zone or ZoneList Name
     BADishwasherSchedule,     !- Schedule Name
     EquipmentLevel,           !- Design Level Calculation Method
-    4346.396177126473,        !- Design Level
+    778.6234087288946,        !- Design Level
     ,                         !- Watts per Zone Floor Area
     ,                         !- Watts per Person
     0.15,                     !- Fraction Latent
@@ -2463,6 +2468,21 @@ ELECTRICEQUIPMENT,
     1,                        !- Fraction Latent
     0,                        !- Fraction Radiant
     0,                        !- Fraction Lost
+    General;                  !- EndUse Subcategory
+
+OTHEREQUIPMENT,
+    WholeHouse TB,            !- Name
+    None,                     !- Fuel Type
+    WholeHouse,               !- Zone or ZoneList Name
+    WholeHouse_TB Schedule,    !- Schedule Name
+    EquipmentLevel,           !- Design Level Calculation Method
+    1,                        !- Design Level
+    ,                         !- Power per Zone Floor Area
+    ,                         !- Power per Person
+    0,                        !- Fraction Latent
+    0,                        !- Fraction Radiant
+    0,                        !- Fraction Lost
+    0,                        !- Carbon Dioxide Generation Rate
     General;                  !- EndUse Subcategory
 
 ZONEINFILTRATION:DESIGNFLOWRATE,
@@ -2643,8 +2663,8 @@ ZONEHVAC:ENERGYRECOVERYVENTILATOR,
     WholeHouse ERV,           !- Name
     ERVAvailable,             !- Availability Schedule Name
     WholeHouse ERV_Core,      !- Heat Exchanger Name
-    0.028316847,              !- Supply Air Flow Rate
-    0.028316847,              !- Exhaust Air Flow Rate
+    0.0141584235,             !- Supply Air Flow Rate
+    0.0141584235,             !- Exhaust Air Flow Rate
     WholeHouse ERV_Supply_Fan,    !- Supply Air Fan Name
     WholeHouse ERV_Exhaust_Fan;    !- Exhaust Air Fan Name
 
@@ -2912,6 +2932,35 @@ WATERHEATER:MIXED,
     IndirectHeatPrimarySetpoint,    !- Source Side Flow Control Mode
     ,                         !- Indirect Alternate Setpoint Temperature Schedule Name
     General;                  !- EndUse Subcategory
+
+ENERGYMANAGEMENTSYSTEM:SENSOR,
+    WholeHouse_IDB,           !- Name
+    WholeHouse,               !- OutputVariable or OutputMeter Index Key Name
+    Zone Air Temperature;     !- OutputVariable or OutputMeter Name
+
+ENERGYMANAGEMENTSYSTEM:SENSOR,
+    ODB,                      !- Name
+    *,                        !- OutputVariable or OutputMeter Index Key Name
+    Site Outdoor Air Drybulb Temperature;    !- OutputVariable or OutputMeter Name
+
+ENERGYMANAGEMENTSYSTEM:ACTUATOR,
+    WholeHouse_tbTemp,        !- Name
+    WholeHouse_TB Schedule,    !- Actuated Component Unique Name
+    Schedule:Constant,        !- Actuated Component Type
+    Schedule Value;           !- Actuated Component Control Type
+
+ENERGYMANAGEMENTSYSTEM:PROGRAMCALLINGMANAGER,
+    WholeHouse_Program Caller,    !- Name
+    BeginZoneTimestepBeforeSetCurrentWeather,    !- EnergyPlus Model Calling Point
+    WholeHouse_TBDelta;       !- Program Name 1
+
+ENERGYMANAGEMENTSYSTEM:PROGRAM,
+    WholeHouse_TBDelta,       !- Name
+    IF ODB == WholeHouse_IDB,    !- Program Line 1
+    SET WholeHouse_tbTemp = 0,    !- Program Line 2
+    ELSE,                     !- Program Line 3
+    SET WholeHouse_tbTemp = ODB - WholeHouse_IDB,    !- Program Line 4
+    ENDIF;                    !- Program Line 5
 
 DEMANDMANAGERASSIGNMENTLIST,
     WholeHouse_Demand Limiting,    !- Name
@@ -3862,7 +3911,7 @@ COMPONENTCOST:LINEITEM,
     General,                  !- Line Item Type
     0,                        !- Item Name
     0,                        !- Object EndUse Key
-    25989.08091832681,        !- Cost per Each
+    3894.238384099925,        !- Cost per Each
     ,                         !- Cost per Area
     ,                         !- Cost per Unit of Output Capacity
     ,                         !- Cost per Unit of Output Capacity per COP
@@ -3937,7 +3986,7 @@ COMPONENTCOST:LINEITEM,
     General,                  !- Line Item Type
     0,                        !- Item Name
     0,                        !- Object EndUse Key
-    40266,                    !- Cost per Each
+    4474,                     !- Cost per Each
     ,                         !- Cost per Area
     ,                         !- Cost per Unit of Output Capacity
     ,                         !- Cost per Unit of Output Capacity per COP
@@ -3952,7 +4001,7 @@ COMPONENTCOST:LINEITEM,
     General,                  !- Line Item Type
     0,                        !- Item Name
     0,                        !- Object EndUse Key
-    2250,                     !- Cost per Each
+    250,                      !- Cost per Each
     ,                         !- Cost per Area
     ,                         !- Cost per Unit of Output Capacity
     ,                         !- Cost per Unit of Output Capacity per COP

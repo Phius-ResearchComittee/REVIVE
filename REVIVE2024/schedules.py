@@ -372,6 +372,46 @@ def AnnualControls(idf, unit_list):
             Schedule_Type_Limits_Name = 'Any Number',
             Hourly_Value = 0
             )
+def TBschedules(idf, unit_list):
+    for zone in unit_list:
+
+        idf.newidfobject('EnergyManagementSystem:Sensor',
+            Name = (str(zone) + '_IDB'),
+            OutputVariable_or_OutputMeter_Index_Key_Name = str(zone),
+            OutputVariable_or_OutputMeter_Name = 'Zone Air Temperature')
+        
+        idf.newidfobject('EnergyManagementSystem:Sensor',
+            Name = 'ODB',
+            OutputVariable_or_OutputMeter_Index_Key_Name ='*',
+            OutputVariable_or_OutputMeter_Name = 'Site Outdoor Air Drybulb Temperature')
+        
+        idf.newidfobject('EnergyManagementSystem:Actuator',
+            Name = (str(zone) + '_tbTemp'),
+            Actuated_Component_Unique_Name = (str(zone) + '_TB Schedule'),
+            Actuated_Component_Type = 'Schedule:Constant',
+            Actuated_Component_Control_Type = 'Schedule Value')
+        
+        idf.newidfobject('Schedule:Constant',
+            Name = (str(zone) + '_TB Schedule'),
+            Schedule_Type_Limits_Name = 'Fraction',
+            Hourly_Value = 0
+            )
+        
+        idf.newidfobject('EnergyManagementSystem:Program',
+            Name = (str(zone) + '_TBDelta'),
+            Program_Line_1 = ('IF ODB == ' + (str(zone) + '_IDB')),
+            Program_Line_2 = ('SET ' + (str(zone) + '_tbTemp') + ' = 0'),
+            Program_Line_3 = 'ELSE',
+            Program_Line_4 = ('SET ' + (str(zone) + '_tbTemp') + ' = ' + 'ODB - ' + (str(zone) + '_IDB')),
+            Program_Line_5 = 'ENDIF')
+        
+        idf.newidfobject('EnergyManagementSystem:ProgramCallingManager',
+            Name = (str(zone) + '_Program Caller'),
+            EnergyPlus_Model_Calling_Point  ='BeginZoneTimestepBeforeSetCurrentWeather',
+            Program_Name_1 = (str(zone) + '_TBDelta')
+            )
+
+
 
 def ResilienceControls(idf, unit_list, NatVentType):
 
@@ -441,7 +481,10 @@ def ResilienceControls(idf, unit_list, NatVentType):
         idf.newidfobject('EnergyManagementSystem:ProgramCallingManager',
             Name = (str(zone) + '_Program Caller'),
             EnergyPlus_Model_Calling_Point  ='BeginZoneTimestepBeforeSetCurrentWeather',
-            Program_Name_1 = (str(zone) + '_SummerVentDB'))
+            Program_Name_1 = (str(zone) + '_SummerVentDB'),
+            Program_Name_2 = (str(zone) + '_TBDelta')
+            )
+            
 
     idf.newidfobject('EnergyManagementSystem:Sensor',
         Name = 'OWB',
