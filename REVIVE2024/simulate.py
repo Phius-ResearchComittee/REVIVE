@@ -82,7 +82,7 @@ class SimulationManager:
         self.q = q
 
         # compute the increment amount
-        self.num_checkpoints = 10 # changes based on how many baked into code
+        self.num_checkpoints = 13 + 1 # changes based on how many baked into code
         self.increment_amt = 1 / (self.num_checkpoints * num_tasks)
 
         # init the stop event
@@ -222,14 +222,14 @@ def simulate_with_gui_communication(si: SimInputs, sm: SimulationManager):
     try:
         # perform resilience simulations
         idfs_batch1 = parallel_runner(resilience_simulation_prep, si, sm)
-        batch_simulation(si, idfs_batch1, "BR")
+        batch_simulation(si, idfs_batch1, "BR", sm)
 
         # process resilience results
         parallel_runner(process_resilience_simulation_output, si, sm)
 
         # generate the idfs for annual simulation
         idfs_batch2 = parallel_runner(annual_simulation_prep, si, sm)
-        batch_simulation(si, idfs_batch2, "BA")
+        batch_simulation(si, idfs_batch2, "BA", sm)
 
         # process annual results
         parallel_runner(process_annual_simulation_output, si, sm)
@@ -239,7 +239,7 @@ def simulate_with_gui_communication(si: SimInputs, sm: SimulationManager):
 
         # collect the individual and combined results
         output_file_names = parallel_runner(collect_individual_simulation_results, si, sm)
-        collect_all_results(si, output_file_names)
+        collect_all_results(si, output_file_names, sm)
 
         # generate graphs
         if si.graphs_enabled:
@@ -659,9 +659,6 @@ def resilience_simulation_prep(si: SimInputs, case_id: int, simulation_mgr=None)
     # save the current idf state as pass file
     idf1.saveas(passIDF)
     idf1 = IDF(passIDF)
-    
-    # CHECKPOINT: before resilience schedules
-    checkpoint(simulation_mgr)
 
     schedules.zeroSch(idf1, 'BARangeSchedule')
     schedules.zeroSch(idf1, 'Phius_Lighting')
@@ -675,9 +672,6 @@ def resilience_simulation_prep(si: SimInputs, case_id: int, simulation_mgr=None)
                                   demandCoolingAvail,shadingAvail,outage1type)
     
     schedules.ResilienceControls(idf1, unit_list, NatVentType)
-    
-    # CHECKPOINT: resilience schedules finished
-    checkpoint(simulation_mgr)
     
     for zone in unit_list:
         hvac.ResilienceERV(idf1, zone, occ, ervSense, ervLatent)
@@ -696,9 +690,6 @@ def resilience_simulation_prep(si: SimInputs, case_id: int, simulation_mgr=None)
 
 def process_resilience_simulation_output(si: SimInputs, case_id: int, simulation_mgr=None):
     """Collects intermediate information and exports it for easier access in annual simulation."""
-    
-    # CHECKPOINT: intermediate processing started
-    checkpoint(simulation_mgr)
 
     # infer case run details
     runList = si.run_list_df
@@ -778,6 +769,9 @@ def annual_simulation_prep(si: SimInputs, case_id: int, simulation_mgr=None):
     passIDF = os.path.join(studyFolder, BaseFileName + "_PASS.idf")
     idf1 = IDF(prev_sim_idf)
     idf2 = IDF(passIDF)
+
+    # CHECKPOINT: IDFs constructed
+    checkpoint(simulation_mgr)
 
     # compute outage starts
     outage1start = runList['OUTAGE_1_START'][runCount]
@@ -905,8 +899,11 @@ def process_annual_simulation_output(si: SimInputs, case_id: int, simulation_mgr
     # export results
     hourly.to_csv(os.path.join(studyFolder, f"{BaseFileName}_BAHourly.csv"))
 
+    # CHECKPOINT: annual sim results processed
+    checkpoint(simulation_mgr)
 
-def batch_simulation(si: SimInputs, idfs, label: str):
+
+def batch_simulation(si: SimInputs, idfs, label: str, simulation_mgr=None):
     """Uses eppy batch run to perform resilience simulation"""
     runs = []
     for i, idf in enumerate(idfs):
@@ -930,6 +927,9 @@ def batch_simulation(si: SimInputs, idfs, label: str):
     
     # run the simulation
     runIDFs([x for x in runs], processors=si.num_procs)
+
+    # CHECKPOINT: all runlist entries done simulating
+    for _ in range(len(idfs)): checkpoint(simulation_mgr)
 
 
 def compute_adorb_costs(si: SimInputs, case_id: int, simulation_mgr=None):
@@ -1090,6 +1090,9 @@ def compute_adorb_costs(si: SimInputs, case_id: int, simulation_mgr=None):
 
     # compute adorb cost
     adorb.adorb(BaseFileName, studyFolder, duration, annualElec, annualGas, annualCO2Elec, annualCO2Gas, dirMR, emCO2, eTrans, si.graphs_enabled)
+
+    # CHECKPOINT: adorb calculation finished
+    checkpoint(simulation_mgr)
 
 
 def collect_individual_simulation_results(si: SimInputs, case_id: int, simulation_mgr=None):
@@ -1283,16 +1286,24 @@ def collect_individual_simulation_results(si: SimInputs, case_id: int, simulatio
         "pv_emCO2_tot":pv_emCO2_tot,
         "pv_eTrans_tot":pv_eTrans_tot
     }
+    
+    # CHECKPOINT: results collected
+    checkpoint(simulation_mgr)
 
+    # export results and return file names
     results_df = pd.DataFrame(results_dict, index=[0])
     result_file_name = os.path.join(studyFolder, f"{BaseFileName}_ResultsTable.csv")
     results_df.to_csv(result_file_name)
     return result_file_name
 
 
-def collect_all_results(si: SimInputs, file_list):
+def collect_all_results(si: SimInputs, file_list, simulation_mgr=None):
+    # collect every set of results and combine into one file
     df = pd.concat(map(pd.read_csv, file_list), ignore_index=True)
     df.to_csv(f"{si.batch_name}_ResultsTable.csv")
+
+    # CHECKPOINT: all results collected
+    for _ in range(len(file_list)): checkpoint(simulation_mgr)
 
 
 def generate_graphs(si: SimInputs, case_id: int, simulation_mgr=None):
