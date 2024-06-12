@@ -4,8 +4,9 @@
 from pickle import TRUE
 import pandas as pd
 import numpy as np
-import matplotlib as mpl
+import matplotlib
 import matplotlib.pyplot as plt
+matplotlib.use("agg")
 import datetime
 import email.utils as eutils
 import time
@@ -26,6 +27,7 @@ import os
 import shutil
 import fnmatch
 import glob
+import re
 
 def adorb(BaseFileName, studyFolder, duration, annualElec, annualGas, annualCO2Elec, annualCO2Gas, dirMR, emCO2, eTrans, graphs):
     results = pd.DataFrame(columns=['pv_dirEn', 'pv_opCO2', 'pv_dirMR', 'pv_emCO2', 'pv_eTrans'])
@@ -142,52 +144,49 @@ def adorb(BaseFileName, studyFolder, duration, annualElec, annualGas, annualCO2E
     pv_emCO2_tot = df['pv_emCO2'].sum()
     pv_eTrans_tot = df['pv_eTrans'].sum()
 
-    if 'BASE' not in BaseFileName:
+    adorbWedgeGraph = os.path.join(studyFolder, BaseFileName + '_ADORB_Wedge.png')
+    adorbBarGraph = os.path.join(studyFolder, BaseFileName + '_ADORB_Bar.png')
+    batch_ident = BaseFileName[:BaseFileName.index("_")]
+    # TODO: NEED MORE RESTRICTIVE RUNLIST INPUT CHECKS TO ENSURE BASE EXISTS
+    if graphs and "BASE" not in BaseFileName:
+        fig = plt.figure(layout="constrained", figsize=(10,6))
         for filename in os.listdir(studyFolder):
-            if filename.endswith('.csv'):
-                if 'BASE' in str(filename):
-                    if 'ADORB' in str(filename):
-                        basedf = pd.read_csv(filename)
+            if re.match(rf".*{batch_ident}.*BASE.*ADORB.*\.csv", filename):
+                ax = fig.subplots()
+                basedf = pd.read_csv(filename)
 
-                        pv_dirEn_tot_base = basedf['pv_dirEn'].sum()
-                        pv_dirMR_tot_base = basedf['pv_dirMR'].sum()
-                        pv_opCO2_tot_base = basedf['pv_opCO2'].sum()
-                        pv_emCO2_tot_base = basedf['pv_emCO2'].sum()
-                        pv_eTrans_tot_base = basedf['pv_eTrans'].sum()
+                pv_dirEn_tot_base = basedf['pv_dirEn'].sum()
+                pv_dirMR_tot_base = basedf['pv_dirMR'].sum()
+                pv_opCO2_tot_base = basedf['pv_opCO2'].sum()
+                pv_emCO2_tot_base = basedf['pv_emCO2'].sum()
+                pv_eTrans_tot_base = basedf['pv_eTrans'].sum()
 
-                        case = ('Base Case','Proposed')
-                        case_data = {
-                            "Direct Energy": np.array([pv_dirEn_tot_base,pv_dirEn_tot]),
-                            "Direct Maintenance": np.array([pv_dirMR_tot_base,pv_dirMR_tot]),
-                            "Operational CO2": np.array([pv_opCO2_tot_base,pv_opCO2_tot]),
-                            "Embodied CO2": np.array([pv_emCO2_tot_base,pv_emCO2_tot]),
-                            "Energy Transition": np.array([pv_eTrans_tot_base,pv_eTrans_tot]),
-                        }
-                        width = 0.3  # the width of the bars: can also be len(x) sequence
+                case = ('Base Case','Proposed')
+                case_data = {
+                    "Direct Energy": np.array([pv_dirEn_tot_base,pv_dirEn_tot]),
+                    "Direct Maintenance": np.array([pv_dirMR_tot_base,pv_dirMR_tot]),
+                    "Operational CO2": np.array([pv_opCO2_tot_base,pv_opCO2_tot]),
+                    "Embodied CO2": np.array([pv_emCO2_tot_base,pv_emCO2_tot]),
+                    "Energy Transition": np.array([pv_eTrans_tot_base,pv_eTrans_tot]),
+                }
+                width = 0.3  # the width of the bars: can also be len(x) sequence
 
-                        if graphs == True:
-                            fig, ax = plt.subplots(figsize=(10,6))
-                            left = np.zeros(2)
+                left = np.zeros(2)
 
-                            for sex, sex_count in case_data.items():
-                                # p = ax.bar(case, sex_count, width, label=sex, bottom=bottom)
-                                y = ax.barh(case,sex_count,width,label=sex,left=left)
-                                left += sex_count
+                for category, data in case_data.items():
+                    y = ax.barh(case,data,width,label=category,left=left)
+                    left += data
 
-                                ax.bar_label(y, label_type='center',rotation=-45)
+                    ax.bar_label(y, label_type='center',rotation=-45)
 
-                            ax.set_title('Total Lifecycle ADORB Cost')
-                            ax.legend(loc="upper right")
-                            ax.set_xlabel('Cost [$]')
-                            plt.savefig(str(adorb.adorbBarGraph),dpi=300)
-                            plt.clf()
+                ax.set_title('Total Lifecycle ADORB Cost')
+                ax.legend(loc="upper right")
+                ax.set_xlabel('Cost [$]')
+                fig.savefig(adorbBarGraph,dpi=300)
+                fig.clf()
     try:
-        if graphs == True:
-            fig = df2.plot(kind='area', xlabel='Years', ylabel='Cummulative Present Value [$]', title=(str(BaseFileName) + '_ADORB COST'), figsize=(10,6)).get_figure()
-
-            adorb.adorbWedgeGraph = os.path.join(studyFolder, BaseFileName + '_ADORB_Wedge.png')
-            adorb.adorbBarGraph = os.path.join(studyFolder, BaseFileName + '_ADORB_Bar.png')
-            fig.savefig(adorb.adorbWedgeGraph)
+        fig = df2.plot(kind='area', xlabel='Years', ylabel='Cummulative Present Value [$]', title=(str(BaseFileName) + '_ADORB COST'), figsize=(10,6)).get_figure()
+        fig.savefig(adorbWedgeGraph)
 
     except:
         print('No Graph')

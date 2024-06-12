@@ -1,6 +1,8 @@
 import pandas as pd
 import numpy as np
+import matplotlib
 import matplotlib.pyplot as plt
+matplotlib.use("agg")
 # import datetime as dt
 from datetime import datetime as dt
 from datetime import timedelta
@@ -235,12 +237,16 @@ def simulate_with_gui_communication(si: SimInputs, sm: SimulationManager):
         # with the two simulations done, compute adorb costs
         parallel_runner(compute_adorb_costs, si, sm)
 
-        # collect the results here
+        # collect the individual and combined results
         output_file_names = parallel_runner(collect_individual_simulation_results, si, sm)
         collect_all_results(si, output_file_names)
 
-        # optional generate graphs/cleanup here
-        ##################################
+        # generate graphs
+        if si.graphs_enabled:
+            parallel_runner(generate_graphs, si, sm)
+
+        # cleanup here
+        ############################################
     
     # check for graceful exit request
     except GracefulExitException:
@@ -1289,9 +1295,200 @@ def collect_all_results(si: SimInputs, file_list):
     df.to_csv(f"{si.batch_name}_ResultsTable.csv")
 
 
-def generate_graphs():
+def generate_graphs(si: SimInputs, case_id: int, simulation_mgr=None):
     """If designated, create graphs and visualizations of results."""
-    pass
+    # get basic information from simulation inputs
+    caseName = si.run_list_df["CASE_NAME"][case_id]
+    studyFolder = si.study_folder
+    BaseFileName = f"{si.batch_name}_{caseName}"
+
+    # bring in datasets
+    hourlyHeat = pd.read_csv(os.path.join(studyFolder, f"{BaseFileName}_BRHourlyHeat.csv"))
+    hourlyCool = pd.read_csv(os.path.join(studyFolder, f"{BaseFileName}_BRHourlyCool.csv"))
+    hourlyHeat['DateTime'] = pd.to_datetime(hourlyHeat['DateTime'], format="%Y-%m-%d %H:%M:%S", exact=True)
+    hourlyCool['DateTime'] = pd.to_datetime(hourlyCool['DateTime'], format="%Y-%m-%d %H:%M:%S", exact=True)
+
+    # get number of zones
+    with open(os.path.join(studyFolder, f"{BaseFileName}_UnitBedrooms.json"), "r") as fp:
+        unit_bedroom_list = json.load(fp)
+        unit_list = [unit for unit, _ in unit_bedroom_list]
+    
+    # construct lambda getter functions for column labels
+    get_zone_air_temp_label = lambda x : f"{x.upper()}:Zone Air Temperature [C](Hourly)"
+    get_zone_rel_hum_label = lambda x : f"{x.upper()}:Zone Air Relative Humidity [%](Hourly)"
+    get_zone_std_eff_temp_label = lambda x : f"{x.upper()} OCCUPANTS:Zone Thermal Comfort Pierce Model Standard Effective Temperature [C](Hourly)"
+    get_zone_heat_idx_label = lambda x : f"{x.upper()}:Zone Heat Index [C](Hourly)"
+    get_zone_dry_bulb_label = lambda x : f"{x} Zone Dry Bulb [C]"
+    get_zone_rh_label = lambda x : f"{x} Zone RH"
+    get_zone_set_label = lambda x : f"{x} Zone SET"
+
+    # compute the critical units (max and min average temperature)
+    heating_outage_unit_results = {}
+    cooling_outage_unit_results = {}
+    for unit in unit_list:
+        heating_outage_unit_results[unit] = mean(hourlyHeat[get_zone_air_temp_label(unit)])
+        cooling_outage_unit_results[unit] = mean(hourlyCool[get_zone_air_temp_label(unit)])
+
+    heating_sorted_keys = sorted(heating_outage_unit_results.keys(),key=lambda x: heating_outage_unit_results[x])
+    cooling_sorted_keys = sorted(cooling_outage_unit_results.keys(),key=lambda x: cooling_outage_unit_results[x])
+
+    heating_min_unit, heating_max_unit = heating_sorted_keys[0], heating_sorted_keys[-1]
+    cooling_min_unit, cooling_max_unit = cooling_sorted_keys[0], cooling_sorted_keys[-1]
+
+    # save columns for code readability
+    heating_min_unit_air_temp = hourlyHeat[get_zone_air_temp_label(heating_min_unit)]
+    heating_max_unit_air_temp = hourlyHeat[get_zone_air_temp_label(heating_max_unit)]
+    heating_min_unit_rel_hum = hourlyHeat[get_zone_rel_hum_label(heating_min_unit)]
+    heating_max_unit_rel_hum = hourlyHeat[get_zone_rel_hum_label(heating_max_unit)]
+    heating_min_unit_std_eff_temp = hourlyHeat[get_zone_std_eff_temp_label(heating_min_unit)]
+    heating_max_unit_std_eff_temp = hourlyHeat[get_zone_std_eff_temp_label(heating_max_unit)]
+    heating_outdoor_air_temp = hourlyHeat["Environment:Site Outdoor Air Drybulb Temperature [C](Hourly)"]
+    
+    # create the figure and axes for heating graphs  
+    fig = plt.figure(layout='constrained', figsize=(10, 10))
+    fig.suptitle(f"{caseName}_Heating Outage Resilience", fontsize='x-large')
+    ax = fig.subplot_mosaic([['temperature'],['rh'],['SET']])
+    
+    # plot graphs for hourly heat 
+    x = hourlyHeat["DateTime"]
+    ax['temperature'].plot(x,heating_outdoor_air_temp, label="Site Dry Bulb [C]", linestyle='dashed')
+
+    # plot data for minimum heating unit
+    color1 = "black" if heating_min_unit==heating_max_unit else "tab:orange"
+    ax['temperature'].plot(x,heating_min_unit_air_temp, 
+                            label=get_zone_dry_bulb_label(heating_min_unit), 
+                            color=color1, 
+                            linewidth=2)
+    ax['rh'].plot(x,heating_min_unit_rel_hum, 
+                    label=get_zone_rh_label(heating_min_unit), 
+                    color=color1, 
+                    linewidth=2)
+    ax['SET'].plot(x,heating_min_unit_std_eff_temp, 
+                    label=get_zone_set_label(heating_min_unit),
+                    color=color1,
+                    linewidth=2)
+
+    # plot data for maximum heating unit (if more than one unit in the building)
+    if heating_min_unit!=heating_max_unit:
+        color2 = "tab:green"
+        ax['temperature'].plot(x,heating_max_unit_air_temp,
+                               label=get_zone_dry_bulb_label(heating_max_unit),
+                               color=color2,
+                               linewidth=2)
+        ax['rh'].plot(x,heating_max_unit_rel_hum, 
+                      label=get_zone_rh_label(heating_max_unit),
+                      color=color2,
+                      linewidth=2,
+                      linestyle='dashdot')
+        ax['SET'].plot(x,heating_max_unit_std_eff_temp,
+                       label=get_zone_set_label(heating_max_unit),
+                       color=color2,
+                       linewidth=2)
+        
+    # set the y limit to capture all data comfortably
+    ax['temperature'].set_ylim(min(min(heating_outdoor_air_temp), min(heating_min_unit_air_temp))-5,
+                               max(max(heating_outdoor_air_temp), max(heating_max_unit_air_temp))+5)
+    ax['rh'].set_ylim(0,100)
+    ax['SET'].set_ylim(min(heating_min_unit_std_eff_temp)-5,
+                       max(heating_max_unit_std_eff_temp)+5)
+    
+    # label axes
+    ax['temperature'].set_ylabel('Temperature [C]')
+    ax['temperature'].legend(ncol=2, loc='lower left', borderaxespad=0, fontsize='x-small')
+    ax['temperature'].grid(True)
+    
+    ax['rh'].set_ylabel('Relative Humidity [%]')
+    ax['rh'].legend(ncol=2, loc='lower left', borderaxespad=0, fontsize='x-small')
+    ax['rh'].grid(True)
+
+    ax['SET'].set_xlabel('Date')
+    ax['SET'].set_ylabel('Standard Effective Temperature [°C]')
+    ax['SET'].legend(ncol=2, loc='lower left', borderaxespad=0, fontsize='x-small')
+    ax['SET'].grid(True)
+    ax['SET'].axhline(12.2, color='crimson', linestyle='dashed')
+
+    # export and clear
+    heatingGraphFile = os.path.join(studyFolder, BaseFileName + "_Heating Outage Resilience Graphs.png")
+    fig.savefig(heatingGraphFile, dpi=300)
+    fig.clf()
+
+    # create figure and axes for cooling graphs
+    fig.suptitle(f"{caseName}_Cooling Outage Resilience", fontsize='x-large')
+    ax = fig.subplot_mosaic([['temperature'],['rh'],['HI']])
+
+    # save columns for readability
+    cooling_min_unit_air_temp = hourlyCool[get_zone_air_temp_label(cooling_min_unit)]
+    cooling_max_unit_air_temp = hourlyCool[get_zone_air_temp_label(cooling_max_unit)]
+    cooling_min_unit_rel_hum = hourlyCool[get_zone_rel_hum_label(cooling_min_unit)]
+    cooling_max_unit_rel_hum = hourlyCool[get_zone_rel_hum_label(cooling_max_unit)]
+    cooling_min_unit_heat_idx = hourlyCool[get_zone_heat_idx_label(cooling_min_unit)]
+    cooling_max_unit_heat_idx = hourlyCool[get_zone_heat_idx_label(cooling_max_unit)]
+    cooling_outdoor_air_temp = hourlyCool["Environment:Site Outdoor Air Drybulb Temperature [C](Hourly)"]
+    
+    # plot graphs for hourly heat 
+    x = hourlyCool["DateTime"]
+    ax['temperature'].plot(x,cooling_outdoor_air_temp, label="Site Dry Bulb [C]", linestyle='dashed')
+    
+    # plot data for minimum cooling unit
+    color1 = "black" if cooling_min_unit==cooling_max_unit else "tab:orange"
+    ax['temperature'].plot(x,cooling_min_unit_air_temp, 
+                            label=get_zone_dry_bulb_label(cooling_min_unit), 
+                            color=color1, 
+                            linewidth=2)
+    ax['rh'].plot(x,cooling_min_unit_rel_hum, 
+                    label=get_zone_rh_label(cooling_min_unit), 
+                    color=color1, 
+                    linewidth=2)
+    ax['HI'].plot(x,cooling_min_unit_heat_idx, 
+                    label=get_zone_heat_idx_label(cooling_min_unit),
+                    color=color1,
+                    linewidth=2)
+
+    # plot data for maximum cooling unit (if more than one unit in the building)
+    if cooling_min_unit!=cooling_max_unit:
+        color2 = "tab:green"
+        ax['temperature'].plot(x,cooling_max_unit_air_temp,
+                               label=get_zone_dry_bulb_label(cooling_max_unit),
+                               color=color2,
+                               linewidth=2)
+        ax['rh'].plot(x,cooling_max_unit_rel_hum, 
+                      label=get_zone_rh_label(cooling_max_unit),
+                      color=color2,
+                      linewidth=2,)
+        ax['HI'].plot(x,cooling_max_unit_heat_idx,
+                       label=get_zone_heat_idx_label(cooling_max_unit),
+                       color=color2,
+                       linewidth=2)
+
+    # set the y limit to capture all data comfortably
+    ax['temperature'].set_ylim(min(min(cooling_outdoor_air_temp), min(cooling_min_unit_air_temp))-5,
+                               max(max(cooling_outdoor_air_temp), max(cooling_max_unit_air_temp))+5)
+    ax['rh'].set_ylim(0,100)
+    ax['HI'].set_ylim(min(cooling_min_unit_heat_idx)-5,
+                      max(cooling_max_unit_heat_idx)+5)
+    
+    # label axes
+    ax['temperature'].set_ylabel('Temperature [C]')
+    ax['temperature'].legend(ncol=2, loc='lower left', borderaxespad=0, fontsize='x-small')
+    ax['temperature'].grid(True)
+
+    ax['rh'].set_ylabel('Relative Humidity [%]')
+    ax['rh'].legend(ncol=2, loc='lower left', borderaxespad=0, fontsize='x-small')
+    ax['rh'].grid(True)
+
+    ax['HI'].set_xlabel('Date')
+    ax['HI'].set_ylabel('Heat Index [°C]')
+    ax['HI'].legend(ncol=2, loc='lower left', borderaxespad=0, fontsize='x-small')
+    ax['HI'].grid(True)
+    ax['HI'].axhline(26.7, color='seagreen', linestyle='dashed')
+    ax['HI'].axhline(32.2, color='orange', linestyle='dashed')
+    ax['HI'].axhline(39.4, color='crimson', linestyle='dashed')
+    ax['HI'].axhline(51.7, color='darkmagenta', linestyle='dashed')
+
+    # export and clear
+    coolingGraphFile = os.path.join(studyFolder, BaseFileName + "_Cooling Outage Resilience Graphs.png")
+    fig.savefig(coolingGraphFile, dpi=300)
+    fig.clf()
 
 
 def cleanup_outputs():
