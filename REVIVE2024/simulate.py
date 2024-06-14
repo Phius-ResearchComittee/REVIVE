@@ -579,7 +579,7 @@ def resilience_simulation_prep(si: SimInputs, case_id: int, simulation_mgr=None)
             windowNames_split = list(divide_chunks(zone_windows, 10))
             for i in range(len(windowNames_split)):
                 windowNamesChunk = windowNames_split[i]
-                envelope.WindowShadingControl(idf1, zone_name[0], windowNamesChunk)
+                envelope.WindowShadingControl(idf1, zone_name[0], (zone_name[0]+str(i)), windowNamesChunk)
 
             hvac.SizingSettings(idf1, zone_name[0])
             hvac.HVACControls(idf1, zone_name[0])
