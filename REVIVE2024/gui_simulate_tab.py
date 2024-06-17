@@ -207,8 +207,8 @@ class SimulateTab(QWidget):
                 try:
                     # accept the progress achieved in the checkpoint
                     progress_achieved = float(next_msg) * 100
-                    new_progress = int(self.progress_bar.value() + progress_achieved)
-                    self.progress_bar.setValue(new_progress)
+                    self.progress += progress_achieved
+                    self.progress_bar.setValue(int(self.progress))
                 
                 # err string detected
                 except ValueError:
@@ -266,6 +266,7 @@ class SimulateTab(QWidget):
     def sim_start(self, sim_inputs, num_procs):
         # create the simulation manager objects
         self.mp_manager = mp.Manager()
+        self.progress = 0
         self.progress_queue = self.mp_manager.Queue()
         self.stop_event = self.mp_manager.Event()
 
