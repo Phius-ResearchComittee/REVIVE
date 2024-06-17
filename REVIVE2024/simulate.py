@@ -55,6 +55,12 @@ class SimInputs:
         self.study_folder = study_folder if not is_dummy_mode else os.path.abspath("dummy")
         self.run_list = run_list if not is_dummy_mode else os.path.join(study_folder, "dummy_runlist.csv")
 
+        # establish output folder hierarchy
+        self.batch_folder = os.path.join(study_folder, batch_name)
+        self.results_folder = os.path.join(self.batch_folder, "results")
+        self.graphs_folder = os.path.join(self.batch_folder, "graphs")
+        self.temp_folder = os.path.join(self.batch_folder, "temp")
+        
         # generate the implied input information
         self.generate_database_inputs()
         self.load_runlist()
@@ -198,11 +204,16 @@ def checkpoint(sm: SimulationManager):
     sm.send_progress()
 
 
+def make_output_folders(sim_inputs: SimInputs):
+    os.mkdir(sim_inputs.batch_folder)
+    os.mkdir(sim_inputs.results_folder)
+    if sim_inputs.graphs_enabled:
+        os.mkdir(sim_inputs.graphs_folder)
+    os.mkdir(sim_inputs.temp_folder)
+
+
 # TODO: HOOK GUI UP TO INNER FUNCTION AND RETIRE PARALLEL_SIMULATE
 def parallel_simulate(sim_inputs: SimInputs, progress_queue=None, stop_event=None):
-    
-    # move to study folder for all sims
-    os.chdir(sim_inputs.study_folder)
 
     # run the parallelized simulation
     sim_mgr = SimulationManager(progress_queue, sim_inputs.total_runs, stop_event)
@@ -218,6 +229,10 @@ def parallel_simulate(sim_inputs: SimInputs, progress_queue=None, stop_event=Non
 
 def simulate_with_gui_communication(si: SimInputs, sm: SimulationManager):
     """Check for any graceful exit requests, otherwise communicate error received to gui."""
+    # prepare folders to organize output
+    make_output_folders(si)# move to study folder for all sims
+    os.chdir(si.batch_folder)
+
     # attempt to run the simulation with error handling
     try:
         # perform resilience simulations
@@ -246,7 +261,7 @@ def simulate_with_gui_communication(si: SimInputs, sm: SimulationManager):
             parallel_runner(generate_graphs, si, sm)
 
         # cleanup here
-        ############################################
+        cleanup_outputs(si) # TODO: INCLUDE DELETE TEMP FILES GUI OPTION
     
     # check for graceful exit request
     except GracefulExitException:
@@ -299,6 +314,8 @@ def resilience_simulation_prep(si: SimInputs, case_id: int, simulation_mgr=None)
     # retrieve cached information from simulation input
     iddfile = si.idd_file
     studyFolder = si.study_folder
+    batchFolder = si.batch_folder
+    tempFolder = si.temp_folder
     databaseDir = si.database_dir
 
     weatherDatabase = si.weather_db
@@ -313,8 +330,8 @@ def resilience_simulation_prep(si: SimInputs, case_id: int, simulation_mgr=None)
 
     # establish file names
     BaseFileName = f"{si.batch_name}_{caseName}"
-    testingFile_BR = os.path.join(studyFolder, BaseFileName + "_BR.idf")
-    passIDF = os.path.join(studyFolder, BaseFileName + "_PASS.idf")
+    testingFile_BR = os.path.join(batchFolder, BaseFileName + "_BR.idf")
+    passIDF = os.path.join(batchFolder, BaseFileName + "_PASS.idf")
 
     epwFile = os.path.join(weatherDatabase, str(runList['EPW'][runCount]))
     ddyName =  os.path.join(weatherDatabase, str(runList['DDY'][runCount]))
@@ -369,7 +386,7 @@ def resilience_simulation_prep(si: SimInputs, case_id: int, simulation_mgr=None)
     # export IHG dictionary to json for use in annual simulation
     # TODO: ASSIGN TO VARIABLE IN SIMULATION MANAGER
     # TODO: DELETE TEMPORARY FILES LIKE THIS UPON COMPLETION/EXIT
-    with open(os.path.join(studyFolder, f"{BaseFileName}_IHGDict.json"), "w") as fp:
+    with open(os.path.join(tempFolder, f"{BaseFileName}_IHGDict.json"), "w") as fp:
         json.dump(ihg_dict, fp)
     
     # TODO: REMOVE LATER
@@ -595,7 +612,7 @@ def resilience_simulation_prep(si: SimInputs, case_id: int, simulation_mgr=None)
     
     # export map of units to # beds for use in annual simulation
     unit_list = [unit for unit, _ in unit_bedroom_list]
-    with open(os.path.join(studyFolder, f"{BaseFileName}_UnitBedrooms.json"), "w") as fp:
+    with open(os.path.join(tempFolder, f"{BaseFileName}_UnitBedrooms.json"), "w") as fp:
         json.dump(unit_bedroom_list, fp)
 
     # Materials and constructions
@@ -695,10 +712,12 @@ def process_resilience_simulation_output(si: SimInputs, case_id: int, simulation
     runList = si.run_list_df
     runCount = case_id
     studyFolder = si.study_folder
+    batchFolder = si.batch_folder
+    tempFolder = si.temp_folder
     BaseFileName = f"{si.batch_name}_{runList['CASE_NAME'][runCount]}"
     
     # load the results
-    resil_sim_temp_results = os.path.join(studyFolder, f"{BaseFileName}_BRout.csv")
+    resil_sim_temp_results = os.path.join(batchFolder, f"{BaseFileName}_BRout.csv")
     hourly = pd.read_csv(resil_sim_temp_results)
 
     # combine columns
@@ -730,8 +749,8 @@ def process_resilience_simulation_output(si: SimInputs, case_id: int, simulation
     hourlyCool = hourly.loc[maskc]
 
     # export results
-    hourlyHeat.to_csv(os.path.join(studyFolder, f"{BaseFileName}_BRHourlyHeat.csv"))
-    hourlyCool.to_csv(os.path.join(studyFolder, f"{BaseFileName}_BRHourlyCool.csv"))
+    hourlyHeat.to_csv(os.path.join(batchFolder, f"{BaseFileName}_BRHourlyHeat.csv"))
+    hourlyCool.to_csv(os.path.join(batchFolder, f"{BaseFileName}_BRHourlyCool.csv"))
 
     # CHECKPOINT: intermediate processing finished
     checkpoint(simulation_mgr)
@@ -746,17 +765,18 @@ def annual_simulation_prep(si: SimInputs, case_id: int, simulation_mgr=None):
     # infer case run details
     runList = si.run_list_df
     runCount = case_id
-    studyFolder = si.study_folder
+    batchFolder = si.batch_folder
+    tempFolder = si.temp_folder
     BaseFileName = f"{si.batch_name}_{runList['CASE_NAME'][runCount]}"
-    testingFile_BA = os.path.join(studyFolder, BaseFileName + "_BA.idf")
+    testingFile_BA = os.path.join(batchFolder, BaseFileName + "_BA.idf")
     epwFile = os.path.join(si.weather_db, runList['EPW'][runCount])
 
     # check for the output idf, return if not found (something went wrong)
-    prev_sim_htm_results = os.path.join(studyFolder, f"{BaseFileName}_BRtbl.htm")
-    prev_sim_idf = os.path.join(studyFolder, f"{BaseFileName}_BR.idf")
-    prev_sim_temp_results = os.path.join(studyFolder, f"{BaseFileName}_BRout.csv")
-    prev_sim_hourly_heat = os.path.join(studyFolder, f"{BaseFileName}_BRHourlyHeat.csv")
-    prev_sim_hourly_cool = os.path.join(studyFolder, f"{BaseFileName}_BRHourlyCool.csv")
+    prev_sim_htm_results = os.path.join(batchFolder, f"{BaseFileName}_BRtbl.htm")
+    prev_sim_idf = os.path.join(batchFolder, f"{BaseFileName}_BR.idf")
+    prev_sim_temp_results = os.path.join(batchFolder, f"{BaseFileName}_BRout.csv")
+    prev_sim_hourly_heat = os.path.join(batchFolder, f"{BaseFileName}_BRHourlyHeat.csv")
+    prev_sim_hourly_cool = os.path.join(batchFolder, f"{BaseFileName}_BRHourlyCool.csv")
     if (not os.path.isfile(prev_sim_htm_results) or 
         not os.path.isfile(prev_sim_idf) or
         not os.path.isfile(prev_sim_temp_results) or
@@ -766,7 +786,7 @@ def annual_simulation_prep(si: SimInputs, case_id: int, simulation_mgr=None):
         return
 
     # initialize idfs for simulation
-    passIDF = os.path.join(studyFolder, BaseFileName + "_PASS.idf")
+    passIDF = os.path.join(batchFolder, BaseFileName + "_PASS.idf")
     idf1 = IDF(prev_sim_idf)
     idf2 = IDF(passIDF)
 
@@ -802,7 +822,7 @@ def annual_simulation_prep(si: SimInputs, case_id: int, simulation_mgr=None):
         hvac.AnnualERV(idf2, zone_name, occ, ervSense, ervLatent)
         
     # create schedules for units with windows
-    with open(os.path.join(studyFolder, f"{BaseFileName}_UnitBedrooms.json"), "r") as fp:
+    with open(os.path.join(tempFolder, f"{BaseFileName}_UnitBedrooms.json"), "r") as fp:
         unit_bedroom_list = json.load(fp)
         unit_list = [unit for unit, _ in unit_bedroom_list]
     schedules.AnnualControls(idf2, unit_list)
@@ -849,7 +869,7 @@ def annual_simulation_prep(si: SimInputs, case_id: int, simulation_mgr=None):
             envelope.costBuilder(idf2, name,'' ,'General',0,0,(costPV*PV_SIZE),'',1)
 
     # factor in appliances and lights cost to envelope
-    with open(os.path.join(studyFolder, f"{BaseFileName}_IHGDict.json"), "r") as fp:
+    with open(os.path.join(tempFolder, f"{BaseFileName}_IHGDict.json"), "r") as fp:
         ihg_dict = json.load(fp)
     
     for _, num_beds in unit_bedroom_list:
@@ -876,10 +896,11 @@ def process_annual_simulation_output(si: SimInputs, case_id: int, simulation_mgr
     runList = si.run_list_df
     runCount = case_id
     studyFolder = si.study_folder
+    batchFolder = si.batch_folder
     BaseFileName = f"{si.batch_name}_{runList['CASE_NAME'][runCount]}"
     
     # load the results
-    annual_sim_temp_results = os.path.join(studyFolder, f"{BaseFileName}_BAout.csv")
+    annual_sim_temp_results = os.path.join(batchFolder, f"{BaseFileName}_BAout.csv")
     hourly = pd.read_csv(annual_sim_temp_results)
 
     # combine columns
@@ -897,7 +918,7 @@ def process_annual_simulation_output(si: SimInputs, case_id: int, simulation_mgr
     hourly = hourly.reset_index()
 
     # export results
-    hourly.to_csv(os.path.join(studyFolder, f"{BaseFileName}_BAHourly.csv"))
+    hourly.to_csv(os.path.join(batchFolder, f"{BaseFileName}_BAHourly.csv"))
 
     # CHECKPOINT: annual sim results processed
     checkpoint(simulation_mgr)
@@ -939,7 +960,7 @@ def compute_adorb_costs(si: SimInputs, case_id: int, simulation_mgr=None):
     runList = si.run_list_df
     runCount = case_id
     case_name = runList["CASE_NAME"][runCount]
-    studyFolder = si.study_folder
+    batchFolder = si.batch_folder
     BaseFileName = f"{si.batch_name}_{case_name}"
     databaseDir = si.database_dir
 
@@ -955,9 +976,9 @@ def compute_adorb_costs(si: SimInputs, case_id: int, simulation_mgr=None):
     case_country = runList['ENVELOPE_COUNTRY'][runCount]
 
     # gather files to use
-    ba_htm_path = os.path.join(studyFolder, f"{BaseFileName}_BAtbl.htm")
-    ba_hourly_path = os.path.join(studyFolder, f"{BaseFileName}_BAHourly.csv")
-    ba_mtr_path = os.path.join(studyFolder, f"{BaseFileName}_BAmtr.csv")
+    ba_htm_path = os.path.join(batchFolder, f"{BaseFileName}_BAtbl.htm")
+    ba_hourly_path = os.path.join(batchFolder, f"{BaseFileName}_BAHourly.csv")
+    ba_mtr_path = os.path.join(batchFolder, f"{BaseFileName}_BAmtr.csv")
     if (not os.path.isfile(ba_htm_path) or
         not os.path.isfile(ba_hourly_path) or 
         not os.path.isfile(ba_mtr_path)):
@@ -1089,7 +1110,11 @@ def compute_adorb_costs(si: SimInputs, case_id: int, simulation_mgr=None):
     eTrans = float(annual_peak_values_table[1][1][4])
 
     # compute adorb cost
-    adorb.adorb(BaseFileName, studyFolder, duration, annualElec, annualGas, annualCO2Elec, annualCO2Gas, dirMR, emCO2, eTrans, si.graphs_enabled)
+    adorb_results_location = si.results_folder
+    adorb_graphs_location = si.graphs_folder
+    adorb.adorb(BaseFileName, adorb_results_location, adorb_graphs_location,
+                duration, annualElec, annualGas, annualCO2Elec, annualCO2Gas,
+                dirMR, emCO2, eTrans, si.graphs_enabled)
 
     # CHECKPOINT: adorb calculation finished
     checkpoint(simulation_mgr)
@@ -1102,18 +1127,20 @@ def collect_individual_simulation_results(si: SimInputs, case_id: int, simulatio
     runList = si.run_list_df
     runCount = case_id
     case_name = runList["CASE_NAME"][runCount]
-    studyFolder = si.study_folder
+    batchFolder = si.batch_folder
+    tempFolder = si.temp_folder
+    resultsFolder = si.results_folder
     BaseFileName = f"{si.batch_name}_{case_name}"
 
     # find all relevant files for this run
-    br_htm_path = os.path.join(studyFolder, f"{BaseFileName}_BRtbl.htm")
-    br_hourly_heat_path = os.path.join(studyFolder, f"{BaseFileName}_BRHourlyHeat.csv")
-    br_hourly_cool_path = os.path.join(studyFolder, f"{BaseFileName}_BRHourlyCool.csv")
-    ba_htm_path = os.path.join(studyFolder, f"{BaseFileName}_BAtbl.htm")
-    ba_hourly_path = os.path.join(studyFolder, f"{BaseFileName}_BAHourly.csv")
-    ba_mtr_path = os.path.join(studyFolder, f"{BaseFileName}_BAmtr.csv")
-    adorb_results_path = os.path.join(studyFolder, f"{BaseFileName}_ADORBresults.csv")
-    unit_list_path = os.path.join(studyFolder, f"{BaseFileName}_UnitBedrooms.json")
+    br_htm_path = os.path.join(batchFolder, f"{BaseFileName}_BRtbl.htm")
+    br_hourly_heat_path = os.path.join(batchFolder, f"{BaseFileName}_BRHourlyHeat.csv")
+    br_hourly_cool_path = os.path.join(batchFolder, f"{BaseFileName}_BRHourlyCool.csv")
+    ba_htm_path = os.path.join(batchFolder, f"{BaseFileName}_BAtbl.htm")
+    ba_hourly_path = os.path.join(batchFolder, f"{BaseFileName}_BAHourly.csv")
+    ba_mtr_path = os.path.join(batchFolder, f"{BaseFileName}_BAmtr.csv")
+    adorb_results_path = os.path.join(resultsFolder, f"{BaseFileName}_ADORBresults.csv")
+    unit_list_path = os.path.join(tempFolder, f"{BaseFileName}_UnitBedrooms.json")
 
     # info from BR htm tables
     try:
@@ -1292,7 +1319,7 @@ def collect_individual_simulation_results(si: SimInputs, case_id: int, simulatio
 
     # export results and return file names
     results_df = pd.DataFrame(results_dict, index=[0])
-    result_file_name = os.path.join(studyFolder, f"{BaseFileName}_ResultsTable.csv")
+    result_file_name = os.path.join(resultsFolder, f"{BaseFileName}_ResultsTable.csv")
     results_df.to_csv(result_file_name)
     return result_file_name
 
@@ -1300,7 +1327,7 @@ def collect_individual_simulation_results(si: SimInputs, case_id: int, simulatio
 def collect_all_results(si: SimInputs, file_list, simulation_mgr=None):
     # collect every set of results and combine into one file
     df = pd.concat(map(pd.read_csv, file_list), ignore_index=True)
-    df.to_csv(f"{si.batch_name}_ResultsTable.csv")
+    df.to_csv(os.path.join(si.results_folder, f"{si.batch_name}_ResultsTable.csv"))
 
     # CHECKPOINT: all results collected
     for _ in range(len(file_list)): checkpoint(simulation_mgr)
@@ -1311,16 +1338,19 @@ def generate_graphs(si: SimInputs, case_id: int, simulation_mgr=None):
     # get basic information from simulation inputs
     caseName = si.run_list_df["CASE_NAME"][case_id]
     studyFolder = si.study_folder
+    batchFolder = si.batch_folder
+    tempFolder = si.temp_folder
+    graphsFolder = si.graphs_folder
     BaseFileName = f"{si.batch_name}_{caseName}"
 
     # bring in datasets
-    hourlyHeat = pd.read_csv(os.path.join(studyFolder, f"{BaseFileName}_BRHourlyHeat.csv"))
-    hourlyCool = pd.read_csv(os.path.join(studyFolder, f"{BaseFileName}_BRHourlyCool.csv"))
+    hourlyHeat = pd.read_csv(os.path.join(batchFolder, f"{BaseFileName}_BRHourlyHeat.csv"))
+    hourlyCool = pd.read_csv(os.path.join(batchFolder, f"{BaseFileName}_BRHourlyCool.csv"))
     hourlyHeat['DateTime'] = pd.to_datetime(hourlyHeat['DateTime'], format="%Y-%m-%d %H:%M:%S", exact=True)
     hourlyCool['DateTime'] = pd.to_datetime(hourlyCool['DateTime'], format="%Y-%m-%d %H:%M:%S", exact=True)
 
     # get number of zones
-    with open(os.path.join(studyFolder, f"{BaseFileName}_UnitBedrooms.json"), "r") as fp:
+    with open(os.path.join(tempFolder, f"{BaseFileName}_UnitBedrooms.json"), "r") as fp:
         unit_bedroom_list = json.load(fp)
         unit_list = [unit for unit, _ in unit_bedroom_list]
     
@@ -1419,7 +1449,7 @@ def generate_graphs(si: SimInputs, case_id: int, simulation_mgr=None):
     ax['SET'].axhline(12.2, color='crimson', linestyle='dashed')
 
     # export and clear
-    heatingGraphFile = os.path.join(studyFolder, BaseFileName + "_Heating Outage Resilience Graphs.png")
+    heatingGraphFile = os.path.join(graphsFolder, BaseFileName + "_Heating Outage Resilience Graphs.png")
     fig.savefig(heatingGraphFile, dpi=300)
     fig.clf()
 
@@ -1497,11 +1527,14 @@ def generate_graphs(si: SimInputs, case_id: int, simulation_mgr=None):
     ax['HI'].axhline(51.7, color='darkmagenta', linestyle='dashed')
 
     # export and clear
-    coolingGraphFile = os.path.join(studyFolder, BaseFileName + "_Cooling Outage Resilience Graphs.png")
+    coolingGraphFile = os.path.join(graphsFolder, BaseFileName + "_Cooling Outage Resilience Graphs.png")
     fig.savefig(coolingGraphFile, dpi=300)
     fig.clf()
 
 
-def cleanup_outputs():
+def cleanup_outputs(si: SimInputs):
     """If designated, remove files generated from energyplus (only keep aggregated results)."""
-    pass
+    # TODO: CLEANUP THE REST
+    for path in os.listdir(si.temp_folder):
+        os.remove(os.path.join(si.temp_folder, path))
+    os.rmdir(si.temp_folder)

@@ -29,7 +29,7 @@ import fnmatch
 import glob
 import re
 
-def adorb(BaseFileName, studyFolder, duration, annualElec, annualGas, annualCO2Elec, annualCO2Gas, dirMR, emCO2, eTrans, graphs):
+def adorb(BaseFileName, resultsFolder, graphsFolder, duration, annualElec, annualGas, annualCO2Elec, annualCO2Gas, dirMR, emCO2, eTrans, graphs):
     results = pd.DataFrame(columns=['pv_dirEn', 'pv_opCO2', 'pv_dirMR', 'pv_emCO2', 'pv_eTrans'])
     years = range(duration)
     pv = []
@@ -124,7 +124,7 @@ def adorb(BaseFileName, studyFolder, duration, annualElec, annualGas, annualCO2E
         pv.append((pv_dirEn + pv_opCO2 + pv_dirMR + pv_emCO2 + pv_eTrans))
         newRow = pd.Series({'pv_dirEn':pv_dirEn, 'pv_opCO2':pv_opCO2, 'pv_dirMR':pv_dirMR, 'pv_emCO2':pv_emCO2, 'pv_eTrans':pv_eTrans})
         results = pd.concat([results, newRow.to_frame().T], ignore_index=True)
-    results.to_csv(str(BaseFileName) + '_ADORBresults.csv')
+    results.to_csv(os.path.join(resultsFolder, f"{BaseFileName}_ADORBresults.csv"))
 
     df = results
 
@@ -144,16 +144,16 @@ def adorb(BaseFileName, studyFolder, duration, annualElec, annualGas, annualCO2E
     pv_emCO2_tot = df['pv_emCO2'].sum()
     pv_eTrans_tot = df['pv_eTrans'].sum()
 
-    adorbWedgeGraph = os.path.join(studyFolder, BaseFileName + '_ADORB_Wedge.png')
-    adorbBarGraph = os.path.join(studyFolder, BaseFileName + '_ADORB_Bar.png')
-    batch_ident = BaseFileName[:BaseFileName.index("_")]
+    adorbWedgeGraph = os.path.join(graphsFolder, BaseFileName + '_ADORB_Wedge.png')
+    adorbBarGraph = os.path.join(graphsFolder, BaseFileName + '_ADORB_Bar.png')
     # TODO: NEED MORE RESTRICTIVE RUNLIST INPUT CHECKS TO ENSURE BASE EXISTS
     if graphs and "BASE" not in BaseFileName:
         fig = plt.figure(layout="constrained", figsize=(10,6))
-        for filename in os.listdir(studyFolder):
-            if re.match(rf".*{batch_ident}.*BASE.*ADORB.*\.csv", filename):
+        for filename in os.listdir(resultsFolder):
+            if re.match(rf".*BASE.*ADORB.*\.csv", filename):
                 ax = fig.subplots()
-                basedf = pd.read_csv(filename)
+                filepath = os.path.join(resultsFolder, filename)
+                basedf = pd.read_csv(filepath)
 
                 pv_dirEn_tot_base = basedf['pv_dirEn'].sum()
                 pv_dirMR_tot_base = basedf['pv_dirMR'].sum()
