@@ -163,6 +163,13 @@ def validate_input(batch_name, idd_file, study_folder, run_list, db_dir):
         return f"{missing_col} column missing, run list may be out of date."
     except FileNotFoundError:
         return "Please run app from project directory."
+    
+    # ensure previous run results will not be overwritten
+    try:
+        batch_folder_name = os.path.join(study_folder, batch_name)
+        assert not os.path.isdir(batch_folder_name), batch_folder_name
+    except AssertionError as folder_name:
+        return f"Folder \"{folder_name}\" already exists. Please change batch name or rename existing folder."
 
     # no errors to report
     return ""
