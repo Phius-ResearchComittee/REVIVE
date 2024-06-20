@@ -971,8 +971,8 @@ def compute_adorb_costs(si: SimInputs, case_id: int, simulation_mgr=None):
     natGasPresent = runList["NATURAL_GAS"][runCount]
     gasPrice = runList['GAS_PRICE_[$/THERM]'][runCount]
     gridRegion = runList['GRID_REGION'][runCount]
-    carbonMeasures = runList["CARBON_MEASURES"][runCount].split(", ")
-    appliance_list = runList['APPLIANCE_LIST'][runCount].split(', ')
+    carbonMeasures = str(runList["CARBON_MEASURES"][runCount]).split(", ")
+    appliance_list = str(runList['APPLIANCE_LIST'][runCount]).split(', ')
     case_country = runList['ENVELOPE_COUNTRY'][runCount]
 
     # gather files to use
@@ -1017,7 +1017,9 @@ def compute_adorb_costs(si: SimInputs, case_id: int, simulation_mgr=None):
         annualCO2Gas = annualGas = 0
 
     # compute carbon measure cost by year
-    carbonDatabase = pd.read_csv(os.path.join(databaseDir, 'Carbon Correction Database.csv'))
+    p_carbonDatabase = pd.read_csv(os.path.join(databaseDir, 'Carbon Correction Database.csv'))
+    np_carbonDatabase = pd.read_csv(os.path.join(databaseDir, "Nonperformance Carbon Correction Database.csv"))
+    carbonDatabase = pd.concat([p_carbonDatabase, np_carbonDatabase])
     countryEmissionsDatabase = pd.read_csv(os.path.join(databaseDir, 'Country Emission Database.csv'))
     firstCost = [float(construction_cost_est_table[1][9][2]),0]
     carbonMeasureCost, emCO2 = [], []
@@ -1033,12 +1035,11 @@ def compute_adorb_costs(si: SimInputs, case_id: int, simulation_mgr=None):
             for country in range(countryEmissionsDatabase.shape[0]):
                 if str(countryEmissionsDatabase['COUNTRY'][country]) == str(carbonDatabase['Country'][1]):
                     ef = countryEmissionsDatabase['EF [kg/$]'][country]
-                if str(countryEmissionsDatabase['COUNTRY'][country]) == 'USA':
-                    efUSA = countryEmissionsDatabase['EF [kg/$]'][country]
             emCO2.append([(carbonDatabase['Cost'][measure]*ef*(1-carbonDatabase['Labor Fraction'][measure])) + 
                             ((carbonDatabase['Cost'][measure]*efUSA*(carbonDatabase['Labor Fraction'][measure]))), carbonDatabase['Year'][measure]])
             # Labor fraction should be subtracted out and have USA EF applied
 
+    efUSA = countryEmissionsDatabase['EF [kg/$]']["USA"]
     for country in range(countryEmissionsDatabase.shape[0]):
         if str(countryEmissionsDatabase['COUNTRY'][country]) == str(runList['ENVELOPE_COUNTRY'][runCount]):
             efENV = countryEmissionsDatabase['EF [kg/$]'][country]
