@@ -311,7 +311,7 @@ class SimulateTab(QWidget):
         self.progress_bar.setVisible(False)
         
         # return to the home directory
-        os.chdir(self.parent.home_dir)
+        os.chdir(self.parent.app_directory)
 
     
     def save_settings(self):

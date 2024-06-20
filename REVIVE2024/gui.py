@@ -31,12 +31,18 @@ class MyWidget(QWidget):
         self.app_name = "REVIVE Calculator Tool"
         self.version_no = "24.2"
         self.settings = QSettings("Phius", self.app_name)
-        self.home_dir = os.getcwd()
-        self.icon = QIcon()
-        self.icon.addFile(os.path.join(getattr(sys, "_MEIPASS", self.home_dir),
-                          "Phius-Logo-RGB__Color_Icon.ico"))
+        self.curr_dir = os.getcwd()
+
+        # set up persistent app resources for exe
+        self.app_directory = getattr(sys, "_MEIPASS", self.curr_dir)
+        self.icon_file = os.path.join(self.app_directory, "Phius-Logo-RGB__Color_Icon.ico")
+        self.runlist_ops_file = os.path.join(self.app_directory, "phius_runlist_options.json")
+        self.help_tree_struc_file = os.path.join(self.app_directory, "help_tree_structure.txt")
+        self.help_tree_content_file = os.path.join(self.app_directory, "help_tree_content.json")
 
         # customize window
+        self.icon = QIcon()
+        self.icon.addFile(self.icon_file)
         self.setWindowTitle(f"{self.app_name} v{self.version_no}")
         self.setWindowIcon(self.icon)
 

@@ -46,8 +46,8 @@ class HelpTab(QWidget):
         self.content_display.setFocusPolicy(Qt.NoFocus)
 
         # assign external content file handles
-        self.help_tree_struc_file = "help_tree_structure.txt"
-        self.help_content_file = "help_tree_content.json"
+        self.help_tree_struc_file = parent.help_tree_struc_file
+        self.help_content_file = parent.help_tree_content_file
 
         # populate content 
         self.populate_content_tree()
