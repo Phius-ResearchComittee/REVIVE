@@ -977,6 +977,8 @@ def compute_adorb_costs(si: SimInputs, case_id: int, simulation_mgr=None):
     elec_sellback_price = float(runList['SELLBACK_PRICE_[$/kWh]'][runCount])
     natGasPresent = runList["NATURAL_GAS"][runCount]
     gasPrice = runList['GAS_PRICE_[$/THERM]'][runCount]
+    annualBaseGas = float(runList["ANNUAL_GAS_CHARGE"][runCount])
+    annualBaseElec = float(runList["ANNUAL_ELEC_CHARGE"][runCount])
     gridRegion = runList['GRID_REGION'][runCount]
     perfCarbonMeasures = str(runList["PERF_CARBON_MEASURES"][runCount])
     perfCarbonMeasures = perfCarbonMeasures.split(", ") if perfCarbonMeasures != "nan" else []
@@ -1008,7 +1010,7 @@ def compute_adorb_costs(si: SimInputs, case_id: int, simulation_mgr=None):
     # compute annual electric consumption and CO2 emissions
     annualElec = ((hourly['Whole Building:Facility Total Purchased Electricity Energy [J](Hourly)'].sum()*0.0000002778*elecPrice)-
                     (hourly['Whole Building:Facility Total Surplus Electricity Energy [J](Hourly)'].sum()*0.0000002778*elec_sellback_price)
-                    +100)
+                    +annualBaseElec)
     MWH = hourly['Whole Building:Facility Total Purchased Electricity Energy [J](Hourly)']*0.0000000002778
     CO2_Elec_List = []
     for filename in os.listdir(os.path.join(databaseDir, 'CambiumFactors')):
@@ -1022,7 +1024,7 @@ def compute_adorb_costs(si: SimInputs, case_id: int, simulation_mgr=None):
     # compute annual gas consumption and CO2 emissions
     if natGasPresent == 1:
         monthlyMTR = monthlyMTR.drop(index=[0,1,2,3,4,5,6,7])
-        annualGas = (((sum(monthlyMTR['NaturalGas:Facility [J](Monthly) ']*9.478169879E-9))*gasPrice)+(40*12))
+        annualGas = (((sum(monthlyMTR['NaturalGas:Facility [J](Monthly) ']*9.478169879E-9))*gasPrice)+annualBaseGas)
         annualCO2Gas = (sum(monthlyMTR['NaturalGas:Facility [J](Monthly) ']*9.478169879E-9))*12.7
     else:
         annualCO2Gas = annualGas = 0
