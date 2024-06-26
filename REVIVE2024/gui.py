@@ -19,6 +19,7 @@ import gui_simulate_tab
 import gui_adorb_tab
 import gui_help_tab
 import gui_morph_tab
+import gui_runlist_maker_tab
 
 class MyWidget(QWidget):
 
@@ -39,6 +40,7 @@ class MyWidget(QWidget):
         self.runlist_ops_file = os.path.join(self.app_directory, "phius_runlist_options.json")
         self.help_tree_struc_file = os.path.join(self.app_directory, "help_tree_structure.txt")
         self.help_tree_content_file = os.path.join(self.app_directory, "help_tree_content.json")
+        self.required_cols_file = os.path.join(self.app_directory, "required_columns.csv")
 
         # customize window
         self.icon = QIcon()
@@ -61,10 +63,12 @@ class MyWidget(QWidget):
         # create different pages
         self.tab_widget = QTabWidget()
         self.help_tab = gui_help_tab.HelpTab(self)
+        self.runlist_maker_tab = gui_runlist_maker_tab.RunlistMakerTab(self)
         self.sim_tab = gui_simulate_tab.SimulateTab(self)
         self.mp_adorb_tab = gui_adorb_tab.MPAdorbTab(self)
         self.morph_tab = gui_morph_tab.MorphTab(self)
         self.tab_widget.addTab(self.help_tab, "Help")
+        self.tab_widget.addTab(self.runlist_maker_tab, "Runlist Maker")
         self.tab_widget.addTab(self.sim_tab, "Simulation")
         self.tab_widget.addTab(self.mp_adorb_tab, "Multi-phase ADORB")
         self.tab_widget.addTab(self.morph_tab, "Weather Morphing")

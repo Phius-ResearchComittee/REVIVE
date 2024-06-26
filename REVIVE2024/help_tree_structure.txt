@@ -1,19 +1,27 @@
-Building
+Basic
+-Case Name
+-Geometry
 -Simulation Duration
-Weather
--Morph
+Site and Utility
 -EPW
 -DDY
-Envelope
--Walls
--Roofing
+-Morph
+Energy Pricing
+-Electric Price
+-Gas Price
+-Sellback Price
 Mechanicals
 -System
 -PV
 -Fuel
-Resilience
--Outages
---Outage Start
---Outage End
+-Appliances
+Envelope
+-Infiltration Rate
+-Foundation
+-Walls
+-Roofing
+-Flooring
 -Shading
-Pizza
+Outages
+-Outage Start
+-Outage End

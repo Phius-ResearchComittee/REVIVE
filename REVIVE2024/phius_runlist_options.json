@@ -1,0 +1,25 @@
+{
+    "Country": ["USA","Canada","China","France","Germany","India","Ireland","Italy","Japan","South","Malaysia","Mexico","Switzerland","Taiwan","United Kingdom","Vietnam"],
+    "Grid Region": ["AZNMc","CAMXc","ERCTc","FRCCc","MROEc","MROWc","NEWEc","NWPPc","NYSTc","RFCEc","RFCMc","RFCWc","RMPAc","SPNOc","SPSOc","SRMVc","SRMWc","SRSOc","SRTVc","SRVCc"],
+    "Performance Carbon Correction Measures": ["HP Replace 1","HP Replace 2","HP Replace 3","Vegan Bike Riding Carpenters"],
+    "Non-Performance Carbon Correction Measures": ["Nonperformant correction 1"],
+    "Mechanical System": ["Packaged Terminal Heat Pump","Gas Furnace DXAC","Split Heat Pump"],
+    "Water Heater Fuel": ["Electricity","Natural Gas"],
+    "Appliances": {
+        "Fridge": ["FRIDGE 289", "FRIDGE 360"],
+        "Dishwasher": ["DISHWASHER 269","DISHWASHER 360"],
+        "Clotheswasher": ["CLOTHESWASHER 120", "CLOTHESWASHER 160"],
+        "Clothesdryer": ["CLOTHESDRYER ES", "CLOTHESDRYER"],
+        "Lights": ["LIGHTS 100", "LIGHTS 60"]
+    },
+    "Envelope": {
+        "Foundation Insulation": ["EPS 2in","EPS 4in","EPS 6in"],
+        "Window": ["WINDOW_U-0.5 g=0.4","WINDOW_U-0.4 g=0.4","WINDOW_U-0.3 g=0.4","WINDOW_U-0.2 g=0.4","WINDOW_U-0.1 g=0.4","WINDOW_U-0.5 g=0.2","WINDOW_U-0.4 g=0.2","WINDOW_U-0.3 g=0.2","WINDOW_U-0.2 g=0.2","WINDOW_U-0.1 g=0.2","WINDOW_U-1.0 g=0.5","WINDOW_U-0.15 g=0.4","WINDOW_U-0.15 g=0.2"],
+        "Door": ["Ext_Door1","Exterior Door","Interior Door"],
+        "Wall": ["Brick Wall","Exterior Wall","Interior Wall","Exterior Wall +1in EPS","Exterior Wall +1.625in EPS","Exterior Wall +2in EPS","Exterior Wall +4in EPS","Exterior Wall +7.5in EPS","Exterior Wall +6in EPS","Exterior Wall +9in EPS","Exterior Wall +14in EPS"],
+        "Roof": ["Exterior Roof","Exterior Roof R-30","Exterior Roof R-38","Exterior Roof R-49","Exterior Roof R-55","Exterior Roof R-60","Exterior Roof R-75","Exterior Roof R-100"],
+        "Exterior Floor": ["P+B UnIns","P+B R-13","P+B R-19","P+B R-30","P+B R-38","P+B R-49", "Exterior Slab UnIns"],
+        "Interior Floor": ["Interior Floor"]
+    },
+    "Natural Ventilation Type": ["NatVent","SchNatVent"]
+}
