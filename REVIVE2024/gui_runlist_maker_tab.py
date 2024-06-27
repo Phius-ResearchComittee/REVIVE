@@ -23,6 +23,7 @@ from PySide6.QtWidgets import (
 )
 
 from gui_utility import *
+import validation
 
 class RunlistMakerTab(QWidget):
     def __init__(self, parent):
@@ -119,7 +120,6 @@ class RunlistMakerTab(QWidget):
         self.scroll_area = QScrollArea()
         self.scroll_area.setWidget(self.case_builder)
         self.scroll_area.setWidgetResizable(True)
-        self.scroll_area.setMaximumWidth(QApplication.instance().primaryScreen().size().width()//2)
 
         # populate content 
         self.populate_groupboxes()
@@ -130,6 +130,7 @@ class RunlistMakerTab(QWidget):
 
         # build the rest of the maker layout
         self.maker_widget = QWidget()
+        self.maker_widget.setMaximumWidth(QApplication.instance().primaryScreen().size().width()//2)
         self.maker_layout = QVBoxLayout(self.maker_widget)
         self.maker_layout.addWidget(self.scroll_area_label)
         self.maker_layout.addWidget(self.scroll_area)
@@ -144,16 +145,17 @@ class RunlistMakerTab(QWidget):
         
         # build rest of the sidepane layout
         self.side_pane_widget = QWidget()
+        self.side_pane_widget.setMaximumHeight(QApplication.instance().primaryScreen().size().height())
+        self.side_pane_widget.setStyleSheet("QWidget {background-color: blue;}")
+        self.side_pane_widget.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Maximum)
         self.side_pane_layout = QVBoxLayout(self.side_pane_widget)
-        self.side_pane_layout.addWidget(self.navigation_groupbox)
+        self.side_pane_layout.addWidget(self.navigation_groupbox, stretch=1)
         self.side_pane_layout.addWidget(self.options_groupbox)
         self.side_pane_layout.addWidget(self.export_groupbox)
 
         # add inner level widgets to horizontal layout
         self.split_layout.addWidget(self.side_pane_widget)
         self.split_layout.addWidget(self.maker_widget)
-
-        # resize to maximize text display area
         self.split_layout.setStretch(0,0)
         self.split_layout.setStretch(1,1)
 
@@ -401,7 +403,7 @@ class RunlistMakerTab(QWidget):
                               self.rl_ext_door_set, self.rl_ext_wall_set,
                               self.rl_ext_roof_set, self.rl_ext_floor_set,
                               self.rl_int_floor_set]
-        self.envelope_items = ["Window", "Door", "Wall", "Roof", "Exterior Floor", "Interior Floor"]
+        self.envelope_items = ["Window", "Exterior Door", "Exterior Wall", "Roof", "Exterior Floor", "Interior Floor"]
         for w_set in self.revive_widget_sets:
             new_layout.addLayout(self.stack_widgets_horizontally(
                 widget_list=[w_set],
@@ -594,36 +596,50 @@ class RunlistMakerTab(QWidget):
                 prompt = f"Custom runlist options from database folder \"{self.custom_db_source.text()}\" loaded successfully!"
                 print("custom import not yet implemented")
                 return
+        
+            # populate runlist option dictionary
+            self.rl_env_country.change_items(self.runlist_options["Country"])
+            self.rl_grid_region.change_items(self.runlist_options["Grid Region"])
+            self.rl_perf_carbon.change_items(self.runlist_options["Performance Carbon Correction Measures"])
+            self.rl_nperf_carbon.change_items(self.runlist_options["Non-Performance Carbon Correction Measures"])
+            self.rl_mech_system.change_items(self.runlist_options["Mechanical System"])
+            self.rl_water_heater_fuel.change_items(self.runlist_options["Water Heater Fuel"])
+            self.rl_foundation_set.change_items(self.runlist_options["Envelope"]["Foundation Insulation"])
+            appliance_dict = self.runlist_options["Appliances"]
+            for i, app in enumerate(self.appliance_list):
+                self.rl_appliances[i].change_items(appliance_dict[app])
+            envelope_dict = self.runlist_options["Envelope"]
+            for i, item in enumerate(self.envelope_items):
+                self.revive_widget_sets[i+1].change_items(envelope_dict[item]) # +1 to skip foundation
+            self.rl_nat_vent_type.change_items(self.runlist_options["Natural Ventilation Type"])
+
         except Exception as e:
             self.parent.display_error(str(e))
             return
-
-        # populate runlist option dictionary
-        self.rl_env_country.change_items(self.runlist_options["Country"])
-        self.rl_grid_region.change_items(self.runlist_options["Grid Region"])
-        self.rl_perf_carbon.change_items(self.runlist_options["Performance Carbon Correction Measures"])
-        self.rl_nperf_carbon.change_items(self.runlist_options["Non-Performance Carbon Correction Measures"])
-        self.rl_mech_system.change_items(self.runlist_options["Mechanical System"])
-        self.rl_water_heater_fuel.change_items(self.runlist_options["Water Heater Fuel"])
-        self.rl_foundation_set.change_items(self.runlist_options["Envelope"]["Foundation Insulation"])
-        appliance_dict = self.runlist_options["Appliances"]
-        for i, app in enumerate(self.appliance_list):
-            self.rl_appliances[i].change_items(appliance_dict[app])
-        envelope_dict = self.runlist_options["Envelope"]
-        for i, item in enumerate(self.envelope_items):
-            self.revive_widget_sets[i+1].change_items(envelope_dict[item]) # +1 to skip foundation
-        self.rl_nat_vent_type.change_items(self.runlist_options["Natural Ventilation Type"])
-
+        
         # prompt user of success
         self.parent.display_info(prompt)
 
 
     def load_phius_runlist_options(self):
+        # get from phius runlist options json
         with open(self.runlist_options_file, "r") as fp:
             self.runlist_options = json.load(fp)
     
 
     def load_custom_runlist_options(self):
+        # get the file location from entry
+        file_path = self.custom_db_source.currentText()
+
+        # check that database is valid
+        try:
+            validation.validate_database_content()
+        except Exception as e:
+            self.parent.display_error(str(e))
+            return
+        
+        # load carbon corrections
+        pd.read_csv()
         pass
 
 
