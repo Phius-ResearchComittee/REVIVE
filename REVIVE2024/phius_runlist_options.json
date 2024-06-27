@@ -3,8 +3,8 @@
     "Grid Region": ["AZNMc","CAMXc","ERCTc","FRCCc","MROEc","MROWc","NEWEc","NWPPc","NYSTc","RFCEc","RFCMc","RFCWc","RMPAc","SPNOc","SPSOc","SRMVc","SRMWc","SRSOc","SRTVc","SRVCc"],
     "Performance Carbon Correction Measures": ["HP Replace 1","HP Replace 2","HP Replace 3","Vegan Bike Riding Carpenters"],
     "Non-Performance Carbon Correction Measures": ["Nonperformant correction 1"],
-    "Mechanical System": ["Packaged Terminal Heat Pump","Gas Furnace DXAC","Split Heat Pump"],
-    "Water Heater Fuel": ["Electricity","Natural Gas"],
+    "Mechanical System": ["PTHP","GasFurnaceDXAC","SplitHeatPump"],
+    "Water Heater Fuel": ["DHW_Electricity","DHW_NaturalGas"],
     "Appliances": {
         "Fridge": ["FRIDGE 289", "FRIDGE 360"],
         "Dishwasher": ["DISHWASHER 269","DISHWASHER 360"],
@@ -13,13 +13,13 @@
         "Lights": ["LIGHTS 100", "LIGHTS 60"]
     },
     "Envelope": {
-        "Foundation Insulation": ["EPS 2in","EPS 4in","EPS 6in"],
+        "Foundation Insulation": ["ccSF R-13","ccSF R-19","ccSF R-30","ccSF R-38","ccSF R-49","EPS","EPS 1.625in","EPS 14in","EPS 1in","EPS 2in","EPS 4in","EPS 6in","EPS 7.5in","EPS 9in","F08 Metal surface","F11 Wood siding","F16 Acoustic tile","FG Attic R-100","FG Attic R-19","FG Attic R-30","FG Attic R-38","FG Attic R-49","FG Attic R-55","FG Attic R-60","FG Attic R-75","Foundation EPS","G01a 19mm gypsum board","G05 25mm wood","I01 25mm insulation board","I02 50mm insulation board","M01 100mm brick","M05 200mm concrete block","M11 100mm lightweight concrete","M15 200mm heavyweight concrete","Mass wood","Plywood (Douglas Fir) - 12.7mm","R-11 3.5in Wood Stud","StemWall UnIns"],
         "Window": ["WINDOW_U-0.5 g=0.4","WINDOW_U-0.4 g=0.4","WINDOW_U-0.3 g=0.4","WINDOW_U-0.2 g=0.4","WINDOW_U-0.1 g=0.4","WINDOW_U-0.5 g=0.2","WINDOW_U-0.4 g=0.2","WINDOW_U-0.3 g=0.2","WINDOW_U-0.2 g=0.2","WINDOW_U-0.1 g=0.2","WINDOW_U-1.0 g=0.5","WINDOW_U-0.15 g=0.4","WINDOW_U-0.15 g=0.2"],
-        "Door": ["Ext_Door1","Exterior Door","Interior Door"],
-        "Wall": ["Brick Wall","Exterior Wall","Interior Wall","Exterior Wall +1in EPS","Exterior Wall +1.625in EPS","Exterior Wall +2in EPS","Exterior Wall +4in EPS","Exterior Wall +7.5in EPS","Exterior Wall +6in EPS","Exterior Wall +9in EPS","Exterior Wall +14in EPS"],
+        "Exterior Door": ["Ext_Door1","Exterior Door"],
+        "Exterior Wall": ["Brick Wall","Exterior Wall","Exterior Wall +1in EPS","Exterior Wall +1.625in EPS","Exterior Wall +2in EPS","Exterior Wall +4in EPS","Exterior Wall +7.5in EPS","Exterior Wall +6in EPS","Exterior Wall +9in EPS","Exterior Wall +14in EPS","Uninsulated Stem Wall","Basement Wall 4in EPS"],
         "Roof": ["Exterior Roof","Exterior Roof R-30","Exterior Roof R-38","Exterior Roof R-49","Exterior Roof R-55","Exterior Roof R-60","Exterior Roof R-75","Exterior Roof R-100"],
-        "Exterior Floor": ["P+B UnIns","P+B R-13","P+B R-19","P+B R-30","P+B R-38","P+B R-49", "Exterior Slab UnIns"],
-        "Interior Floor": ["Interior Floor"]
+        "Exterior Floor": [ "Exterior Slab UnIns","Exterior Slab + 2in EPS"],
+        "Interior Floor": ["P+B UnIns","P+B R-13","P+B R-19","P+B R-30","P+B R-38","P+B R-49","Interior Floor"]
     },
     "Natural Ventilation Type": ["NatVent","SchNatVent"]
 }
