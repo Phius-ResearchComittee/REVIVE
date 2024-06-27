@@ -17,12 +17,19 @@ from PySide6.QtWidgets import (
     QPlainTextEdit
 )
 
+# custom imports
+from gui_utility import *
+
 class HelpTab(QWidget):
     def __init__(self, parent):
         
         # call widget init
         super().__init__()
         self.parent = parent
+
+        # assign external content file handles
+        self.help_tree_struc_file = parent.help_tree_struc_file
+        self.help_content_file = parent.help_tree_content_file
 
         # create top-level widgets
         self.layout = QVBoxLayout()
@@ -35,22 +42,16 @@ class HelpTab(QWidget):
         self.layout.addLayout(self.help_content_layout)
         
         # build content tree widget
-        self.content_tree = QTreeWidget()
-        self.content_tree.setColumnCount(1)
-        self.content_tree.setHeaderLabels(["Topics"])
+        self.content_tree = REVIVEHelpTree()
+        self.top_level_items, self.all_items = self.content_tree.populate_from_file(
+            self.help_tree_struc_file
+        )
 
         # build content display widget
         self.content_display = QPlainTextEdit()
         self.content_display.setReadOnly(True)
         self.content_display.cursorPositionChanged.connect(lambda : self.content_display.viewport().setCursor(self.parent.cursor()))
         self.content_display.setFocusPolicy(Qt.NoFocus)
-
-        # assign external content file handles
-        self.help_tree_struc_file = parent.help_tree_struc_file
-        self.help_content_file = parent.help_tree_content_file
-
-        # populate content 
-        self.populate_content_tree()
 
         # enable action to display content when selected
         self.content_tree.itemSelectionChanged.connect(self.display_content)
@@ -66,43 +67,6 @@ class HelpTab(QWidget):
         # set the layout
         self.setLayout(self.layout)
 
-
-    def populate_content_tree(self):
-        self.top_level_items = []
-        self.all_items = [] # items to be tuple of (item, level)
-        with open(self.help_tree_struc_file, "r") as reader:
-            for line in reader:
-                # find the beginning of the word
-                level = 0
-                while line[level] == "-": level += 1
-
-                # create the tree widget item
-                name = line[level:].strip()
-                tree_item = QTreeWidgetItem([name])
-
-                # add to list of tree item list
-                self.all_items.append((tree_item, level))
-
-                # find parent topic if child topic
-                if level > 0:
-                    parent_level = level-1
-
-                    # iterate through all items backwards to find most recent
-                    for i in range(1,len(self.all_items)+1):
-                        curr_item = self.all_items[-i]
-                        
-                        # check if the current item is the target level
-                        if curr_item[1] == parent_level:
-                            curr_item[0].addChild(tree_item)
-                            break
-                
-                # if topic has no parent add to top level items
-                else:
-                    self.top_level_items.append(tree_item)
-
-        # place top level items in tree
-        self.content_tree.insertTopLevelItems(0, self.top_level_items)
-    
 
     @Slot()
     def display_content(self):
