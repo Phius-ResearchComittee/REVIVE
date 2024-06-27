@@ -283,6 +283,7 @@ def error_handler(fn, si: SimInputs, case_id: int, simulation_mgr=None):
         raise GracefulExitException
     
     # otherwise pass the error to the gui
+    # COMMENT OUT BLOCK TO DEBUG
     except Exception as e:
         simulation_mgr.raise_exception(str(e))
         return None
@@ -524,13 +525,13 @@ def resilience_simulation_prep(si: SimInputs, case_id: int, simulation_mgr=None)
     modeled_zones = idf1.idfobjects['ZONE']
     DHW_CombinedGPM = 0
 
-    unit_bedroom_list = []
+    unit_bedroom_dict = {}
     for zone in modeled_zones:
         zone_name = zone.Name.split('|')
         zone_type = zone_name[1] if len(zone_name)>1 else ""
         zone.Name = zone_name[0]
         if 'UNIT' in zone_type:
-            unit_bedroom_list.append([zone_name[0],int(zone_name[2][0])])
+            unit_bedroom_dict[str(zone_name[0])] = int(zone_name[2][0])
             occ = 1 + float(zone_name[2][0])
             icfa_zone = zone.Floor_Area
             Nbr_zone = float(zone_name[2][0])
@@ -590,9 +591,9 @@ def resilience_simulation_prep(si: SimInputs, case_id: int, simulation_mgr=None)
             print(str(zone_name[0]) + ' is some a Corridor')
     
     # export map of units to # beds for use in annual simulation
-    unit_list = [unit for unit, _ in unit_bedroom_list]
+    unit_list = [unit for unit in unit_bedroom_dict.keys()]
     with open(os.path.join(tempFolder, f"{BaseFileName}_UnitBedrooms.json"), "w") as fp:
-        json.dump(unit_bedroom_list, fp)
+        json.dump(unit_bedroom_dict, fp)
 
     # Materials and constructions
     materials = pd.read_csv(os.path.join(databaseDir, 'Material Database.csv'))
@@ -795,20 +796,20 @@ def annual_simulation_prep(si: SimInputs, case_id: int, simulation_mgr=None):
 
     # create schedules for units with windows
     with open(os.path.join(tempFolder, f"{BaseFileName}_UnitBedrooms.json"), "r") as fp:
-        unit_bedroom_list = json.load(fp)
-        unit_list = [unit for unit, _ in unit_bedroom_list]
+        unit_bedroom_dict = json.load(fp)
+        unit_list = [unit for unit in unit_bedroom_dict.keys()]
     schedules.AnnualControls(idf2, unit_list)
 
     # loop through zones for annual erv computation
     modeled_zones = idf1.idfobjects['ZONE']
     for zone in modeled_zones:
         zone_name = zone.Name
-        occ = float(unit_bedroom_list[str(zone_name)]) + 1
+        occ = float(unit_bedroom_dict[str(zone_name)]) + 1
         hvac.AnnualERV(idf2, zone_name, occ, ervSense, ervLatent)
         
 
     # get envelope information
-    infiltration_rate = runList['INFILTRATION_RATE'][runCount]
+    infiltration_rate = float(runList['INFILTRATION_RATE'][runCount])
     mechSystemType = runList['MECH_SYSTEM_TYPE'][runCount]
     dhwFuel = runList['WATER_HEATER_FUEL'][runCount]
     PV_SIZE = runList['PV_SIZE_[W]'][runCount]
@@ -821,6 +822,7 @@ def annual_simulation_prep(si: SimInputs, case_id: int, simulation_mgr=None):
 
     # add envelope costs from construction database
     constructionList = pd.read_csv(si.construction_db, index_col="Name")
+    icfa = fasthtml.tablebyname(open(prev_sim_htm_results, "r") , "Building Area")[1][1][1]
     for name, row in constructionList.iterrows():
         outerLayer = row['Outside_Layer']
         cost = row['Cost_Per_Area_[$/m2]']
@@ -828,11 +830,17 @@ def annual_simulation_prep(si: SimInputs, case_id: int, simulation_mgr=None):
         costBatt = row['Battery_Cost_[$/kWh]']
         costPV = row['PV_Cost_[$/W]']
         costMech = row['Mechanical Cost']
+        
+        # convert numeric input if given
+        try: 
+            name_val = float(name) 
+        except ValueError:
+            name_val = None
 
         if cost > 0 and str(outerLayer) != 'nan':
             envelope.costBuilder(idf2, name, '','Construction', name,'','',cost,'')
         
-        if costSealing > 0 and name == infiltration_rate:
+        if costSealing > 0 and name_val == infiltration_rate:            
             envelope.costBuilder(idf2, f"AIR SEALING = {name}",'','General',0,0,(costSealing*icfa),'',1)
 
         if costMech> 0 and name == mechSystemType:
@@ -851,7 +859,7 @@ def annual_simulation_prep(si: SimInputs, case_id: int, simulation_mgr=None):
     with open(os.path.join(tempFolder, f"{BaseFileName}_IHGDict.json"), "r") as fp:
         ihg_dict = json.load(fp)
     
-    for _, num_beds in unit_bedroom_list:
+    for num_beds in unit_bedroom_dict.values():
         total_appliance_cost = ihg_dict[str(num_beds)]["applianceCost"]
         lights_cost = ihg_dict[str(num_beds)]["lightsCost"]
         envelope.costBuilder(idf2, 'APPLIANCES','','General',0,0,total_appliance_cost,'',1)
@@ -1159,7 +1167,7 @@ def collect_individual_simulation_results(si: SimInputs, case_id: int, simulatio
     # info from hourly cool
     try:
         with open(unit_list_path, "r") as fp:
-            unit_bedroom_list = json.load(fp)
+            unit_bedroom_dict = json.load(fp)
         
         hourlyCool = pd.read_csv(br_hourly_cool_path)
 
@@ -1168,7 +1176,7 @@ def collect_individual_simulation_results(si: SimInputs, case_id: int, simulatio
         
         # compute total mora days
         mora_days_units = {}
-        for unit, _ in unit_bedroom_list:
+        for unit in unit_bedroom_dict.keys():
             RH = hourlyCool[(str(unit).upper()+ ':Zone Air Relative Humidity [%](Hourly)')].tolist()
             Temp = hourlyCool[(str(unit).upper()+ ':Zone Air Temperature [C](Hourly)')].tolist()
 
@@ -1337,8 +1345,8 @@ def generate_graphs(si: SimInputs, case_id: int, simulation_mgr=None):
 
     # get number of zones
     with open(os.path.join(tempFolder, f"{BaseFileName}_UnitBedrooms.json"), "r") as fp:
-        unit_bedroom_list = json.load(fp)
-        unit_list = [unit for unit, _ in unit_bedroom_list]
+        unit_bedroom_dict = json.load(fp)
+        unit_list = [unit for unit in unit_bedroom_dict.keys()]
     
     # construct lambda getter functions for column labels
     get_zone_air_temp_label = lambda x : f"{x.upper()}:Zone Air Temperature [C](Hourly)"
