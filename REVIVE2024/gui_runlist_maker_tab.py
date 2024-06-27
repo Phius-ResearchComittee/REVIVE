@@ -146,7 +146,6 @@ class RunlistMakerTab(QWidget):
         # build rest of the sidepane layout
         self.side_pane_widget = QWidget()
         self.side_pane_widget.setMaximumHeight(QApplication.instance().primaryScreen().size().height())
-        self.side_pane_widget.setStyleSheet("QWidget {background-color: blue;}")
         self.side_pane_widget.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Maximum)
         self.side_pane_layout = QVBoxLayout(self.side_pane_widget)
         self.side_pane_layout.addWidget(self.navigation_groupbox, stretch=1)
