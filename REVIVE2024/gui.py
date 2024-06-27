@@ -40,7 +40,7 @@ class MyWidget(QWidget):
         self.runlist_ops_file = os.path.join(self.app_directory, "phius_runlist_options.json")
         self.help_tree_struc_file = os.path.join(self.app_directory, "help_tree_structure.txt")
         self.help_tree_content_file = os.path.join(self.app_directory, "help_tree_content.json")
-        self.required_cols_file = os.path.join(self.app_directory, "required_columns.csv")
+        self.required_cols_file = os.path.join(self.app_directory, "required_columns.json")
 
         # customize window
         self.icon = QIcon()

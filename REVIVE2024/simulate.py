@@ -36,6 +36,7 @@ import renewables
 import schedules
 import simControl
 import weatherMorph
+import validation
 # TODO: CLEAN UP IMPORTS
 
 """Class to hold all inputs that do not vary from run to run""" 
@@ -138,31 +139,6 @@ def validate_input(batch_name, idd_file, study_folder, run_list, db_dir):
         assert os.path.isdir(db_dir), f"Database folder path ({db_dir})"
     except AssertionError as wrong_path:
         return f"{wrong_path} does not exist."
-    
-    # ensure database folder contains necessary files/folders
-    try:
-        emissions_file = "Hourly Emission Rates.csv"
-        weather_folder = "Weather Data"
-        construction_file = "Construction Database.csv"
-        assert os.path.isfile(os.path.join(db_dir, emissions_file)), f"file \"{emissions_file}\""
-        assert os.path.isdir(os.path.join(db_dir, weather_folder)), f"folder \"{weather_folder}\""
-        assert os.path.isfile(os.path.join(db_dir, construction_file)), f"file \"{construction_file}\""
-    except AssertionError as missing_item:
-        return f"Cannot find {missing_item} in specified database directory."
-    
-    # ensure all required columns are present in run list
-    try:
-        req_cols_file_name = os.path.join(getattr(sys, "_MEIPASS", os.getcwd()),"required_columns.csv")
-        with open(req_cols_file_name, "r") as f:
-            reader = csv.reader(f)
-            required_columns = list(reader)[0]
-        for col in required_columns:
-            run_list_df = pd.read_csv(run_list)
-            assert col in run_list_df, col
-    except AssertionError as missing_col:
-        return f"{missing_col} column missing, run list may be out of date."
-    except FileNotFoundError:
-        return "Please run app from project directory."
     
     # ensure previous run results will not be overwritten
     try:
