@@ -25,12 +25,12 @@
 23,Exterior Roof R-60,Roof,27,21.53,FG Attic R-60,Plywood (Douglas Fir) - 12.7mm,G01a 19mm gypsum board,,,,,,,,,,,,,30,0.3
 24,Exterior Roof R-75,Roof,30.6,39.4,FG Attic R-75,Plywood (Douglas Fir) - 12.7mm,G01a 19mm gypsum board,,,,,,,,,,,,,30,0.3
 25,Exterior Roof R-100,Roof,36,69.32,FG Attic R-100,Plywood (Douglas Fir) - 12.7mm,G01a 19mm gypsum board,,,,,,,,,,,,,30,0.3
-26,P+B UnIns,Interior Floor,16.2,15,Plywood (Douglas Fir) - 12.7mm,F05 Ceiling air space resistance,Plywood (Douglas Fir) - 12.7mm,G05 25mm wood,,,,,,,,,,,,0,0.3
-27,P+B R-13,Interior Floor,70.2,22.6,Plywood (Douglas Fir) - 12.7mm,ccSF R-13,Plywood (Douglas Fir) - 12.7mm,G05 25mm wood,,,,,,,,,,,,0,0.3
-28,P+B R-19,Interior Floor,79.2,29.06,Plywood (Douglas Fir) - 12.7mm,ccSF R-19,Plywood (Douglas Fir) - 12.7mm,G05 25mm wood,,,,,,,,,,,,0,0.3
-29,P+B R-30,Interior Floor,140.4,38.75,Plywood (Douglas Fir) - 12.7mm,ccSF R-30,Plywood (Douglas Fir) - 12.7mm,G05 25mm wood,,,,,,,,,,,,0,0.3
-30,P+B R-38,Interior Floor,144,46.44,Plywood (Douglas Fir) - 12.7mm,ccSF R-38,Plywood (Douglas Fir) - 12.7mm,G05 25mm wood,,,,,,,,,,,,0,0.3
-31,P+B R-49,Interior Floor,153,56.78,Plywood (Douglas Fir) - 12.7mm,ccSF R-49,Plywood (Douglas Fir) - 12.7mm,G05 25mm wood,,,,,,,,,,,,0,0.3
+26,P+B UnIns,Exterior Floor,16.2,15,Plywood (Douglas Fir) - 12.7mm,F05 Ceiling air space resistance,Plywood (Douglas Fir) - 12.7mm,G05 25mm wood,,,,,,,,,,,,0,0.3
+27,P+B R-13,Exterior Floor,70.2,22.6,Plywood (Douglas Fir) - 12.7mm,ccSF R-13,Plywood (Douglas Fir) - 12.7mm,G05 25mm wood,,,,,,,,,,,,0,0.3
+28,P+B R-19,Exterior Floor,79.2,29.06,Plywood (Douglas Fir) - 12.7mm,ccSF R-19,Plywood (Douglas Fir) - 12.7mm,G05 25mm wood,,,,,,,,,,,,0,0.3
+29,P+B R-30,Exterior Floor,140.4,38.75,Plywood (Douglas Fir) - 12.7mm,ccSF R-30,Plywood (Douglas Fir) - 12.7mm,G05 25mm wood,,,,,,,,,,,,0,0.3
+30,P+B R-38,Exterior Floor,144,46.44,Plywood (Douglas Fir) - 12.7mm,ccSF R-38,Plywood (Douglas Fir) - 12.7mm,G05 25mm wood,,,,,,,,,,,,0,0.3
+31,P+B R-49,Exterior Floor,153,56.78,Plywood (Douglas Fir) - 12.7mm,ccSF R-49,Plywood (Douglas Fir) - 12.7mm,G05 25mm wood,,,,,,,,,,,,0,0.3
 32,WINDOW_U-0.5 g=0.4,Window,205.2,100,U-0.5 g=0.4,,,,,,,,,,,,,,,30,0.5
 33,WINDOW_U-0.4 g=0.4,Window,205.2,139.94,U-0.4 g=0.4,,,,,,,,,,,,,,,30,0.5
 34,WINDOW_U-0.3 g=0.4,Window,205.2,258.34,U-0.3 g=0.4,,,,,,,,,,,,,,,30,0.5
