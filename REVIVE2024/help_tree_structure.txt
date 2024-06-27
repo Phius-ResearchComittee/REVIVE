@@ -1,12 +1,12 @@
-Basic
+General
 -Case Name
 -Geometry
 -Simulation Duration
-Site and Utility
+Site
 -EPW
 -DDY
 -Morph
-Energy Pricing
+Energy Economics
 -Electric Price
 -Gas Price
 -Sellback Price

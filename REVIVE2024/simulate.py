@@ -323,17 +323,13 @@ def resilience_simulation_prep(si: SimInputs, case_id: int, simulation_mgr=None)
     assert os.path.isfile(epwFile), "Cannot find specified EPW file."
     assert os.path.isfile(ddyName), "Cannot find specified DDY file."
 
-    icfa = runList['ICFA'][runCount]
-    icfa_M  = icfa*0.09290304
-    Nbr = runList['BEDROOMS'][runCount]
-    occ = int(runList['BEDROOMS'][runCount]) + 1
     operableArea_N = ((runList['Operable_Area_N'][runCount])*0.09290304)
     operableArea_S = ((runList['Operable_Area_S'][runCount])*0.09290304)
     operableArea_W = ((runList['Operable_Area_W'][runCount])*0.09290304)
     operableArea_E = ((runList['Operable_Area_E'][runCount])*0.09290304)
     halfHeight = 1.524
-    ervSense = 0
-    ervLatent = 0
+    ervSense = 0.7
+    ervLatent = 0.4
 
     # IHG Calc
     constructionList = pd.read_csv(constructionDatabase, index_col="Name")
@@ -794,29 +790,29 @@ def annual_simulation_prep(si: SimInputs, case_id: int, simulation_mgr=None):
                     demandCoolingAvail,shadingAvail)
     
     # get annual erv info
-    occ = runList['BEDROOMS'][runCount] + 1
-    ervSense = 0 # TODO: are these correct? values never changed
-    ervLatent = 0
+    ervSense = 0.7 # TODO: are these correct? values never changed
+    ervLatent = 0.4
 
-    # loop through zones for annual erv computation
-    modeled_zones = idf1.idfobjects['ZONE']
-    for zone in modeled_zones:
-        zone_name = zone.Name
-        hvac.AnnualERV(idf2, zone_name, occ, ervSense, ervLatent)
-        
     # create schedules for units with windows
     with open(os.path.join(tempFolder, f"{BaseFileName}_UnitBedrooms.json"), "r") as fp:
         unit_bedroom_list = json.load(fp)
         unit_list = [unit for unit, _ in unit_bedroom_list]
     schedules.AnnualControls(idf2, unit_list)
 
+    # loop through zones for annual erv computation
+    modeled_zones = idf1.idfobjects['ZONE']
+    for zone in modeled_zones:
+        zone_name = zone.Name
+        occ = float(unit_bedroom_list[str(zone_name)]) + 1
+        hvac.AnnualERV(idf2, zone_name, occ, ervSense, ervLatent)
+        
+
     # get envelope information
     infiltration_rate = runList['INFILTRATION_RATE'][runCount]
     mechSystemType = runList['MECH_SYSTEM_TYPE'][runCount]
     dhwFuel = runList['WATER_HEATER_FUEL'][runCount]
     PV_SIZE = runList['PV_SIZE_[W]'][runCount]
-    icfa = runList['ICFA'][runCount]
-    
+  
     # get hourly temperature results
     hourlyHeat = pd.read_csv(prev_sim_hourly_heat)
     hourlyCool = pd.read_csv(prev_sim_hourly_cool)
