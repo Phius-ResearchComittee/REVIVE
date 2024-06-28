@@ -403,17 +403,17 @@ def resilience_simulation_prep(si: SimInputs, case_id: int, simulation_mgr=None)
 
     # Foundation interfaces
     fnd1 = runList['FOUNDATION_INTERFACE_1'][runCount]
-    fnd1i = runList['FOUNDATION_INSUINSULATION_1'][runCount]
+    fnd1i = runList['FOUNDATION_INSULATION_1'][runCount]
     fnd1p = runList['FOUNDATION_PERIMETER_1'][runCount]
     fnd1d = runList['FOUNDATION_INSULATION_DEPTH_1'][runCount]
 
     fnd2 = runList['FOUNDATION_INTERFACE_2'][runCount]
-    fnd2i = runList['FOUNDATION_INSUINSULATION_2'][runCount]
+    fnd2i = runList['FOUNDATION_INSULATION_2'][runCount]
     fnd2p = runList['FOUNDATION_PERIMETER_2'][runCount]
     fnd2d = runList['FOUNDATION_INSULATION_DEPTH_2'][runCount]
 
     fnd3 = runList['FOUNDATION_INTERFACE_3'][runCount]
-    fnd3i = runList['FOUNDATION_INSUINSULATION_3'][runCount]
+    fnd3i = runList['FOUNDATION_INSULATION_3'][runCount]
     fnd3p = runList['FOUNDATION_PERIMETER_3'][runCount]
     fnd3d = runList['FOUNDATION_INSULATION_DEPTH_3'][runCount]
 

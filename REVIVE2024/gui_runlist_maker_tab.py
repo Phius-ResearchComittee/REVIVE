@@ -557,7 +557,7 @@ class RunlistMakerTab(QWidget):
         for i in range(3):
             
             # foundations
-            for j, attr in enumerate(["INTERFACE", "INSUINSULATION"]):
+            for j, attr in enumerate(["INTERFACE", "INSULATION"]):
                 self.runlist_dict[f"FOUNDATION_{attr}_{i+1}"] = foundation_widgets[i][j].currentText() if i<len(foundation_widgets) else ""
             for j, attr in enumerate(["PERIMETER", "DEPTH"]):
                 self.runlist_dict[f"FOUNDATION_{attr}_{i+1}"] = foundation_widgets[i][j].cleanText() if i<len(foundation_widgets) else ""
