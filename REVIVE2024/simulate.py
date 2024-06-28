@@ -1246,10 +1246,11 @@ def collect_individual_simulation_results(si: SimInputs, case_id: int, simulatio
     try:
         hourly = pd.read_csv(ba_hourly_path)
         elecPrice = float(runList['ELEC_PRICE_[$/kWh]'][runCount])
+        annualBaseElec = float(runList["ANNUAL_ELEC_CHARGE"][runCount])
         elec_sellback_price = float(runList['SELLBACK_PRICE_[$/kWh]'][runCount])
         annualElec = ((hourly['Whole Building:Facility Total Purchased Electricity Energy [J](Hourly)'].sum()*0.0000002778*elecPrice)-
                         (hourly['Whole Building:Facility Total Surplus Electricity Energy [J](Hourly)'].sum()*0.0000002778*elec_sellback_price)
-                        +100)
+                        +annualBaseElec)
     except FileNotFoundError:
         annualElec = "ERROR"
 
@@ -1258,9 +1259,10 @@ def collect_individual_simulation_results(si: SimInputs, case_id: int, simulatio
         monthlyMTR = pd.read_csv(ba_mtr_path)
         natGasPresent = runList['NATURAL_GAS'][runCount]
         gasPrice = runList['GAS_PRICE_[$/THERM]'][runCount]
+        annualBaseGas = float(runList["ANNUAL_GAS_CHARGE"][runCount])
         if natGasPresent == 1:
             monthlyMTR = monthlyMTR.drop(index=[0,1,2,3,4,5,6,7])
-            annualGas = ((sum(monthlyMTR['NaturalGas:Facility [J](Monthly) ']*9.478169879E-9))*gasPrice)+(40*12)
+            annualGas = ((sum(monthlyMTR['NaturalGas:Facility [J](Monthly) ']*9.478169879E-9))*gasPrice)+(annualBaseGas)
         else:
             annualGas = 0
     except FileNotFoundError:
