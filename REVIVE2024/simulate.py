@@ -1089,7 +1089,7 @@ def compute_adorb_costs(si: SimInputs, case_id: int, simulation_mgr=None):
         if item_name[:5] == "mech_": item_name = item_name[5:]
 
         # handle appliance breakdown after loop
-        if item_name == "appliances" or item_name == "lights":
+        if item_name in ["appliances", "lights"] or item_name.startswith("air sealing"):
             continue
         
         # for all normal entries compute and add to emCO2 and dirMR list
@@ -1205,9 +1205,10 @@ def collect_individual_simulation_results(si: SimInputs, case_id: int, simulatio
         coolingBattery = moraTotalDays = MaxDBOut = MaxDPOut = "ERROR"
 
     # info from BA htm tables
-    items_list = ["WALL", "ROOF", "FLOOR", "WINDOW", "DOOR", 
-                    "AIR SEALING", "MECH", "DHW", "APPLIANCES", 
-                    "LIGHTS", "PV COST", "BATTERY COST"] # to be used for cost map keys
+    construction_df = pd.read_csv(si.construction_db, index_col="Name")
+    construction_df.index = construction_df.index.str.upper()
+    item_types = ["Exterior Wall", "Roof", "Exterior Floor", "Window", "Exterior Door"]
+    other_items = ["AIR SEALING", "MECH", "DHW", "APPLIANCES", "PV COST", "BATTERY COST"]
     try:
         site_source_energy_table = fasthtml.tablebyname(open(ba_htm_path, "r"), "Site and Source Energy")
         annual_peak_values_table = fasthtml.tablebyname(open(ba_htm_path, "r"), "Annual and Peak Values - Electricity")
@@ -1217,20 +1218,28 @@ def collect_individual_simulation_results(si: SimInputs, case_id: int, simulatio
         eui = float(site_source_energy_table[1][1][2])
         peakElec = float(annual_peak_values_table[1][1][4])
         firstCost = 0
-        item_cost_dict = {key:0 for key in items_list}
+        item_cost_dict = {key:0 for key in item_types+other_items}
         
         if "BASE" not in case_name:
             firstCost = float(construction_cost_est_table[1][9][2])
-            for row in range(len(cost_line_item_detail_table[1])):
+            for row in range(1, len(cost_line_item_detail_table[1])):
                 item_name = cost_line_item_detail_table[1][row][2]
                 item_cost = cost_line_item_detail_table[1][row][6]
-                for key in items_list:
-                    if key in item_name:
-                        item_cost_dict[key] = item_cost_dict[key] + item_cost
+
+                for key in other_items:
+                    if item_name.startswith(key):
+                        item_cost_dict[key] = item_cost
+                        break
+                else:
+                    if item_name in construction_df.index:
+                        item_type = construction_df.loc[item_name, "Type"]
+                        try:
+                            item_cost_dict[item_type] = item_cost_dict[item_type] + item_cost
+                        except KeyError: pass
 
     except FileNotFoundError:
         eui = peakElec = firstCost = "ERROR"
-        item_cost_dict = {item:"ERROR" for item in items_list}
+        item_cost_dict = {item:"ERROR" for item in item_types}
 
 
     # info from BA hourly dataset
@@ -1289,11 +1298,11 @@ def collect_individual_simulation_results(si: SimInputs, case_id: int, simulatio
         "First Year Electric Cost [$]" : annualElec,
         "First Year Gas Cost [$]":annualGas,
         "First Cost [$]":firstCost,
-        "Wall Cost [$]":item_cost_dict["WALL"],
-        "Roof Cost [$]":item_cost_dict["ROOF"],
-        "Floor Cost [$]":item_cost_dict["FLOOR"],
-        "Window Cost [$]":item_cost_dict["WINDOW"],
-        "Door Cost [$]":item_cost_dict["DOOR"],
+        "Wall Cost [$]":item_cost_dict["Exterior Wall"],
+        "Roof Cost [$]":item_cost_dict["Roof"],
+        "Floor Cost [$]":item_cost_dict["Exterior Floor"],
+        "Window Cost [$]":item_cost_dict["Window"],
+        "Door Cost [$]":item_cost_dict["Exterior Door"],
         "Air Sealing Cost [$]":item_cost_dict["AIR SEALING"],
         "Mechanical Cost [$]":item_cost_dict["MECH"],
         "Water Heater Cost [$]":item_cost_dict["DHW"],
