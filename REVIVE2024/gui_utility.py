@@ -117,7 +117,7 @@ class REVIVEHelpTree(QTreeWidget):
 
 
 class REVIVESpinBox(QSpinBox):
-    def __init__(self, step_amt=1, min=0, max=None, parent=None):
+    def __init__(self, step_amt=1, min=0, max=100_000_000, parent=None):
         # create the regular spinbox
         super().__init__(parent)
 
@@ -126,12 +126,11 @@ class REVIVESpinBox(QSpinBox):
 
         # set parameters
         self.setSingleStep(step_amt)
-        if max is not None:
-            self.setRange(min, max)
+        self.setRange(min, max)
 
 
 class REVIVEDoubleSpinBox(QDoubleSpinBox):
-    def __init__(self, decimals=None, step_amt=0.01, min=0, max=10_0000_000, parent=None):
+    def __init__(self, decimals=None, step_amt=0.01, min=0, max=100_000_000, parent=None):
         # create the regular spinbox
         super().__init__(parent)
 

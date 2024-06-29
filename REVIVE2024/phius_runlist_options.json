@@ -20,6 +20,5 @@
         "Roof": ["Exterior Roof","Exterior Roof R-30","Exterior Roof R-38","Exterior Roof R-49","Exterior Roof R-55","Exterior Roof R-60","Exterior Roof R-75","Exterior Roof R-100"],
         "Exterior Floor": [ "Exterior Slab UnIns","Exterior Slab + 2in EPS"],
         "Interior Floor": ["P+B UnIns","P+B R-13","P+B R-19","P+B R-30","P+B R-38","P+B R-49","Interior Floor"]
-    },
-    "Natural Ventilation Type": ["NatVent","SchNatVent"]
+    }
 }

@@ -58,7 +58,7 @@ class RunlistMakerTab(QWidget):
         self.navigation_pane.addWidget(self.navigation_tree)
 
         # create options source pane components
-        self.use_phius_options_button = QRadioButton("Load PHIUS options")
+        self.use_phius_options_button = QRadioButton("Load Phius options")
         self.use_phius_options_button.setChecked(True)
         self.use_custom_options_button = QRadioButton("Load custom options from database:")
         self.custom_db_source = REVIVEFolderPicker("Select Database Folder", parent=self.use_custom_options_button)
@@ -98,9 +98,9 @@ class RunlistMakerTab(QWidget):
         self.runlist_export.setExclusive(True)
 
         # connect runlist export pane components
-        # self.create_new_rl_button.setChecked.connect(
+        # self.create_new_rl_button.checkStateSet.connect(
         #     lambda _ : self.existing_runlist_file.setEnabled(False))
-        # self.add_existing_rl_button.setChecked.connect(
+        # self.add_existing_rl_button.checkStateSet.connect(
         #     lambda _ : self.new_runlist_file.setEnabled(False))
         self.export_button.clicked.connect(self.export_to_csv)
 
@@ -225,7 +225,7 @@ class RunlistMakerTab(QWidget):
         # create all the new widgets
         self.rl_epw_file = REVIVEFilePicker("EPW File", "epw")
         self.rl_ddy_file = REVIVEFilePicker("DDY File", "ddy")
-        self.rl_morph_factors = [REVIVEDoubleSpinBox(decimals=2, step_amt=0.01, min=0, max=15) for _ in range(4)]
+        self.rl_morph_factors = [REVIVEDoubleSpinBox(decimals=2, step_amt=0.01) for _ in range(4)]
         self.rl_env_country = REVIVEComboBox()
         self.rl_grid_region = REVIVEComboBox()
         self.rl_env_labor_frac = REVIVEDoubleSpinBox(decimals=2, step_amt=0.1, min=0, max=10)
@@ -307,8 +307,8 @@ class RunlistMakerTab(QWidget):
         new_layout.addLayout(self.stack_widgets_vertically(
             widget_list=[self.rl_annual_gas_charge,
                          self.rl_annual_elec_charge],
-            label_list=["Annual Gas Bill ($)",
-                        "Annual Electric Bill ($)"]
+            label_list=["Annual Gas Fixed Charge ($)",
+                        "Annual Electric Fixed Charge ($)"]
         ))
 
         # assign layout to groupbox
@@ -320,25 +320,53 @@ class RunlistMakerTab(QWidget):
         new_layout = QVBoxLayout()
 
         # create all the new widgets
-        self.rl_mech_system = REVIVEComboBox() # TODO: SPLIT HEAT PUMP IN HVAC BUT NOT CONSTR. DB
+        self.rl_mech_system = REVIVEComboBox()
         self.rl_water_heater_fuel = REVIVEComboBox()
-        self.rl_pv_size = REVIVESpinBox(step_amt=500, min=0, max=12000)
+        self.rl_vent_system = REVIVEComboBox(items=["Balanced", "Exhaust"])
+        self.rl_erv_sense = REVIVEDoubleSpinBox(max=1)
+        self.rl_erv_latent = REVIVEDoubleSpinBox(max=1)
+        self.rl_heating_cop = REVIVEDoubleSpinBox(max=10)
+        self.rl_cooling_cop = REVIVEDoubleSpinBox(max=10)
+        self.rl_heating_cop.setEnabled(False)
+        self.rl_cooling_cop.setEnabled(False)
+        self.rl_mech_system.currentTextChanged.connect(
+            lambda new_text : self.rl_heating_cop.setEnabled(new_text=="SplitHeatPump"))
+        self.rl_mech_system.currentTextChanged.connect(
+            lambda new_text : self.rl_cooling_cop.setEnabled(new_text=="SplitHeatPump"))
+        self.rl_pv_size = REVIVESpinBox(step_amt=500)
         self.rl_pv_tilt = REVIVESpinBox(step_amt=10, min=0, max=90)
+        self.rl_pv_azimuth = REVIVESpinBox(max=360)
         self.appliance_list = ["Fridge","Dishwasher","Clotheswasher","Clothesdryer","Lights"]
         self.rl_appliances = [REVIVEComboBox() for _ in self.appliance_list]
         
         # add all new widgets to layout with labels
         new_layout.addLayout(self.stack_widgets_vertically(
-            widget_list=[self.rl_mech_system,
-                         self.rl_water_heater_fuel],
-            label_list=["Mechanical System Type",
-                        "Water Heater Fuel Type"]
+            widget_list=[self.rl_vent_system,
+                         self.rl_water_heater_fuel,
+                         self.rl_mech_system],
+            label_list=["Ventilation System",
+                        "Water Heater Fuel Type",
+                        "Mechanical System Type"]
+        ))
+        new_layout.addLayout(self.stack_widgets_vertically(
+            widget_list=[self.rl_heating_cop,
+                         self.rl_cooling_cop],
+            label_list=["Coefficient of Performance (Heating)",
+                        "Coefficient of Performance (Cooling)"]
+        ))
+        new_layout.addLayout(self.stack_widgets_vertically(
+            widget_list=[self.rl_erv_sense,
+                         self.rl_erv_latent],
+            label_list=["Sensible Recovery Efficiency",
+                        "Latent Recover Efficiency"]
         ))
         new_layout.addLayout(self.stack_widgets_horizontally(
             widget_list=[self.rl_pv_size,
-                         self.rl_pv_tilt],
+                         self.rl_pv_tilt,
+                         self.rl_pv_azimuth],
             label_list=["Photovoltaics Size (W)",
-                        "Photovoltaics Tilt (deg)"]
+                        "Photovoltaics Tilt (deg)",
+                        "Photovoltaics Azimuth (deg)"]
         ))
         new_layout.addLayout(self.stack_widgets_vertically(
             widget_list=self.rl_appliances,
@@ -357,40 +385,40 @@ class RunlistMakerTab(QWidget):
         self.rl_chi_val = REVIVEDoubleSpinBox(decimals=3, step_amt=0.001, max=5)
         self.rl_infil_rate = REVIVEDoubleSpinBox(decimals=3, step_amt=0.01, min=0, max=1)
         self.rl_op_areas = [REVIVESpinBox(step_amt=1) for _ in range(4)]
-        self.rl_foundation_set = REVIVEFoundationWidgetSet(add_label="Add Foundation Layer", 
+        self.rl_foundation_set = REVIVEFoundationWidgetSet(add_label="Add Foundation Type", 
                                                            initial_widgets=1, 
                                                            max_widgets=3, 
-                                                           label="Foundation Layer",
+                                                           label="Foundation Type",
                                                            is_groupbox=True)
-        self.rl_window_set = REVIVENameOnlyWidgetSet(add_label="Add Window Layer",
+        self.rl_window_set = REVIVENameOnlyWidgetSet(add_label="Add Window Type",
                                                      initial_widgets=1,
                                                      max_widgets=3,
-                                                     label="Window Layer",
+                                                     label="Window Type",
                                                      is_groupbox=True)
-        self.rl_ext_door_set = REVIVENameOnlyWidgetSet(add_label="Add Exterior Door Layer",
+        self.rl_ext_door_set = REVIVENameOnlyWidgetSet(add_label="Add Exterior Door Type",
                                                        initial_widgets=1,
                                                        max_widgets=3,
-                                                       label="Ext. Door Layer",
+                                                       label="Ext. Door Type",
                                                        is_groupbox=True)
-        self.rl_ext_wall_set = REVIVENameOnlyWidgetSet(add_label="Add Exterior Wall Layer",
+        self.rl_ext_wall_set = REVIVENameOnlyWidgetSet(add_label="Add Exterior Wall Type",
                                                        initial_widgets=1,
                                                        max_widgets=3,
-                                                       label="Ext. Wall Layer",
+                                                       label="Ext. Wall Type",
                                                        is_groupbox=True)
-        self.rl_ext_roof_set = REVIVENameOnlyWidgetSet(add_label="Add Roof Layer",
+        self.rl_ext_roof_set = REVIVENameOnlyWidgetSet(add_label="Add Roof Type",
                                                        initial_widgets=1,
                                                        max_widgets=3,
-                                                       label="Roof Layer",
+                                                       label="Roof Type",
                                                        is_groupbox=True)
-        self.rl_ext_floor_set = REVIVENameOnlyWidgetSet(add_label="Add Exterior Floor Layer",
+        self.rl_ext_floor_set = REVIVENameOnlyWidgetSet(add_label="Add Exterior Floor Type",
                                                        initial_widgets=1,
                                                        max_widgets=3,
-                                                       label="Ext. Floor Layer",
+                                                       label="Ext. Floor Type",
                                                        is_groupbox=True)
-        self.rl_int_floor_set = REVIVENameOnlyWidgetSet(add_label="Add Interior Floor Layer",
+        self.rl_int_floor_set = REVIVENameOnlyWidgetSet(add_label="Add Interior Floor Type",
                                                        initial_widgets=1,
                                                        max_widgets=3,
-                                                       label="Int. Floor Layer",
+                                                       label="Int. Floor Type",
                                                        is_groupbox=True)
 
         # add all new widgets to layout with labels
@@ -425,7 +453,7 @@ class RunlistMakerTab(QWidget):
         self.rl_dem_cool_avail.setChecked(False)
         self.rl_nat_vent_avail = QCheckBox()
         self.rl_nat_vent_avail.setChecked(False)
-        self.rl_nat_vent_type = REVIVEComboBox()
+        self.rl_nat_vent_type = REVIVEComboBox(items=["NatVent","SchNatVent"])
         self.rl_nat_vent_type.setEnabled(False)
         self.rl_nat_vent_avail.checkStateChanged.connect(
             lambda state : self.rl_nat_vent_type.setEnabled(state==Qt.Checked))
@@ -532,8 +560,14 @@ class RunlistMakerTab(QWidget):
         # mechanicals
         self.runlist_dict["MECH_SYSTEM_TYPE"] = self.rl_mech_system.currentText()
         self.runlist_dict["WATER_HEATER_FUEL"] = self.rl_water_heater_fuel.currentText()
+        self.runlist_dict["VENT_SYSTEM_TYPE"] = self.rl_vent_system.currentText()
+        self.runlist_dict["HEATING_COP"] = self.rl_heating_cop.cleanText() if self.rl_heating_cop.isEnabled() else ""
+        self.runlist_dict["COOLING_COP"] = self.rl_cooling_cop.cleanText() if self.rl_cooling_cop.isEnabled() else ""
+        self.runlist_dict["SENSIBLE_RECOVERY_EFF"] = self.rl_erv_sense.cleanText()
+        self.runlist_dict["LATENT_RECOVERY_EFF"] = self.rl_erv_latent.cleanText()
         self.runlist_dict["PV_SIZE_[W]"] = self.rl_pv_size.cleanText()
         self.runlist_dict["PV_TILT"] = self.rl_pv_tilt.cleanText()
+        self.runlist_dict["PV_AZIMUTH"] = self.rl_pv_azimuth.cleanText()
         self.runlist_dict["APPLIANCE_LIST"] = ", ".join([x.currentText() for x in self.rl_appliances if x != ""])
 
         # envelope (top-levels)
@@ -589,7 +623,7 @@ class RunlistMakerTab(QWidget):
         try:
             if self.use_phius_options_button.isChecked():
                 self.load_phius_runlist_options()
-                prompt = "PHIUS runlist options loaded successfully!"
+                prompt = "Phius runlist options loaded successfully!"
             else:
                 self.load_custom_runlist_options()
                 prompt = f"Custom runlist options from database folder \"{self.custom_db_source.text()}\" loaded successfully!"
@@ -610,7 +644,6 @@ class RunlistMakerTab(QWidget):
             envelope_dict = self.runlist_options["Envelope"]
             for i, item in enumerate(self.envelope_items):
                 self.revive_widget_sets[i+1].change_items(envelope_dict[item]) # +1 to skip foundation
-            self.rl_nat_vent_type.change_items(self.runlist_options["Natural Ventilation Type"])
 
         except Exception as e:
             self.parent.display_error(str(e))
@@ -628,15 +661,17 @@ class RunlistMakerTab(QWidget):
 
     def load_custom_runlist_options(self):
         # get the file location from entry
-        file_path = self.custom_db_source.currentText()
+        db_path = self.custom_db_source.text()
 
         # check that database is valid
         try:
-            validation.validate_database_content()
+            validation.validate_database_content(self.required_cols_file, db_path)
         except Exception as e:
             self.parent.display_error(str(e))
             return
         
+
+        ### CHANGE BELOW
         # load carbon corrections
         pd.read_csv()
         pass
