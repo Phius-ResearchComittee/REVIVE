@@ -1,6 +1,7 @@
 # native imports
 import os
 import json
+from datetime import datetime
 
 # dependency imports
 import pandas as pd
@@ -33,8 +34,13 @@ required_dirs = [
 ]
 
 invalid_csv_prompt = lambda invalid_file : f"File \"{invalid_file}\" cannot be parsed as CSV."
+missing_item_prompt = lambda missing_item : f"Cannot find {missing_item} in specified database directory."
 missing_column_prompt = lambda missing_col, file : f"Column \"{missing_col}\" missing from file \"{file}\". Please make sure column exists and is named properly."
-   
+rl_missing_item_prompt = lambda rl_file, missing_item, location : f"Problem in runlist \"{rl_file}\": {missing_item} not found in {location}. Please make sure runlist was generated using the designated database."
+rl_missing_value_prompt = lambda rl_file, col : f"Problem in runlist \"{rl_file}\": Required column \"{col}\" is missing one or more values."
+rl_misc_prompt = lambda rl_file, prompt : f"Problem in runlist \"{rl_file}\": {prompt}"
+rl_numeric_prompt = lambda rl_file, numeric_col : f"Problem in runlist \"{rl_file}\": All values in column \"{numeric_col}\" must be a numeric input."
+rl_boolean_prompt = lambda rl_file, bool_col : f"Problem in runlist \"{rl_file}\": All values in column \"{bool_col}\" must be either 1 (True) or 0 (False)."
 
 
 # define functions
@@ -50,7 +56,6 @@ def validate_database_exists(db_path):
     
 
 def validate_database_structure(db_path):
-    missing_item_prompt = lambda missing_item : f"Cannot find {missing_item} in specified database directory."
     
     # make sure the required items exist in the directory
     for file in required_files:
@@ -101,44 +106,172 @@ def validate_runlist_structure(req_cols_path, rl_path):
     # load the column requirements
     with open(req_cols_path, "r") as fp:
         content = json.load(fp)
-    cols = content["Runlist"]
+    req_cols = content["Runlist"]
+    present_cols = df.columns
 
     # compare columns
-    for col in cols:
-        assert col in df, f"Column {col} missing, runlist may be out of date."
+    for col in req_cols:
+        assert col in present_cols, rl_misc_prompt(rl_path, f"Column {col} missing, runlist may be out of date.")
+    for col in present_cols:
+        assert col in req_cols, rl_misc_prompt(rl_path, f"Column {col} is not allowed, please remove it from runlist.")
 
 
 def validate_runlist_inputs(rl_path, db_path):
-    # load runlist and database files
+    # infer database file paths
+    construction_db_path = os.path.join(db_path, CONSTRUCTION_DB_FILE_NAME)
+    carbon_db_path = os.path.join(db_path, P_CARBON_CORRECTION_DB_FILE_NAME)
+    np_carbon_db_path = os.path.join(db_path, NP_CARBON_CORRECTION_DB_FILE_NAME)
+    country_emissions_db_path = os.path.join(db_path, COUNTRY_EMISSIONS_DB_FILE_NAME)
+    hourly_emissions_db_path = os.path.join(db_path, HOURLY_EMISSIONS_FILE_NAME)
+    materials_db_path = os.path.join(db_path, MATERIALS_DB_FILE_NAME)
+    window_db_path = os.path.join(db_path, WINDOW_DB_FILE_NAME)
+
+    # load items from databases
     runlist_df = pd.read_csv(rl_path)
-    construction_df = pd.read_csv(os.path.join(db_path, CONSTRUCTION_DB_FILE_NAME))
-    carbon_df = pd.read_csv(os.path.join(db_path, P_CARBON_CORRECTION_DB_FILE_NAME))
-    np_carbon_df = pd.read_csv(os.path.join(db_path, NP_CARBON_CORRECTION_DB_FILE_NAME))
-    country_emissions_df = pd.read_csv(os.path.join(db_path, COUNTRY_EMISSIONS_DB_FILE_NAME))
-    hourly_emissions_df = pd.read_csv(os.path.join(db_path, HOURLY_EMISSIONS_FILE_NAME))
-    materials_df = pd.read_csv(os.path.join(db_path, MATERIALS_DB_FILE_NAME))
-    window_df = pd.read_csv(os.path.join(db_path, WINDOW_DB_FILE_NAME))
-    
-    # case name (avoid strange characters)
-    is_legal_char = lambda x : x.isalnum() or x in " _"
-    for case_name in runlist_df["CASE_NAME"]:
-        assert not any(is_legal_char(c) for c in case_name), "Case name may contain letters, numbers, underscores, or spaces only."
-    
-    # check for geometry file
-    for idf in runlist_df["GEOMETRY_IDF"]:
-        assert os.path.isfile(idf)
-    
-    # check for weather file
-    weather_dir = os.path.join(db_path, WEATHER_DATA_DIR)
-    for epw, ddy in zip(runlist_df["EPW"], runlist_df["DDY"]):
-        assert os.path.isfile(os.path.join(weather_dir, epw)), f"EPW file \"{epw}\" could not be found in weather folder \"{weather_dir}\"."
-        assert os.path.isfile(os.path.join(weather_dir, ddy)), f"DDY file \"{ddy}\" could not be found in weather folder \"{weather_dir}\"."
-    
-    # check construction list items
-    for app_list in runlist_df["APPLIANCE_LIST"]:
-        for app in app_list:
-            assert app in construction_df["NAME"], f"Appliance \"{app}\" not found in construction database \"{os.path.join(db_path, CONSTRUCTION_DB_FILE_NAME)}\"."
+    construction_list = pd.read_csv(construction_db_path, index_col="Name").index.tolist()
+    carbon_list = pd.read_csv(carbon_db_path, index_col="Name").index.tolist()
+    np_carbon_list = pd.read_csv(np_carbon_db_path, index_col="Name").index.tolist()
+    country_list = pd.read_csv(country_emissions_db_path, index_col="COUNTRY").index.tolist()
+    grid_regions_list = pd.read_csv(hourly_emissions_db_path).columns
+    materials_list = pd.read_csv(materials_db_path, index_col="NAME").index.tolist()
+    window_list = pd.read_csv(window_db_path, index_col="NAME").index.tolist()
 
+    # make labels for error prompts
+    label_maker = lambda db_type, db_path : f"{db_type} database \"{db_path}\""
+    construction_db_label = label_maker("construction", construction_db_path)
+    carbon_db_label = label_maker("carbon", carbon_db_path)
+    np_carbon_db_label = label_maker("non-performance carbon", np_carbon_db_path)
+    country_emissions_db_label = label_maker("country emissions", country_emissions_db_path)
+    hourly_emissions_db_label = label_maker("hourly emissions", hourly_emissions_db_path)
+    materials_db_label = label_maker("materials", materials_db_path)
+    window_db_label = label_maker("window", window_db_path)
 
+    # ensure all required columns are filled out
+    not_empty = lambda x : not pd.isna(x) and str(x).strip()
+    optional_columns = ["GAS_PRICE_[$/THERM]", "APPLIANCE_LIST",
+                        "EXT_WINDOW_1", "EXT_WINDOW_2", "EXT_WINDOW_3",
+                        "FOUNDATION_INTERFACE_1", "FOUNDATION_INSULATION_1",
+                        "FOUNDATION_PERIMETER_1", "FOUNDATION_INSULATION_DEPTH_1",
+                        "FOUNDATION_INTERFACE_2", "FOUNDATION_INSULATION_2",
+                        "FOUNDATION_PERIMETER_2", "FOUNDATION_INSULATION_DEPTH_2",
+                        "FOUNDATION_INTERFACE_3", "FOUNDATION_INSULATION_3",
+                        "FOUNDATION_PERIMETER_3", "FOUNDATION_INSULATION_DEPTH_3",
+                        "EXT_WALL_1_NAME", "EXT_ROOF_1_NAME", "EXT_DOOR_1_NAME",
+                        "INT_FLOOR_1_NAME","EXT_FLOOR_1_NAME",
+                        "EXT_WALL_2_NAME", "EXT_ROOF_2_NAME", "EXT_DOOR_2_NAME",
+                        "INT_FLOOR_2_NAME","EXT_FLOOR_2_NAME",
+                        "EXT_WALL_3_NAME", "EXT_ROOF_3_NAME", "EXT_DOOR_3_NAME",
+                        "INT_FLOOR_3_NAME","EXT_FLOOR_3_NAME",
+                        "PERF_CARBON_MEASURES", "NON_PERF_CARBON_MEASURES",
+                        "HEATING_COP", "COOLING_COP",
+                        "VENT_SYSTEM_TYPE", "NAT_VENT_TYPE"]
+    for col in [c for c in runlist_df.columns if c not in optional_columns]:
+        for cell in runlist_df[col]:
+            assert not_empty(cell), rl_missing_value_prompt(rl_path, col)
 
+    for _, row in runlist_df.iterrows():
 
+        # case name (avoid strange characters)
+        is_legal_char = lambda x : x.isalnum() or x in "_- "
+        case_name = row["CASE_NAME"]
+        for c in case_name:
+            assert is_legal_char(c), rl_misc_prompt(rl_path, "Case names may contain letters, numbers, underscores, dashes, or spaces only.")
+        
+        # check for geometry file
+        idf = row["GEOMETRY_IDF"]
+        assert os.path.isfile(idf), rl_misc_prompt(rl_path, f"Geometry file \"{idf}\" not found in current working directory.")
+        
+        # check for weather file
+        weather_dir = os.path.join(db_path, WEATHER_DATA_DIR)
+        epw, ddy = row["EPW"], row["DDY"]
+        assert os.path.isfile(os.path.join(weather_dir, epw)), rl_misc_prompt(rl_path, f"EPW file \"{epw}\" could not be found in weather folder \"{weather_dir}\".")
+        assert os.path.isfile(os.path.join(weather_dir, ddy)), rl_misc_prompt(rl_path, f"DDY file \"{ddy}\" could not be found in weather folder \"{weather_dir}\".")
+        
+        # check all numerical inputs
+        numeric_cols = ["ELEC_PRICE_[$/kWh]","SELLBACK_PRICE_[$/kWh]","ANNUAL_ELEC_CHARGE",
+                        "GAS_PRICE_[$/THERM]","ANNUAL_GAS_CHARGE",
+                        "MorphFactorDB1","MorphFactorDP1",
+                        "MorphFactorDB2","MorphFactorDP2",
+                        "PV_SIZE_[W]","PV_TILT","PV_AZIMUTH",
+                        "CHI_VALUE","INFILTRATION_RATE",
+                        "Operable_Area_N","Operable_Area_E",
+                        "Operable_Area_W","Operable_Area_S",
+                        "SENSIBLE_RECOVERY_EFF","LATENT_RECOVERY_EFF",
+                        "ENVELOPE_LABOR_FRACTION",
+                        "ANALYSIS_DURATION"]
+        for col in numeric_cols:
+            try:
+                _ = float(row[col])
+            except ValueError:
+                raise AssertionError(rl_numeric_prompt(rl_path, col))
+            
+        # check all boolean inputs
+        boolean_cols = ["NATURAL_GAS",
+                        "NAT_VENT_AVAIL",
+                        "SHADING_AVAIL",
+                        "DEMAND_COOLING_AVAIL"]
+        for col in boolean_cols:
+            assert str(row[col]).strip() in ["1", "0"], rl_boolean_prompt(rl_path, col)
+        
+        # appliances
+        app_list = row["APPLIANCE_LIST"]
+        app_list = app_list.split(",") if not pd.isna(app_list) else []
+        for app in [a.strip() for a in app_list]:
+            assert app in construction_list, rl_missing_item_prompt(rl_path, f"Appliance \"{app}\"", construction_db_label)
+    
+        # water heater fuel
+        dhw_fuel = row["WATER_HEATER_FUEL"]
+        prefixed_fuel = f"DHW_{dhw_fuel}"
+        assert prefixed_fuel in construction_list, rl_missing_item_prompt(rl_path, f"Fuel type \"{prefixed_fuel}\"", construction_db_label)
+    
+        # mechanical system
+        mech_sys = row["MECH_SYSTEM_TYPE"]
+        assert mech_sys in construction_list, rl_missing_item_prompt(rl_path, f"Mechanical system \"{mech_sys}\"", construction_db_label)
+
+        # int/ext items
+        items = (row.filter(like="EXT_") + row.filter(like="INT_")).dropna()
+        for item in [i for i in items if str(i).strip()]:
+            assert item in construction_list, rl_missing_item_prompt(rl_path, f"Envelope item \"{item}\"", construction_db_label)
+        
+        # outages
+        outage_type = row["1ST_OUTAGE"]
+        assert outage_type in ["HEATING", "COOLING"], rl_misc_prompt(rl_path, "Values in column \"1ST_OUTAGE\" must be either \"HEATING\" or \"COOLING\".")
+
+        date_format = "%d-%b"
+        for date in row.filter(like="OUTAGE_"):
+            try:
+                datetime.strptime(date, date_format)
+            except ValueError:
+                raise AssertionError(rl_misc_prompt(rl_path, "Outage dates must be in format \"dd-MMM\" (i.e. \"5-Jan\")."))
+ 
+        # carbon corrections
+        p_carbons = row["PERF_CARBON_MEASURES"]
+        np_carbons = row["NON_PERF_CARBON_MEASURES"]
+        p_carbons = p_carbons.split(",") if not pd.isna(p_carbons) else []
+        np_carbons = np_carbons.split(",") if not pd.isna(np_carbons) else []
+        for p, np in zip([p.strip() for p in p_carbons], [np.split() for np in np_carbons]):
+            assert p in carbon_list, rl_missing_item_prompt(rl_path, f"Carbon correction measure \"{p}\"", carbon_db_label)
+            assert np in np_carbon_list, rl_missing_item_prompt(rl_path, f"Non-performance carbon correction measure \"{np}\"", np_carbon_db_label)
+
+        # country
+        country = row["ENVELOPE_COUNTRY"].strip()
+        assert country in country_list, rl_missing_item_prompt(rl_path, f"Country \"{country}\"", country_emissions_db_label)
+
+        # grid region
+        grid_region = row["GRID_REGION"].strip()
+        assert grid_region in grid_regions_list, rl_missing_item_prompt(rl_path, f"Grid region \"{grid_region}\"", hourly_emissions_db_label)
+
+        # foundations
+        interfaces = row.filter(like="FOUNDATION_INTERFACE").dropna()
+        for interf in [i for i in interfaces if str(i).strip()]:
+            choices = ["Slab", "Crawlspace", "Basement"]
+            assert interf in choices, rl_misc_prompt(rl_path, f"Entries in \"FOUNDATION_INTERFACE\" columns must be one of {str(choices)}.")
+        
+        insulations = row.filter(regex=r"^FOUNDATION_INSULATION(?!.*DEPTH).*$").dropna()
+        for insu in [i for i in insulations if str(i).strip()]:
+            assert insu in materials_list, rl_missing_item_prompt(rl_path, f"Foundation insulation \"{insu}\"", materials_db_label)
+        
+        # windows
+        windows = row.filter(like="EXT_WINDOW").dropna()
+        for window in [w[len("WINDOW_"):] for w in windows if str(w).strip()]:
+            assert window in window_list, rl_missing_item_prompt(rl_path, f"Window \"{window}\"", window_db_label)
