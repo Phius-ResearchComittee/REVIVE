@@ -119,38 +119,6 @@ class GracefulExitException(Exception):
 
 
 ### UTILITY FUNCTIONS
-
-def validate_input(batch_name, idd_file, study_folder, run_list, db_dir):
-    # ensure all fields are not empty
-    try:
-        assert batch_name, "a batch name"
-        assert idd_file, "the location of the Energy+ IDD File"
-        assert study_folder, "a study/output folder"
-        assert run_list, "a run list file"
-        assert db_dir, "the location of the database folder"
-    except AssertionError as missing_item:
-        return f"Please specify {missing_item}."
-    
-    # ensure all file paths can be found
-    try:
-        assert os.path.isfile(idd_file), f"Energy+ IDD file path ({idd_file})"
-        assert os.path.isfile(run_list), f"Run list file path ({run_list})"
-        assert os.path.isdir(study_folder), f"Study/output folder path ({study_folder})"
-        assert os.path.isdir(db_dir), f"Database folder path ({db_dir})"
-    except AssertionError as wrong_path:
-        return f"{wrong_path} does not exist."
-    
-    # ensure previous run results will not be overwritten
-    try:
-        batch_folder_name = os.path.join(study_folder, batch_name)
-        assert not os.path.isdir(batch_folder_name), batch_folder_name
-    except AssertionError as folder_name:
-        return f"Folder \"{folder_name}\" already exists. Please change batch name or rename existing folder."
-
-    # no errors to report
-    return ""
-
-
 def divide_chunks(l, n): 
       
     # looping till length l 

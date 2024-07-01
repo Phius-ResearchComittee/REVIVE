@@ -87,6 +87,34 @@ def validate_database_file_structures(req_cols_path, db_path):
         for col in cols:
             assert col in df, missing_column_prompt(col, file)
 
+
+def validate_simulation_inputs(batch_name, idd_file, study_folder, run_list, db_dir, req_cols_path):
+    named_tuple_list = zip(["Batch Name","IDD File Name","Study/Output Folder","Run List File","Database Directory"],
+                           [batch_name,idd_file,study_folder,run_list,db_dir])
+    validate_simulation_inputs_filled(named_tuple_list)
+    validate_simulation_inputs_exist(named_tuple_list)
+    validate_batch_folder_is_unique(batch_name, study_folder)
+    validate_database_content(req_cols_path, db_dir)
+    cwd = os.getcwd()
+    os.chdir(study_folder)
+    validate_runlist_content(req_cols_path, run_list, db_dir)
+    os.chdir(cwd)
+
+
+def validate_simulation_inputs_filled(field_tuples):
+    for field, value in field_tuples:
+        assert value, missing_field_prompt(field)
+
+
+def validate_simulation_inputs_exist(field_tuples):
+    for field, value in field_tuples:
+        assert os.path.isfile(value), wrong_file_prompt(field, value)
+
+
+def validate_batch_folder_is_unique(batch_name, study_folder):
+    batch_folder_name = os.path.join(study_folder, batch_name)
+    assert not os.path.isdir(batch_folder_name), f"Folder \"{batch_folder_name}\" already exists. Please change batch name or rename existing folder."
+
     
 def validate_runlist_content(req_cols_path, rl_path, db_path):
     validate_runlist_exists(rl_path)

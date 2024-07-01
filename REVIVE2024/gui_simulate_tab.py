@@ -30,6 +30,7 @@ import multiprocessing as mp
 
 # custom imports
 import simulate
+import validation
 
 
 class SimulateTab(QWidget):
@@ -37,6 +38,9 @@ class SimulateTab(QWidget):
         # init the widget
         super().__init__(parent)
         self.parent = parent
+
+        # collect info from parent
+        self.required_cols_file = self.parent.required_cols_file
 
         # create top-level widgets
         self.file_entry_layout = QGridLayout()
@@ -247,23 +251,24 @@ class SimulateTab(QWidget):
         del_files = self.del_files_option.isChecked()
         is_dummy_mode = self.parent.is_dummy_mode
 
-        try:
-            # input validation
-            err_string = simulate.validate_input(batch_name, idd_file, study_folder, run_list, db_dir)
-            assert err_string == "", err_string
 
-            # prepare inputs and save for next run
+        # begin the simulation
+        try:
+            # inpute validation
+            validation.validate_simulation_inputs(batch_name, idd_file, study_folder, run_list, db_dir, self.required_cols_file)
+            sim_inputs = simulate.SimInputs(batch_name, idd_file, study_folder, run_list, db_dir, num_procs, show_graphs, gen_pdf_report, del_files, is_dummy_mode)
+            
+            # save for next run
             self.save_settings()
-            sim_inputs = simulate.SimInputs(batch_name, idd_file, study_folder, run_list, db_dir, num_procs, show_graphs, gen_pdf_report, is_dummy_mode)
             
             # call the simulation in thread
-            self.sim_start(sim_inputs, num_procs)
+            self.sim_start(sim_inputs)
         
         except Exception as err_msg:
             self.sim_cleanup(success=False, err_msg=str(err_msg))
 
     
-    def sim_start(self, sim_inputs, num_procs):
+    def sim_start(self, sim_inputs):
         # create the simulation manager objects
         self.mp_manager = mp.Manager()
         self.progress = 0
