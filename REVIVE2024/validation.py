@@ -36,6 +36,8 @@ required_dirs = [
 invalid_csv_prompt = lambda invalid_file : f"File \"{invalid_file}\" cannot be parsed as CSV."
 missing_item_prompt = lambda missing_item : f"Cannot find {missing_item} in specified database directory."
 missing_column_prompt = lambda missing_col, file : f"Column \"{missing_col}\" missing from file \"{file}\". Please make sure column exists and is named properly."
+missing_field_prompt = lambda missing_field : f"Field \"{missing_field}\" is required."
+wrong_file_prompt = lambda item_name, wrong_path : f"{item_name} \"{wrong_path}\" does not exist. Please use the file browser to select path."
 rl_missing_item_prompt = lambda rl_file, missing_item, location : f"Problem in runlist \"{rl_file}\": {missing_item} not found in {location}. Please make sure runlist was generated using the designated database."
 rl_missing_value_prompt = lambda rl_file, col : f"Problem in runlist \"{rl_file}\": Required column \"{col}\" is missing one or more values."
 rl_misc_prompt = lambda rl_file, prompt : f"Problem in runlist \"{rl_file}\": {prompt}"
@@ -52,7 +54,7 @@ def validate_database_content(req_cols_path, db_path):
 
 def validate_database_exists(db_path):
     # prelim: ensure the file path exists
-    assert os.path.isdir(db_path), f"Directory path \"{db_path}\" does not exist. Please use the folder browser to select path."
+    assert os.path.isdir(db_path), wrong_file_prompt("Directory path", db_path)
     
 
 def validate_database_structure(db_path):
@@ -93,7 +95,7 @@ def validate_runlist_content(req_cols_path, rl_path, db_path):
 
 
 def validate_runlist_exists(rl_path):
-    assert os.path.isfile(rl_path), f"Runlist path \"{rl_path}\" does not exist. Please use the file browser to select path."
+    assert os.path.isfile(rl_path), wrong_file_prompt("Runlist path", rl_path)
 
 
 def validate_runlist_structure(req_cols_path, rl_path):
@@ -149,22 +151,18 @@ def validate_runlist_inputs(rl_path, db_path):
     # ensure all required columns are filled out
     not_empty = lambda x : not pd.isna(x) and str(x).strip()
     optional_columns = ["GAS_PRICE_[$/THERM]", "APPLIANCE_LIST",
-                        "EXT_WINDOW_1", "EXT_WINDOW_2", "EXT_WINDOW_3",
-                        "FOUNDATION_INTERFACE_1", "FOUNDATION_INSULATION_1",
-                        "FOUNDATION_PERIMETER_1", "FOUNDATION_INSULATION_DEPTH_1",
+                        "EXT_WINDOW_2", "EXT_WINDOW_3",
                         "FOUNDATION_INTERFACE_2", "FOUNDATION_INSULATION_2",
                         "FOUNDATION_PERIMETER_2", "FOUNDATION_INSULATION_DEPTH_2",
                         "FOUNDATION_INTERFACE_3", "FOUNDATION_INSULATION_3",
                         "FOUNDATION_PERIMETER_3", "FOUNDATION_INSULATION_DEPTH_3",
-                        "EXT_WALL_1_NAME", "EXT_ROOF_1_NAME", "EXT_DOOR_1_NAME",
-                        "INT_FLOOR_1_NAME","EXT_FLOOR_1_NAME",
                         "EXT_WALL_2_NAME", "EXT_ROOF_2_NAME", "EXT_DOOR_2_NAME",
                         "INT_FLOOR_2_NAME","EXT_FLOOR_2_NAME",
                         "EXT_WALL_3_NAME", "EXT_ROOF_3_NAME", "EXT_DOOR_3_NAME",
                         "INT_FLOOR_3_NAME","EXT_FLOOR_3_NAME",
                         "PERF_CARBON_MEASURES", "NON_PERF_CARBON_MEASURES",
                         "HEATING_COP", "COOLING_COP",
-                        "VENT_SYSTEM_TYPE", "NAT_VENT_TYPE"]
+                        "VENT_SYSTEM_TYPE"]
     for col in [c for c in runlist_df.columns if c not in optional_columns]:
         for cell in runlist_df[col]:
             assert not_empty(cell), rl_missing_value_prompt(rl_path, col)
@@ -243,7 +241,11 @@ def validate_runlist_inputs(rl_path, db_path):
                 datetime.strptime(date, date_format)
             except ValueError:
                 raise AssertionError(rl_misc_prompt(rl_path, "Outage dates must be in format \"dd-MMM\" (i.e. \"5-Jan\")."))
- 
+        outage1_delta = datetime.strptime(row["OUTAGE_1_END"], date_format) - datetime.strptime(row["OUTAGE_1_START"], date_format)
+        outage2_delta = datetime.strptime(row["OUTAGE_2_END"], date_format) - datetime.strptime(row["OUTAGE_2_START"], date_format)
+        assert outage1_delta.days >= 7, rl_misc_prompt(rl_path, "Outages must be seven days in length.")
+        assert outage2_delta.days >= 7, rl_misc_prompt(rl_path, "Outages must be seven days in length.")
+
         # carbon corrections
         p_carbons = row["PERF_CARBON_MEASURES"]
         np_carbons = row["NON_PERF_CARBON_MEASURES"]
