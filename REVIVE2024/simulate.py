@@ -42,7 +42,7 @@ import validation
 """Class to hold all inputs that do not vary from run to run""" 
 class SimInputs:
 
-    def __init__(self, batch_name, idd_file, study_folder, run_list, database_dir, num_procs, graphs_enabled, pdf_enabled, is_dummy_mode):
+    def __init__(self, batch_name, idd_file, study_folder, run_list, database_dir, num_procs, graphs_enabled, pdf_enabled, del_files, is_dummy_mode):
         # collect basic input information
         self.is_dummy_mode = is_dummy_mode
         self.idd_file = idd_file
@@ -50,6 +50,7 @@ class SimInputs:
         self.num_procs = num_procs
         self.graphs_enabled = graphs_enabled
         self.pdf_enabled = pdf_enabled
+        self.del_files_enabled = del_files
         
         # establish dummy-dependent input information
         self.batch_name = batch_name if not is_dummy_mode else os.path.abspath("dummy")
@@ -1511,3 +1512,10 @@ def cleanup_outputs(si: SimInputs):
     for path in os.listdir(si.temp_folder):
         os.remove(os.path.join(si.temp_folder, path))
     os.rmdir(si.temp_folder)
+
+    # clean up the eplus output files if designated
+    if si.del_files_enabled:
+        for file in os.listdir(si.batch_folder):
+            full_file_path = os.path.join(si.batch_folder, file)
+            if os.path.isfile(full_file_path):
+                os.remove(full_file_path)

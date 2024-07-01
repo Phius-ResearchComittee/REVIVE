@@ -67,6 +67,7 @@ class SimulateTab(QWidget):
         for field in self.widget_labels[1:5]:
             self.file_entry_widgets[field] = QLineEdit()
         self.gen_pdf_option = QCheckBox(self.widget_labels[6])
+        self.gen_pdf_option.setVisible(False)
         self.gen_graphs_option = QCheckBox(self.widget_labels[7])
         self.del_files_option = QCheckBox(self.widget_labels[8])
         self.num_parallel_procs = QComboBox()
