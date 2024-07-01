@@ -27,20 +27,24 @@ from PySide6.QtWidgets import (
 class REVIVEFilePicker(QLineEdit):
     def __init__(self, prompt: str, file_ext: str, parent=None):
         super().__init__(parent)
+        
+        self.prompt = f"Select File: {prompt}"
+        self.file_ext = file_ext
+        self.default_directory = QDir.homePath()
 
-        action = self.addAction(
+        self.action = self.addAction(
             qApp.style().standardIcon(QStyle.SP_DirOpenIcon),  # noqa: F821
             QLineEdit.TrailingPosition)
-        action.triggered.connect(
-            lambda _ : self.on_open_file(prompt, file_ext)
-        )
+        self.action.triggered.connect(self.on_open_file)
+         
+    def assign_default_directory(self, path):
+        self.default_directory = path   
     
     @Slot()
-    def on_open_file(self, prompt: str, ext: str):
-        prompt = f"Select File: {prompt}"
+    def on_open_file(self):
         
         path, _ = QFileDialog.getOpenFileName(
-                self, prompt, QDir.homePath(), f"*.{ext}")
+                self, self.prompt, self.default_directory, f"*.{self.file_ext}")
 
         dest = QDir(path)
         self.setText(QDir.fromNativeSeparators(dest.path()))
@@ -50,23 +54,48 @@ class REVIVEFolderPicker(QLineEdit):
     def __init__(self, prompt: str, parent=None):
         super().__init__(parent)
 
-        action = self.addAction(
+        self.prompt = prompt
+        self.default_directory = QDir.homePath()
+
+        self.action = self.addAction(
             qApp.style().standardIcon(QStyle.SP_DirOpenIcon),  # noqa: F821
             QLineEdit.TrailingPosition)
-        action.triggered.connect(
-            lambda _ : self.on_open_folder(prompt)
-        )
+        self.action.triggered.connect(self.on_open_folder)
+    
+    def assign_default_directory(self, path):
+        print(path)
+        self.default_directory = path
     
     @Slot()
-    def on_open_folder(self, prompt: str):
+    def on_open_folder(self):
         
         path = QFileDialog.getExistingDirectory(
-            self, prompt, QDir.homePath(), QFileDialog.ShowDirsOnly
+            self, self.prompt, self.default_directory, QFileDialog.ShowDirsOnly
         )
         dest = QDir(path)
         self.setText(QDir.fromNativeSeparators(dest.path()))
 
+#Added FileSaver class
+class REVIVEFileSaver(QLineEdit):
+    def __init__(self, prompt: str, parent=None):
+        super().__init__(parent)
 
+        action = self.addAction(
+            qApp.style().standardIcon(QStyle.SP_DirOpenIcon),  # noqa: F821
+            QLineEdit.TrailingPosition)
+        action.triggered.connect(
+            lambda _ : self.on_save_file(prompt)
+        )
+    
+    @Slot()
+    def on_save_file(self, prompt: str):
+        
+        path, _ = QFileDialog.getSaveFileName(
+            self, prompt, QDir.homePath(), "*.csv"
+        )
+        dest = QDir(path)
+        self.setText(QDir.fromNativeSeparators(dest.path()))
+        
 class REVIVEHelpTree(QTreeWidget):
     def __init__(self, parent=None):
         # create the regular tree widget
@@ -347,7 +376,7 @@ class REVIVEFoundationWidgetSet(REVIVEDeletableWidgetSet):
         # create interface vbox
         interface_vbox = QVBoxLayout()
         interface_label = QLabel("Interface")
-        interface_choice = REVIVEComboBox(items=["Slab", "Crawlspace", "Basement"],
+        interface_choice = REVIVEComboBox(items=["Basement", "Crawlspace", "Slab"],
                                           parent=foundation_widget)
         interface_vbox.addWidget(interface_label)
         interface_vbox.addWidget(interface_choice)

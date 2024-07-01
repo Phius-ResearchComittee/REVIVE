@@ -1,6 +1,6 @@
 # native imports
 import json
-
+import os
 # dependency imports
 import pandas as pd
 from PySide6.QtCore import (
@@ -72,7 +72,8 @@ class RunlistMakerTab(QWidget):
 
         # connect options source pane components
         self.custom_db_source.textChanged.connect(
-            lambda _ : self.use_custom_options_button.setChecked(True))
+            lambda _ : self.use_custom_options_button.setChecked(True)
+        )
         self.use_phius_options_button.setEnabled(True)
         self.refresh_options_button.clicked.connect(self.load_options_from_source)
 
@@ -86,9 +87,12 @@ class RunlistMakerTab(QWidget):
         # create runlist export pane components
         self.create_new_rl_button = QRadioButton("Create New Runlist")
         self.create_new_rl_button.setChecked(True)
-        self.new_runlist_file = REVIVEFilePicker("Save as:", parent=self.create_new_rl_button, file_ext="csv")
+        self.new_runlist_file = REVIVEFileSaver("Save as:", parent=self.create_new_rl_button)
         self.add_existing_rl_button = QRadioButton("Add to Existing Runlist:")
         self.existing_runlist_file = REVIVEFilePicker("Select Runlist", parent=self.add_existing_rl_button, file_ext="csv")
+        self.existing_runlist_file.textChanged.connect(
+            lambda _ : self.add_existing_rl_button.setChecked(True)
+        )
         self.export_button = QPushButton("Export Case to Runlist")
 
         # group the runlist export radio buttons
@@ -98,9 +102,9 @@ class RunlistMakerTab(QWidget):
         self.runlist_export.setExclusive(True)
 
         # connect runlist export pane components
-        # self.create_new_rl_button.checkStateSet.connect(
+        # self.create_new_rl_button.setChecked.connect(
         #     lambda _ : self.existing_runlist_file.setEnabled(False))
-        # self.add_existing_rl_button.checkStateSet.connect(
+        # self.add_existing_rl_button.setChecked.connect(
         #     lambda _ : self.new_runlist_file.setEnabled(False))
         self.export_button.clicked.connect(self.export_to_csv)
 
@@ -123,7 +127,6 @@ class RunlistMakerTab(QWidget):
 
         # populate content 
         self.populate_groupboxes()
-        self.populate_basic_groupbox()
 
         # enable action to display content when selected
         self.navigation_tree.itemSelectionChanged.connect(self.display_content)
@@ -291,7 +294,9 @@ class RunlistMakerTab(QWidget):
         self.rl_nat_gas_present.checkStateChanged.connect(
             lambda state : self.rl_nat_gas_price.setEnabled(state==Qt.Checked))
         self.rl_annual_gas_charge = REVIVESpinBox(step_amt=10)
+        self.rl_annual_gas_charge.setPrefix("$")        
         self.rl_annual_elec_charge = REVIVESpinBox(step_amt=10)
+        self.rl_annual_elec_charge.setPrefix("$")
 
         # add all new widgets to layout with labels
         new_layout.addLayout(self.stack_widgets_vertically(
@@ -335,7 +340,7 @@ class RunlistMakerTab(QWidget):
             lambda new_text : self.rl_cooling_cop.setEnabled(new_text=="SplitHeatPump"))
         self.rl_pv_size = REVIVESpinBox(step_amt=500)
         self.rl_pv_tilt = REVIVESpinBox(step_amt=10, min=0, max=90)
-        self.rl_pv_azimuth = REVIVESpinBox(max=360)
+        self.rl_pv_azimuth = REVIVESpinBox(step_amt=10, max=360)
         self.appliance_list = ["Fridge","Dishwasher","Clotheswasher","Clothesdryer","Lights"]
         self.rl_appliances = [REVIVEComboBox() for _ in self.appliance_list]
         
@@ -550,16 +555,16 @@ class RunlistMakerTab(QWidget):
         self.runlist_dict["NON_PERF_CARBON_MEASURES"] = ", ".join([npc.currentText() for npc in self.rl_nperf_carbon])
 
         # energy pricing
-        self.runlist_dict["ELEC_PRICE_"] = self.rl_elec_price.cleanText()
+        self.runlist_dict["ELEC_PRICE_[$/kWh]"] = self.rl_elec_price.cleanText()
         self.runlist_dict["SELLBACK_PRICE_[$/kWh]"] = self.rl_elec_sellback_price.cleanText()
-        self.runlist_dict["NATURAL_GAS"] = self.rl_nat_gas_present.isChecked()
+        self.runlist_dict["NATURAL_GAS"] = int(self.rl_nat_gas_present.isChecked())
         self.runlist_dict["GAS_PRICE_[$/THERM]"] = self.rl_nat_gas_price.cleanText()
         self.runlist_dict["ANNUAL_GAS_CHARGE"] = self.rl_annual_gas_charge.cleanText()
         self.runlist_dict["ANNUAL_ELEC_CHARGE"] = self.rl_annual_elec_charge.cleanText()
         
         # mechanicals
         self.runlist_dict["MECH_SYSTEM_TYPE"] = self.rl_mech_system.currentText()
-        self.runlist_dict["WATER_HEATER_FUEL"] = self.rl_water_heater_fuel.currentText()
+        self.runlist_dict["WATER_HEATER_FUEL"] = ''.join(self.rl_water_heater_fuel.currentText().split('_')[1:])
         self.runlist_dict["VENT_SYSTEM_TYPE"] = self.rl_vent_system.currentText()
         self.runlist_dict["HEATING_COP"] = self.rl_heating_cop.cleanText() if self.rl_heating_cop.isEnabled() else ""
         self.runlist_dict["COOLING_COP"] = self.rl_cooling_cop.cleanText() if self.rl_cooling_cop.isEnabled() else ""
@@ -589,12 +594,12 @@ class RunlistMakerTab(QWidget):
 
         safe_get_element = lambda idx, arr : arr[idx] if idx<len(arr) else ""
         for i in range(3):
-            
             # foundations
-            for j, attr in enumerate(["INTERFACE", "INSULATION"]):
-                self.runlist_dict[f"FOUNDATION_{attr}_{i+1}"] = foundation_widgets[i][j].currentText() if i<len(foundation_widgets) else ""
-            for j, attr in enumerate(["PERIMETER", "DEPTH"]):
-                self.runlist_dict[f"FOUNDATION_{attr}_{i+1}"] = foundation_widgets[i][j].cleanText() if i<len(foundation_widgets) else ""
+            for j, attr in enumerate(["INTERFACE", "INSULATION", "PERIMETER", "INSULATION_DEPTH"]):
+                if i<len(foundation_widgets):
+                    self.runlist_dict[f"FOUNDATION_{attr}_{i+1}"] = foundation_widgets[i][j].currentText() if j < 2 else foundation_widgets[i][j].cleanText()
+                else:
+                    self.runlist_dict[f"FOUNDATION_{attr}_{i+1}"] = ""
             
             # windows, walls, roofs, doors, floors
             self.runlist_dict[f"EXT_WINDOW_{i+1}"] = safe_get_element(i,windows)
@@ -611,10 +616,11 @@ class RunlistMakerTab(QWidget):
         self.runlist_dict["OUTAGE_1_END"] = self.rl_outage_dates[1].get_date()
         self.runlist_dict["OUTAGE_2_START"] = self.rl_outage_dates[2].get_date()
         self.runlist_dict["OUTAGE_2_END"] = self.rl_outage_dates[3].get_date()
-        self.runlist_dict["NAT_VENT_AVAIL"] = self.rl_nat_vent_avail.isChecked()
+        self.runlist_dict["NAT_VENT_AVAIL"] = int(self.rl_nat_vent_avail.isChecked())
         self.runlist_dict["NAT_VENT_TYPE"] = self.rl_nat_vent_type.currentText() if self.rl_nat_vent_avail.isChecked() else "NatVent"
-        self.runlist_dict["SHADING_AVAIL"] = self.rl_shading_avail.isChecked()
-        self.runlist_dict["DEMAND_COOLING_AVAIL"] = self.rl_dem_cool_avail.isChecked()
+        self.runlist_dict["SHADING_AVAIL"] = int(self.rl_shading_avail.isChecked())
+        self.runlist_dict["DEMAND_COOLING_AVAIL"] = int(self.rl_dem_cool_avail.isChecked())
+
 
     
     @Slot()
@@ -627,8 +633,6 @@ class RunlistMakerTab(QWidget):
             else:
                 self.load_custom_runlist_options()
                 prompt = f"Custom runlist options from database folder \"{self.custom_db_source.text()}\" loaded successfully!"
-                print("custom import not yet implemented")
-                return
         
             # populate runlist option dictionary
             self.rl_env_country.change_items(self.runlist_options["Country"])
@@ -646,7 +650,7 @@ class RunlistMakerTab(QWidget):
                 self.revive_widget_sets[i+1].change_items(envelope_dict[item]) # +1 to skip foundation
 
         except Exception as e:
-            self.parent.display_error(str(e))
+            self.parent.display_error(f"Failure to load options from database: {str(e)}")
             return
         
         # prompt user of success
@@ -664,19 +668,49 @@ class RunlistMakerTab(QWidget):
         db_path = self.custom_db_source.text()
 
         # check that database is valid
-        try:
-            validation.validate_database_content(self.required_cols_file, db_path)
-        except Exception as e:
-            self.parent.display_error(str(e))
-            return
-        
+        validation.validate_database_content(self.required_cols_file, db_path)        
 
         ### CHANGE BELOW
         # load carbon corrections
-        pd.read_csv()
-        pass
+        cc = pd.read_csv(os.path.join(db_path,"Carbon Correction Database.csv"))
+        self.runlist_options["Performance Carbon Correction Measures"] = sorted(list(cc['Name'].unique()), key=str.casefold)
 
+        # load country emission 
+        country = pd.read_csv(os.path.join(db_path,"Country Emission Database.csv"))
+        self.runlist_options["Country"] = sorted(list(country['COUNTRY'].unique()), key=str.casefold)
 
+        # load hourly emission
+        hourly_emission = pd.read_csv(os.path.join(db_path,"Hourly Emission Rates.csv"))
+        self.runlist_options["Grid Region"] = sorted(hourly_emission.columns.tolist()[4:], key=str.casefold)
+        
+        # load nonperformance cc
+        ncc = pd.read_csv(os.path.join(db_path,"Nonperformance Carbon Correction Database.csv"))
+        self.runlist_options["Non-Performance Carbon Correction Measures"] = sorted(list(ncc['Name']), key=str.casefold)
+
+        # load materials and construction
+        construction_groups = {
+            "Mechanical System": "Mechanical",
+            "Water Heater Fuel": "DHW",
+            "Appliances": ["Fridge", "Dishwasher", "Clotheswasher", "Clothesdryer", "Lights"],
+            "Envelope": ["Foundation Insulation", "Window", "Exterior Door", "Exterior Wall", "Roof", "Exterior Floor", "Interior Floor"]
+        }
+
+        construction_df = pd.read_csv(os.path.join(db_path,"Construction Database.csv"))
+        for group, types in construction_groups.items():
+            if isinstance(types, list):
+                self.runlist_options[group] = {key: sorted(list(construction_df[construction_df['Type'] == key]['Name'].unique()), key=str.casefold) for key in types}
+            else:
+                self.runlist_options[group] = sorted(list(construction_df[construction_df['Type'] == types]['Name'].unique()), key=str.casefold)
+
+        material_df = pd.read_csv(os.path.join(db_path, "Material Database.csv"))
+        self.runlist_options["Envelope"]['Foundation Insulation'] += sorted(list(material_df['NAME'].unique()), key=str.casefold)
+        # change filepickers to open to database directory
+        for filepicker in [self.rl_epw_file, self.rl_ddy_file]:
+            filepicker.assign_default_directory(db_path)
+
+        
+
+        
     @Slot()
     def display_content(self):
         choice = self.navigation_tree.selectedItems()[0]
@@ -688,25 +722,47 @@ class RunlistMakerTab(QWidget):
         self.scroll_area.verticalScrollBar().setValue(ypos)    
     
 
-    @Slot()
-    def create_new_runlist(self):
-        # get dict of current results
-        self.collect_results()
-        print(self.runlist_dict)
-
-
-    @Slot()
-    def add_to_runlist(self):
-        # get dict of current results
-        self.collect_results()
-        
-        # get current runlist
-        df = pd.read_csv(self.existing_runlist)
-
-        # simple validation
-        assert set(df.columns)==set(self.runlist_dict.keys())
+    def ensure_list_values(self, dictionary):
+        """Ensure all dictionary values are lists."""
+        for key, value in dictionary.items():
+            if not isinstance(value, (list, tuple, pd.Series)):
+                dictionary[key] = [value]
+            else:
+                print(f"skipped item {key}")
+        return dictionary
 
     @Slot()
     def export_to_csv(self):
-        print("exporting not yet implemented")
+        file_path = self.new_runlist_file.text() if self.create_new_rl_button.isChecked() else self.existing_runlist_file.text()
+
+        if not file_path:
+            self.parent.display_error("Please specify a valid file path.")
+            return
+        
+        self.collect_results()
+
+        runlist_df = pd.DataFrame.from_dict(self.ensure_list_values(self.runlist_dict))
+
+        if self.add_existing_rl_button.isChecked():
+            try:
+                existing_df = pd.read_csv(file_path)
+
+                # Simple Validation
+                validation.validate_runlist_structure(self.required_cols_file, file_path)
+
+                # Concatenate the new data to the existing DataFrame
+                runlist_df = pd.concat([existing_df, runlist_df], ignore_index=True)
+
+            except Exception as e:
+                self.parent.display_error(f"Failed to read existing runlist: {e}")
+                return
+
+        try:
+            runlist_df.to_csv(file_path, index=False)
+            self.parent.display_info(f"Data successfully exported to {file_path}")
+        except Exception as e:
+            self.parent.display_error(f"Failed to export data: {e}")
+
+        validation.validate_runlist_structure(self.required_cols_file, file_path)
+
 
