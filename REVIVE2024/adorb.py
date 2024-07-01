@@ -123,7 +123,7 @@ def adorb(BaseFileName, resultsFolder, graphsFolder, duration, annualElec, annua
 
         pv.append((pv_dirEn + pv_opCO2 + pv_dirMR + pv_emCO2 + pv_eTrans))
         newRow = pd.Series({'pv_dirEn':pv_dirEn, 'pv_opCO2':pv_opCO2, 'pv_dirMR':pv_dirMR, 'pv_emCO2':pv_emCO2, 'pv_eTrans':pv_eTrans})
-        results = pd.concat([results, newRow.to_frame().T], ignore_index=True)
+        results.loc[len(results)] = newRow
     results.to_csv(os.path.join(resultsFolder, f"{BaseFileName}_ADORBresults.csv"))
 
     df = results
