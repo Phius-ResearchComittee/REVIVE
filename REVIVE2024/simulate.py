@@ -303,11 +303,12 @@ def resilience_simulation_prep(si: SimInputs, case_id: int, simulation_mgr=None)
 
     # IHG Calc
     constructionList = pd.read_csv(constructionDatabase, index_col="Name")
-    appliance_list = list(runList['APPLIANCE_LIST'][runCount].split(', '))
+    raw_appliance_list = runList["APPLIANCE_LIST"][runCount]
+    appliance_list = raw_appliance_list.split(', ') if not pd.isna(raw_appliance_list) else []
 
     ihg_dict = {}
     for Nbr in range(9):
-        total_appliance_cost = fridge = dishWasher = clothesWasher = clothesDryer = lights_cost = 0
+        total_appliance_cost = fridge = dishWasher = clothesWasher = clothesDryer = fracHighEff = lights_cost = 0
         for appliance_name, row in constructionList.filter(items=appliance_list, axis=0).iterrows():
             rating = float(row["Appliance_Rating"]) # must be float for fractional efficiency
             cost = int(row["Mechanical Cost"])
@@ -387,6 +388,7 @@ def resilience_simulation_prep(si: SimInputs, case_id: int, simulation_mgr=None)
     fnd3d = runList['FOUNDATION_INSULATION_DEPTH_3'][runCount]
 
 
+    foundationList = []
     if str(fnd1) != 'nan':
         foundationList = [(fnd1,fnd1i,fnd1d,fnd1p)]
 
