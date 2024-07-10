@@ -332,12 +332,6 @@ class RunlistMakerTab(QWidget):
         self.rl_erv_latent = REVIVEDoubleSpinBox(max=1)
         self.rl_heating_cop = REVIVEDoubleSpinBox(max=10)
         self.rl_cooling_cop = REVIVEDoubleSpinBox(max=10)
-        self.rl_heating_cop.setEnabled(False)
-        self.rl_cooling_cop.setEnabled(False)
-        self.rl_mech_system.currentTextChanged.connect(
-            lambda new_text : self.rl_heating_cop.setEnabled(new_text=="SplitHeatPump"))
-        self.rl_mech_system.currentTextChanged.connect(
-            lambda new_text : self.rl_cooling_cop.setEnabled(new_text=="SplitHeatPump"))
         self.rl_pv_size = REVIVESpinBox(step_amt=500)
         self.rl_pv_tilt = REVIVESpinBox(step_amt=10, min=0, max=90)
         self.rl_pv_azimuth = REVIVESpinBox(step_amt=10, max=360)
@@ -566,8 +560,8 @@ class RunlistMakerTab(QWidget):
         self.runlist_dict["MECH_SYSTEM_TYPE"] = self.rl_mech_system.currentText()
         self.runlist_dict["WATER_HEATER_FUEL"] = ''.join(self.rl_water_heater_fuel.currentText().split('_')[1:])
         self.runlist_dict["VENT_SYSTEM_TYPE"] = self.rl_vent_system.currentText()
-        self.runlist_dict["HEATING_COP"] = self.rl_heating_cop.cleanText() if self.rl_heating_cop.isEnabled() else ""
-        self.runlist_dict["COOLING_COP"] = self.rl_cooling_cop.cleanText() if self.rl_cooling_cop.isEnabled() else ""
+        self.runlist_dict["HEATING_COP"] = self.rl_heating_cop.cleanText()
+        self.runlist_dict["COOLING_COP"] = self.rl_cooling_cop.cleanText()
         self.runlist_dict["SENSIBLE_RECOVERY_EFF"] = self.rl_erv_sense.cleanText()
         self.runlist_dict["LATENT_RECOVERY_EFF"] = self.rl_erv_latent.cleanText()
         self.runlist_dict["PV_SIZE_[W]"] = self.rl_pv_size.cleanText()
