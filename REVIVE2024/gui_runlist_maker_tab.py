@@ -604,9 +604,9 @@ class RunlistMakerTab(QWidget):
             # windows, walls, roofs, doors, floors
             self.runlist_dict[f"EXT_WINDOW_{i+1}"] = safe_get_element(i,windows)
             self.runlist_dict[f"EXT_WALL_{i+1}_NAME"] = safe_get_element(i,ext_walls)
-            self.runlist_dict[f"EXT_ROOF_{i+1}_NAME"] = safe_get_element(i,ext_doors)
-            self.runlist_dict[f"EXT_FLOOR_{i+1}_NAME"] = safe_get_element(i,ext_roofs)
-            self.runlist_dict[f"EXT_DOOR_{i+1}_NAME"] = safe_get_element(i,ext_floors)
+            self.runlist_dict[f"EXT_ROOF_{i+1}_NAME"] = safe_get_element(i,ext_roofs)
+            self.runlist_dict[f"EXT_FLOOR_{i+1}_NAME"] = safe_get_element(i,ext_floors)
+            self.runlist_dict[f"EXT_DOOR_{i+1}_NAME"] = safe_get_element(i,ext_doors)
             self.runlist_dict[f"INT_FLOOR_{i+1}_NAME"] = safe_get_element(i,int_floors)
 
         
