@@ -103,24 +103,39 @@ def ZoneMechConnections(idf, zone):
         Node_2_Name = (str(zone) + '_MECH_Air_Inlet')
         )
     
-def HVACBuilder(idf, zone, mechSystemType):
+def HVACBuilder(idf, zone, vent_system_type, mechSystemType, heating_COP, cooling_COP):
 
     if mechSystemType == 'PTHP':
-
-        idf.newidfobject('ZoneHVAC:EquipmentList',
-            Name = (str(zone) + '_Equipment'),
-            Load_Distribution_Scheme = 'SequentialLoad',
-            Zone_Equipment_1_Object_Type = 'ZoneHVAC:EnergyRecoveryVentilator',
-            Zone_Equipment_1_Name = (str(zone) + ' ERV'),
-            Zone_Equipment_1_Cooling_Sequence = 2,
-            Zone_Equipment_1_Heating_or_NoLoad_Sequence = 2,
-            Zone_Equipment_2_Object_Type = 'ZoneHVAC:PackagedTerminalHeatPump',
-            Zone_Equipment_2_Name = (str(zone) + '_PTHP'),
-            Zone_Equipment_2_Cooling_Sequence = 1,
-            Zone_Equipment_2_Heating_or_NoLoad_Sequence = 1
-            #Zone_Equipment_1_Sequential_Cooling_Fraction_Schedule_Name = 
-            #Zone_Equipment_1_Sequential_Heating_Fraction_Schedule_Name = 
-            )
+        if vent_system_type == 'Balanced':
+            idf.newidfobject('ZoneHVAC:EquipmentList',
+                Name = (str(zone) + '_Equipment'),
+                Load_Distribution_Scheme = 'SequentialLoad',
+                Zone_Equipment_1_Object_Type = 'ZoneHVAC:EnergyRecoveryVentilator',
+                Zone_Equipment_1_Name = (str(zone) + ' ERV'),
+                Zone_Equipment_1_Cooling_Sequence = 2,
+                Zone_Equipment_1_Heating_or_NoLoad_Sequence = 2,
+                Zone_Equipment_2_Object_Type = 'ZoneHVAC:PackagedTerminalHeatPump',
+                Zone_Equipment_2_Name = (str(zone) + '_PTHP'),
+                Zone_Equipment_2_Cooling_Sequence = 1,
+                Zone_Equipment_2_Heating_or_NoLoad_Sequence = 1
+                #Zone_Equipment_1_Sequential_Cooling_Fraction_Schedule_Name = 
+                #Zone_Equipment_1_Sequential_Heating_Fraction_Schedule_Name = 
+                )
+        else:
+            idf.newidfobject('ZoneHVAC:EquipmentList',
+                Name = (str(zone) + '_Equipment'),
+                Load_Distribution_Scheme = 'SequentialLoad',
+                Zone_Equipment_1_Object_Type = 'Fan:ZoneExhaust',
+                Zone_Equipment_1_Name = (str(zone) + ' ERV'),
+                Zone_Equipment_1_Cooling_Sequence = 2,
+                Zone_Equipment_1_Heating_or_NoLoad_Sequence = 2,
+                Zone_Equipment_2_Object_Type = 'ZoneHVAC:PackagedTerminalHeatPump',
+                Zone_Equipment_2_Name = (str(zone) + '_PTHP'),
+                Zone_Equipment_2_Cooling_Sequence = 1,
+                Zone_Equipment_2_Heating_or_NoLoad_Sequence = 1
+                #Zone_Equipment_1_Sequential_Cooling_Fraction_Schedule_Name = 
+                #Zone_Equipment_1_Sequential_Heating_Fraction_Schedule_Name = 
+                )
 
         idf.newidfobject('ZoneHVAC:PackagedTerminalHeatPump',
             Name = (str(zone) + '_PTHP'),
@@ -175,7 +190,7 @@ def HVACBuilder(idf, zone, mechSystemType):
             Availability_Schedule_Name = 'MechAvailable',
             Gross_Rated_Total_Cooling_Capacity = 'autosize',
             Gross_Rated_Sensible_Heat_Ratio = 0.75,
-            Gross_Rated_Cooling_COP = 3.0,  # Change to var for future shit
+            Gross_Rated_Cooling_COP = cooling_COP,
             Rated_Air_Flow_Rate = 'autosize',
             Air_Inlet_Node_Name = (str(zone) + '_PTHP_Fan_Outlet'),
             Air_Outlet_Node_Name  = (str(zone) + '_PTHP_DX_Cool_Coil_Outlet'),
@@ -190,7 +205,7 @@ def HVACBuilder(idf, zone, mechSystemType):
             Name = (str(zone) + '_PTHP_DX_Heat_Coil'),
             Availability_Schedule_Name = 'MechAvailable',
             Gross_Rated_Heating_Capacity = 'autosize',
-            Gross_Rated_Heating_COP = 3.0, #change to var for future
+            Gross_Rated_Heating_COP = heating_COP,
             Rated_Air_Flow_Rate  ='autosize',
             # Rated_Supply_Fa,n_Power_Per_Volume_Flow_Rate_{W/(m3/s)}
             Air_Inlet_Node_Name = (str(zone) + '_PTHP_DX_Cool_Coil_Outlet'),
@@ -222,21 +237,36 @@ def HVACBuilder(idf, zone, mechSystemType):
             )
         
     if mechSystemType == 'GasFurnaceDXAC':
-
-        idf.newidfobject('ZoneHVAC:EquipmentList',
-            Name = (str(zone) + '_Equipment'),
-            Load_Distribution_Scheme = 'SequentialLoad',
-            Zone_Equipment_1_Object_Type = 'ZoneHVAC:EnergyRecoveryVentilator',
-            Zone_Equipment_1_Name = (str(zone) + ' ERV'),
-            Zone_Equipment_1_Cooling_Sequence = 2,
-            Zone_Equipment_1_Heating_or_NoLoad_Sequence = 2,
-            Zone_Equipment_2_Object_Type = 'AirLoopHVAC:UnitarySystem',
-            Zone_Equipment_2_Name = (str(zone) +'_GasHeat_DXAC_Furnace'),
-            Zone_Equipment_2_Cooling_Sequence = 1,
-            Zone_Equipment_2_Heating_or_NoLoad_Sequence = 1
-            #Zone_Equipment_1_Sequential_Cooling_Fraction_Schedule_Name = 
-            #Zone_Equipment_1_Sequential_Heating_Fraction_Schedule_Name = 
-            )
+        if vent_system_type == 'Balanced':
+            idf.newidfobject('ZoneHVAC:EquipmentList',
+                Name = (str(zone) + '_Equipment'),
+                Load_Distribution_Scheme = 'SequentialLoad',
+                Zone_Equipment_1_Object_Type = 'ZoneHVAC:EnergyRecoveryVentilator',
+                Zone_Equipment_1_Name = (str(zone) + ' ERV'),
+                Zone_Equipment_1_Cooling_Sequence = 2,
+                Zone_Equipment_1_Heating_or_NoLoad_Sequence = 2,
+                Zone_Equipment_2_Object_Type = 'AirLoopHVAC:UnitarySystem',
+                Zone_Equipment_2_Name = (str(zone) +'_GasHeat_DXAC_Furnace'),
+                Zone_Equipment_2_Cooling_Sequence = 1,
+                Zone_Equipment_2_Heating_or_NoLoad_Sequence = 1
+                #Zone_Equipment_1_Sequential_Cooling_Fraction_Schedule_Name = 
+                #Zone_Equipment_1_Sequential_Heating_Fraction_Schedule_Name = 
+                )
+        else:
+            idf.newidfobject('ZoneHVAC:EquipmentList',
+                Name = (str(zone) + '_Equipment'),
+                Load_Distribution_Scheme = 'SequentialLoad',
+                Zone_Equipment_1_Object_Type = 'Fan:ZoneExhaust',
+                Zone_Equipment_1_Name = (str(zone) + ' ERV'),
+                Zone_Equipment_1_Cooling_Sequence = 2,
+                Zone_Equipment_1_Heating_or_NoLoad_Sequence = 2,
+                Zone_Equipment_2_Object_Type = 'AirLoopHVAC:UnitarySystem',
+                Zone_Equipment_2_Name = (str(zone) +'_GasHeat_DXAC_Furnace'),
+                Zone_Equipment_2_Cooling_Sequence = 1,
+                Zone_Equipment_2_Heating_or_NoLoad_Sequence = 1
+                #Zone_Equipment_1_Sequential_Cooling_Fraction_Schedule_Name = 
+                #Zone_Equipment_1_Sequential_Heating_Fraction_Schedule_Name = 
+                )
       
         idf.newidfobject('AirLoopHVAC:UnitarySystem',
             Name = (str(zone) +'_GasHeat_DXAC_Furnace'),
@@ -263,7 +293,7 @@ def HVACBuilder(idf, zone, mechSystemType):
             Name = (str(zone) + 'Furnace_Heating_Coil'),
             Availability_Schedule_Name = 'MechAvailable',
             Fuel_Type = 'NaturalGas',
-            Burner_Efficiency = 0.8,
+            Burner_Efficiency = heating_COP,
             Nominal_Capacity = 'autosize',
             Air_Inlet_Node_Name = (str(zone) + '_Heating_Coil_Air_Inlet'),
             Air_Outlet_Node_Name = (str(zone) + '_MECH_Air_Outlet'),
@@ -274,7 +304,7 @@ def HVACBuilder(idf, zone, mechSystemType):
             Availability_Schedule_Name = 'MechAvailable',
             Gross_Rated_Total_Cooling_Capacity = 'autosize',
             Gross_Rated_Sensible_Heat_Ratio = 0.75,
-            Gross_Rated_Cooling_COP = 3.0,  # Change to var for future shit
+            Gross_Rated_Cooling_COP = cooling_COP,
             Rated_Air_Flow_Rate = 'autosize',
             Air_Inlet_Node_Name = (str(zone) + '_DXAC_Coil_Air_Inlet'),
             Air_Outlet_Node_Name  = (str(zone) + '_Heating_Coil_Air_Inlet'),
@@ -299,21 +329,36 @@ def HVACBuilder(idf, zone, mechSystemType):
         
 
     if mechSystemType == 'SplitHeatPump':
-
-        idf.newidfobject('ZoneHVAC:EquipmentList',
-            Name = (str(zone) + '_Equipment'),
-            Load_Distribution_Scheme = 'SequentialLoad',
-            Zone_Equipment_1_Object_Type = 'ZoneHVAC:EnergyRecoveryVentilator',
-            Zone_Equipment_1_Name = (str(zone) + ' ERV'),
-            Zone_Equipment_1_Cooling_Sequence = 2,
-            Zone_Equipment_1_Heating_or_NoLoad_Sequence = 2,
-            Zone_Equipment_2_Object_Type = 'AirLoopHVAC:UnitarySystem',
-            Zone_Equipment_2_Name = (str(zone) + 'Split_HP'),
-            Zone_Equipment_2_Cooling_Sequence = 1,
-            Zone_Equipment_2_Heating_or_NoLoad_Sequence = 1
-            #Zone_Equipment_1_Sequential_Cooling_Fraction_Schedule_Name = 
-            #Zone_Equipment_1_Sequential_Heating_Fraction_Schedule_Name = 
-            )
+        if vent_system_type == 'Balanced':
+            idf.newidfobject('ZoneHVAC:EquipmentList',
+                Name = (str(zone) + '_Equipment'),
+                Load_Distribution_Scheme = 'SequentialLoad',
+                Zone_Equipment_1_Object_Type = 'ZoneHVAC:EnergyRecoveryVentilator',
+                Zone_Equipment_1_Name = (str(zone) + ' ERV'),
+                Zone_Equipment_1_Cooling_Sequence = 2,
+                Zone_Equipment_1_Heating_or_NoLoad_Sequence = 2,
+                Zone_Equipment_2_Object_Type = 'AirLoopHVAC:UnitarySystem',
+                Zone_Equipment_2_Name = (str(zone) + 'Split_HP'),
+                Zone_Equipment_2_Cooling_Sequence = 1,
+                Zone_Equipment_2_Heating_or_NoLoad_Sequence = 1
+                #Zone_Equipment_1_Sequential_Cooling_Fraction_Schedule_Name = 
+                #Zone_Equipment_1_Sequential_Heating_Fraction_Schedule_Name = 
+                )
+        else:
+            idf.newidfobject('ZoneHVAC:EquipmentList',
+                Name = (str(zone) + '_Equipment'),
+                Load_Distribution_Scheme = 'SequentialLoad',
+                Zone_Equipment_1_Object_Type = 'Fan:ZoneExhaust',
+                Zone_Equipment_1_Name = (str(zone) + ' ERV'),
+                Zone_Equipment_1_Cooling_Sequence = 2,
+                Zone_Equipment_1_Heating_or_NoLoad_Sequence = 2,
+                Zone_Equipment_2_Object_Type = 'AirLoopHVAC:UnitarySystem',
+                Zone_Equipment_2_Name = (str(zone) + 'Split_HP'),
+                Zone_Equipment_2_Cooling_Sequence = 1,
+                Zone_Equipment_2_Heating_or_NoLoad_Sequence = 1
+                #Zone_Equipment_1_Sequential_Cooling_Fraction_Schedule_Name = 
+                #Zone_Equipment_1_Sequential_Heating_Fraction_Schedule_Name = 
+                )
         
         idf.newidfobject('AirLoopHVAC:UnitarySystem',
             Name = (str(zone) + 'Split_HP'),
@@ -570,68 +615,79 @@ def Curves(idf):
         Output_Unit_Type = 'Dimensionless'
         )
     
-def ResilienceERV(idf, zone, occ, ervSense, ervLatent):
+def ResilienceERV(idf, zone,vent_system_type, occ, ervSense, ervLatent):
+    if vent_system_type == 'Balanced':
+        idf.newidfobject('ZoneHVAC:EnergyRecoveryVentilator',
+            Name = (str(zone) + ' ERV'),
+            Availability_Schedule_Name = 'ERVAvailable',
+            Heat_Exchanger_Name = (str(zone) + ' ERV_Core'),
+            Supply_Air_Flow_Rate = (0.00235973725*occ),
+            Exhaust_Air_Flow_Rate = (0.00235973725*occ),
+            Supply_Air_Fan_Name = (str(zone) + ' ERV_Supply_Fan'),
+            Exhaust_Air_Fan_Name = (str(zone) + ' ERV_Exhaust_Fan')
+            )
 
-    idf.newidfobject('ZoneHVAC:EnergyRecoveryVentilator',
-        Name = (str(zone) + ' ERV'),
-        Availability_Schedule_Name = 'ERVAvailable',
-        Heat_Exchanger_Name = (str(zone) + ' ERV_Core'),
-        Supply_Air_Flow_Rate = (0.00235973725*occ),
-        Exhaust_Air_Flow_Rate = (0.00235973725*occ),
-        Supply_Air_Fan_Name = (str(zone) + ' ERV_Supply_Fan'),
-        Exhaust_Air_Fan_Name = (str(zone) + ' ERV_Exhaust_Fan')
-        )
+        idf.newidfobject('Fan:OnOff',
+            Name = (str(zone) + ' ERV_Supply_Fan'),
+            Availability_Schedule_Name = 'ERVAvailable',
+            Fan_Total_Efficiency = 0.6,
+            Pressure_Rise = 200,
+            Maximum_Flow_Rate = 'autosize',
+            Motor_Efficiency = 0.8,
+            Motor_In_Airstream_Fraction = 1,
+            Air_Inlet_Node_Name = (str(zone) + '_ERV_Core_Sup_Out'),
+            Air_Outlet_Node_Name = (str(zone) + '_ERV_Supply'),
+            EndUse_Subcategory = 'ERV_Fan'
+            )
 
-    idf.newidfobject('Fan:OnOff',
-        Name = (str(zone) + ' ERV_Supply_Fan'),
-        Availability_Schedule_Name = 'ERVAvailable',
-        Fan_Total_Efficiency = 0.6,
-        Pressure_Rise = 200,
-        Maximum_Flow_Rate = 'autosize',
-        Motor_Efficiency = 0.8,
-        Motor_In_Airstream_Fraction = 1,
-        Air_Inlet_Node_Name = (str(zone) + '_ERV_Core_Sup_Out'),
-        Air_Outlet_Node_Name = (str(zone) + '_ERV_Supply'),
-        EndUse_Subcategory = 'ERV_Fan'
-        )
+        idf.newidfobject('Fan:OnOff',
+            Name = (str(zone) + ' ERV_Exhaust_Fan'),
+            Availability_Schedule_Name = 'ERVAvailable',
+            Fan_Total_Efficiency = 0.6,
+            Pressure_Rise = 200,
+            Maximum_Flow_Rate = 'autosize',
+            Motor_Efficiency = 0.8,
+            Motor_In_Airstream_Fraction = 1,
+            Air_Inlet_Node_Name = (str(zone) + '_ERV_Core_Exh_Out'),
+            Air_Outlet_Node_Name = (str(zone) + '_ERV_Exhaust'),
+            EndUse_Subcategory = 'ERV_Fan'
+            )
 
-    idf.newidfobject('Fan:OnOff',
-        Name = (str(zone) + ' ERV_Exhaust_Fan'),
-        Availability_Schedule_Name = 'ERVAvailable',
-        Fan_Total_Efficiency = 0.6,
-        Pressure_Rise = 200,
-        Maximum_Flow_Rate = 'autosize',
-        Motor_Efficiency = 0.8,
-        Motor_In_Airstream_Fraction = 1,
-        Air_Inlet_Node_Name = (str(zone) + '_ERV_Core_Exh_Out'),
-        Air_Outlet_Node_Name = (str(zone) + '_ERV_Exhaust'),
-        EndUse_Subcategory = 'ERV_Fan'
-        )
-
-    idf.newidfobject('HeatExchanger:AirToAir:SensibleAndLatent',
-        Name = (str(zone) + ' ERV_Core'),
-        Availability_Schedule_Name = 'ERVAvailable',
-        Nominal_Supply_Air_Flow_Rate = 0.047,
-        Sensible_Effectiveness_at_100_Heating_Air_Flow = ervSense,
-        Latent_Effectiveness_at_100_Heating_Air_Flow = ervLatent,
-        Sensible_Effectiveness_at_75_Heating_Air_Flow = (ervSense * 1.1),
-        Latent_Effectiveness_at_75_Heating_Air_Flow = (ervLatent * 1.1),
-        Sensible_Effectiveness_at_100_Cooling_Air_Flow = ervSense,
-        Latent_Effectiveness_at_100_Cooling_Air_Flow = ervLatent,
-        Sensible_Effectiveness_at_75_Cooling_Air_Flow = (ervSense * 1.1),
-        Latent_Effectiveness_at_75_Cooling_Air_Flow =  (ervLatent * 1.1),
-        Supply_Air_Inlet_Node_Name = (str(zone) + '_OA_1'),
-        Supply_Air_Outlet_Node_Name = (str(zone) + '_ERV_Core_Sup_Out'),
-        Exhaust_Air_Inlet_Node_Name = (str(zone) + '_ERV_Exhaust'),
-        Exhaust_Air_Outlet_Node_Name = (str(zone) + '_ERV_Core_Exh_Out'),
-        Supply_Air_Outlet_Temperature_Control = 'No',
-        Heat_Exchanger_Type = 'Plate',
-        Frost_Control_Type = 'ExhaustAirRecirculation',
-        Threshold_Temperature = -10,
-        Initial_Defrost_Time_Fraction = 0.083,
-        Rate_of_Defrost_Time_Fraction_Increase = 0.012,
-        Economizer_Lockout = 'Yes'
-        )
+        idf.newidfobject('HeatExchanger:AirToAir:SensibleAndLatent',
+            Name = (str(zone) + ' ERV_Core'),
+            Availability_Schedule_Name = 'ERVAvailable',
+            Nominal_Supply_Air_Flow_Rate = 0.047,
+            Sensible_Effectiveness_at_100_Heating_Air_Flow = ervSense,
+            Latent_Effectiveness_at_100_Heating_Air_Flow = ervLatent,
+            Sensible_Effectiveness_at_75_Heating_Air_Flow = (ervSense * 1.1),
+            Latent_Effectiveness_at_75_Heating_Air_Flow = (ervLatent * 1.1),
+            Sensible_Effectiveness_at_100_Cooling_Air_Flow = ervSense,
+            Latent_Effectiveness_at_100_Cooling_Air_Flow = ervLatent,
+            Sensible_Effectiveness_at_75_Cooling_Air_Flow = (ervSense * 1.1),
+            Latent_Effectiveness_at_75_Cooling_Air_Flow =  (ervLatent * 1.1),
+            Supply_Air_Inlet_Node_Name = (str(zone) + '_OA_1'),
+            Supply_Air_Outlet_Node_Name = (str(zone) + '_ERV_Core_Sup_Out'),
+            Exhaust_Air_Inlet_Node_Name = (str(zone) + '_ERV_Exhaust'),
+            Exhaust_Air_Outlet_Node_Name = (str(zone) + '_ERV_Core_Exh_Out'),
+            Supply_Air_Outlet_Temperature_Control = 'No',
+            Heat_Exchanger_Type = 'Plate',
+            Frost_Control_Type = 'ExhaustAirRecirculation',
+            Threshold_Temperature = -10,
+            Initial_Defrost_Time_Fraction = 0.083,
+            Rate_of_Defrost_Time_Fraction_Increase = 0.012,
+            Economizer_Lockout = 'Yes'
+            )
+    if vent_system_type == 'Exhaust':
+        idf.newidfobject('Fan:ZoneExhaust',
+            Name = (str(zone) + ' ERV'),
+            Availability_Schedule_Name = 'MechAvailable',
+            Fan_Total_Efficiency = 0.6,
+            Pressure_Rise = 70,
+            Maximum_Flow_Rate = (0.00707921175*occ),
+            Air_Inlet_Node_Name = (str(zone) + '_ERV_Exhaust'),
+            Air_Outlet_Node_Name = (str(zone) + '_OA_1'),
+            EndUse_Subcategory = 'General',
+            Flow_Fraction_Schedule_Name = 'ExhaustFanSchedule')
 
     idf.newidfobject('OutdoorAir:Node',
         Name = (str(zone) + '_OA_1'),
@@ -643,68 +699,80 @@ def ResilienceERV(idf, zone, occ, ervSense, ervLatent):
         Height_Above_Ground = 3.048
         )
 
-def AnnualERV(idf, zone, occ, ervSense, ervLatent):
+def AnnualERV(idf, zone, vent_system_type, occ, ervSense, ervLatent):
 
-    idf.newidfobject('ZoneHVAC:EnergyRecoveryVentilator',
-        Name = (str(zone) + ' ERV'),
-        Availability_Schedule_Name = 'ERVAvailable',
-        Heat_Exchanger_Name = (str(zone) + ' ERV_Core'),
-        Supply_Air_Flow_Rate = (0.00707921175*occ),
-        Exhaust_Air_Flow_Rate = (0.00707921175*occ),
-        Supply_Air_Fan_Name = (str(zone) + ' ERV_Supply_Fan'),
-        Exhaust_Air_Fan_Name = (str(zone) + ' ERV_Exhaust_Fan')
-        )
+    if vent_system_type == 'Balanced':
+        idf.newidfobject('ZoneHVAC:EnergyRecoveryVentilator',
+            Name = (str(zone) + ' ERV'),
+            Availability_Schedule_Name = 'ERVAvailable',
+            Heat_Exchanger_Name = (str(zone) + ' ERV_Core'),
+            Supply_Air_Flow_Rate = (0.00707921175*occ),
+            Exhaust_Air_Flow_Rate = (0.00707921175*occ),
+            Supply_Air_Fan_Name = (str(zone) + ' ERV_Supply_Fan'),
+            Exhaust_Air_Fan_Name = (str(zone) + ' ERV_Exhaust_Fan')
+            )
 
-    idf.newidfobject('Fan:OnOff',
-        Name = (str(zone) + ' ERV_Supply_Fan'),
-        Availability_Schedule_Name = 'ERVAvailable',
-        Fan_Total_Efficiency = 0.6,
-        Pressure_Rise = 200,
-        Maximum_Flow_Rate = 'autosize',
-        Motor_Efficiency = 0.8,
-        Motor_In_Airstream_Fraction = 1,
-        Air_Inlet_Node_Name = (str(zone) + '_ERV_Core_Sup_Out'),
-        Air_Outlet_Node_Name = (str(zone) + '_ERV_Supply'),
-        EndUse_Subcategory = 'ERV_Fan'
-        )
+        idf.newidfobject('Fan:OnOff',
+            Name = (str(zone) + ' ERV_Supply_Fan'),
+            Availability_Schedule_Name = 'ERVAvailable',
+            Fan_Total_Efficiency = 0.6,
+            Pressure_Rise = 200,
+            Maximum_Flow_Rate = 'autosize',
+            Motor_Efficiency = 0.8,
+            Motor_In_Airstream_Fraction = 1,
+            Air_Inlet_Node_Name = (str(zone) + '_ERV_Core_Sup_Out'),
+            Air_Outlet_Node_Name = (str(zone) + '_ERV_Supply'),
+            EndUse_Subcategory = 'ERV_Fan'
+            )
 
-    idf.newidfobject('Fan:OnOff',
-        Name = (str(zone) + ' ERV_Exhaust_Fan'),
-        Availability_Schedule_Name = 'ERVAvailable',
-        Fan_Total_Efficiency = 0.6,
-        Pressure_Rise = 200,
-        Maximum_Flow_Rate = 'autosize',
-        Motor_Efficiency = 0.8,
-        Motor_In_Airstream_Fraction = 1,
-        Air_Inlet_Node_Name = (str(zone) + '_ERV_Core_Exh_Out'),
-        Air_Outlet_Node_Name = (str(zone) + '_ERV_Exhaust'),
-        EndUse_Subcategory = 'ERV_Fan'
-        )
+        idf.newidfobject('Fan:OnOff',
+            Name = (str(zone) + ' ERV_Exhaust_Fan'),
+            Availability_Schedule_Name = 'ERVAvailable',
+            Fan_Total_Efficiency = 0.6,
+            Pressure_Rise = 200,
+            Maximum_Flow_Rate = 'autosize',
+            Motor_Efficiency = 0.8,
+            Motor_In_Airstream_Fraction = 1,
+            Air_Inlet_Node_Name = (str(zone) + '_ERV_Core_Exh_Out'),
+            Air_Outlet_Node_Name = (str(zone) + '_ERV_Exhaust'),
+            EndUse_Subcategory = 'ERV_Fan'
+            )
 
-    idf.newidfobject('HeatExchanger:AirToAir:SensibleAndLatent',
-        Name = (str(zone) + ' ERV_Core'),
-        Availability_Schedule_Name = 'ERVAvailable',
-        Nominal_Supply_Air_Flow_Rate = 0.047,
-        Sensible_Effectiveness_at_100_Heating_Air_Flow = ervSense,
-        Latent_Effectiveness_at_100_Heating_Air_Flow = ervLatent,
-        Sensible_Effectiveness_at_75_Heating_Air_Flow = (ervSense * 1.1),
-        Latent_Effectiveness_at_75_Heating_Air_Flow = (ervLatent * 1.1),
-        Sensible_Effectiveness_at_100_Cooling_Air_Flow = ervSense,
-        Latent_Effectiveness_at_100_Cooling_Air_Flow = ervLatent,
-        Sensible_Effectiveness_at_75_Cooling_Air_Flow = (ervSense * 1.1),
-        Latent_Effectiveness_at_75_Cooling_Air_Flow =  (ervLatent * 1.1),
-        Supply_Air_Inlet_Node_Name = (str(zone) + '_OA_1'),
-        Supply_Air_Outlet_Node_Name = (str(zone) + '_ERV_Core_Sup_Out'),
-        Exhaust_Air_Inlet_Node_Name = (str(zone) + '_ERV_Exhaust'),
-        Exhaust_Air_Outlet_Node_Name = (str(zone) + '_ERV_Core_Exh_Out'),
-        Supply_Air_Outlet_Temperature_Control = 'No',
-        Heat_Exchanger_Type = 'Plate',
-        Frost_Control_Type = 'ExhaustAirRecirculation',
-        Threshold_Temperature = -10,
-        Initial_Defrost_Time_Fraction = 0.083,
-        Rate_of_Defrost_Time_Fraction_Increase = 0.012,
-        Economizer_Lockout = 'Yes'
-        )
+        idf.newidfobject('HeatExchanger:AirToAir:SensibleAndLatent',
+            Name = (str(zone) + ' ERV_Core'),
+            Availability_Schedule_Name = 'ERVAvailable',
+            Nominal_Supply_Air_Flow_Rate = (0.00707921175*occ),
+            Sensible_Effectiveness_at_100_Heating_Air_Flow = ervSense,
+            Latent_Effectiveness_at_100_Heating_Air_Flow = ervLatent,
+            Sensible_Effectiveness_at_75_Heating_Air_Flow = (ervSense * 1.1),
+            Latent_Effectiveness_at_75_Heating_Air_Flow = (ervLatent * 1.1),
+            Sensible_Effectiveness_at_100_Cooling_Air_Flow = ervSense,
+            Latent_Effectiveness_at_100_Cooling_Air_Flow = ervLatent,
+            Sensible_Effectiveness_at_75_Cooling_Air_Flow = (ervSense * 1.1),
+            Latent_Effectiveness_at_75_Cooling_Air_Flow =  (ervLatent * 1.1),
+            Supply_Air_Inlet_Node_Name = (str(zone) + '_OA_1'),
+            Supply_Air_Outlet_Node_Name = (str(zone) + '_ERV_Core_Sup_Out'),
+            Exhaust_Air_Inlet_Node_Name = (str(zone) + '_ERV_Exhaust'),
+            Exhaust_Air_Outlet_Node_Name = (str(zone) + '_ERV_Core_Exh_Out'),
+            Supply_Air_Outlet_Temperature_Control = 'No',
+            Heat_Exchanger_Type = 'Plate',
+            Frost_Control_Type = 'ExhaustAirRecirculation',
+            Threshold_Temperature = -10,
+            Initial_Defrost_Time_Fraction = 0.083,
+            Rate_of_Defrost_Time_Fraction_Increase = 0.012,
+            Economizer_Lockout = 'Yes'
+            )
+    if vent_system_type == 'Exhaust':
+        idf.newidfobject('Fan:ZoneExhaust',
+            Name = (str(zone) + ' ERV'),
+            Availability_Schedule_Name = 'MechAvailable',
+            Fan_Total_Efficiency = 0.6,
+            Pressure_Rise = 70,
+            Maximum_Flow_Rate = (0.00707921175*occ),
+            Air_Inlet_Node_Name = (str(zone) + '_ERV_Exhaust'),
+            Air_Outlet_Node_Name = (str(zone) + '_OA_1'),
+            EndUse_Subcategory = 'General',
+            Flow_Fraction_Schedule_Name = 'ExhaustFanSchedule')
 
     idf.newidfobject('OutdoorAir:Node',
         Name = (str(zone) + '_OA_1'),

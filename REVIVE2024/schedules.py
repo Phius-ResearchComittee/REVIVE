@@ -65,7 +65,23 @@ def ResilienceSchedules(idf, outage1start, outage1end, outage2start, outage2end,
     outage2end = datetime.datetime.strptime(outage2end, "%d-%b").strftime("%m/%d")
     coolingOutageStart = datetime.datetime.strptime(coolingOutageStart, "%d-%b").strftime("%m/%d")
     coolingOutageEnd = datetime.datetime.strptime(coolingOutageEnd, "%d-%b").strftime("%m/%d")
-
+    
+    idf.newidfobject('Schedule:Compact',
+        Name = 'ExhaustFanSchedule',
+        Schedule_Type_Limits_Name = 'Fraction',
+        Field_1 = 'Through: 12/31',
+        Field_2 = 'For: AllDays',
+        Field_3 = 'Until: 06:00',
+        Field_4 = 0,
+        Field_5 = 'Until: 06:30',
+        Field_6 = 1,
+        Field_7 = 'Until: 18:00',
+        Field_8 = 0.0,
+        Field_9 = 'Until: 18:30',
+        Field_10 = 1.0,
+        Field_11 = 'Until: 24:00'
+        )
+    
     idf.newidfobject('ScheduleTypeLimits',
         Name = 'Number')
 
@@ -184,6 +200,7 @@ def ResilienceSchedules(idf, outage1start, outage1end, outage2start, outage2end,
         Schedule_Type_Limits_Name = 'Any Number',
         Hourly_Value = 1
         )
+    
     if demandCoolingAvail == 1 and outage1type =='HEATING':
         idf.newidfobject('Schedule:Compact',
             Name = 'MechAvailable',
@@ -553,6 +570,22 @@ def AnnualSchedules(idf, outage1start, outage1end, outage2start, outage2end,
     hourSch(idf, SchName_ClothesWasher, SchValues_ClothesWasher)
     hourSch(idf, SchName_Dishwasher, SchValues_Dishwasher)
     hourSch(idf, SchName_Occupant, SchValues_Occupant)
+
+    idf.newidfobject('Schedule:Compact',
+        Name = 'ExhaustFanSchedule',
+        Schedule_Type_Limits_Name = 'Fraction',
+        Field_1 = 'Through: 12/31',
+        Field_2 = 'For: AllDays',
+        Field_3 = 'Until: 06:00',
+        Field_4 = 0,
+        Field_5 = 'Until: 06:30',
+        Field_6 = 1,
+        Field_7 = 'Until: 18:00',
+        Field_8 = 0.0,
+        Field_9 = 'Until: 18:30',
+        Field_10 = 1.0,
+        Field_11 = 'Until: 24:00'
+        )
 
     idf.newidfobject('ScheduleTypeLimits',
         Name = 'Number')

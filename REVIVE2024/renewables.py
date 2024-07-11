@@ -51,7 +51,7 @@ def demand_limiting(idf, zone):
         Thermostat_1_Name = (str(zone) + '_Thermostat')
         )
 
-def generators(idf, PV_SIZE, PV_TILT):
+def generators(idf, PV_SIZE, PV_TILT, PV_AZIMUTH):
 
     idf.newidfobject('Generator:PVWatts',
         Name = 'PV Array',
@@ -62,7 +62,7 @@ def generators(idf, PV_SIZE, PV_TILT):
         System_Losses = 0.14,
         Array_Geometry_Type = 'TiltAzimuth',
         Tilt_Angle = PV_TILT,
-        Azimuth_Angle = 180,
+        Azimuth_Angle = PV_AZIMUTH,
         # Surface_Name = ,
         Ground_Coverage_Ratio = 0.4)
 

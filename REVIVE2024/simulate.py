@@ -298,8 +298,9 @@ def resilience_simulation_prep(si: SimInputs, case_id: int, simulation_mgr=None)
     operableArea_W = ((runList['Operable_Area_W'][runCount])*0.09290304)
     operableArea_E = ((runList['Operable_Area_E'][runCount])*0.09290304)
     halfHeight = 1.524
-    ervSense = 0.7
-    ervLatent = 0.4
+    ervSense = runList["SENSIBLE_RECOVERY_EFF"][runCount]
+    ervLatent = runList["LATENT_RECOVERY_EFF"][runCount]
+
 
     # IHG Calc
     constructionList = pd.read_csv(constructionDatabase, index_col="Name")
@@ -343,6 +344,7 @@ def resilience_simulation_prep(si: SimInputs, case_id: int, simulation_mgr=None)
     constructionList = constructionList.reset_index()
     PV_SIZE = runList['PV_SIZE_[W]'][runCount]
     PV_TILT = runList['PV_TILT'][runCount]
+    PV_AZIMUTH = runList["PV_AZIMUTH"][runCount]
     
     # Envelope
 
@@ -425,6 +427,9 @@ def resilience_simulation_prep(si: SimInputs, case_id: int, simulation_mgr=None)
     natGasPresent = runList['NATURAL_GAS'][runCount]
     dhwFuel = runList['WATER_HEATER_FUEL'][runCount]
     mechSystemType = runList['MECH_SYSTEM_TYPE'][runCount]
+    cooling_COP = runList["COOLING_COP"][runCount]
+    heating_COP = runList["HEATING_COP"][runCount]
+    vent_system_type = runList['VENT_SYSTEM_TYPE'][runCount]
 
     gridRegion = runList['GRID_REGION'][runCount]
     #==============================================================================================================================
@@ -552,7 +557,7 @@ def resilience_simulation_prep(si: SimInputs, case_id: int, simulation_mgr=None)
             hvac.SizingSettings(idf1, zone_name[0])
             hvac.HVACControls(idf1, zone_name[0])
             hvac.ZoneMechConnections(idf1, zone_name[0])
-            hvac.HVACBuilder(idf1, zone_name[0], mechSystemType)
+            hvac.HVACBuilder(idf1, zone_name[0], vent_system_type, mechSystemType, heating_COP, cooling_COP)
             hvac.WaterHeater(idf1, zone_name[0], dhwFuel, DHW_CombinedGPM)
             renewables.demand_limiting(idf1, zone_name[0])
         # Al to do
@@ -618,7 +623,7 @@ def resilience_simulation_prep(si: SimInputs, case_id: int, simulation_mgr=None)
     # Sizing settings:
     hvac.Curves(idf1)
 
-    renewables.generators(idf1, PV_SIZE, PV_TILT)
+    renewables.generators(idf1, PV_SIZE, PV_TILT, PV_AZIMUTH)
 
     internalHeatGains.ext_lights(idf1)
 
@@ -642,7 +647,7 @@ def resilience_simulation_prep(si: SimInputs, case_id: int, simulation_mgr=None)
     schedules.ResilienceControls(idf1, unit_list, NatVentType)
     
     for zone in unit_list:
-        hvac.ResilienceERV(idf1, zone, occ, ervSense, ervLatent)
+        hvac.ResilienceERV(idf1, zone, vent_system_type, occ, ervSense, ervLatent)
 
     weatherMorph.WeatherMorphSine(idf1, outage1start, outage1end, outage2start, outage2end,
             MorphFactorDB1, MorphFactorDP1, MorphFactorDB2, MorphFactorDP2)
@@ -762,8 +767,9 @@ def annual_simulation_prep(si: SimInputs, case_id: int, simulation_mgr=None):
                     demandCoolingAvail,shadingAvail)
     
     # get annual erv info
-    ervSense = 0.7 # TODO: are these correct? values never changed
-    ervLatent = 0.4
+    ervSense = runList["SENSIBLE_RECOVERY_EFF"][runCount]
+    ervLatent = runList["LATENT_RECOVERY_EFF"][runCount]
+    vent_system_type = runList['VENT_SYSTEM_TYPE'][runCount]
 
     # create schedules for units with windows
     with open(os.path.join(tempFolder, f"{BaseFileName}_UnitBedrooms.json"), "r") as fp:
@@ -776,7 +782,7 @@ def annual_simulation_prep(si: SimInputs, case_id: int, simulation_mgr=None):
     for zone in modeled_zones:
         zone_name = zone.Name
         occ = float(unit_bedroom_dict[str(zone_name)]) + 1
-        hvac.AnnualERV(idf2, zone_name, occ, ervSense, ervLatent)
+        hvac.AnnualERV(idf2, zone_name, vent_system_type, occ, ervSense, ervLatent)
         
 
     # get envelope information
