@@ -29,7 +29,7 @@ class MyWidget(QWidget):
         self.is_dummy_mode = is_dummy_mode
 
         # set up app identity
-        self.app_name = "REVIVE Calculator Tool"
+        self.app_name = "REVIVEcalc"
         self.version_no = "24.2"
         self.settings = QSettings("Phius", self.app_name)
         self.curr_dir = os.getcwd()
