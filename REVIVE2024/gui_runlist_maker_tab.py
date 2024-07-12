@@ -10,7 +10,6 @@ from PySide6.QtCore import (
 from PySide6.QtWidgets import (
     QApplication,
     QWidget,
-    QFormLayout,
     QVBoxLayout,
     QHBoxLayout,
     QLabel,
@@ -208,7 +207,7 @@ class RunlistMakerTab(QWidget):
         self.rl_sim_duration.setValue(50)
         
         # add all new widgets to layout with labels
-        new_layout.addLayout(self.stack_widgets_vertically(
+        new_layout.addLayout(stack_widgets_vertically(
             widget_list=[self.rl_case_name,
                          self.rl_geom_file,
                          self.rl_sim_duration],
@@ -244,20 +243,20 @@ class RunlistMakerTab(QWidget):
                                                       is_groupbox=True)
         
         # add all new widgets to layout with labels
-        new_layout.addLayout(self.stack_widgets_vertically(
+        new_layout.addLayout(stack_widgets_vertically(
             widget_list=[self.rl_epw_file,
                          self.rl_ddy_file],
             label_list=["EPW File",
                         "DDY File"]
         ))
-        new_layout.addLayout(self.stack_widgets_vertically(
+        new_layout.addLayout(stack_widgets_vertically(
             widget_list=self.rl_morph_factors,
             label_list=["Morph Factor 1 - Dry Bulb (°C)",
                         "Morph Factor 1 - Dewpoint (°C)",
                         "Morph Factor 2 - Dry Bulb (°C)",
                         "Morph Factor 2 - Dewpoint (°C)"]
         ))
-        new_layout.addLayout(self.stack_widgets_vertically(
+        new_layout.addLayout(stack_widgets_vertically(
             widget_list=[self.rl_env_country,
                          self.rl_grid_region,
                          self.rl_env_labor_frac],
@@ -265,11 +264,11 @@ class RunlistMakerTab(QWidget):
                         "Grid Region",
                         "Envelope Labor Fraction"]
         ))
-        new_layout.addLayout(self.stack_widgets_horizontally(
+        new_layout.addLayout(stack_widgets_horizontally(
             widget_list=[self.rl_perf_carbon],
             label_list=["Performance Carbon Correction Measures"]
         ))
-        new_layout.addLayout(self.stack_widgets_horizontally(
+        new_layout.addLayout(stack_widgets_horizontally(
             widget_list=[self.rl_nperf_carbon],
             label_list=["Non-Performance Carbon Correction Measures"]
         ))
@@ -299,7 +298,7 @@ class RunlistMakerTab(QWidget):
         self.rl_annual_elec_charge.setPrefix("$")
 
         # add all new widgets to layout with labels
-        new_layout.addLayout(self.stack_widgets_vertically(
+        new_layout.addLayout(stack_widgets_vertically(
             widget_list=[self.rl_elec_price,
                          self.rl_elec_sellback_price,
                          self.rl_nat_gas_present,
@@ -309,7 +308,7 @@ class RunlistMakerTab(QWidget):
                         "Natural Gas Present?",
                         "Natural Gas Price ($/THERM)"]
         ))
-        new_layout.addLayout(self.stack_widgets_vertically(
+        new_layout.addLayout(stack_widgets_vertically(
             widget_list=[self.rl_annual_gas_charge,
                          self.rl_annual_elec_charge],
             label_list=["Annual Gas Fixed Charge ($)",
@@ -339,7 +338,7 @@ class RunlistMakerTab(QWidget):
         self.rl_appliances = [REVIVEComboBox() for _ in self.appliance_list]
         
         # add all new widgets to layout with labels
-        new_layout.addLayout(self.stack_widgets_vertically(
+        new_layout.addLayout(stack_widgets_vertically(
             widget_list=[self.rl_vent_system,
                          self.rl_water_heater_fuel,
                          self.rl_mech_system],
@@ -347,19 +346,19 @@ class RunlistMakerTab(QWidget):
                         "Water Heater Fuel Type",
                         "Mechanical System Type"]
         ))
-        new_layout.addLayout(self.stack_widgets_vertically(
+        new_layout.addLayout(stack_widgets_vertically(
             widget_list=[self.rl_heating_cop,
                          self.rl_cooling_cop],
             label_list=["Coefficient of Performance (Heating)",
                         "Coefficient of Performance (Cooling)"]
         ))
-        new_layout.addLayout(self.stack_widgets_vertically(
+        new_layout.addLayout(stack_widgets_vertically(
             widget_list=[self.rl_erv_sense,
                          self.rl_erv_latent],
             label_list=["Sensible Recovery Efficiency",
                         "Latent Recover Efficiency"]
         ))
-        new_layout.addLayout(self.stack_widgets_horizontally(
+        new_layout.addLayout(stack_widgets_horizontally(
             widget_list=[self.rl_pv_size,
                          self.rl_pv_tilt,
                          self.rl_pv_azimuth],
@@ -367,7 +366,7 @@ class RunlistMakerTab(QWidget):
                         "Photovoltaics Tilt (deg)",
                         "Photovoltaics Azimuth (deg)"]
         ))
-        new_layout.addLayout(self.stack_widgets_vertically(
+        new_layout.addLayout(stack_widgets_vertically(
             widget_list=self.rl_appliances,
             label_list=self.appliance_list
         ))
@@ -421,7 +420,7 @@ class RunlistMakerTab(QWidget):
                                                        is_groupbox=True)
 
         # add all new widgets to layout with labels
-        new_layout.addLayout(self.stack_widgets_vertically(
+        new_layout.addLayout(stack_widgets_vertically(
             widget_list=self.rl_op_areas,
             label_list=[f"Operable Area - {dir}" for dir in ["North", "East", "South", "West"]]
         ))
@@ -431,7 +430,7 @@ class RunlistMakerTab(QWidget):
                               self.rl_int_floor_set]
         self.envelope_items = ["Window", "Exterior Door", "Exterior Wall", "Roof", "Exterior Floor", "Interior Floor"]
         for w_set in self.revive_widget_sets:
-            new_layout.addLayout(self.stack_widgets_horizontally(
+            new_layout.addLayout(stack_widgets_horizontally(
                 widget_list=[w_set],
                 label_list=[""]
             ))
@@ -458,14 +457,14 @@ class RunlistMakerTab(QWidget):
             lambda state : self.rl_nat_vent_type.setEnabled(state==Qt.Checked))
 
         # add all new widgets to layout with labels
-        new_layout.addLayout(self.stack_widgets_vertically(
+        new_layout.addLayout(stack_widgets_vertically(
             widget_list=self.rl_outage_dates,
             label_list=["Winter Outage Start",
                         "Winter Outage End",
                         "Summer Outage Start",
                         "Summer Outage End"]
         ))
-        new_layout.addLayout(self.stack_widgets_vertically(
+        new_layout.addLayout(stack_widgets_vertically(
             widget_list=[self.rl_shading_avail,
                          self.rl_dem_cool_avail,
                          self.rl_nat_vent_avail,
@@ -486,47 +485,6 @@ class RunlistMakerTab(QWidget):
 
         # assign layout to groupbox
         groupbox.setLayout(new_layout)
-
-    
-    def stack_widgets_vertically(self, widget_list, label_list):
-        # organize the new layout
-        new_layout = QFormLayout()
-        new_layout.setLabelAlignment(Qt.AlignLeft)
-        for widget, label in zip(widget_list, label_list):
-            if label != "":
-                label_widget = QLabel(f"{label}:")
-                new_layout.addRow(label_widget, widget)
-            else:
-                new_layout.addWidget(widget)
-        
-        # return new layout with padding
-        padded_layout = QVBoxLayout()
-        padded_layout.addWidget(REVIVESpacer())
-        padded_layout.addLayout(new_layout)
-        padded_layout.addWidget(REVIVESpacer())
-        return padded_layout
-    
-
-    def stack_widgets_horizontally(self, widget_list, label_list):
-        # organize the new layout
-        new_layout = QHBoxLayout()
-        for widget, label in zip(widget_list, label_list):
-            buddy_layout = QVBoxLayout()
-            if label != "":
-                label_widget = QLabel(f"{label}:")
-                buddy_layout.addWidget(label_widget)
-            if isinstance(widget, QWidget):
-                buddy_layout.addWidget(widget)
-            else:
-                buddy_layout.addLayout(widget)
-            new_layout.addLayout(buddy_layout)
-        
-        # return new layout with padding
-        padded_layout = QVBoxLayout()
-        padded_layout.addWidget(REVIVESpacer())
-        padded_layout.addLayout(new_layout)
-        padded_layout.addWidget(REVIVESpacer())
-        return padded_layout
     
     
     def collect_results(self):

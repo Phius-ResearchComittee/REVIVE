@@ -8,6 +8,7 @@ from PySide6.QtWidgets import (
     QWidget,
     QVBoxLayout,
     QHBoxLayout,
+    QFormLayout,
     QSizePolicy,
     QFileDialog,
     QComboBox,
@@ -434,3 +435,46 @@ class REVIVESpacer(QWidget):
         super().__init__()
         self.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
         self.setMinimumHeight(10)
+
+
+
+
+def stack_widgets_vertically(widget_list, label_list):
+    # organize the new layout
+    new_layout = QFormLayout()
+    new_layout.setLabelAlignment(Qt.AlignLeft)
+    for widget, label in zip(widget_list, label_list):
+        if label != "":
+            label_widget = QLabel(f"{label}:")
+            new_layout.addRow(label_widget, widget)
+        else:
+            new_layout.addWidget(widget)
+    
+    # return new layout with padding
+    padded_layout = QVBoxLayout()
+    padded_layout.addWidget(REVIVESpacer())
+    padded_layout.addLayout(new_layout)
+    padded_layout.addWidget(REVIVESpacer())
+    return padded_layout
+
+
+def stack_widgets_horizontally(widget_list, label_list):
+    # organize the new layout
+    new_layout = QHBoxLayout()
+    for widget, label in zip(widget_list, label_list):
+        buddy_layout = QVBoxLayout()
+        if label != "":
+            label_widget = QLabel(f"{label}:")
+            buddy_layout.addWidget(label_widget)
+        if isinstance(widget, QWidget):
+            buddy_layout.addWidget(widget)
+        else:
+            buddy_layout.addLayout(widget)
+        new_layout.addLayout(buddy_layout)
+    
+    # return new layout with padding
+    padded_layout = QVBoxLayout()
+    padded_layout.addWidget(REVIVESpacer())
+    padded_layout.addLayout(new_layout)
+    padded_layout.addWidget(REVIVESpacer())
+    return padded_layout
