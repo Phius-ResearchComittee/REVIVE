@@ -1,21 +1,30 @@
 {
-    "Building":"Help page content about Building",
-    "Simulation Duration":"Help page content about Simulation",
-    "Weather":"Help page content about Weather",
-    "Morph":"Help page content about Morph",
-    "EPW":"Help page content about EPW",
-    "DDY":"Help page content about DDY",
-    "Envelope":"Help page content about Envelope",
-    "Walls":"Help page content about Walls",
-    "Roofing":"Help page content about Roofing",
-    "Mechanicals":"Help page content about Mechanicals",
-    "System":"Help page content about System",
-    "PV":"Help page content about PV",
-    "Fuel":"Help page content about Fuel",
-    "Resilience":"Help page content about Resilience",
-    "Outages":"Help page content about Outages",
-    "Outage Start":"Help page content about Outage",
-    "Outage End":"Help page content about Outage",
-    "Shading":"Help page content about Shading",
-    "Pizza":"Should not have pineapple"
+    "General":"This tab contains the help infomation for the general settings of the run.",
+    "Case Name":"Enter a unique case name. Using BASE in the name of the case will assign this as the base case for comparison.",
+    "Geometry":"Enter the file path for the .idf file containing the geometry desired for the case",
+    "Simulation Duration":"Enter 70 years for the duration for certification. Other durations may be used for checking longer or shorter term ADORB costs",
+    "Site":"This section contains inputs about the site and grid region",
+    "EPW":"Enter the exact name or path of the .epw file to be used for this case. Ensure that the file is located in the “Weather Data” folder",
+    "DDY":"Enter the exact name or path of the .ddy file to be used for this case. Ensure that the file is located in the “Weather Data” folder.",
+    "Morph":"Enter the morphing factors for the outage period. Use the Weather Morphing tab to determine the inputs for this section",
+    "Energy Economics":"This section deals with energy pricing",
+    "Electric Price":"Enter the "
 }
+// -Gas Price
+// -Sellback Price
+// Mechanicals
+// -System
+// -PV
+// -Fuel
+// -Appliances
+// Envelope
+// -Infiltration Rate
+// -Foundation
+// -Walls
+// -Roofing
+// -Flooring
+// -Shading
+// Outages
+// -Outage Start
+// -Outage End
+// }
