@@ -30,6 +30,7 @@ import multiprocessing as mp
 
 # custom imports
 import weatherMorph
+from gui_utility import *
 
 
 class MorphTab(QWidget):
@@ -39,95 +40,74 @@ class MorphTab(QWidget):
         self.parent = parent
 
         # create top-level widgets
-        self.file_entry_layout = QGridLayout()
-        self.file_entry_groupbox = QGroupBox("File Entry")
-        self.run_options_layout = QHBoxLayout()
-        self.run_options_groupbox = QGroupBox("Run Options")
-        self.morph_button = QPushButton("Morph")
-        self.progress_bar = QProgressBar()
+        self.settings_groupbox = QGroupBox("Site Weather Settings")
+        self.morph_button = QPushButton("Compute Weather Morph Factors")
 
         # create all inner-level widgets
         self.file_entry_widget = QLineEdit()
 
         # add top-level widgets to main layout
         self.layout = QVBoxLayout()
-        self.layout.addWidget(self.file_entry_groupbox)
-        self.layout.addWidget(self.run_options_groupbox)
+        self.layout.addWidget(self.settings_groupbox)
         self.layout.addWidget(self.morph_button)
-        self.layout.addWidget(self.progress_bar)
         
         # populate the top-level widgets with child widgets
-        self.create_file_entry_widgets()
-        self.create_run_options_widgets()
+        self.create_widgets()
         
         # enable the big simulate button
         self.morph_button.clicked.connect(self.morph)
-
-        # initialize the progress bar attributes
-        self.progress_bar.setVisible(False)
-        self.progress_bar.setRange(0,100)
-        self.progress_bar.reset()
-
-        # initialize the threading mechanisms
-        self.mp_manager = None
-        self.progress_queue = None
-        self.stop_event = None
-        self.worker = None
         
         # set the layout
         self.setLayout(self.layout)
 
 
-    def create_file_entry_widgets(self):
-        # show label and entry box
-        self.file_label_string = "Input file"
-        self.file_label = QLabel()
-        self.file_label.setText(self.file_label_string)
-        self.file_entry = QLineEdit()
-        self.file_entry_layout.addWidget(self.file_label, 0, 0)
-        self.file_entry_layout.addWidget(self.file_entry, 0, 1)
+    def create_widgets(self):
+        # show input file box
+        self.epw_csv_file = REVIVEFilePicker("EPW CSV File", "csv")
+        self.summer_outage_start = REVIVEDatePicker()
+        self.summer_outage_end = REVIVEDatePicker()
+        self.winter_outage_start = REVIVEDatePicker()
+        self.winter_outage_end = REVIVEDatePicker()
+        self.summer_treturn_dp = REVIVEDoubleSpinBox(decimals=1, step_amt=0.1, min=-200, max=200)
+        self.summer_treturn_db = REVIVEDoubleSpinBox(decimals=1, step_amt=0.1, min=-200, max=200)
+        self.winter_treturn_dp = REVIVEDoubleSpinBox(decimals=1, step_amt=0.1, min=-200, max=200)
+        self.winter_treturn_db = REVIVEDoubleSpinBox(decimals=1, step_amt=0.1, min=-200, max=200)
 
-        # add file explorer widgets to layout
-        self._open_file_explorer_action = self.file_entry.addAction(
-                qApp.style().standardIcon(QStyle.SP_DirOpenIcon),  # noqa: F821
-                QLineEdit.TrailingPosition)
-            
-        # populate fields with last used information, blank string as default
-        self.file_entry.setText(self.parent.get_setting("Morph input"))
-
-        # connect the actions
-        self._open_file_explorer_action.triggered.connect( 
-            lambda _ : self.on_open_file(self.file_label_string, "*.csv"))
-            
-        # apply layout to groupbox widget
-        self.file_entry_groupbox.setLayout(self.file_entry_layout)
-
-    
-    def create_run_options_widgets(self):
-        pass
-
-
-    @Slot()
-    def on_open_file(self, widget_key, file_ext):
-        prompt = f"Select File: {widget_key}"
-        
-        path, _ = QFileDialog.getOpenFileName(
-                self, prompt, QDir.homePath(), file_ext)
-
-        dest = QDir(path)
-        self.file_entry.setText(QDir.fromNativeSeparators(dest.path()))
+        # assign to layout
+        new_layout = QVBoxLayout()
+        new_layout.addLayout(stack_widgets_horizontally(
+            widget_list=[self.epw_csv_file],
+            label_list=["EPW CSV file"]
+        ))
+        new_layout.addLayout(stack_widgets_vertically(
+            widget_list=[self.winter_outage_start,
+                         self.winter_outage_end,
+                         self.summer_outage_start,
+                         self.summer_outage_end],
+            label_list=["Winter Outage Start",
+                        "Winter Outage End",
+                        "Summer Outage Start",
+                        "Summer Outage End"]
+        ))
+        new_layout.addLayout(stack_widgets_vertically(
+            widget_list=[self.winter_treturn_dp,
+                         self.winter_treturn_db,
+                         self.summer_treturn_dp,
+                         self.summer_treturn_db],
+            label_list=["Winter Return Extreme Dew Point",
+                        "Winter Return Extreme Dry Bulb",
+                        "Summer Return Extreme Dew Point",
+                        "Summer Return Extreme Dry Bulb"]
+        ))
+        self.settings_groupbox.setLayout(new_layout)
 
 
     @Slot()
     def morph(self):
-        # signal that simulation is starting (disable sim button)
-        self.morph_button.setText("Running morph...")
+        # signal that computation is starting (disable button)
+        self.morph_button.setText("Computing morph factors...")
         self.morph_button.setFlat(True)
         self.morph_button.setEnabled(False)
-
-        # show the progress bar
-        self.progress_bar.setValue(0)
-        self.progress_bar.setVisible(True)
 
         try:
             # input validation
@@ -138,17 +118,45 @@ class MorphTab(QWidget):
             self.save_settings()
             
             # collect arguments to send to simulate function
-            morph_file = self.file_entry.text()
+            morph_file = self.epw_csv_file.text()
+            summer_outage_start = self.summer_outage_start.get_date()
+            summer_outage_end = self.summer_outage_end.get_date()
+            winter_outage_start = self.winter_outage_start.get_date()
+            winter_outage_end = self.winter_outage_end.get_date()
+            summer_treturn_dp = self.summer_treturn_dp.value()
+            summer_treturn_db = self.summer_treturn_db.value()
+            winter_treturn_dp = self.winter_treturn_dp.value()
+            winter_treturn_db = self.winter_treturn_db.value()
 
-            #####################################################
-            # Call morph function in weather morph here
-            #####################################################
-            print(f"Calling weather morph on file {morph_file}")
+            print(f"Computing morph factors for EPW CSV file \"{morph_file}\"")
+            summer_db_factor, summer_dp_factor, winter_db_factor, winter_dp_factor = weatherMorph.ComputeWeatherMorphFactors(
+                morph_file, summer_outage_start, summer_outage_end, 
+                winter_outage_start, winter_outage_end, 
+                summer_treturn_dp, summer_treturn_db, 
+                winter_treturn_dp, winter_treturn_db
+            )
 
+            msg = (f"Morph factors calculation complete!\n"
+                   f"MorphFactorDB1 = {winter_db_factor}\n"
+                   f"MorphFactorDP1 = {winter_dp_factor}\n"
+                   f"MorphFactorDB2 = {summer_db_factor}\n"
+                   f"MorphFactorDP2 = {summer_dp_factor}\n")
+            self.parent.display_info(msg)
         
         except Exception as err_msg:
             self.morph_cleanup(success=False, err_msg=str(err_msg))
 
+
+    def morph_cleanup(self, success=False, err_msg=None):
+        # notify the user
+        if not success:
+            self.parent.display_error(err_msg)
+
+        # reset simulate button
+        self.morph_button.setText("Compute Weather Morph Factors")
+        self.morph_button.setFlat(False)
+        self.morph_button.setEnabled(True)
+
     
     def save_settings(self):
-        self.parent.set_setting("Morph input", self.file_entry.text())
+        self.parent.set_setting("Morph input", self.epw_csv_file.text())
