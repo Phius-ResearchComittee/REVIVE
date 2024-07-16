@@ -4,8 +4,8 @@
     "Geometry":"Enter the file path for the .idf file containing the geometry desired for the case",
     "Simulation Duration":"Enter 70 years for the duration for certification. Other durations may be used for checking longer or shorter term ADORB costs",
     "Site":"This section contains inputs about the site and grid region",
-    "EPW":"Enter the exact name or path of the .epw file to be used for this case. Ensure that the file is located in the “Weather Data” folder",
-    "DDY":"Enter the exact name or path of the .ddy file to be used for this case. Ensure that the file is located in the “Weather Data” folder.",
+    "EPW":"Enter the exact name or path of the .epw file to be used for this case. Ensure that the file is located in the Weather Data folder",
+    "DDY":"Enter the exact name or path of the .ddy file to be used for this case. Ensure that the file is located in the Weather Data folder.",
     "Morph":"Enter the morphing factors for the outage period. Use the Weather Morphing tab to determine the inputs for this section",
     "Energy Economics":"This section deals with energy pricing",
     "Electric Price":"Enter the marginal electric rate for the location. Do not include fixed charges (static utility fees)"
