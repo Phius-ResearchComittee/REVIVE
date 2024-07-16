@@ -219,7 +219,7 @@ class SimulateTab(QWidget):
             for row_idx, row in top_cases_df.iterrows():
                 for col_idx, col_key in enumerate(self.highlight_columns):
                     data = row[col_key]
-                    item = QTableWidgetItem(data)
+                    item = QTableWidgetItem(str(data))
                     if row['Display Color']:
                         item.setBackground(QColor(row['Display Color']))
                     self.highlights_display.setItem(row_idx, col_idx, item)
