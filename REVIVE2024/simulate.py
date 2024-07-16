@@ -12,6 +12,7 @@ import eppy as eppy
 from eppy import modeleditor
 from eppy.modeleditor import IDF
 from eppy.runner.run_functions import runIDFs
+from eppy.runner.run_functions import EnergyPlusRunError
 import multiprocessing as mp
 import multiprocessing.pool as mp_pool
 # from PIL import Image, ImageTk
@@ -911,7 +912,14 @@ def batch_simulation(si: SimInputs, idfs, label: str, simulation_mgr=None):
             runs.append([idf, options])
     
     # run the simulation
-    runIDFs([x for x in runs], processors=si.num_procs)
+    try:
+        runIDFs([x for x in runs], processors=si.num_procs)
+    except EnergyPlusRunError:
+        msg = "EnergyPlus ran into an unexpected error. Please check .err files in the batch \
+               folder and contact Phius if necessary."
+        if simulation_mgr:
+            simulation_mgr.raise_exception(msg)
+
 
     # CHECKPOINT: all runlist entries done simulating
     for _ in range(len(idfs)): checkpoint(simulation_mgr)
@@ -1308,7 +1316,8 @@ def collect_individual_simulation_results(si: SimInputs, case_id: int, simulatio
 
 def collect_all_results(si: SimInputs, file_list, simulation_mgr=None):
     # collect every set of results and combine into one file
-    df = pd.concat(map(pd.read_csv, file_list), ignore_index=True)
+    filtered_file_list = [x for x in file_list if x is not None]
+    df = pd.concat(map(pd.read_csv, filtered_file_list), ignore_index=True)
     df.to_csv(os.path.join(si.results_folder, f"{si.batch_name}_ResultsTable.csv"))
 
     # CHECKPOINT: all results collected
