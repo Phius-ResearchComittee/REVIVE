@@ -205,7 +205,7 @@ def validate_runlist_inputs(rl_path, db_path):
         
         # check for geometry file
         idf = row["GEOMETRY_IDF"]
-        assert os.path.isfile(idf), rl_misc_prompt(rl_path, f"Geometry file \"{idf}\" not found in current working directory.")
+        assert os.path.isfile(idf), rl_misc_prompt(rl_path, f"Geometry file \"{idf}\" not found in current working directory. Please provide full path.")
         
         # check for weather file
         weather_dir = os.path.join(db_path, WEATHER_DATA_DIR)
