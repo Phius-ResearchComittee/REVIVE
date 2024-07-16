@@ -424,6 +424,12 @@ class RunlistMakerTab(QWidget):
             widget_list=self.rl_op_areas,
             label_list=[f"Operable Area - {dir}" for dir in ["North", "East", "South", "West"]]
         ))
+        new_layout.addLayout(stack_widgets_horizontally(
+            widget_list=[self.rl_chi_val,
+                         self.rl_infil_rate],
+            label_list=["Chi Value",
+                        "Infiltration Rate"]
+        ))
         self.revive_widget_sets = [self.rl_foundation_set, self.rl_window_set,
                               self.rl_ext_door_set, self.rl_ext_wall_set,
                               self.rl_ext_roof_set, self.rl_ext_floor_set,
