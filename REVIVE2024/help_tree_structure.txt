@@ -6,22 +6,30 @@ Site
 -EPW
 -DDY
 -Morph
+-Site Country
+-Grid Region
 Energy Economics
--Electric Price
--Gas Price
--Sellback Price
+-Electricity Price
+-Electricity Sell-back Price
+-Natural Gas Present
+-Natural Gas Price
+-Annual Electricity Fixed Charge
+-Annual Natural Gas Fixed Charge
 Mechanicals
--System
--PV
--Fuel
+-Ventilation System
+-Water Heater Fuel Type
+-Mechanical System Type
+-COPs
+-Sensible and Latent Recovery Efficiencies
+-Photovoltaics
 -Appliances
 Envelope
 -Infiltration Rate
--Foundation
--Walls
--Roofing
--Flooring
--Shading
+-Opaque Assemblies
+-Fenestration
 Outages
--Outage Start
--Outage End
+-Outage Start and End
+-Shading Available
+-Demand Cooling Available
+-Natural Ventilation Available
+-Natural Ventilation Type
