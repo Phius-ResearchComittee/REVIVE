@@ -281,13 +281,13 @@ class RunlistMakerTab(QWidget):
         new_layout = QVBoxLayout()
 
         # create all the new widgets
-        self.rl_elec_price = REVIVEDoubleSpinBox(decimals=2, step_amt=0.01, min=0, max=100)
+        self.rl_elec_price = REVIVEDoubleSpinBox(decimals=4, step_amt=0.01, min=0, max=100)
         self.rl_elec_price.setPrefix("$")
-        self.rl_elec_sellback_price = REVIVEDoubleSpinBox(decimals=2, step_amt=0.01, min=0, max=100)
+        self.rl_elec_sellback_price = REVIVEDoubleSpinBox(decimals=4, step_amt=0.01, min=0, max=100)
         self.rl_elec_sellback_price.setPrefix("$")
         self.rl_nat_gas_present = QCheckBox()
         self.rl_nat_gas_present.setChecked(False)
-        self.rl_nat_gas_price = REVIVEDoubleSpinBox(decimals=2, step_amt=0.01, min=0, max=100)
+        self.rl_nat_gas_price = REVIVEDoubleSpinBox(decimals=4, step_amt=0.01, min=0, max=100)
         self.rl_nat_gas_price.setPrefix("$")
         self.rl_nat_gas_price.setEnabled(False)
         self.rl_nat_gas_present.checkStateChanged.connect(
