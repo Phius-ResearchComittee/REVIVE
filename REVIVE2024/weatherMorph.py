@@ -147,7 +147,7 @@ def WeatherMorphSine(idf, outage1start, outage1end, outage2start, outage2end,
         Program_Line_11 = 'RETURN')
 
 
-def ComputeWeatherMorphFactors(epw_csv, summer_outage_start, summer_outage_end, winter_outage_start, winter_outage_end,
+def ComputeWeatherMorphFactors(epw_csv, summer_outage_start, winter_outage_start,
                                summer_treturn_dp, summer_treturn_db, winter_treturn_dp, winter_treturn_db):
     # count how many lines of header using regex
     with open(epw_csv, "r") as fp:
@@ -165,7 +165,9 @@ def ComputeWeatherMorphFactors(epw_csv, summer_outage_start, summer_outage_end, 
 
     # assign date/hour to multiindex
     df = df.set_index(['Date', 'HH:MM'])
-    df.index = df.index.set_levels([pd.to_datetime(df.index.levels[0], format="%m/%d"), df.index.levels[1]])
+    df.index = df.index.set_levels([
+        pd.to_datetime(df.index.levels[0], format="%m/%d").strftime("%m/%d"), # to properly zero-pad the date
+        df.index.levels[1]])
     df = df.sort_index()
 
     # get db and dp data for all time
@@ -173,19 +175,19 @@ def ComputeWeatherMorphFactors(epw_csv, summer_outage_start, summer_outage_end, 
 
     # construct date ranges
     # TODO: CHECK FOR WRAP AROUND YEARS
-    summer_outage_range = pd.date_range(pd.to_datetime(summer_outage_start, format="%d-%b"),
-                                        pd.to_datetime(summer_outage_end, format="%d-%b"))
-    winter_outage_range = pd.date_range(pd.to_datetime(winter_outage_start, format="%d-%b"), 
-                                        pd.to_datetime(winter_outage_end, format="%d-%b"))
+    summer_outage_start = pd.to_datetime(summer_outage_start, format="%d-%b")
+    summer_outage_dates = [(summer_outage_start + pd.Timedelta(days=n)).strftime("%m/%d") for n in range(7)]
+    winter_outage_start = pd.to_datetime(winter_outage_start, format="%d-%b")
+    winter_outage_dates = [(winter_outage_start + pd.Timedelta(days=n)).strftime("%m/%d") for n in range(7)]
 
     # select new dataframes for date range
-    summer_outage_df = morph_df.loc[morph_df.index.get_level_values(0).isin(summer_outage_range)]
-    winter_outage_df = morph_df.loc[morph_df.index.get_level_values(0).isin(winter_outage_range)]
+    summer_outage_df = morph_df.loc[morph_df.index.get_level_values(0).isin(summer_outage_dates)]
+    winter_outage_df = morph_df.loc[morph_df.index.get_level_values(0).isin(winter_outage_dates)]
 
     # establish dataframes are correct
     num_outage_hours = 168
-    assert len(summer_outage_df)==num_outage_hours, f"Summer outage should be of length {num_outage_hours} hours."
-    assert len(winter_outage_df)==num_outage_hours, f"Winter outage should be of length {num_outage_hours} hours."
+    assert len(summer_outage_df)==num_outage_hours, f"Summer outage should be of length {num_outage_hours} hours. Received {len(summer_outage_df)} hours."
+    assert len(winter_outage_df)==num_outage_hours, f"Winter outage should be of length {num_outage_hours} hours. Received {len(winter_outage_df)} hours."
 
     # compute the phase adjustment for every hour
     phase_adj = [math.pi * h / num_outage_hours for h in range(num_outage_hours)]

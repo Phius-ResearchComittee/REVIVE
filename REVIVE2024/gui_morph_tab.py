@@ -1,32 +1,14 @@
-# native imports
-import os
-import psutil
-import signal
-
 # dependency imports
 from PySide6.QtCore import (
-    QDir,
-    Qt,
-    QTimer,
     Slot
 )
 from PySide6.QtWidgets import (
     QWidget,
     QVBoxLayout,
-    QHBoxLayout,
-    QGridLayout,
     QGroupBox,
     QPushButton,
     QLineEdit,
-    QCheckBox,
-    QComboBox,
-    QProgressBar,
-    QLabel,
-    QStyle,
-    QFileDialog
 )
-import pandas as pd
-import multiprocessing as mp
 
 # custom imports
 import weatherMorph
@@ -65,9 +47,7 @@ class MorphTab(QWidget):
         # show input file box
         self.epw_csv_file = REVIVEFilePicker("EPW CSV File", "csv")
         self.summer_outage_start = REVIVEDatePicker()
-        self.summer_outage_end = REVIVEDatePicker()
         self.winter_outage_start = REVIVEDatePicker()
-        self.winter_outage_end = REVIVEDatePicker()
         self.summer_treturn_dp = REVIVEDoubleSpinBox(decimals=1, step_amt=0.1, min=-200, max=200)
         self.summer_treturn_db = REVIVEDoubleSpinBox(decimals=1, step_amt=0.1, min=-200, max=200)
         self.winter_treturn_dp = REVIVEDoubleSpinBox(decimals=1, step_amt=0.1, min=-200, max=200)
@@ -81,13 +61,9 @@ class MorphTab(QWidget):
         ))
         new_layout.addLayout(stack_widgets_vertically(
             widget_list=[self.winter_outage_start,
-                         self.winter_outage_end,
-                         self.summer_outage_start,
-                         self.summer_outage_end],
+                         self.summer_outage_start],
             label_list=["Winter Outage Start",
-                        "Winter Outage End",
-                        "Summer Outage Start",
-                        "Summer Outage End"]
+                        "Summer Outage Start"]
         ))
         new_layout.addLayout(stack_widgets_vertically(
             widget_list=[self.winter_treturn_dp,
@@ -120,9 +96,7 @@ class MorphTab(QWidget):
             # collect arguments to send to simulate function
             morph_file = self.epw_csv_file.text()
             summer_outage_start = self.summer_outage_start.get_date()
-            summer_outage_end = self.summer_outage_end.get_date()
             winter_outage_start = self.winter_outage_start.get_date()
-            winter_outage_end = self.winter_outage_end.get_date()
             summer_treturn_dp = self.summer_treturn_dp.value()
             summer_treturn_db = self.summer_treturn_db.value()
             winter_treturn_dp = self.winter_treturn_dp.value()
@@ -130,8 +104,7 @@ class MorphTab(QWidget):
 
             print(f"Computing morph factors for EPW CSV file \"{morph_file}\"")
             summer_db_factor, summer_dp_factor, winter_db_factor, winter_dp_factor = weatherMorph.ComputeWeatherMorphFactors(
-                morph_file, summer_outage_start, summer_outage_end, 
-                winter_outage_start, winter_outage_end, 
+                morph_file, summer_outage_start, winter_outage_start, 
                 summer_treturn_dp, summer_treturn_db, 
                 winter_treturn_dp, winter_treturn_db
             )
@@ -142,6 +115,7 @@ class MorphTab(QWidget):
                    f"MorphFactorDB2 = {summer_db_factor}\n"
                    f"MorphFactorDP2 = {summer_dp_factor}\n")
             self.parent.display_info(msg)
+            self.morph_cleanup(success=True)
         
         except Exception as err_msg:
             self.morph_cleanup(success=False, err_msg=str(err_msg))
