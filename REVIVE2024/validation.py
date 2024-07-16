@@ -305,3 +305,20 @@ def validate_runlist_inputs(rl_path, db_path):
         windows = row.filter(like="EXT_WINDOW").dropna()
         for window in [w[len("WINDOW_"):] for w in windows if str(w).strip()]:
             assert window in window_list, rl_missing_item_prompt(rl_path, f"Window \"{window}\"", window_db_label)
+
+def validate_results_file(results_path, field_name, required_cols: list):
+    # ensure entry widget is filled
+    assert results_path, missing_field_prompt(field_name)
+
+    # ensure file path exists
+    assert os.path.isfile(results_path), wrong_file_prompt("Results file path", results_path)
+
+    # ensure file is proper readable csv
+    try:
+        df = pd.read_csv(results_path)
+    except:
+        raise AssertionError(invalid_csv_prompt(results_path))
+    
+    # ensure presence of all required columns for analysis
+    for col in required_cols:
+        assert col in df.columns, missing_column_prompt(col, results_path)

@@ -1527,3 +1527,38 @@ def cleanup_outputs(si: SimInputs):
             full_file_path = os.path.join(si.batch_folder, file)
             if os.path.isfile(full_file_path):
                 os.remove(full_file_path)
+
+def ranked_top_cases(results_path, num_top_cases=5):
+    # read results into dataframe
+    df = pd.read_csv(results_path)
+    assert len(df)>0, "Results file does not contain any cases to review."
+
+    # establish conditions for passing resilience
+    condition_columns = ["Total Deadly Days_failBR", "Hours < 2°C [hr]_failBR", "SET ≤ 12.2°C Hours (F)_failBR"]
+    df["Total Deadly Days_failBR"] = df["Total Deadly Days"].apply(lambda x: np.nan if x == "ERROR" else int(x)>0)
+    df["Hours < 2°C [hr]_failBR"] = df["Hours < 2°C [hr]"].apply(lambda x: np.nan if x == "ERROR" else float(x)>0)
+    df["SET ≤ 12.2°C Hours (F)_failBR"] = df["SET ≤ 12.2°C Hours (F)"].apply(lambda x: np.nan if x == "ERROR" else float(x)>216)
+    df["Total ADORB Cost [$]_clean"] = df["Total ADORB Cost [$]"].apply(lambda x : np.nan if x == "ERROR" else float(x))
+
+    # rounding to 2 decimals
+    df['Total ADORB Cost [$]'] = df["Total ADORB Cost [$]"].apply(lambda x : f"{float(x):.2f}" if x != "ERROR" else x)
+    df['First Cost [$]'] = df['First Cost [$]'].apply(lambda x : f"{float(x):.2f}" if x != "ERROR" else x)
+
+    nan_check = df[condition_columns].isna().any(axis=1)
+    bool_check = df[condition_columns].map(lambda x: isinstance(x, bool) and x==True).any(axis=1)
+    df['Display Color'] = df.apply(lambda row: '#f7b5b5' if bool_check[row.name]
+                                            else'#e3d8a1' if nan_check[row.name]  
+                                            else None, axis=1)
+
+    # sort by passing resilience and then by adorb cost
+    df = df.sort_values(by=["Total Deadly Days_failBR",
+                            "Hours < 2°C [hr]_failBR",
+                            "SET ≤ 12.2°C Hours (F)_failBR",
+                            "Total ADORB Cost [$]_clean"],
+                        na_position="last",
+                        ignore_index=True)
+    
+    # return the top sorted results
+    if len(df) < num_top_cases:
+        print(f"Results file contains less than {num_top_cases} rows. Only displaying {len(df)} rows.")
+    return df.head(num_top_cases)
