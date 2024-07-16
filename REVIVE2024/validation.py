@@ -189,8 +189,7 @@ def validate_runlist_inputs(rl_path, db_path):
                         "EXT_WALL_3_NAME", "EXT_ROOF_3_NAME", "EXT_DOOR_3_NAME",
                         "INT_FLOOR_3_NAME","EXT_FLOOR_3_NAME",
                         "PERF_CARBON_MEASURES", "NON_PERF_CARBON_MEASURES",
-                        "HEATING_COP", "COOLING_COP",
-                        "VENT_SYSTEM_TYPE"]
+                        "HEATING_COP", "COOLING_COP"]
     for col in [c for c in runlist_df.columns if c not in optional_columns]:
         for cell in runlist_df[col]:
             assert not_empty(cell), rl_missing_value_prompt(rl_path, col)
@@ -254,6 +253,16 @@ def validate_runlist_inputs(rl_path, db_path):
         mech_sys = row["MECH_SYSTEM_TYPE"]
         assert mech_sys in construction_list, rl_missing_item_prompt(rl_path, f"Mechanical system \"{mech_sys}\"", construction_db_label)
 
+        # heating/cooling cop
+        if mech_sys in ["PTHP","GasFurnaceDXAC","SplitHeatPump"]:
+            for col in ["HEATING_COP", "COOLING_COP"]:
+                cell = row[col]
+                assert not_empty(cell), rl_missing_value_prompt(rl_path, col)
+                try:
+                    cell = float(cell)
+                except ValueError:
+                    raise AssertionError(rl_numeric_prompt(rl_path, col))
+                
         # int/ext items
         items = (row.filter(like="EXT_") + row.filter(like="INT_")).dropna()
         for item in [i for i in items if str(i).strip()]:

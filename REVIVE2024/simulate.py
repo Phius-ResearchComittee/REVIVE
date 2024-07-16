@@ -428,8 +428,8 @@ def resilience_simulation_prep(si: SimInputs, case_id: int, simulation_mgr=None)
     natGasPresent = runList['NATURAL_GAS'][runCount]
     dhwFuel = runList['WATER_HEATER_FUEL'][runCount]
     mechSystemType = runList['MECH_SYSTEM_TYPE'][runCount]
-    cooling_COP = runList["COOLING_COP"][runCount]
-    heating_COP = runList["HEATING_COP"][runCount]
+    cooling_COP = runList["COOLING_COP"][runCount] if pd.notna(runList["COOLING_COP"][runCount]) else ""
+    heating_COP = runList["HEATING_COP"][runCount] if pd.notna(runList["HEATING_COP"][runCount]) else ""
     vent_system_type = runList['VENT_SYSTEM_TYPE'][runCount]
 
     gridRegion = runList['GRID_REGION'][runCount]
