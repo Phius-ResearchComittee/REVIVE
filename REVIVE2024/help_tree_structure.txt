@@ -1,0 +1,35 @@
+General
+-Case Name
+-Geometry
+-Simulation Duration
+Site
+-EPW
+-DDY
+-Morph
+-Site Country
+-Grid Region
+Energy Economics
+-Electricity Price
+-Electricity Sell-back Price
+-Natural Gas Present
+-Natural Gas Price
+-Annual Electricity Fixed Charge
+-Annual Natural Gas Fixed Charge
+Mechanicals
+-Ventilation System
+-Water Heater Fuel Type
+-Mechanical System Type
+-COPs
+-Sensible and Latent Recovery Efficiencies
+-Photovoltaics
+-Appliances
+Envelope
+-Infiltration Rate
+-Opaque Assemblies
+-Fenestration
+Outages
+-Outage Start and End
+-Shading Available
+-Demand Cooling Available
+-Natural Ventilation Available
+-Natural Ventilation Type

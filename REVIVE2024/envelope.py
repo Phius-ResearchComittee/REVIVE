@@ -14,7 +14,6 @@ import math
 import eppy as eppy
 from eppy import modeleditor
 from eppy.modeleditor import IDF
-import PySimpleGUI as sg
 # from PIL import Image, ImageTk
 import os
 from eppy.results import readhtml # the eppy module with functions to read the html
@@ -71,16 +70,23 @@ def glazingBuilder(idf, name, uFactor, shgc):
         Solar_Heat_Gain_Coefficient = shgc
         )
 
-def Infiltration(idf, flowCoefficient):
+def infiltration(idf, zone, infiltration_rate):
     
-    idf.newidfobject('ZoneInfiltration:FlowCoefficient',
-        Name = 'Zone_Infiltration',
-        Zone_Name = 'Zone 1',
+    infiltration_rate_4pa = infiltration_rate * 8.6701E-04
+
+    idf.newidfobject('ZoneInfiltration:DesignFlowRate',
+        Name = (str(zone) + ' Infiltration'),
+        Zone_or_ZoneList_Name = str(zone),
         Schedule_Name = 'Always_On',
-        Flow_Coefficient = flowCoefficient,
-        Stack_Coefficient = 0.078,
-        Wind_Coefficient = 0.17,
-        Shelter_Factor = 0.9
+        Design_Flow_Rate_Calculation_Method = 'Flow/ExteriorArea',
+        Design_Flow_Rate = 0,
+        Flow_per_Zone_Floor_Area = 0,
+        Flow_per_Exterior_Surface_Area = infiltration_rate_4pa,
+        Air_Changes_per_Hour = 0,
+        Constant_Term_Coefficient = 0,
+        Temperature_Term_Coefficient = 0.015,
+        Velocity_Term_Coefficient = 0.224,
+        Velocity_Squared_Term_Coefficient = 0
         )
 
 def SpecialMaterials(idf):
@@ -161,14 +167,14 @@ def ShadeMaterials(idf):
         RightSide_Opening_Multiplier = 0.5,
         Airflow_Permeability = 0)
     
-def WindowVentilation(idf, halfHeight, operableArea_N, operableArea_W, 
+def WindowVentilation(idf, zone, halfHeight, operableArea_N, operableArea_W, 
                       operableArea_S, operableArea_E):
 
     idf.newidfobject('ZoneVentilation:WindandStackOpenArea',
-        Name = 'OperableWindows-N',
-        Zone_Name = 'Zone 1',
+        Name = (str(zone) + '_OperableWindows-N'),
+        Zone_Name = str(zone),
         Opening_Area = operableArea_N,
-        Opening_Area_Fraction_Schedule_Name = 'WindowFraction2',
+        Opening_Area_Fraction_Schedule_Name = (str(zone) + '_WindowFractionControl'),
         Opening_Effectiveness = 'autocalculate',
         Effective_Angle = 0,
         Height_Difference = halfHeight,
@@ -182,10 +188,10 @@ def WindowVentilation(idf, halfHeight, operableArea_N, operableArea_W,
         )
 
     idf.newidfobject('ZoneVentilation:WindandStackOpenArea',
-        Name = 'OperableWindows-E',
-        Zone_Name = 'Zone 1',
+        Name = (str(zone) + '_OperableWindows-E'),
+        Zone_Name = str(zone),
         Opening_Area = operableArea_E,
-        Opening_Area_Fraction_Schedule_Name = 'WindowFraction2',
+        Opening_Area_Fraction_Schedule_Name = (str(zone) + '_WindowFractionControl'),
         Opening_Effectiveness = 'autocalculate',
         Effective_Angle = 90,
         Height_Difference = halfHeight,
@@ -199,10 +205,10 @@ def WindowVentilation(idf, halfHeight, operableArea_N, operableArea_W,
         )
 
     idf.newidfobject('ZoneVentilation:WindandStackOpenArea',
-        Name = 'OperableWindows-S',
-        Zone_Name = 'Zone 1',
+        Name = (str(zone) + '_OperableWindows-S'),
+        Zone_Name = str(zone),
         Opening_Area = operableArea_S,
-        Opening_Area_Fraction_Schedule_Name = 'WindowFraction2',
+        Opening_Area_Fraction_Schedule_Name = (str(zone) + '_WindowFractionControl'),
         Opening_Effectiveness = 'autocalculate',
         Effective_Angle = 180,
         Height_Difference = halfHeight,
@@ -216,10 +222,10 @@ def WindowVentilation(idf, halfHeight, operableArea_N, operableArea_W,
         )
 
     idf.newidfobject('ZoneVentilation:WindandStackOpenArea',
-        Name = 'OperableWindows-W',
-        Zone_Name = 'Zone 1',
+        Name = (str(zone) + '_OperableWindows-W'),
+        Zone_Name = str(zone),
         Opening_Area = operableArea_W,
-        Opening_Area_Fraction_Schedule_Name = 'WindowFraction2',
+        Opening_Area_Fraction_Schedule_Name = (str(zone) + '_WindowFractionControl'),
         Opening_Effectiveness = 'autocalculate',
         Effective_Angle = 270,
         Height_Difference = halfHeight,
@@ -232,15 +238,15 @@ def WindowVentilation(idf, halfHeight, operableArea_N, operableArea_W,
         Maximum_Wind_Speed = 10
         )
     
-def WindowShadingControl(idf, windowNames):
+def WindowShadingControl(idf, zone, name, windowNames):
     runs = windowNames
     params = [x for x in runs]
     values = {}
     for i,param in enumerate(params):
         values['Fenestration_Surface_' + str(i+1) + '_Name'] = param
     idf.newidfobject('WindowShadingControl',
-    Name = 'Shading Control',
-    Zone_Name = 'Zone 1',
+    Name = (str(name) + '_Shading Control'),
+    Zone_Name = str(zone),
     Shading_Control_Sequence_Number = 1,
     Shading_Type = 'ExteriorShade',
     Shading_Control_Type = 'OnIfHighSolarOnWindow',

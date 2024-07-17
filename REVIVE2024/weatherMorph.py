@@ -15,7 +15,6 @@ import eppy as eppy
 from eppy import modeleditor
 from eppy.modeleditor import IDF
 from eppy.runner.run_functions import runIDFs
-import PySimpleGUI as sg
 # from PIL import Image, ImageTk
 import os
 from eppy.results import readhtml # the eppy module with functions to read the html
@@ -23,6 +22,10 @@ from eppy.results import fasthtml
 import subprocess
 import os
 from os import system
+import re
+import pandas as pd
+import numpy as np
+import math
 
 
 def WeatherMorphSine(idf, outage1start, outage1end, outage2start, outage2end,
@@ -142,3 +145,103 @@ def WeatherMorphSine(idf, outage1start, outage1end, outage2start, outage2end,
         Program_Line_9 = 'SET Count2 = 0',
         Program_Line_10 = 'ENDIF',
         Program_Line_11 = 'RETURN')
+
+
+def ComputeWeatherMorphFactors(epw_csv, summer_outage_start, winter_outage_start,
+                               summer_treturn_dp, summer_treturn_db, winter_treturn_dp, winter_treturn_db):
+    # count how many lines of header using regex
+    with open(epw_csv, "r") as fp:
+        pattern = r"Date.*\nDate.*\n"
+        all_content = fp.read()
+        split_set = re.split(pattern, all_content)
+        num_preceding_lines = len(str(split_set[0]).splitlines())+1
+
+    # load in the dataframe skipping the header rows
+    print(f"Skipping {num_preceding_lines} rows...")
+    df = pd.read_csv(epw_csv, skiprows=num_preceding_lines, encoding="latin1")
+
+    # strip arbitrary year from date format
+    df["Date"] = df["Date"].str[5:]
+
+    # assign date/hour to multiindex
+    df = df.set_index(['Date', 'HH:MM'])
+    df.index = df.index.set_levels([
+        pd.to_datetime(df.index.levels[0], format="%m/%d").strftime("%m/%d"), # to properly zero-pad the date
+        df.index.levels[1]])
+    df = df.sort_index()
+
+    # get db and dp data for all time
+    morph_df = df[["Dry Bulb Temperature {C}","Dew Point Temperature {C}"]]
+
+    # construct date ranges
+    # TODO: CHECK FOR WRAP AROUND YEARS
+    summer_outage_start = pd.to_datetime(summer_outage_start, format="%d-%b")
+    summer_outage_dates = [(summer_outage_start + pd.Timedelta(days=n)).strftime("%m/%d") for n in range(7)]
+    winter_outage_start = pd.to_datetime(winter_outage_start, format="%d-%b")
+    winter_outage_dates = [(winter_outage_start + pd.Timedelta(days=n)).strftime("%m/%d") for n in range(7)]
+
+    # select new dataframes for date range
+    summer_outage_df = morph_df.loc[morph_df.index.get_level_values(0).isin(summer_outage_dates)]
+    winter_outage_df = morph_df.loc[morph_df.index.get_level_values(0).isin(winter_outage_dates)]
+
+    # establish dataframes are correct
+    num_outage_hours = 168
+    assert len(summer_outage_df)==num_outage_hours, f"Summer outage should be of length {num_outage_hours} hours. Received {len(summer_outage_df)} hours."
+    assert len(winter_outage_df)==num_outage_hours, f"Winter outage should be of length {num_outage_hours} hours. Received {len(winter_outage_df)} hours."
+
+    # compute the phase adjustment for every hour
+    phase_adj = [math.pi * h / num_outage_hours for h in range(num_outage_hours)]
+
+    # compute the iteratively morphed week and return delta
+    def iterative_delta(t_return, tx_week, x_fn):
+        """
+        t_return: n-year return extreme values of db or dewpoint
+        tw_week: original hourly db or dewpoint values from outage week
+        x_fn: function to apply to morphed week - max for summer and min for winter
+        """
+        # iterative constants
+        k_relax = 0.1
+        tolerance = 0.01
+        
+        # initial values
+        delta = t_return - (sum(tx_week)/len(tx_week))
+        morphed_week = tx_week + delta*np.sin(phase_adj)
+        x = x_fn(morphed_week)
+
+        # perform the iterative calculation
+        counter = 0
+        while abs(t_return - x) >= tolerance:
+            if counter >= 100:
+                print("Max iterations reached!")
+                break
+            counter += 1
+            delta += k_relax * (t_return - x)
+            morphed_week = tx_week + delta*np.sin(phase_adj)
+            x = x_fn(morphed_week)
+
+        # report iterative stats and return the computed delta
+        print(f"Final iteration count: {counter} iterations")
+        return delta
+
+
+    summer_db_factor = iterative_delta(
+        summer_treturn_db,
+        summer_outage_df["Dry Bulb Temperature {C}"],
+        max)
+
+    summer_dp_factor = iterative_delta(
+        summer_treturn_dp, 
+        summer_outage_df["Dew Point Temperature {C}"], 
+        max)
+
+    winter_db_factor = iterative_delta(
+        winter_treturn_db,
+        winter_outage_df["Dry Bulb Temperature {C}"],
+        min)
+
+    winter_dp_factor = iterative_delta(
+        winter_treturn_dp, 
+        winter_outage_df["Dew Point Temperature {C}"], 
+        min)
+    
+    return summer_db_factor, summer_dp_factor, winter_db_factor, winter_dp_factor

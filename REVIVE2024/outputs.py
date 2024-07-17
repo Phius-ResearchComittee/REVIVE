@@ -16,7 +16,6 @@ import eppy as eppy
 from eppy import modeleditor
 from eppy.modeleditor import IDF
 from eppy.runner.run_functions import runIDFs
-import PySimpleGUI as sg
 # from PIL import Image, ImageTk
 import os
 from eppy.results import readhtml # the eppy module with functions to read the html
@@ -182,7 +181,7 @@ def PDF_Report(caseName, studyFolder, HeatingSET, Below2C, Caution, ExtremeCauti
 
     
 
-    docname = (str(studyFolder) + "/" + str(caseName) + "_Summary Report")
+    docname = os.path.join(studyFolder, caseName + "_Summary Report")
     doc.generate_pdf(docname, silent=True, clean_tex=False)
 
 
