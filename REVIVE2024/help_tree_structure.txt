@@ -8,6 +8,10 @@ Site
 -Morph
 -Site Country
 -Grid Region
+Zones
+-Occupancy
+-Lighting
+-Loads
 Energy Economics
 -Electricity Price
 -Electricity Sell-back Price

@@ -36,6 +36,7 @@ class RunlistMakerTab(QWidget):
         self.help_content_file = parent.help_tree_content_file
         self.runlist_options_file = parent.runlist_ops_file
         self.required_cols_file = parent.required_cols_file
+        # self.zone_names_file = parent.zone_name_file
         
         # establish runlist options as empty to start
         self.runlist_options = {}
@@ -75,6 +76,7 @@ class RunlistMakerTab(QWidget):
         )
         self.use_phius_options_button.setEnabled(True)
         self.refresh_options_button.clicked.connect(self.load_options_from_source)
+        
 
         # add to options source layout
         self.options_pane = QVBoxLayout()
@@ -171,6 +173,7 @@ class RunlistMakerTab(QWidget):
         # NOTE: GROUPBOX LIST IS DEPENDENT ON TOP LEVEL ITEMS IN HELP TREE STRUCTURE, DO NOT EDIT
         self.populate_funcs =  [self.populate_basic_groupbox,
                                 self.populate_site_utility_groupbox,
+                                self.populate_zone_groupbox,
                                 self.populate_energy_groupbox,
                                 self.populate_mechanicals_groupbox,
                                 self.populate_envelope_groupbox,
@@ -203,6 +206,7 @@ class RunlistMakerTab(QWidget):
         # create all the new widgets
         self.rl_case_name = QLineEdit()
         self.rl_geom_file = REVIVEFilePicker("Geometry File", "idf")
+        self.idd_file = REVIVEFilePicker("IDD File", "idd")
         self.rl_sim_duration = REVIVESpinBox(step_amt=1, min=1, max=100)
         self.rl_sim_duration.setValue(50)
         
@@ -210,10 +214,12 @@ class RunlistMakerTab(QWidget):
         new_layout.addLayout(stack_widgets_vertically(
             widget_list=[self.rl_case_name,
                          self.rl_geom_file,
+                         self.idd_file,
                          self.rl_sim_duration],
             label_list=["Case Name",
-                        "Geometry File",
-                        "Simulation Duration (Years)",]
+                        "Geometry File [IDF]",
+                        "IDD File",
+                        "Simulation Duration [Years]",]
         ))
 
         # assign layout to groupbox
@@ -227,7 +233,7 @@ class RunlistMakerTab(QWidget):
         # create all the new widgets
         self.rl_epw_file = REVIVEFilePicker("EPW File", "epw")
         self.rl_ddy_file = REVIVEFilePicker("DDY File", "ddy")
-        self.rl_morph_factors = [REVIVEDoubleSpinBox(decimals=2, step_amt=0.01) for _ in range(4)]
+        self.rl_morph_factors = [REVIVEDoubleSpinBox(decimals=2, step_amt=0.01, min=-40, max=40) for _ in range(4)]
         self.rl_env_country = REVIVEComboBox()
         self.rl_grid_region = REVIVEComboBox()
         self.rl_env_labor_frac = REVIVEDoubleSpinBox(decimals=2, step_amt=0.1, min=0, max=10)
@@ -251,10 +257,10 @@ class RunlistMakerTab(QWidget):
         ))
         new_layout.addLayout(stack_widgets_vertically(
             widget_list=self.rl_morph_factors,
-            label_list=["Morph Factor 1 - Dry Bulb (°C)",
-                        "Morph Factor 1 - Dewpoint (°C)",
-                        "Morph Factor 2 - Dry Bulb (°C)",
-                        "Morph Factor 2 - Dewpoint (°C)"]
+            label_list=["Morph Factor 1 - Dry Bulb [°C]",
+                        "Morph Factor 1 - Dewpoint [°C]",
+                        "Morph Factor 2 - Dry Bulb [°C]",
+                        "Morph Factor 2 - Dewpoint [°C]"]
         ))
         new_layout.addLayout(stack_widgets_vertically(
             widget_list=[self.rl_env_country,
@@ -275,6 +281,26 @@ class RunlistMakerTab(QWidget):
 
         # assign layout to groupbox
         self.assign_layout_to_groupbox(1, new_layout)
+
+    def populate_zone_groupbox(self):
+        # create the new form layout
+        new_layout = QVBoxLayout()
+
+        # create all the new widgets
+        self.rl_zone_set = REVIVEZoneWidgetSet(add_label="Add Zone", 
+                                                           initial_widgets=1, 
+                                                           max_widgets=100, 
+                                                           label="Zone",
+                                                           is_groupbox=True)
+        
+        # add all new widgets to layout with labels
+        new_layout.addLayout(stack_widgets_vertically(
+            widget_list=[self.rl_zone_set],
+            label_list=["Zones"]))
+        self.revive_widget_sets = [self.rl_zone_set]
+
+        
+        self.assign_layout_to_groupbox(2, new_layout)
 
     def populate_energy_groupbox(self):
         # create the new form layout
@@ -303,20 +329,20 @@ class RunlistMakerTab(QWidget):
                          self.rl_elec_sellback_price,
                          self.rl_nat_gas_present,
                          self.rl_nat_gas_price],
-            label_list=["Electric Price ($/kWh)",
-                        "Electric Sellback Price ($/kWh)",
-                        "Natural Gas Present?",
-                        "Natural Gas Price ($/THERM)"]
+            label_list=["Electric Price [$/kWh]",
+                        "Electric Sellback Price [$/kWh]",
+                        "Natural Gas Present [Boolean]",
+                        "Natural Gas Price [$/THERM]"]
         ))
         new_layout.addLayout(stack_widgets_vertically(
             widget_list=[self.rl_annual_gas_charge,
                          self.rl_annual_elec_charge],
-            label_list=["Annual Gas Fixed Charge ($)",
-                        "Annual Electric Fixed Charge ($)"]
+            label_list=["Annual Gas Fixed Charge [$]",
+                        "Annual Electric Fixed Charge [$]"]
         ))
 
         # assign layout to groupbox
-        self.assign_layout_to_groupbox(2, new_layout)
+        self.assign_layout_to_groupbox(3, new_layout)
 
 
     def populate_mechanicals_groupbox(self):
@@ -349,22 +375,22 @@ class RunlistMakerTab(QWidget):
         new_layout.addLayout(stack_widgets_vertically(
             widget_list=[self.rl_heating_cop,
                          self.rl_cooling_cop],
-            label_list=["Coefficient of Performance (Heating)",
-                        "Coefficient of Performance (Cooling)"]
+            label_list=["Heating Coefficient of Performance",
+                        "Cooling Coefficient of Performance"]
         ))
         new_layout.addLayout(stack_widgets_vertically(
             widget_list=[self.rl_erv_sense,
                          self.rl_erv_latent],
-            label_list=["Sensible Recovery Efficiency",
-                        "Latent Recover Efficiency"]
+            label_list=["Sensible Recovery Efficiency [Fractional]",
+                        "Latent Recover Efficiency [Fractional]"]
         ))
         new_layout.addLayout(stack_widgets_horizontally(
             widget_list=[self.rl_pv_size,
                          self.rl_pv_tilt,
                          self.rl_pv_azimuth],
-            label_list=["Photovoltaics Size (W)",
-                        "Photovoltaics Tilt (deg)",
-                        "Photovoltaics Azimuth (deg)"]
+            label_list=["Photovoltaics Size [W]",
+                        "Photovoltaics Tilt [deg]",
+                        "Photovoltaics Azimuth [deg]"]
         ))
         new_layout.addLayout(stack_widgets_vertically(
             widget_list=self.rl_appliances,
@@ -372,7 +398,7 @@ class RunlistMakerTab(QWidget):
         ))
         
         # assign layout to groupbox
-        self.assign_layout_to_groupbox(3, new_layout)
+        self.assign_layout_to_groupbox(4, new_layout)
 
 
     def populate_envelope_groupbox(self):
@@ -380,7 +406,7 @@ class RunlistMakerTab(QWidget):
         new_layout = QVBoxLayout()
 
         # create all the new widgets
-        self.rl_chi_val = REVIVEDoubleSpinBox(decimals=3, step_amt=0.001, max=5)
+        self.rl_chi_val = REVIVEDoubleSpinBox(decimals=3, step_amt=0.001, max=1000)
         self.rl_infil_rate = REVIVEDoubleSpinBox(decimals=3, step_amt=0.01, min=0, max=1)
         self.rl_op_areas = [REVIVESpinBox(step_amt=1) for _ in range(4)]
         self.rl_foundation_set = REVIVEFoundationWidgetSet(add_label="Add Foundation Type", 
@@ -427,8 +453,8 @@ class RunlistMakerTab(QWidget):
         new_layout.addLayout(stack_widgets_horizontally(
             widget_list=[self.rl_chi_val,
                          self.rl_infil_rate],
-            label_list=["Chi Value",
-                        "Infiltration Rate"]
+            label_list=["Chi Value [Btu/hr °F]",
+                        "Infiltration Rate [CFM50/sf]"]
         ))
         self.revive_widget_sets = [self.rl_foundation_set, self.rl_window_set,
                               self.rl_ext_door_set, self.rl_ext_wall_set,
@@ -442,7 +468,7 @@ class RunlistMakerTab(QWidget):
             ))
 
         # assign layout to groupbox
-        self.assign_layout_to_groupbox(4, new_layout)
+        self.assign_layout_to_groupbox(5, new_layout)
 
 
     def populate_outages_groupbox(self):
@@ -475,14 +501,14 @@ class RunlistMakerTab(QWidget):
                          self.rl_dem_cool_avail,
                          self.rl_nat_vent_avail,
                          self.rl_nat_vent_type],
-            label_list=["Shading Available?",
-                        "Demand Cooling Available?",
-                        "Natural Ventilation Available?",
+            label_list=["Shading Available [Boolean]",
+                        "Demand Cooling Available [Boolean]",
+                        "Natural Ventilation Available [Boolean]",
                         "Natural Ventilation Type"]
         ))
         
         # assign layout to groupbox
-        self.assign_layout_to_groupbox(5, new_layout)
+        self.assign_layout_to_groupbox(6, new_layout)
 
     
     def assign_layout_to_groupbox(self, idx, new_layout):
@@ -619,7 +645,7 @@ class RunlistMakerTab(QWidget):
         # get from phius runlist options json
         with open(self.runlist_options_file, "r") as fp:
             self.runlist_options = json.load(fp)
-    
+
 
     def load_custom_runlist_options(self):
         # get the file location from entry

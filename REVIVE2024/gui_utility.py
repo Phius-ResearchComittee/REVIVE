@@ -24,6 +24,9 @@ from PySide6.QtWidgets import (
     QTreeWidgetItem
 )
 
+import eppy as eppy
+from eppy import modeleditor
+from eppy.modeleditor import IDF
 
 class REVIVEFilePicker(QLineEdit):
     def __init__(self, prompt: str, file_ext: str, parent=None):
@@ -363,6 +366,120 @@ class REVIVENameOnlyWidgetSet(REVIVEDeletableWidgetSet):
         for x in super().__iter__():
             name_widg = x.findChildren(REVIVEComboBox)[0]
             yield name_widg
+
+class REVIVEZoneWidgetSet(REVIVEDeletableWidgetSet):
+    def __init__(self, add_label="Add", initial_widgets=1, max_widgets=100, label="", is_groupbox=False, parent=None):
+        self.choices = []
+        super().__init__(add_label, initial_widgets, max_widgets, label, is_groupbox)
+    
+        # self.load_zones_from_geometry_button = QPushButton("Load Zones from Geometry")
+        # self.options_pane.addWidget(self.load_zones_from_geometry_button)
+
+        
+        # self.load_zones_from_geometry_button.clicked.connect(self.load_zones_from_geometry)
+
+        # def load_zones_from_geometry(self):
+        #     self.rl_zone_name_choice = []
+        #     # get from phius runlist options json
+        #     geometry_path = self.rl_geom_file.text()
+        #     IDF.setiddname(self.idd_file.text())
+        #     zone_list = []
+        #     idfg = IDF(geometry_path)
+        #     for zone in idfg.idfobjects['Zone']:
+        #         zone_list.append(zone.Name)
+        # # self.rl_zone_name_choice.change_items(zone_list)
+    # working
+
+        zone_widget = QWidget()
+        zone_hbox = QHBoxLayout()
+
+        # create interface vbox
+        zone_name_vbox = QVBoxLayout()
+        zone_name_label = QLabel("Zone Name")
+        zone_name_choice = REVIVEComboBox(items=["UNIT", "CORRIDOR", "STAIR"])
+        zone_name_choice.change_items(self.choices)
+
+        zone_name_vbox.addWidget(zone_name_label)
+        zone_name_vbox.addWidget(zone_name_choice)
+
+        # create interface vbox
+        zone_vbox = QVBoxLayout()
+        zone_label = QLabel("Zone Type")
+        zone_choice = REVIVEComboBox(items=["UNIT", "CORRIDOR", "STAIR"],
+                                          parent=zone_widget)
+        zone_vbox.addWidget(zone_label)
+        zone_vbox.addWidget(zone_choice)
+
+
+        # create bedroom - occupancy vbox
+        bedroom_occupancy_vbox = QVBoxLayout()
+        bedroom_occupancy_label = QLabel("Number of Beds / Occ")
+        bedroom_occupancy_choice = REVIVESpinBox(parent=zone_widget)
+        bedroom_occupancy_vbox.addWidget(bedroom_occupancy_label)
+        bedroom_occupancy_vbox.addWidget(bedroom_occupancy_choice)
+
+        # create chi vbox
+        chi_vbox = QVBoxLayout()
+        chi_label = QLabel("Chi Value [Btu/hr °F]")
+        chi_choice = REVIVEDoubleSpinBox(parent=zone_widget)
+        chi_vbox.addWidget(chi_label)
+        chi_vbox.addWidget(chi_choice)
+
+        # create operable_area_N vbox
+        operable_area_N_vbox = QVBoxLayout()
+        operable_area_N_label = QLabel("N Op. Window Area [ft2]")
+        operable_area_N_choice = REVIVEDoubleSpinBox(parent=zone_widget)
+        operable_area_N_vbox.addWidget(operable_area_N_label)
+        operable_area_N_vbox.addWidget(operable_area_N_choice)
+
+        # create operable_area_W vbox
+        operable_area_W_vbox = QVBoxLayout()
+        operable_area_W_label = QLabel("W Op. Window Area [ft2]")
+        operable_area_W_choice = REVIVEDoubleSpinBox(parent=zone_widget)
+        operable_area_W_vbox.addWidget(operable_area_W_label)
+        operable_area_W_vbox.addWidget(operable_area_W_choice)
+
+        # create operable_area_S vbox
+        operable_area_S_vbox = QVBoxLayout()
+        operable_area_S_label = QLabel("S Op. Window Area [ft2]")
+        operable_area_S_choice = REVIVEDoubleSpinBox(parent=zone_widget)
+        operable_area_S_vbox.addWidget(operable_area_S_label)
+        operable_area_S_vbox.addWidget(operable_area_S_choice)
+
+        # create operable_area_E vbox
+        operable_area_E_vbox = QVBoxLayout()
+        operable_area_E_label = QLabel("E Op. Window Area [ft2]")
+        operable_area_E_choice = REVIVEDoubleSpinBox(parent=zone_widget)
+        operable_area_E_vbox.addWidget(operable_area_E_label)
+        operable_area_E_vbox.addWidget(operable_area_E_choice)
+
+        # add to hbox
+        zone_hbox.addLayout(zone_name_vbox)
+        zone_hbox.addLayout(zone_vbox)
+        zone_hbox.addLayout(bedroom_occupancy_vbox)
+        zone_hbox.addLayout(chi_vbox)
+        zone_hbox.addLayout(operable_area_N_vbox)
+        zone_hbox.addLayout(operable_area_W_vbox)
+        zone_hbox.addLayout(operable_area_S_vbox)
+        zone_hbox.addLayout(operable_area_E_vbox)
+        zone_widget.setLayout(zone_hbox)
+        return zone_widget
+    
+    def change_items(self, choices):
+        self.choices = choices
+        for x in super().__iter__():
+            insul_combobox = x.findChildren(REVIVEComboBox)[1]
+            insul_combobox.change_items(self.choices)
+    
+    def __iter__(self):
+        for x in super().__iter__():
+            comboboxes = x.findChildren(REVIVEComboBox)
+            dbspinboxes = x.findChildren(REVIVEDoubleSpinBox)
+            interface_widg = comboboxes[0]
+            insulation_widg = comboboxes[1]
+            perimeter_widg = dbspinboxes[0]
+            depth_widg = dbspinboxes[1]
+            yield (interface_widg, insulation_widg, perimeter_widg, depth_widg)
 
 
 class REVIVEFoundationWidgetSet(REVIVEDeletableWidgetSet):

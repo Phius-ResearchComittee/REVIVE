@@ -224,24 +224,23 @@ def ComputeWeatherMorphFactors(epw_csv, summer_outage_start, winter_outage_start
         return delta
 
 
-    summer_db_factor = iterative_delta(
+    summer_db_factor = round(iterative_delta(
         summer_treturn_db,
         summer_outage_df["Dry Bulb Temperature {C}"],
-        max)
-
-    summer_dp_factor = iterative_delta(
+        max),2)
+    summer_dp_factor = round(iterative_delta(
         summer_treturn_dp, 
         summer_outage_df["Dew Point Temperature {C}"], 
-        max)
+        max),2)
 
-    winter_db_factor = iterative_delta(
+    winter_db_factor = round(iterative_delta(
         winter_treturn_db,
         winter_outage_df["Dry Bulb Temperature {C}"],
-        min)
+        min),2)
 
-    winter_dp_factor = iterative_delta(
+    winter_dp_factor = round(iterative_delta(
         winter_treturn_dp, 
         winter_outage_df["Dew Point Temperature {C}"], 
-        min)
+        min),2)
     
     return summer_db_factor, summer_dp_factor, winter_db_factor, winter_dp_factor

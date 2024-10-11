@@ -978,7 +978,7 @@ def compute_adorb_costs(si: SimInputs, case_id: int, simulation_mgr=None):
                     +annualBaseElec)
     MWH = hourly['Whole Building:Facility Total Purchased Electricity Energy [J](Hourly)']*0.0000000002778
     CO2_Elec_List = []
-    for filename in os.listdir(os.path.join(databaseDir, 'CambiumFactors')):
+    for filename in sorted(os.listdir(os.path.join(databaseDir, 'CambiumFactors'))):
         if filename.endswith('.csv'):
             hourlyBAEmissions = pd.read_csv(os.path.join(databaseDir, 'CambiumFactors', filename))
             emissions = hourlyBAEmissions[str(gridRegion)]

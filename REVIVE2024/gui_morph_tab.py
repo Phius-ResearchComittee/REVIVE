@@ -70,10 +70,10 @@ class MorphTab(QWidget):
                          self.winter_treturn_db,
                          self.summer_treturn_dp,
                          self.summer_treturn_db],
-            label_list=["Winter Return Extreme Dew Point",
-                        "Winter Return Extreme Dry Bulb",
-                        "Summer Return Extreme Dew Point",
-                        "Summer Return Extreme Dry Bulb"]
+            label_list=["Winter Return Extreme Dew Point [°C]",
+                        "Winter Return Extreme Dry Bulb [°C]",
+                        "Summer Return Extreme Dew Point [°C]",
+                        "Summer Return Extreme Dry Bulb [°C]"]
         ))
         self.settings_groupbox.setLayout(new_layout)
 
