@@ -227,7 +227,7 @@ class RunlistMakerTab(QWidget):
         # create all the new widgets
         self.rl_epw_file = REVIVEFilePicker("EPW File", "epw")
         self.rl_ddy_file = REVIVEFilePicker("DDY File", "ddy")
-        self.rl_morph_factors = [REVIVEDoubleSpinBox(decimals=2, step_amt=0.01) for _ in range(4)]
+        self.rl_morph_factors = [REVIVEDoubleSpinBox(decimals=2, step_amt=0.01, min=-20, max=20) for _ in range(4)]
         self.rl_env_country = REVIVEComboBox()
         self.rl_grid_region = REVIVEComboBox()
         self.rl_env_labor_frac = REVIVEDoubleSpinBox(decimals=2, step_amt=0.1, min=0, max=10)
@@ -251,10 +251,10 @@ class RunlistMakerTab(QWidget):
         ))
         new_layout.addLayout(stack_widgets_vertically(
             widget_list=self.rl_morph_factors,
-            label_list=["Morph Factor 1 - Dry Bulb (°C)",
-                        "Morph Factor 1 - Dewpoint (°C)",
-                        "Morph Factor 2 - Dry Bulb (°C)",
-                        "Morph Factor 2 - Dewpoint (°C)"]
+            label_list=["Morph Factor 1 - Dry Bulb [°C]",
+                        "Morph Factor 1 - Dewpoint [°C]",
+                        "Morph Factor 2 - Dry Bulb [°C]",
+                        "Morph Factor 2 - Dewpoint [°C]"]
         ))
         new_layout.addLayout(stack_widgets_vertically(
             widget_list=[self.rl_env_country,
