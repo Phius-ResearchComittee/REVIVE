@@ -371,25 +371,21 @@ class REVIVEZoneWidgetSet(REVIVEDeletableWidgetSet):
     def __init__(self, add_label="Add", initial_widgets=1, max_widgets=100, label="", is_groupbox=False, parent=None):
         self.choices = []
         super().__init__(add_label, initial_widgets, max_widgets, label, is_groupbox)
+
+    def change_items(self, choices):
+        self.choices = choices
+        for x in super().__iter__():
+            name_combobox = x.findChildren(REVIVEComboBox)[1]
+            name_combobox.change_items(self.choices)
     
-        # self.load_zones_from_geometry_button = QPushButton("Load Zones from Geometry")
-        # self.options_pane.addWidget(self.load_zones_from_geometry_button)
+    def __iter__(self):
+        for x in super().__iter__():
+            name_widg = x.findChildren(REVIVEComboBox)[0]
+            yield name_widg
 
-        
-        # self.load_zones_from_geometry_button.clicked.connect(self.load_zones_from_geometry)
-
-        # def load_zones_from_geometry(self):
-        #     self.rl_zone_name_choice = []
-        #     # get from phius runlist options json
-        #     geometry_path = self.rl_geom_file.text()
-        #     IDF.setiddname(self.idd_file.text())
-        #     zone_list = []
-        #     idfg = IDF(geometry_path)
-        #     for zone in idfg.idfobjects['Zone']:
-        #         zone_list.append(zone.Name)
-        # # self.rl_zone_name_choice.change_items(zone_list)
     # working
-
+    def create_widget(self):
+        
         zone_widget = QWidget()
         zone_hbox = QHBoxLayout()
 
@@ -406,10 +402,16 @@ class REVIVEZoneWidgetSet(REVIVEDeletableWidgetSet):
         zone_vbox = QVBoxLayout()
         zone_label = QLabel("Zone Type")
         zone_choice = REVIVEComboBox(items=["UNIT", "CORRIDOR", "STAIR"],
-                                          parent=zone_widget)
+                                            parent=zone_widget)
         zone_vbox.addWidget(zone_label)
         zone_vbox.addWidget(zone_choice)
 
+        # create bedroom - occupancy vbox
+        icfa_vbox = QVBoxLayout()
+        icfa_label = QLabel("ICFA [ft2]")
+        icfa_choice = REVIVESpinBox(parent=zone_widget)
+        icfa_vbox.addWidget(icfa_label)
+        icfa_vbox.addWidget(icfa_choice)
 
         # create bedroom - occupancy vbox
         bedroom_occupancy_vbox = QVBoxLayout()
@@ -456,6 +458,7 @@ class REVIVEZoneWidgetSet(REVIVEDeletableWidgetSet):
         # add to hbox
         zone_hbox.addLayout(zone_name_vbox)
         zone_hbox.addLayout(zone_vbox)
+        zone_hbox.addLayout(icfa_vbox)
         zone_hbox.addLayout(bedroom_occupancy_vbox)
         zone_hbox.addLayout(chi_vbox)
         zone_hbox.addLayout(operable_area_N_vbox)
@@ -464,23 +467,6 @@ class REVIVEZoneWidgetSet(REVIVEDeletableWidgetSet):
         zone_hbox.addLayout(operable_area_E_vbox)
         zone_widget.setLayout(zone_hbox)
         return zone_widget
-    
-    def change_items(self, choices):
-        self.choices = choices
-        for x in super().__iter__():
-            insul_combobox = x.findChildren(REVIVEComboBox)[1]
-            insul_combobox.change_items(self.choices)
-    
-    def __iter__(self):
-        for x in super().__iter__():
-            comboboxes = x.findChildren(REVIVEComboBox)
-            dbspinboxes = x.findChildren(REVIVEDoubleSpinBox)
-            interface_widg = comboboxes[0]
-            insulation_widg = comboboxes[1]
-            perimeter_widg = dbspinboxes[0]
-            depth_widg = dbspinboxes[1]
-            yield (interface_widg, insulation_widg, perimeter_widg, depth_widg)
-
 
 class REVIVEFoundationWidgetSet(REVIVEDeletableWidgetSet):
     def __init__(self, add_label="Add", initial_widgets=1, max_widgets=5, label="", is_groupbox=False, parent=None):

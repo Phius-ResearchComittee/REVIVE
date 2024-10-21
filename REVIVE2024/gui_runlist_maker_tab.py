@@ -63,6 +63,7 @@ class RunlistMakerTab(QWidget):
         self.use_custom_options_button = QRadioButton("Load custom options from database:")
         self.custom_db_source = REVIVEFolderPicker("Select Database Folder", parent=self.use_custom_options_button)
         self.refresh_options_button = QPushButton("Load Options into Runlist Maker")
+        self.load_zones_from_geometry_button = QPushButton("Load Zones From Geometry")
 
         # group the options source radio buttons
         self.options_source_group = QButtonGroup()
@@ -76,6 +77,7 @@ class RunlistMakerTab(QWidget):
         )
         self.use_phius_options_button.setEnabled(True)
         self.refresh_options_button.clicked.connect(self.load_options_from_source)
+        self.load_zones_from_geometry_button.clicked.connect(self.load_zones_from_geometry)
         
 
         # add to options source layout
@@ -84,6 +86,7 @@ class RunlistMakerTab(QWidget):
         self.options_pane.addWidget(self.use_custom_options_button)
         self.options_pane.addWidget(self.custom_db_source)
         self.options_pane.addWidget(self.refresh_options_button)
+        self.options_pane.addWidget(self.load_zones_from_geometry_button)
 
         # create runlist export pane components
         self.create_new_rl_button = QRadioButton("Create New Runlist")
@@ -446,15 +449,19 @@ class RunlistMakerTab(QWidget):
                                                        is_groupbox=True)
 
         # add all new widgets to layout with labels
-        new_layout.addLayout(stack_widgets_vertically(
-            widget_list=self.rl_op_areas,
-            label_list=[f"Operable Area - {dir}" for dir in ["North", "East", "South", "West"]]
-        ))
+        # new_layout.addLayout(stack_widgets_vertically(
+        #     widget_list=self.rl_op_areas,
+        #     label_list=[f"Operable Area - {dir}" for dir in ["North", "East", "South", "West"]]
+        # ))
+        # new_layout.addLayout(stack_widgets_horizontally(
+        #     widget_list=[self.rl_chi_val,
+        #                  self.rl_infil_rate],
+        #     label_list=["Chi Value [Btu/hr °F]",
+        #                 "Infiltration Rate [CFM50/sf]"]
+
         new_layout.addLayout(stack_widgets_horizontally(
-            widget_list=[self.rl_chi_val,
-                         self.rl_infil_rate],
-            label_list=["Chi Value [Btu/hr °F]",
-                        "Infiltration Rate [CFM50/sf]"]
+            widget_list=[self.rl_infil_rate],
+            label_list=["Infiltration Rate [CFM50/sf]"]
         ))
         self.revive_widget_sets = [self.rl_foundation_set, self.rl_window_set,
                               self.rl_ext_door_set, self.rl_ext_wall_set,
@@ -561,11 +568,11 @@ class RunlistMakerTab(QWidget):
 
         # envelope (top-levels)
         self.runlist_dict["INFILTRATION_RATE"] = self.rl_infil_rate.cleanText()
-        self.runlist_dict["CHI_VALUE"] = self.rl_chi_val.cleanText()
-        self.runlist_dict["Operable_Area_N"] = self.rl_op_areas[0].cleanText()
-        self.runlist_dict["Operable_Area_E"] = self.rl_op_areas[1].cleanText()
-        self.runlist_dict["Operable_Area_S"] = self.rl_op_areas[2].cleanText()
-        self.runlist_dict["Operable_Area_W"] = self.rl_op_areas[3].cleanText()
+        # self.runlist_dict["CHI_VALUE"] = self.rl_chi_val.cleanText()
+        # self.runlist_dict["Operable_Area_N"] = self.rl_op_areas[0].cleanText()
+        # self.runlist_dict["Operable_Area_E"] = self.rl_op_areas[1].cleanText()
+        # self.runlist_dict["Operable_Area_S"] = self.rl_op_areas[2].cleanText()
+        # self.runlist_dict["Operable_Area_W"] = self.rl_op_areas[3].cleanText()
 
         # envelope (child-levels)
         foundation_widgets = [fdn for fdn in self.rl_foundation_set]
@@ -692,6 +699,18 @@ class RunlistMakerTab(QWidget):
         for filepicker in [self.rl_epw_file, self.rl_ddy_file]:
             filepicker.assign_default_directory(db_path)
 
+    @Slot()
+    def load_zones_from_geometry(self):
+        self.rl_zone_name_choice = []
+        # get from phius runlist options json
+        geometry_path = self.rl_geom_file.text()
+        IDF.setiddname(self.idd_file.text())
+        zone_list = []
+        idfg = IDF(geometry_path)
+        for zone in idfg.idfobjects['Zone']:
+            zone_list.append(zone.Name)
+        self.rl_zone_set.change_items(zone_list)
+        print(zone_list)
         
 
         
@@ -714,6 +733,7 @@ class RunlistMakerTab(QWidget):
             else:
                 print(f"skipped item {key}")
         return dictionary
+
 
     @Slot()
     def export_to_csv(self):
