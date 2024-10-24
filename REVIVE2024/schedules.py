@@ -390,17 +390,16 @@ def AnnualControls(idf, unit_list):
             Hourly_Value = 0
             )
 def TBschedules(idf, unit_list):
+    idf.newidfobject('EnergyManagementSystem:Sensor',
+            Name = 'ODB',
+            OutputVariable_or_OutputMeter_Index_Key_Name ='*',
+            OutputVariable_or_OutputMeter_Name = 'Site Outdoor Air Drybulb Temperature')
     for zone in unit_list:
 
         idf.newidfobject('EnergyManagementSystem:Sensor',
             Name = (str(zone) + '_IDB'),
             OutputVariable_or_OutputMeter_Index_Key_Name = str(zone),
             OutputVariable_or_OutputMeter_Name = 'Zone Air Temperature')
-        
-        idf.newidfobject('EnergyManagementSystem:Sensor',
-            Name = 'ODB',
-            OutputVariable_or_OutputMeter_Index_Key_Name ='*',
-            OutputVariable_or_OutputMeter_Name = 'Site Outdoor Air Drybulb Temperature')
         
         idf.newidfobject('EnergyManagementSystem:Actuator',
             Name = (str(zone) + '_tbTemp'),

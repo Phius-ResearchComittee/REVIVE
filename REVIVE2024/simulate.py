@@ -252,10 +252,10 @@ def error_handler(fn, si: SimInputs, case_id: int, simulation_mgr=None):
     except GracefulExitException:
         raise GracefulExitException
     
-    # otherwise pass the error to the gui
-    # COMMENT OUT BLOCK TO DEBUG
-    except Exception as e:
-        simulation_mgr.raise_exception(str(e))
+    # # otherwise pass the error to the gui
+    # # COMMENT OUT BLOCK TO DEBUG
+    # except Exception as e:
+    #     simulation_mgr.raise_exception(str(e))
         return None
 
 
@@ -470,8 +470,10 @@ def resilience_simulation_prep(si: SimInputs, case_id: int, simulation_mgr=None)
             windowNames.append(windows.Name)
             srf_name = windows.Building_Surface_Name
             window_zone = srf_dict[srf_name]
-            existing_list = windows_by_zone.get(zone_name[0],[])
+            existing_list = windows_by_zone.get(window_zone[0],[])
             windows_by_zone[window_zone] = existing_list + [windows.Name]
+
+            #alfix - needs to sort window dict properly
 
     # site shading
 
@@ -837,11 +839,11 @@ def annual_simulation_prep(si: SimInputs, case_id: int, simulation_mgr=None):
     with open(os.path.join(tempFolder, f"{BaseFileName}_IHGDict.json"), "r") as fp:
         ihg_dict = json.load(fp)
     
-    for num_beds in unit_bedroom_dict.values():
-        total_appliance_cost = ihg_dict[str(num_beds)]["applianceCost"]
-        lights_cost = ihg_dict[str(num_beds)]["lightsCost"]
-        envelope.costBuilder(idf2, 'APPLIANCES','','General',0,0,total_appliance_cost,'',1)
-        envelope.costBuilder(idf2, 'LIGHTS','','General',0,0,lights_cost,'',1)
+    # for num_beds in unit_bedroom_dict.values():
+    #     total_appliance_cost = ihg_dict[str(num_beds)]["applianceCost"]
+    #     lights_cost = ihg_dict[str(num_beds)]["lightsCost"]
+    #     envelope.costBuilder(idf2, 'APPLIANCES','','General',0,0,total_appliance_cost,'',1)
+    #     envelope.costBuilder(idf2, 'LIGHTS','','General',0,0,lights_cost,'',1)
 
     schedules.TBschedules(idf2, unit_list)
 
