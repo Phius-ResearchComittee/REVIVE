@@ -1,0 +1,57 @@
+Program Version,EnergyPlus, Version 9.5.0-de239b2e5f, YMD=2024.11.24 15:02,
+   ** Warning ** ManageSizing: For a zone sizing run, there must be at least 1 Sizing:Zone input object. SimulationControl Zone Sizing option ignored.
+   ** Warning ** ProcessScheduleInput: Schedule:Constant="COUNT", Schedule Type Limits Name="ANYNUMBER" not found -- will not be validated
+   ** Warning ** Foundation:Kiva="SLAB DETAILS", no Interior Horizontal Insulation Material Name defined
+   **   ~~~   ** Interior Horizontal Insulation Depth will not be used.
+   ** Warning ** Foundation:Kiva="SLAB DETAILS", no Exterior Horizontal Insulation Material Name defined
+   **   ~~~   ** Exterior Horizontal Insulation Width will not be used.
+   ** Warning ** Foundation:Kiva="SLAB DETAILS", no Footing Material Name defined
+   **   ~~~   ** Footing Depth will not be used.
+   ** Warning ** GetSurfaceData: Entered Zone Floor Areas differ from calculated Zone Floor Area(s).
+   **   ~~~   ** ...use Output:Diagnostics,DisplayExtraWarnings; to show more details on individual zones.
+   ** Warning ** SurfaceProperty:ExposedFoundationPerimeter: SLAB, TOTALEXPOSEDPERIMETER set as calculation method, but a value has been set for Exposed Perimeter Fraction. This value will be ignored.
+   ************* Note that the following warning(s) may/will occur if you have not enclosed your zone completely.
+   ** Warning ** Entered Zone Volumes differ from calculated zone volume(s).
+   **   ~~~   ** ...use Output:Diagnostics,DisplayExtraWarnings; to show more details on individual zones.
+   ** Warning ** CalculateZoneVolume: 1 zone is not fully enclosed. For more details use:  Output:Diagnostics,DisplayExtrawarnings; 
+   ** Warning ** CheckUsedConstructions: There are 69 nominally unused constructions in input.
+   **   ~~~   ** For explicit details on each unused construction, use Output:Diagnostics,DisplayExtraWarnings;
+   ** Warning ** GeneratorController constructor ElectricLoadCenter:Generators, Availability Schedule for Generator:PVWatts 'PV ARRAY' will be be ignored (runs all the time).
+   ** Warning ** Output:Meter:MeterFileOnly: invalid Key Name="INTERIORLIGHTS:ELECTRICITY" - not found.
+   ** Warning ** Output:Meter:MeterFileOnly: invalid Key Name="INTERIOREQUIPMENT:ELECTRICITY" - not found.
+   ** Warning ** Output:Meter:MeterFileOnly: invalid Key Name="FANS:ELECTRICITY" - not found.
+   ** Warning ** Output:Meter:MeterFileOnly: invalid Key Name="HEATING:ELECTRICITY" - not found.
+   ** Warning ** Output:Meter:MeterFileOnly: invalid Key Name="COOLING:ELECTRICITY" - not found.
+   ** Warning ** Output:Meter:MeterFileOnly: invalid Key Name="NATURALGAS:FACILITY" - not found.
+   ************* Testing Individual Branch Integrity
+   ************* All Branches passed integrity testing
+   ************* Testing Individual Supply Air Path Integrity
+   ************* All Supply Air Paths passed integrity testing
+   ************* Testing Individual Return Air Path Integrity
+   ************* All Return Air Paths passed integrity testing
+   ************* No node connection errors were found.
+   ************* Beginning Simulation
+   ************* Simulation Error Summary *************
+   ** Warning ** The following Report Variables were requested but not generated -- check.rdd file
+   **   ~~~   ** Either the IDF did not contain these elements, the variable name is misspelled,
+   **   ~~~   ** or the requested variable is an advanced output which requires Output : Diagnostics, DisplayAdvancedReportVariables;
+   ************* Key=*, VarName=ZONE VENTILATION MASS FLOW RATE, Frequency=Hourly
+   ************* Key=*, VarName=ELECTRIC EQUIPMENT ELECTRICITY ENERGY, Frequency=Hourly
+   ************* Key=*, VarName=ZONE THERMAL COMFORT PIERCE MODEL STANDARD EFFECTIVE TEMPERATURE, Frequency=Hourly
+   ************* There are 14 unused objects in input.
+   ************* Use Output:Diagnostics,DisplayUnusedObjects; to see them.
+   ************* There are 25 unused schedules in input.
+   ************* There are 8 unused week schedules in input.
+   ************* There are 8 unused day schedules in input.
+   ************* Use Output:Diagnostics,DisplayUnusedSchedules; to see them.
+   *************
+   ************* ===== Final Error Summary =====
+   ************* The following error categories occurred.  Consider correcting or noting.
+   ************* Nominally Unused Constructions
+   ************* ..The nominally unused constructions warning is provided to alert you to potential conditions that can cause
+   ************* ..extra time during simulation. Each construction is calculated by the algorithm indicated in the HeatBalanceAlgorithm
+   ************* ..object. You may remove the constructions indicated (when you use the DisplayExtraWarnings option).
+   *************
+   ************* EnergyPlus Warmup Error Summary. During Warmup: 0 Warning; 0 Severe Errors.
+   ************* EnergyPlus Sizing Error Summary. During Sizing: 1 Warning; 0 Severe Errors.
+   ************* EnergyPlus Completed Successfully-- 18 Warning; 0 Severe Errors; Elapsed Time=00hr 01min 12.23sec
