@@ -507,6 +507,8 @@ def resilience_simulation_prep(si: SimInputs, case_id: int, simulation_mgr=None)
         zone_name = zone.Name.split('|')
         zone_type = zone_name[1] if len(zone_name)>1 else ""
         zone.Name = zone_name[0]
+        # print(zone_name[4])
+        zone.Floor_Area = (float(zone_name[4])/10.76391)
         if 'UNIT' in zone_type:
             unit_bedroom_dict[str(zone_name[0])] = int(zone_name[2][0])
             occ = 1 + float(zone_name[2][0])
