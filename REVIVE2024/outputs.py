@@ -60,7 +60,8 @@ def SimulationOutputs(idf):
         Unit_Conversion_for_Tabular_Data = 'InchPound'
         )
 
-    outputVars = ['Site Outdoor Air Drybulb Temperature', 'Zone Air Relative Humidity', 'Zone Air CO2 Concentration', 'Zone Air Temperature', 'Exterior Lights Electricity Energy', 
+    outputVars = ['Site Outdoor Air Drybulb Temperature', 'Zone Air Relative Humidity', 'Zone Air CO2 Concentration', 'Zone Air Temperature', 'Zone Mean Radiant Temperature', 
+                'Zone Operative Temperature', 'Exterior Lights Electricity Energy', 
                 'Zone Ventilation Mass Flow Rate', 'Schedule Value', 'Electric Equipment Electricity Energy',
                 'Facility Total Purchased Electricity Energy', 'Zone Heat Index', 'Zone Thermal Comfort Pierce Model Standard Effective Temperature', 'Site Outdoor Air Relative Humidity',
                 'Site Outdoor Air Dewpoint Temperature', 'Zone Mean Air Dewpoint Temperature','Facility Total Surplus Electricity Energy']

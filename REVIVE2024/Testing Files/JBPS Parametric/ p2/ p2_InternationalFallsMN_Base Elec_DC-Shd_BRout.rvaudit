@@ -1,0 +1,16 @@
+ ReadVarsESO
+ processing:C:\Users\amitc_crl\OneDrive\Documents\GitHub\REVIVE\REVIVE2024\Testing Files\JBPS Parametric\ p2\multi_runs\idf_205\in.rvi
+ input file:C:\Users\amitc_crl\OneDrive\Documents\GitHub\REVIVE\REVIVE2024\Testing Files\JBPS Parametric\ p2\ p2_InternationalFallsMN_Base Elec_DC-Shd_BRout.eso
+ output file:C:\Users\amitc_crl\OneDrive\Documents\GitHub\REVIVE\REVIVE2024\Testing Files\JBPS Parametric\ p2\ p2_InternationalFallsMN_Base Elec_DC-Shd_BRout.csv
+ getting all vars from:C:\Users\amitc_crl\OneDrive\Documents\GitHub\REVIVE\REVIVE2024\Testing Files\JBPS Parametric\ p2\ p2_InternationalFallsMN_Base Elec_DC-Shd_BRout.eso
+  number variables requested for output=          42
+ ReadVars Run Time=00hr 00min  1.64sec
+ ReadVarsESO program completed successfully.
+ ReadVarsESO
+ processing:C:\Users\amitc_crl\OneDrive\Documents\GitHub\REVIVE\REVIVE2024\Testing Files\JBPS Parametric\ p2\multi_runs\idf_205\in.mvi
+ input file:C:\Users\amitc_crl\OneDrive\Documents\GitHub\REVIVE\REVIVE2024\Testing Files\JBPS Parametric\ p2\ p2_InternationalFallsMN_Base Elec_DC-Shd_BRout.mtr
+ output file:C:\Users\amitc_crl\OneDrive\Documents\GitHub\REVIVE\REVIVE2024\Testing Files\JBPS Parametric\ p2\ p2_InternationalFallsMN_Base Elec_DC-Shd_BRmtr.csv
+ getting all vars from:C:\Users\amitc_crl\OneDrive\Documents\GitHub\REVIVE\REVIVE2024\Testing Files\JBPS Parametric\ p2\ p2_InternationalFallsMN_Base Elec_DC-Shd_BRout.mtr
+  number variables requested for output=           1
+ ReadVars Run Time=00hr 00min  0.00sec
+ ReadVarsESO program completed successfully.

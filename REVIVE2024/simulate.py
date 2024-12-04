@@ -507,6 +507,8 @@ def resilience_simulation_prep(si: SimInputs, case_id: int, simulation_mgr=None)
         zone_name = zone.Name.split('|')
         zone_type = zone_name[1] if len(zone_name)>1 else ""
         zone.Name = zone_name[0]
+        # print(zone_name[4])
+        zone.Floor_Area = (float(zone_name[4])/10.76391)
         if 'UNIT' in zone_type:
             unit_bedroom_dict[str(zone_name[0])] = int(zone_name[2][0])
             occ = 1 + float(zone_name[2][0])
@@ -978,7 +980,7 @@ def compute_adorb_costs(si: SimInputs, case_id: int, simulation_mgr=None):
                     +annualBaseElec)
     MWH = hourly['Whole Building:Facility Total Purchased Electricity Energy [J](Hourly)']*0.0000000002778
     CO2_Elec_List = []
-    for filename in os.listdir(os.path.join(databaseDir, 'CambiumFactors')):
+    for filename in sorted(os.listdir(os.path.join(databaseDir, 'CambiumFactors'))):
         if filename.endswith('.csv'):
             hourlyBAEmissions = pd.read_csv(os.path.join(databaseDir, 'CambiumFactors', filename))
             emissions = hourlyBAEmissions[str(gridRegion)]

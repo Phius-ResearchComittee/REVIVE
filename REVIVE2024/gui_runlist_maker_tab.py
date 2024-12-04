@@ -227,7 +227,7 @@ class RunlistMakerTab(QWidget):
         # create all the new widgets
         self.rl_epw_file = REVIVEFilePicker("EPW File", "epw")
         self.rl_ddy_file = REVIVEFilePicker("DDY File", "ddy")
-        self.rl_morph_factors = [REVIVEDoubleSpinBox(decimals=2, step_amt=0.01) for _ in range(4)]
+        self.rl_morph_factors = [REVIVEDoubleSpinBox(decimals=2, step_amt=0.01, min=-20, max=20) for _ in range(4)]
         self.rl_env_country = REVIVEComboBox()
         self.rl_grid_region = REVIVEComboBox()
         self.rl_env_labor_frac = REVIVEDoubleSpinBox(decimals=2, step_amt=0.1, min=0, max=10)
@@ -251,10 +251,10 @@ class RunlistMakerTab(QWidget):
         ))
         new_layout.addLayout(stack_widgets_vertically(
             widget_list=self.rl_morph_factors,
-            label_list=["Morph Factor 1 - Dry Bulb (°C)",
-                        "Morph Factor 1 - Dewpoint (°C)",
-                        "Morph Factor 2 - Dry Bulb (°C)",
-                        "Morph Factor 2 - Dewpoint (°C)"]
+            label_list=["Morph Factor 1 - Dry Bulb [°C]",
+                        "Morph Factor 1 - Dewpoint [°C]",
+                        "Morph Factor 2 - Dry Bulb [°C]",
+                        "Morph Factor 2 - Dewpoint [°C]"]
         ))
         new_layout.addLayout(stack_widgets_vertically(
             widget_list=[self.rl_env_country,
@@ -303,16 +303,16 @@ class RunlistMakerTab(QWidget):
                          self.rl_elec_sellback_price,
                          self.rl_nat_gas_present,
                          self.rl_nat_gas_price],
-            label_list=["Electric Price ($/kWh)",
-                        "Electric Sellback Price ($/kWh)",
-                        "Natural Gas Present?",
-                        "Natural Gas Price ($/THERM)"]
+            label_list=["Electric Price [$/kWh]",
+                        "Electric Sellback Price [$/kWh]",
+                        "Natural Gas Present [Bool]",
+                        "Natural Gas Price [$/THERM]"]
         ))
         new_layout.addLayout(stack_widgets_vertically(
             widget_list=[self.rl_annual_gas_charge,
                          self.rl_annual_elec_charge],
-            label_list=["Annual Gas Fixed Charge ($)",
-                        "Annual Electric Fixed Charge ($)"]
+            label_list=["Annual Gas Fixed Charge [$]",
+                        "Annual Electric Fixed Charge [$]"]
         ))
 
         # assign layout to groupbox
@@ -362,9 +362,9 @@ class RunlistMakerTab(QWidget):
             widget_list=[self.rl_pv_size,
                          self.rl_pv_tilt,
                          self.rl_pv_azimuth],
-            label_list=["Photovoltaics Size (W)",
-                        "Photovoltaics Tilt (deg)",
-                        "Photovoltaics Azimuth (deg)"]
+            label_list=["Photovoltaics Size [W]",
+                        "Photovoltaics Tilt [deg]",
+                        "Photovoltaics Azimuth [deg]"]
         ))
         new_layout.addLayout(stack_widgets_vertically(
             widget_list=self.rl_appliances,
@@ -422,13 +422,13 @@ class RunlistMakerTab(QWidget):
         # add all new widgets to layout with labels
         new_layout.addLayout(stack_widgets_vertically(
             widget_list=self.rl_op_areas,
-            label_list=[f"Operable Area - {dir}" for dir in ["North", "East", "South", "West"]]
+            label_list=[f"Operable Area [ft2] - {dir}" for dir in ["North", "East", "South", "West"]]
         ))
         new_layout.addLayout(stack_widgets_horizontally(
             widget_list=[self.rl_chi_val,
                          self.rl_infil_rate],
-            label_list=["Chi Value",
-                        "Infiltration Rate"]
+            label_list=["Chi Value [Btu/hr °F]",
+                        "Infiltration Rate [CFM/sf @50 Pa]"]
         ))
         self.revive_widget_sets = [self.rl_foundation_set, self.rl_window_set,
                               self.rl_ext_door_set, self.rl_ext_wall_set,
