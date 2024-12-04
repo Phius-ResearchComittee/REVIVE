@@ -1,0 +1,8 @@
+remaking exe instructions:
+
+1) create new, blank virtual environment NOT in REVIVE2024 directory (py -m venv .venv)
+2) activate virtual environment
+3) install requirements (py -m pip install -r "path/to/REVIVE2024/requirements.txt")
+4) IMPORTANT install pyinstaller within virtual environment (py -m pip install pyinstaller)
+5) cd back into REVIVE2024 folder
+6) pyinstaller command, but replace the paths with wherever they are found on your machine: "pyinstaller --name REVIVEcalc -i path/to/versioned/iconfile.ico --add-data help_tree_content.json:. --add-data help_tree_structure.txt:. --add-data phius_runlist_options.json:. --add-data required_columns.json:. --add-data Phius-Logo-RGB__Color_Icon.ico:. --paths path/to/blank/venv/Lib/site-packages --onefile main.py"
