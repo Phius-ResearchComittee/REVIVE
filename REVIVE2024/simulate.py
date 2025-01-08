@@ -254,9 +254,9 @@ def error_handler(fn, si: SimInputs, case_id: int, simulation_mgr=None):
     
     # otherwise pass the error to the gui
     # COMMENT OUT BLOCK TO DEBUG
-    except Exception as e:
-        simulation_mgr.raise_exception(str(e))
-        return None
+    # except Exception as e:
+    #     simulation_mgr.raise_exception(str(e))
+    #     return None
 
 
 
