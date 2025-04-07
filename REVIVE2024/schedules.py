@@ -383,24 +383,25 @@ def ResilienceSchedules(idf, outage1start, outage1end, outage2start, outage2end,
         Field_7 = 0)
 
 def AnnualControls(idf, unit_list):
+    
+    unit_list = list(set(unit_list))
+
     for zone in unit_list:
         idf.newidfobject('Schedule:Constant',
             Name = (str(zone) + '_WindowFractionControl'),
             Schedule_Type_Limits_Name = 'Any Number',
             Hourly_Value = 0
             )
+        
 def TBschedules(idf, unit_list):
-    for zone in unit_list:
 
+    # unit_list = list(set(unit_list))
+
+    for zone in unit_list:
         idf.newidfobject('EnergyManagementSystem:Sensor',
-            Name = (str(zone) + '_IDB'),
+            Name = (str(zone) + '_TB_IDB'),
             OutputVariable_or_OutputMeter_Index_Key_Name = str(zone),
             OutputVariable_or_OutputMeter_Name = 'Zone Air Temperature')
-        
-        idf.newidfobject('EnergyManagementSystem:Sensor',
-            Name = 'ODB',
-            OutputVariable_or_OutputMeter_Index_Key_Name ='*',
-            OutputVariable_or_OutputMeter_Name = 'Site Outdoor Air Drybulb Temperature')
         
         idf.newidfobject('EnergyManagementSystem:Actuator',
             Name = (str(zone) + '_tbTemp'),
@@ -416,18 +417,22 @@ def TBschedules(idf, unit_list):
         
         idf.newidfobject('EnergyManagementSystem:Program',
             Name = (str(zone) + '_TBDelta'),
-            Program_Line_1 = ('IF ODB == ' + (str(zone) + '_IDB')),
+            Program_Line_1 = ('IF TB_ODB == ' + (str(zone) + '_TB_IDB')),
             Program_Line_2 = ('SET ' + (str(zone) + '_tbTemp') + ' = 0'),
             Program_Line_3 = 'ELSE',
-            Program_Line_4 = ('SET ' + (str(zone) + '_tbTemp') + ' = ' + 'ODB - ' + (str(zone) + '_IDB')),
+            Program_Line_4 = ('SET ' + (str(zone) + '_tbTemp') + ' = ' + 'TB_ODB - ' + (str(zone) + '_TB_IDB')),
             Program_Line_5 = 'ENDIF')
-        
+            
         idf.newidfobject('EnergyManagementSystem:ProgramCallingManager',
-            Name = (str(zone) + '_Program Caller'),
+            Name = (str(zone) + '_TB_Program Caller'),
             EnergyPlus_Model_Calling_Point  ='BeginZoneTimestepBeforeSetCurrentWeather',
             Program_Name_1 = (str(zone) + '_TBDelta')
             )
-
+        
+    idf.newidfobject('EnergyManagementSystem:Sensor',
+            Name = 'TB_ODB',
+            OutputVariable_or_OutputMeter_Index_Key_Name ='*',
+            OutputVariable_or_OutputMeter_Name = 'Site Outdoor Air Drybulb Temperature')
 
 
 def ResilienceControls(idf, unit_list, NatVentType):

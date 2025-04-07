@@ -48,9 +48,10 @@ class MorphTab(QWidget):
         self.epw_csv_file = REVIVEFilePicker("EPW CSV File", "csv")
         self.summer_outage_start = REVIVEDatePicker()
         self.winter_outage_start = REVIVEDatePicker()
-        self.summer_treturn_dp = REVIVEDoubleSpinBox(decimals=1, step_amt=0.1, min=-200, max=200)
+        self.elevation = REVIVEDoubleSpinBox(decimals=1, step_amt=0.1, min=-500, max=15000)
+        self.summer_treturn_wb = REVIVEDoubleSpinBox(decimals=1, step_amt=0.1, min=-200, max=200)
         self.summer_treturn_db = REVIVEDoubleSpinBox(decimals=1, step_amt=0.1, min=-200, max=200)
-        self.winter_treturn_dp = REVIVEDoubleSpinBox(decimals=1, step_amt=0.1, min=-200, max=200)
+        self.winter_treturn_wb = REVIVEDoubleSpinBox(decimals=1, step_amt=0.1, min=-200, max=200)
         self.winter_treturn_db = REVIVEDoubleSpinBox(decimals=1, step_amt=0.1, min=-200, max=200)
 
         # assign to layout
@@ -66,14 +67,16 @@ class MorphTab(QWidget):
                         "Summer Outage Start"]
         ))
         new_layout.addLayout(stack_widgets_vertically(
-            widget_list=[self.winter_treturn_dp,
-                         self.winter_treturn_db,
-                         self.summer_treturn_dp,
-                         self.summer_treturn_db],
-            label_list=["Winter Return Extreme Dew Point",
-                        "Winter Return Extreme Dry Bulb",
-                        "Summer Return Extreme Dew Point",
-                        "Summer Return Extreme Dry Bulb"]
+            widget_list=[self.elevation,
+                        self.winter_treturn_db,
+                        self.winter_treturn_wb,
+                        self.summer_treturn_db,
+                        self.summer_treturn_wb],
+            label_list=["Elevation [m]",
+                        "Winter Return Extreme Dry Bulb [°C]",
+                        "Winter Return Extreme Wet Bulb [°C]",
+                        "Summer Return Extreme Dry Bulb [°C]",
+                        "Summer Return Extreme Wet Bulb [°C]"]
         ))
         self.settings_groupbox.setLayout(new_layout)
 
@@ -97,17 +100,18 @@ class MorphTab(QWidget):
             morph_file = self.epw_csv_file.text()
             summer_outage_start = self.summer_outage_start.get_date()
             winter_outage_start = self.winter_outage_start.get_date()
-            summer_treturn_dp = self.summer_treturn_dp.value()
+            elevation = self.elevation.value()
+            summer_treturn_wb = self.summer_treturn_wb.value()
             summer_treturn_db = self.summer_treturn_db.value()
-            winter_treturn_dp = self.winter_treturn_dp.value()
+            winter_treturn_wb = self.winter_treturn_wb.value()
             winter_treturn_db = self.winter_treturn_db.value()
 
             print(f"Computing morph factors for EPW CSV file \"{morph_file}\"")
+            print(elevation, summer_treturn_wb, summer_treturn_db, winter_treturn_wb, winter_treturn_db)
             summer_db_factor, summer_dp_factor, winter_db_factor, winter_dp_factor = weatherMorph.ComputeWeatherMorphFactors(
-                morph_file, summer_outage_start, winter_outage_start, 
-                summer_treturn_dp, summer_treturn_db, 
-                winter_treturn_dp, winter_treturn_db
-            )
+                morph_file, summer_outage_start, winter_outage_start, elevation, 
+                summer_treturn_wb, summer_treturn_db, 
+                winter_treturn_wb, winter_treturn_db)
 
             msg = (f"Morph factors calculation complete!\n"
                    f"MorphFactorDB1 = {winter_db_factor}\n"
