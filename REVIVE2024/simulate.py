@@ -568,7 +568,7 @@ def resilience_simulation_prep(si: SimInputs, case_id: int, simulation_mgr=None)
             print(str(zone_name[0]) + ' is some Stairs')
         if 'CORRIDOR' in zone_type:
             print(str(zone_name[0]) + ' is some a Corridor')
-    
+        
     # export map of units to # beds for use in annual simulation
     unit_list = [unit for unit in unit_bedroom_dict.keys()]
     with open(os.path.join(tempFolder, f"{BaseFileName}_UnitBedrooms.json"), "w") as fp:
@@ -631,6 +631,7 @@ def resilience_simulation_prep(si: SimInputs, case_id: int, simulation_mgr=None)
     internalHeatGains.ext_lights(idf1)
 
     outputs.SimulationOutputs(idf1)
+
     
     # save the current idf state as pass file
     idf1.saveas(passIDF)
@@ -646,7 +647,10 @@ def resilience_simulation_prep(si: SimInputs, case_id: int, simulation_mgr=None)
     schedules.ResilienceSchedules(idf1, outage1start, outage1end, outage2start, outage2end, 
                                   coolingOutageStart,coolingOutageEnd,NatVentAvail,
                                   demandCoolingAvail,shadingAvail,outage1type)
-    
+   
+    with open(os.path.join(tempFolder, f"{BaseFileName}_UnitBedrooms.json"), "r") as fp:
+        unit_bedroom_dict = json.load(fp)
+        unit_list = [unit for unit in unit_bedroom_dict.keys()]
     schedules.ResilienceControls(idf1, unit_list, NatVentType)
     
     for zone in unit_list:
@@ -657,6 +661,8 @@ def resilience_simulation_prep(si: SimInputs, case_id: int, simulation_mgr=None)
 
     # CHECKPOINT: before resilience simulation starts
     checkpoint(simulation_mgr)
+
+    
 
     # save and return the resulting idf
     idf1.saveas(testingFile_BR)
@@ -785,8 +791,7 @@ def annual_simulation_prep(si: SimInputs, case_id: int, simulation_mgr=None):
     for zone in modeled_zones:
         zone_name = zone.Name
         occ = float(unit_bedroom_dict[str(zone_name)]) + 1
-        hvac.AnnualERV(idf2, zone_name, vent_system_type, occ, ervSense, ervLatent)
-        
+        hvac.AnnualERV(idf2, zone_name, vent_system_type, occ, ervSense, ervLatent)  
 
     # get envelope information
     infiltration_rate = float(runList['INFILTRATION_RATE'][runCount])
@@ -839,13 +844,18 @@ def annual_simulation_prep(si: SimInputs, case_id: int, simulation_mgr=None):
     with open(os.path.join(tempFolder, f"{BaseFileName}_IHGDict.json"), "r") as fp:
         ihg_dict = json.load(fp)
     
-    for num_beds in unit_bedroom_dict.values():
-        total_appliance_cost = ihg_dict[str(num_beds)]["applianceCost"]
-        lights_cost = ihg_dict[str(num_beds)]["lightsCost"]
-        envelope.costBuilder(idf2, 'APPLIANCES','','General',0,0,total_appliance_cost,'',1)
-        envelope.costBuilder(idf2, 'LIGHTS','','General',0,0,lights_cost,'',1)
+    total_appliance_cost = []
+    lights_cost = []
 
-    schedules.TBschedules(idf2, unit_list)
+    for unit in unit_list:
+        num_beds = unit_bedroom_dict[unit]
+
+        total_appliance_cost.append(ihg_dict[str(num_beds)]["applianceCost"])
+        lights_cost.append(ihg_dict[str(num_beds)]["lightsCost"])
+    envelope.costBuilder(idf2, ' APPLIANCES','','General',0,0,sum(total_appliance_cost),'',1)
+    envelope.costBuilder(idf2, ' LIGHTS','','General',0,0,sum(lights_cost),'',1)
+
+    schedules.TBschedules(idf2, unit_list)  
 
     # CHECKPOINT: before annual simulation starts
     checkpoint(simulation_mgr)

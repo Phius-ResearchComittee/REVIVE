@@ -26,6 +26,7 @@ import re
 import pandas as pd
 import numpy as np
 import math
+import psychrolib
 
 
 def WeatherMorphSine(idf, outage1start, outage1end, outage2start, outage2end,
@@ -147,8 +148,16 @@ def WeatherMorphSine(idf, outage1start, outage1end, outage2start, outage2end,
         Program_Line_11 = 'RETURN')
 
 
-def ComputeWeatherMorphFactors(epw_csv, summer_outage_start, winter_outage_start,
-                               summer_treturn_dp, summer_treturn_db, winter_treturn_dp, winter_treturn_db):
+def ComputeWeatherMorphFactors(epw_csv, summer_outage_start, winter_outage_start, elevation,
+                               summer_treturn_wb, summer_treturn_db, winter_treturn_wb, winter_treturn_db):
+    
+    psychrolib.SetUnitSystem(psychrolib.SI)
+
+    pressure = psychrolib.GetStandardAtmPressure(elevation)
+
+    summer_treturn_dp = psychrolib.GetTDewPointFromTWetBulb(summer_treturn_db, summer_treturn_wb, pressure)
+    winter_treturn_dp = psychrolib.GetTDewPointFromTWetBulb(winter_treturn_db, winter_treturn_wb, pressure)
+
     # count how many lines of header using regex
     with open(epw_csv, "r") as fp:
         pattern = r"Date.*\nDate.*\n"
@@ -244,4 +253,4 @@ def ComputeWeatherMorphFactors(epw_csv, summer_outage_start, winter_outage_start
         winter_outage_df["Dew Point Temperature {C}"], 
         min)
     
-    return summer_db_factor, summer_dp_factor, winter_db_factor, winter_dp_factor
+    return round(summer_db_factor,2), round(summer_dp_factor,2), round(winter_db_factor,2), round(winter_dp_factor, 2)
