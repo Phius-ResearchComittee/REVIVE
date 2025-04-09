@@ -3,7 +3,7 @@
 
 a = Analysis(
     ['main.py'],
-    pathex=['C:\\Users\\amitc_crl\\OneDrive\\Documents\\GitHub\\REVIVE\\venv\\Lib\\site-packages'],
+    pathex=['../.venv/Lib/site-packages'],
     binaries=[],
     datas=[('help_tree_content.json', '.'), ('help_tree_structure.txt', '.'), ('phius_runlist_options.json', '.'), ('required_columns.json', '.'), ('Phius-Logo-RGB__Color_Icon.ico', '.')],
     hiddenimports=[],
@@ -35,5 +35,5 @@ exe = EXE(
     target_arch=None,
     codesign_identity=None,
     entitlements_file=None,
-    icon=['C:\\Users\\amitc_crl\\OneDrive\\Documents\\GitHub\\REVIVE\\REVIVE2024\\revive_phius_icon_v24.2.1.ico'],
+    icon=['revive_phius_icon_v24.2.1.ico'],
 )
