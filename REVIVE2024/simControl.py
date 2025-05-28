@@ -48,7 +48,7 @@ def Building(idf,fileName):
         Terrain = 'City',
         Loads_Convergence_Tolerance_Value = 0.04,
         Temperature_Convergence_Tolerance_Value = 0.4,
-        Solar_Distribution = 'FullInteriorAndExterior', 
+        Solar_Distribution = 'FullExterior', 
         Maximum_Number_of_Warmup_Days = 25,
         Minimum_Number_of_Warmup_Days = 6
         )
