@@ -783,3 +783,79 @@ def AnnualERV(idf, zone, vent_system_type, occ, ervSense, ervLatent):
         Name = (str(zone) + '_OA_2'),
         Height_Above_Ground = 3.048
         )
+    
+def crawlSpaceHeatAndVent(idf, zone, exhaust_flow_rate, crawlspace_setpoint):
+
+    idf.newidfobject('ZoneVentilation:DesignFlowRate',
+    Name = (str(zone) + 'Exhaust'),
+    Zone_or_ZoneList_Name = str(zone),
+    Schedule_Name = 'MechAvailable',
+    Design_Flow_Rate_Calculation_Method = 'Flow/Zone',
+    Design_Flow_Rate = (float(exhaust_flow_rate) * 0.0004719474499999953),
+    Ventilation_Type = 'Exhaust',
+    Fan_Pressure_Rise = 5515.8056, 
+    Fan_Total_Efficiency = 0.6,   
+    Constant_Term_Coefficient = 1
+    )
+    # ,                        !- Temperature Term Coefficient
+    # ,                        !- Velocity Term Coefficient
+    # ,                        !- Velocity Squared Term Coefficient
+    # -100,                    !- Minimum Indoor Temperature {C}
+    # ,                        !- Minimum Indoor Temperature Schedule Name
+    # 100,                     !- Maximum Indoor Temperature {C}
+    # ,                        !- Maximum Indoor Temperature Schedule Name
+    # -100,                    !- Delta Temperature {deltaC}
+    # ,                        !- Delta Temperature Schedule Name
+    # -100,                    !- Minimum Outdoor Temperature {C}
+    # ,                        !- Minimum Outdoor Temperature Schedule Name
+    # 100,                     !- Maximum Outdoor Temperature {C}
+    # ,                        !- Maximum Outdoor Temperature Schedule Name
+    # 40;                      !- Maximum Wind Speed {m/s}
+
+    idf.newidfobject('Schedule:Constant',
+    Name = 'Crawl Space Setpoint',
+    Schedule_Type_Limits_Name = 'Any Number',
+    Hourly_Value = ((float(crawlspace_setpoint) - 32) * (5/9))
+    )
+
+    idf.newidfobject('ZoneControl:Thermostat',
+    Name = (str(zone) + ' Thermostat'),
+    Zone_or_ZoneList_Name = str(zone),
+    Control_Type_Schedule_Name = 'Always_On',
+    Control_1_Object_Type = 'ThermostatSetpoint:SingleHeating',
+    Control_1_Name = (str(zone) + ' Heating')
+    )
+
+    idf.newidfobject('ThermostatSetpoint:SingleHeating',
+    Name = (str(zone) + ' Heating'),
+    Setpoint_Temperature_Schedule_Name = 'Crawl Space Setpoint'
+    )
+
+    idf.newidfobject('ZoneHVAC:Baseboard:Convective:Electric',
+    Name = (str(zone) + ' Radiator'),
+    Availability_Schedule_Name = 'MechAvailable',
+    Heating_Design_Capacity_Method = 'HeatingDesignCapacity',
+    Heating_Design_Capacity = 'autosize', 
+    # ,                        !- Heating Design Capacity Per Floor Area {W/m2}
+    Fraction_of_Autosized_Heating_Design_Capacity = 1,
+    Efficiency = 1
+    )
+
+    idf.newidfobject('ZoneHVAC:EquipmentList',
+    Name = (str(zone) + ' Equiptment List'),
+    Load_Distribution_Scheme = 'SequentialLoad',
+    Zone_Equipment_1_Object_Type = 'ZoneHVAC:Baseboard:Convective:Electric',
+    Zone_Equipment_1_Name = (str(zone) + ' Radiator'),
+    Zone_Equipment_1_Cooling_Sequence = 0,
+    Zone_Equipment_1_Heating_or_NoLoad_Sequence = 1,
+    # ,                        !- Zone Equipment 1 Sequential Cooling Fraction Schedule Name
+    # ;                        !- Zone Equipment 1 Sequential Heating Fraction Schedule Name
+    )
+
+    idf.newidfobject('ZoneHVAC:EquipmentConnections',
+    Zone_Name = str(zone),
+    Zone_Conditioning_Equipment_List_Name = (str(zone) + ' Equiptment List'),
+    # ,                        !- Zone Air Inlet Node or NodeList Name
+    # ,                        !- Zone Air Exhaust Node or NodeList Name
+    Zone_Air_Node_Name = (str(zone) + '_Zone_Air_Node')
+    )

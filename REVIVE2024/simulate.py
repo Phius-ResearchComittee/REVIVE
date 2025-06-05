@@ -455,9 +455,15 @@ def resilience_simulation_prep(si: SimInputs, case_id: int, simulation_mgr=None)
     srf_dict = {}
     for srf in idf1.idfobjects['BuildingSurface:Detailed']:
         zone_name = srf.Zone_Name.split('|')
-        srf.Zone_Name = zone_name[0]
-        srf_dict[srf.Name] = zone_name[0]
-    
+        zone_type = zone_name[1] if len(zone_name)>1 else ""
+        if 'UNIT' in zone_type:
+            srf.Zone_Name = str(str(zone_name[0]) + '_occ')
+            srf_dict[srf.Name] = str(str(zone_name[0]) + '_occ')
+        if 'UNIT' not in zone_type:
+            srf.Zone_Name = zone_name[0]
+            srf_dict[srf.Name] = zone_name[0]
+
+        
 
     count = -1
     windowNames = []
@@ -503,13 +509,17 @@ def resilience_simulation_prep(si: SimInputs, case_id: int, simulation_mgr=None)
     DHW_CombinedGPM = 0
 
     unit_bedroom_dict = {}
+    occupied_zones = []
     for zone in modeled_zones:
         zone_name = zone.Name.split('|')
+        
         zone_type = zone_name[1] if len(zone_name)>1 else ""
-        zone.Name = zone_name[0]
+        
         # print(zone_name[4])
         zone.Floor_Area = (float(zone_name[4])/10.76391)
         if 'UNIT' in zone_type:
+            zone.Name = (str(zone_name[0]) + '_occ')
+            zone_name[0] = str(str(zone_name[0]) + '_occ')
             unit_bedroom_dict[str(zone_name[0])] = int(zone_name[2][0])
             occ = 1 + float(zone_name[2][0])
             icfa_zone = zone.Floor_Area
@@ -551,6 +561,7 @@ def resilience_simulation_prep(si: SimInputs, case_id: int, simulation_mgr=None)
 
             # insert window sorting here
 
+            
             zone_windows = windows_by_zone[zone_name[0]]
             windowNames_split = list(divide_chunks(zone_windows, 10))
             for i in range(len(windowNames_split)):
@@ -568,6 +579,14 @@ def resilience_simulation_prep(si: SimInputs, case_id: int, simulation_mgr=None)
             print(str(zone_name[0]) + ' is some Stairs')
         if 'CORRIDOR' in zone_type:
             print(str(zone_name[0]) + ' is some a Corridor')
+        if 'CRAWLSPACE' in zone_type:
+            print(str(zone_name[0]) + ' is some a Corridor')
+            zone.Name = zone_name[0]
+            # Zone2|CRAWLSPACE|55|15|3
+            hvac.crawlSpaceHeatAndVent(idf1, zone_name[0], zone_name[3], zone_name[2])
+            envelope.crawlSpaceInfiltration(idf1, zone_name[0], zone_name[4])
+            # zone infiltration, zone ventilation
+            # zone_name[0] = str(zone_name
         
     # export map of units to # beds for use in annual simulation
     unit_list = [unit for unit in unit_bedroom_dict.keys()]
@@ -789,9 +808,10 @@ def annual_simulation_prep(si: SimInputs, case_id: int, simulation_mgr=None):
     # loop through zones for annual erv computation
     modeled_zones = idf1.idfobjects['ZONE']
     for zone in modeled_zones:
-        zone_name = zone.Name
-        occ = float(unit_bedroom_dict[str(zone_name)]) + 1
-        hvac.AnnualERV(idf2, zone_name, vent_system_type, occ, ervSense, ervLatent)  
+        if '_occ' in str(zone.Name):
+            zone_name = zone.Name
+            occ = float(unit_bedroom_dict[str(zone_name)]) + 1
+            hvac.AnnualERV(idf2, zone_name, vent_system_type, occ, ervSense, ervLatent)  
 
     # get envelope information
     infiltration_rate = float(runList['INFILTRATION_RATE'][runCount])

@@ -350,3 +350,20 @@ def FoundationInterface(idf,foundationList):
             # Exposed_Perimeter_Fraction = 1.0,
             # Surface_Segment_1_Exposed = 'Yes'
             )
+        
+
+def crawlSpaceInfiltration(idf, zone, ach50):
+    idf.newidfobject('ZoneInfiltration:DesignFlowRate',
+    Name = (str(zone) + ' Infiltration'),
+    Zone_or_ZoneList_Name = str(zone),
+    Schedule_Name = 'Always_On',
+    Design_Flow_Rate_Calculation_Method = 'AirChanges/Hour',
+    # ,                        !- Design Flow Rate {m3/s}
+    # ,                        !- Flow per Zone Floor Area {m3/s-m2}
+    # ,                        !- Flow per Exterior Surface Area {m3/s-m2}
+    Air_Changes_per_Hour = (float(ach50) * 0.2),
+    Constant_Term_Coefficient = 0,
+    Temperature_Term_Coefficient = 0.015,
+    Velocity_Term_Coefficient = 0.224,
+    Velocity_Squared_Term_Coefficient = 0
+    )
