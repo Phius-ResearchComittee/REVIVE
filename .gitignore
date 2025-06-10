@@ -1,2 +1,5 @@
 REVIVE2024/.venv/
 REVIVE2024/__pycache__/
+.venv/
+REVIVE2024/build/
+REVIVE2024/dist/
