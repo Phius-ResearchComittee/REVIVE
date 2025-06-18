@@ -25,7 +25,7 @@ except:
 # 0000001
 os.chdir(model_folder)
 
-bldg_range = list(range(1,55001,1))
+bldg_range = list(range(1,11,1))
 
 urls = []
 
@@ -47,4 +47,4 @@ def dowload(osm_url):
     except:
         print("["+str(osm_url)+"] osm not downloaded")
 
-Parallel(n_jobs=1)(delayed(dowload)(osm_url) for osm_url in urls)
+Parallel(n_jobs=8)(delayed(dowload)(osm_url) for osm_url in urls)
