@@ -10,26 +10,38 @@ import wget
 import pandas as pd
 from urllib.request import urlretrieve
 from joblib import Parallel,delayed 
-
+import os
 
 try:
-    csvfilename = "D:/ABCC/550k_results_with_economics_allfuels_chars.csv/ABCC_resstock_download 55k sch.csv"
-    urlheader = "bldg_id"
+    base_link = 'https://oedi-data-lake.s3.amazonaws.com/nrel-pds-building-stock/end-use-load-profiles-for-us-building-stock/2022/resstock_tmy3_release_1/building_energy_models/upgrade%3D0/bldg'
+    link_suffix = '-up00.zip'
     model_folder = "D:/ABCC"
     schedule_folder = "D:/ABCC"
 except:
     print("ERROR: Please specify filename and url column name to download")
     sys.exit(0)
 
-df = pd.read_csv(csvfilename)
 
-urls = list(df['bldg_id'])
+# 0000001
+os.chdir(model_folder)
+
+bldg_range = list(range(1,55001,1))
+
+urls = []
+
+for bldg in bldg_range:
+    padded_num = str(bldg).rjust(7, '0')
+    url = (str(base_link) + str(padded_num) + str(link_suffix))
+    urls.append(url)
+    print(url)
+
 
 # open csv file to read
 def dowload(osm_url):
     try:
         print('downloading started')
-        wget.download(osm_url,out=model_folder) # downloading the file by sending the request to the URL
+        # wget.download(osm_url,out=model_folder) # downloading the file by sending the request to the URL
+        urlretrieve(osm_url, str(osm_url.split('/')[-1]))
         # wget.download((osm_url.replace('.osm', '.csv').replace('building_energy_models', 'occupancy_schedules')),out=schedule_folder) # downloading the file by sending the request to the URL
         print("["+str(osm_url)+"] osm saved")
     except:
