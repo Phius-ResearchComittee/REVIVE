@@ -13,7 +13,7 @@ from joblib import Parallel,delayed
 
 
 try:
-    csvfilename = "D:/ABCC/550k_results_with_economics_allfuels_chars.csv/ABCC_resstock_download_short.csv"
+    csvfilename = "D:/ABCC/550k_results_with_economics_allfuels_chars.csv/ABCC_resstock_download 55k sch.csv"
     urlheader = "bldg_id"
     model_folder = "D:/ABCC"
     schedule_folder = "D:/ABCC"
@@ -21,7 +21,7 @@ except:
     print("ERROR: Please specify filename and url column name to download")
     sys.exit(0)
 
-df = pd.read_excel(csvfilename)
+df = pd.read_csv(csvfilename)
 
 urls = list(df['bldg_id'])
 
@@ -35,4 +35,4 @@ def dowload(osm_url):
     except:
         print("["+str(osm_url)+"] osm not downloaded")
 
-Parallel(n_jobs=8)(delayed(dowload)(osm_url) for osm_url in urls)
+Parallel(n_jobs=1)(delayed(dowload)(osm_url) for osm_url in urls)

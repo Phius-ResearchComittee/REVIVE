@@ -13,7 +13,7 @@ from joblib import Parallel,delayed
 
 
 try:
-    csvfilename = "D:/ABCC/550k_results_with_economics_allfuels_chars.csv/ABCC_resstock_download_short.csv"
+    csvfilename = "D:/ABCC/550k_results_with_economics_allfuels_chars.csv/ABCC_resstock_download 55k sch.csv"
     urlheader = "bldg_id"
     model_folder = "D:/ABCC"
     schedule_folder = "D:/ABCC"
