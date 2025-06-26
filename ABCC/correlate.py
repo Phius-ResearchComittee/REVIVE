@@ -33,11 +33,11 @@ def area_correlation(iddname, file):
         idf1 = IDF(file)
 
         for object in idf1.idfobjects['SimulationControl']:
-            object.Do_Zone_Sizing_Calculation = 'No'
+            object.Do_Zone_Sizing_Calculation = 'Yes'
             object.Do_System_Sizing_Calculation = 'No'
             object.Do_Plant_Sizing_Calculation = 'No'
             object.Run_Simulation_for_Sizing_Periods = 'No'
-            object.Run_Simulation_for_Weather_File_Run_Periods = 'Yes'
+            object.Run_Simulation_for_Weather_File_Run_Periods = 'No'
 
         for object in idf1.idfobjects['Site:Location']:
             site_name = object.Name
