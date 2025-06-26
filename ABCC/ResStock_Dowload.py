@@ -12,8 +12,8 @@ from joblib import Parallel, delayed
 base_link = 'https://oedi-data-lake.s3.amazonaws.com/nrel-pds-building-stock/end-use-load-profiles-for-us-building-stock/2021/resstock_tmy3_release_1/building_energy_models/bldg'
            
 link_suffix = '-up00.osm.gz'
-model_folder = "A:/PHIUS/ABCC/Base Model Correlation"
-schedule_folder = "A:/PHIUS/ABCC"
+model_folder = "C:/test/abc" # add desired download loaction EX:A:/PHIUS/ABCC/Base Model Correlation
+schedule_folder = "C:/test/schedule"   #add schedule folder
 
 # Ensure folders exist
 os.makedirs(model_folder, exist_ok=True)
