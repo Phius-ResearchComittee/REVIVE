@@ -52,7 +52,7 @@ def SimulationOutputs(idf):
 
     idf.newidfobject('OutputControl:Table:Style',
         Column_Separator = 'HTML',
-        Unit_Conversion = 'InchPound'
+        Unit_Conversion = 'JtoKWH'
         )
 
     idf.newidfobject('Output:SQLite',

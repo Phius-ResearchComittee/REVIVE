@@ -13,9 +13,9 @@ from joblib import Parallel,delayed
 import os
 
 try:
-    base_link = 'https://oedi-data-lake.s3.amazonaws.com/nrel-pds-building-stock/end-use-load-profiles-for-us-building-stock/2022/resstock_tmy3_release_1/building_energy_models/upgrade%3D0/bldg'
-    link_suffix = '-up00.zip'
-    model_folder = "D:/ABCC"
+    base_link = 'https://data.openei.org/s3_viewer?bucket=oedi-data-lake&prefix=nrel-pds-building-stock%2Fend-use-load-profiles-for-us-building-stock%2F2021%2Fresstock_tmy3_release_1%2Fbuilding_energy_models%2F/bldg'
+    link_suffix = '-up00.osm.gz'
+    model_folder = "D:/ABCC/Base Model Correlation"
     schedule_folder = "D:/ABCC"
 except:
     print("ERROR: Please specify filename and url column name to download")

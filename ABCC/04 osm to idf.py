@@ -6,7 +6,7 @@
 import os
 import openstudio
 
-dir_name = "C:/Users/amitc_crl/OneDrive/Mitchell_ANL-Starr_2023/Models" # where osm files nested
+dir_name = "D:/ABCC/Base Model Correlation" # where osm files nested
 
 for item in os.listdir(dir_name): # loop thru items in dir
     osm_name = os.path.join(dir_name,item) # osm file path .osm

@@ -7,7 +7,7 @@ import shutil
 from zipfile import ZipFile
 import pathlib
 
-schedule_folder = "D:/ABCC/Schedules"
+schedule_folder = "D:/ABCC/Base Model Correlation"
 
 
 # GZ Files
@@ -47,5 +47,5 @@ for folder in folder_list:
     bldg = str(folder.split('-')[0])
     for item in folder_contents:
         if '.csv' in item:
-            os.rename((str(os.path.realpath(folder)) + '\\' + str(item)), (str(os.path.realpath(folder)) + '\\' + str(item)).replace('schedules.csv', str(bldg) + '.csv'))
+            os.rename((str(os.path.realpath(folder)) + '//' + str(item)), (str(os.path.realpath(folder)) + '\\' + str(item)).replace('schedules.csv', str(bldg) + '.csv'))
             shutil.copy((str(os.path.realpath(folder)) + '\\' + str(item)).replace('schedules.csv', str(bldg) + '.csv'), (str(folder_path) + '\\' + str(bldg) + '.csv'))

@@ -103,7 +103,7 @@ def ResilienceSchedules(idf, outage1start, outage1end, outage2start, outage2end,
     idf.newidfobject('Schedule:Constant',
         Name = 'Phius_68F',
         Schedule_Type_Limits_Name = 'Any Number',
-        Hourly_Value = 20
+        Hourly_Value = 22.2222
         )
     
     idf.newidfobject('Schedule:Constant',
