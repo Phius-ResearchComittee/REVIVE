@@ -42,6 +42,11 @@ def area_correlation(iddname, file):
         for object in idf1.idfobjects['Site:Location']:
             site_name = object.Name
 
+        schedules_from_file = idf1.idfobjects['Schedule:File']
+
+        for schedule in schedules_from_file:
+                schedule.File_Name = "schedules.csv
+
         idf1.saveas(str(file))
 
         

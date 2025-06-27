@@ -12,7 +12,7 @@ from joblib import Parallel, delayed
 base_link = 'https://oedi-data-lake.s3.amazonaws.com/nrel-pds-building-stock/end-use-load-profiles-for-us-building-stock/2021/resstock_tmy3_release_1/building_energy_models/bldg'
            
 link_suffix = '-up00.osm.gz'
-model_folder = "C:/test/abc" # add desired download loaction EX:A:/PHIUS/ABCC/Base Model Correlation
+model_folder = "D:/ABCC/BMC2" # add desired download loaction EX:A:/PHIUS/ABCC/Base Model Correlation
 schedule_folder = "C:/test/schedule"   #add schedule folder
 
 # Ensure folders exist
@@ -20,7 +20,7 @@ os.makedirs(model_folder, exist_ok=True)
 os.makedirs(schedule_folder, exist_ok=True)
 
 # Generate URLs
-bldg_range = range(1, 11)  # 0000001 to 0000010
+bldg_range = range(1, 550001)  # 0000001 to 0000010
 urls = [
     f"{base_link}{str(bldg).rjust(7, '0')}{link_suffix}"
     for bldg in bldg_range
@@ -36,5 +36,5 @@ def download(osm_url):
         print(f"Failed to download {osm_url}: {e}")
 
 # Parallel Download
-Parallel(n_jobs=8)(delayed(download)(url) for url in urls)
+Parallel(n_jobs=14)(delayed(download)(url) for url in urls)
 
