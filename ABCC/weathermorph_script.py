@@ -206,7 +206,7 @@ if __name__ == "__main__":
         processor = WeatherMorphProcessor(CONFIG['base_dir'], CONFIG['epw_csv'], CONFIG['master_csv'])
         processor.process_all_stat_files()
         result_path = processor.append_to_master_csv()
-        logger.info(f"✅ All done! Morphing output at: {result_path}")
+        logger.info(f" All done! Morphing output at: {result_path}")
 
     except Exception as e:
-        logger.error(f"❌ Fatal error: {e}")
+        logger.error(f" Fatal error: {e}")
