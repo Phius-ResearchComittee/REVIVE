@@ -1,13 +1,13 @@
 import os
 
-source_dir = 'D:/Boston'
+source_dir = 'D:/Chicago'
 
 files = os.listdir(source_dir)
 os.chdir(source_dir)
 
 rows = []
 
-list_file = open("Boston.lst", "w")
+list_file = open("Chicago.lst", "w")
 
 for file in files:
     if ".epw" in str(file):

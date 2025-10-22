@@ -381,8 +381,18 @@ def ResilienceSchedules(idf, outage1start, outage1end, outage2start, outage2end,
         Field_5 = 'For: AllOtherDays',
         Field_6  ='Until: 24:00',
         Field_7 = 0)
+    
+def VanosZoneCalculations(idf, zone):
+    idf.newidfobject('Schedule:Constant',
+        Name = 'Always_On',
+        Schedule_Type_Limits_Name = 'Any Number',
+        Hourly_Value = 0
+        )
 
-def AnnualControls(idf, unit_list):
+# def VanosGeneralCalculations(zone):
+
+
+# def AnnualControls(idf, unit_list):
     
     unit_list = list(set(unit_list))
 
