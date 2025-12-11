@@ -2,6 +2,7 @@
 import os
 import sys
 
+
 # dependency imports
 from PySide6.QtCore import (
     QSettings,
@@ -30,7 +31,7 @@ class MyWidget(QWidget):
 
         # set up app identity
         self.app_name = "REVIVEcalc"
-        self.version_no = "24.3.0"
+        self.version_no = "24.4.0"
         self.settings = QSettings("Phius", self.app_name)
         self.curr_dir = os.getcwd()
 

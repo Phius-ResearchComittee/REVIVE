@@ -438,7 +438,9 @@ def resilience_simulation_prep(si: SimInputs, case_id: int, simulation_mgr=None)
     #==============================================================================================================================
     open(testingFile_BR, "w").close()
     idfg = IDF(os.path.join(studyFolder, idfgName))
+    print(ddyName)
     ddy = IDF(ddyName)
+    print(ddy)
     idf1 = IDF(testingFile_BR)
 
     # CHECKPOINT: IDFs constructed
@@ -674,9 +676,11 @@ def resilience_simulation_prep(si: SimInputs, case_id: int, simulation_mgr=None)
     
     for zone in unit_list:
         hvac.ResilienceERV(idf1, zone, vent_system_type, occ, ervSense, ervLatent)
+        schedules.VanosZoneCalculations(idf1, zone)
 
     weatherMorph.WeatherMorphSine(idf1, outage1start, outage1end, outage2start, outage2end,
             MorphFactorDB1, MorphFactorDP1, MorphFactorDB2, MorphFactorDP2)
+    
 
     # CHECKPOINT: before resilience simulation starts
     checkpoint(simulation_mgr)
