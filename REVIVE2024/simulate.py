@@ -417,7 +417,8 @@ def resilience_simulation_prep(si: SimInputs, case_id: int, simulation_mgr=None)
     MorphFactorDP1 = runList['MorphFactorDP1'][runCount]
     MorphFactorDB2 = runList['MorphFactorDB2'][runCount]
     MorphFactorDP2 = runList['MorphFactorDP2'][runCount]
-
+    # MorphType
+    MorphType = runList['MORPH_TYPE'][runCount]
     # Controls 
     NatVentType  = str(runList['NAT_VENT_TYPE'][runCount])
     NatVentAvail = runList['NAT_VENT_AVAIL'][runCount]
@@ -516,7 +517,7 @@ def resilience_simulation_prep(si: SimInputs, case_id: int, simulation_mgr=None)
         zone_name = zone.Name.split('|')
         
         zone_type = zone_name[1] if len(zone_name)>1 else ""
-        
+        print(f"CRASH DEBUG: zone_name list is: {zone_name}")
         # print(zone_name[4])
         zone.Floor_Area = (float(zone_name[4])/10.76391)
         if 'UNIT' in zone_type:
@@ -679,7 +680,7 @@ def resilience_simulation_prep(si: SimInputs, case_id: int, simulation_mgr=None)
         schedules.VanosZoneCalculations(idf1, zone)
 
     weatherMorph.WeatherMorphSine(idf1, outage1start, outage1end, outage2start, outage2end,
-            MorphFactorDB1, MorphFactorDP1, MorphFactorDB2, MorphFactorDP2)
+            MorphFactorDB1, MorphFactorDP1, MorphFactorDB2, MorphFactorDP2,MorphType)
     
 
     # CHECKPOINT: before resilience simulation starts
@@ -1193,6 +1194,8 @@ def collect_individual_simulation_results(si: SimInputs, case_id: int, simulatio
         hourlyCool = pd.read_csv(br_hourly_cool_path)
 
         # save cooling battery value
+        # arjun to add similar type of calc below summing ZoneName_VANOS:Schedule Values [](Hourly) in hourlyCool table
+        # arjun Need to add different outputs per the names of units in the unit_list
         coolingBattery = (hourlyCool['Whole Building:Facility Total Purchased Electricity Energy [J](Hourly)'].sum())*0.0000002778
         
         # compute total mora days
@@ -1305,6 +1308,7 @@ def collect_individual_simulation_results(si: SimInputs, case_id: int, simulatio
         "Run Name":case_name,
         "SET ≤ 12.2°C Hours (F)":HeatingSET,
         "Hours < 2°C [hr]":Below2C,
+        # arjun put extensible vanos keys here
         "Total Deadly Days":moraTotalDays,
         "Min outdoor DB [°C]":MinDBOut,
         "Min outdoor DP [°C]":MinDPOut,

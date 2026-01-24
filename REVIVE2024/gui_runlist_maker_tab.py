@@ -227,6 +227,10 @@ class RunlistMakerTab(QWidget):
         # create all the new widgets
         self.rl_epw_file = REVIVEFilePicker("EPW File", "epw")
         self.rl_ddy_file = REVIVEFilePicker("DDY File", "ddy")
+        
+        # --- ADDED MORPHTYPE ---
+        self.rl_morph_type = REVIVEComboBox(items=["Classic Morph", "Peaked Morph"])
+        
         self.rl_morph_factors = [REVIVEDoubleSpinBox(decimals=2, step_amt=0.01, min=-20, max=20) for _ in range(4)]
         self.rl_env_country = REVIVEComboBox()
         self.rl_grid_region = REVIVEComboBox()
@@ -249,6 +253,13 @@ class RunlistMakerTab(QWidget):
             label_list=["EPW File",
                         "DDY File"]
         ))
+        
+        # --- ADDED MORPHTYPE TO LAYOUT ---
+        new_layout.addLayout(stack_widgets_vertically(
+            widget_list=[self.rl_morph_type],
+            label_list=["Morphology Type"]
+        ))
+        
         new_layout.addLayout(stack_widgets_vertically(
             widget_list=self.rl_morph_factors,
             label_list=["Morph Factor 1 - Dry Bulb [°C]",
@@ -394,30 +405,30 @@ class RunlistMakerTab(QWidget):
                                                      label="Window Type",
                                                      is_groupbox=True)
         self.rl_ext_door_set = REVIVENameOnlyWidgetSet(add_label="Add Exterior Door Type",
-                                                       initial_widgets=1,
-                                                       max_widgets=3,
-                                                       label="Ext. Door Type",
-                                                       is_groupbox=True)
+                                                        initial_widgets=1,
+                                                        max_widgets=3,
+                                                        label="Ext. Door Type",
+                                                        is_groupbox=True)
         self.rl_ext_wall_set = REVIVENameOnlyWidgetSet(add_label="Add Exterior Wall Type",
-                                                       initial_widgets=1,
-                                                       max_widgets=3,
-                                                       label="Ext. Wall Type",
-                                                       is_groupbox=True)
+                                                        initial_widgets=1,
+                                                        max_widgets=3,
+                                                        label="Ext. Wall Type",
+                                                        is_groupbox=True)
         self.rl_ext_roof_set = REVIVENameOnlyWidgetSet(add_label="Add Roof Type",
-                                                       initial_widgets=1,
-                                                       max_widgets=3,
-                                                       label="Roof Type",
-                                                       is_groupbox=True)
+                                                        initial_widgets=1,
+                                                        max_widgets=3,
+                                                        label="Roof Type",
+                                                        is_groupbox=True)
         self.rl_ext_floor_set = REVIVENameOnlyWidgetSet(add_label="Add Exterior Floor Type",
-                                                       initial_widgets=1,
-                                                       max_widgets=3,
-                                                       label="Ext. Floor Type",
-                                                       is_groupbox=True)
+                                                        initial_widgets=1,
+                                                        max_widgets=3,
+                                                        label="Ext. Floor Type",
+                                                        is_groupbox=True)
         self.rl_int_floor_set = REVIVENameOnlyWidgetSet(add_label="Add Interior Floor Type",
-                                                       initial_widgets=1,
-                                                       max_widgets=3,
-                                                       label="Int. Floor Type",
-                                                       is_groupbox=True)
+                                                        initial_widgets=1,
+                                                        max_widgets=3,
+                                                        label="Int. Floor Type",
+                                                        is_groupbox=True)
 
         # add all new widgets to layout with labels
         new_layout.addLayout(stack_widgets_vertically(
@@ -431,9 +442,9 @@ class RunlistMakerTab(QWidget):
                         "Infiltration Rate [CFM/sf @50 Pa]"]
         ))
         self.revive_widget_sets = [self.rl_foundation_set, self.rl_window_set,
-                              self.rl_ext_door_set, self.rl_ext_wall_set,
-                              self.rl_ext_roof_set, self.rl_ext_floor_set,
-                              self.rl_int_floor_set]
+                                   self.rl_ext_door_set, self.rl_ext_wall_set,
+                                   self.rl_ext_roof_set, self.rl_ext_floor_set,
+                                   self.rl_int_floor_set]
         self.envelope_items = ["Window", "Exterior Door", "Exterior Wall", "Roof", "Exterior Floor", "Interior Floor"]
         for w_set in self.revive_widget_sets:
             new_layout.addLayout(stack_widgets_horizontally(
@@ -502,6 +513,10 @@ class RunlistMakerTab(QWidget):
         # site and utility
         self.runlist_dict["EPW"] = self.rl_epw_file.text()
         self.runlist_dict["DDY"] = self.rl_ddy_file.text()
+        
+        # --- ADDED COLLECTION OF MORPH TYPE ---
+        self.runlist_dict["MORPH_TYPE"] = self.rl_morph_type.currentText()
+        
         self.runlist_dict["MorphFactorDB1"] = self.rl_morph_factors[0].cleanText()
         self.runlist_dict["MorphFactorDP1"] = self.rl_morph_factors[1].cleanText()
         self.runlist_dict["MorphFactorDB2"] = self.rl_morph_factors[2].cleanText()
@@ -722,5 +737,3 @@ class RunlistMakerTab(QWidget):
             self.parent.display_error(f"Failed to export data: {e}")
 
         validation.validate_runlist_structure(self.required_cols_file, file_path)
-
-
