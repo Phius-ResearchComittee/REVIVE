@@ -22,6 +22,7 @@ from PySide6.QtWidgets import (
     QPushButton,
     QTreeWidget,
     QTreeWidgetItem
+    
 )
 
 
@@ -49,7 +50,8 @@ class REVIVEFilePicker(QLineEdit):
 
         dest = QDir(path)
         self.setText(QDir.fromNativeSeparators(dest.path()))
-
+    def get_filename(self):
+        return self.text().strip()
 
 class REVIVEFolderPicker(QLineEdit):
     def __init__(self, prompt: str, parent=None):
@@ -363,8 +365,154 @@ class REVIVENameOnlyWidgetSet(REVIVEDeletableWidgetSet):
         for x in super().__iter__():
             name_widg = x.findChildren(REVIVEComboBox)[0]
             yield name_widg
+    def clear_widgets(self):
+        for widget in self.all_widgets:
+            widget.setParent(None)  # This removes it from the layout/GUI
+        self.all_widgets.clear()
+    
+class REVIVEGeometryWidgetSet(REVIVEDeletableWidgetSet):
+    def __init__(self, add_label="Add", initial_widgets=1, max_widgets=20, label="Zone", is_groupbox=True, parent=None):
+        self.choices = []  # zone name choices
+        self.window_area_boxes_list = []  # hold per-zone window spinboxes
+        super().__init__(add_label, initial_widgets, max_widgets, label, is_groupbox)
 
+    def create_widget(self):
+        geometry_widget = QWidget()
+        geometry_layout = QVBoxLayout()
 
+        # First row (3 dropdowns)
+        row1 = QHBoxLayout()
+        dropdown_zone = REVIVEComboBox(items=self.choices, parent=geometry_widget)
+        dropdown_zone_type = REVIVEComboBox(items=["Conditioned", "Unconditioned", "Plenum"], parent=geometry_widget)
+        dropdown_mech = REVIVEComboBox(items=["VAV", "CAV", "Natural Vent", "None"], parent=geometry_widget)
+
+        row1.addLayout(self._wrap_with_label("Zone Name", dropdown_zone))
+        row1.addLayout(self._wrap_with_label("Zone Type", dropdown_zone_type))
+        row1.addLayout(self._wrap_with_label("Mechanical System Type", dropdown_mech))
+
+        # Second row (4 line edits)
+        row2 = QHBoxLayout()
+        le_occ = QLineEdit()
+        le_exh = QLineEdit()
+        le_sup = QLineEdit()
+        le_chi = QLineEdit()
+
+        row2.addLayout(self._wrap_with_label("# of occupants", le_occ))
+        row2.addLayout(self._wrap_with_label("Exhaust flow rate", le_exh))
+        row2.addLayout(self._wrap_with_label("Supply flow rate", le_sup))
+        row2.addLayout(self._wrap_with_label("Chi value", le_chi))
+
+        # 4 window areas (stored in a dict per zone)
+        window_row_layouts = []
+        window_boxes = {}
+        for direction in ["North", "East", "West", "South"]:
+            row = QHBoxLayout()
+            label = QLabel(f"{direction} Window Area")
+            spinbox = REVIVESpinBox(step_amt=1)
+            window_boxes[direction] = spinbox
+            row.addWidget(label)
+            row.addWidget(spinbox)
+            window_row_layouts.append(row)
+
+        # Add all layouts
+        geometry_layout.addLayout(row1)
+        geometry_layout.addLayout(row2)
+        for win_row in window_row_layouts:
+            geometry_layout.addLayout(win_row)
+
+        geometry_widget.setLayout(geometry_layout)
+
+        # Save window boxes in list for reference in get_data()
+        self.window_area_boxes_list.append(window_boxes)
+
+        return geometry_widget
+
+    def _wrap_with_label(self, label_text, widget):
+        layout = QVBoxLayout()
+        layout.addWidget(QLabel(label_text))
+        layout.addWidget(widget)
+        return layout
+    @Slot()
+    def delete_widget(self, widget):
+        """
+        Overrides the parent delete_widget to synchronize the window_area_boxes_list.
+        """
+        try:
+            # Find the index of the widget *before* it's removed from self.all_widgets.
+            idx = self.all_widgets.index(widget)
+            
+            # Use the index to remove the corresponding dictionary of spinboxes.
+            self.window_area_boxes_list.pop(idx)
+
+        except ValueError:
+            # This can happen if the widget is not in the list for some reason.
+            # It's safe to ignore in this context and proceed with deletion.
+            pass
+
+        # Now, call the original delete_widget method from the parent class
+        # to handle the GUI removal and cleanup of the self.all_widgets list.
+        super().delete_widget(widget)
+    def __iter__(self):
+        # Match each widget row with its saved spinboxes
+        for i, widget in enumerate(self.all_widgets):
+            combos = widget.findChildren(REVIVEComboBox)
+            edits = widget.findChildren(QLineEdit)
+            if len(combos) >= 3 and len(edits) >= 4:
+                window_areas = self.window_area_boxes_list[i]
+                yield (
+                    combos[0],  # zone name
+                    combos[1],  # zone type
+                    combos[2],  # mechanical system type
+                    edits[0],   # # occupants
+                    edits[1],   # exhaust flow
+                    edits[2],   # supply flow
+                    edits[3],   # chi
+                    window_areas  # dict with north/east/west/south spinboxes
+                )
+
+    def get_data(self):
+        zone_data = {}
+        for (
+            combo_zone, combo_type, combo_mech,
+            edit_occ, edit_exh, edit_sup, edit_chi,
+            win_dict
+        ) in self:
+            zone_name = combo_zone.currentText().strip()
+            if not zone_name:
+                continue
+            zone_data[zone_name] = {
+                "zone_type": combo_type.currentText(),
+                "mechanical_type": combo_mech.currentText(),
+                "#_occupants": edit_occ.text(),
+                "exhaust_flow": edit_exh.text(),
+                "supply_flow": edit_sup.text(),
+                "chi": edit_chi.text(),
+                "window_areas": {
+                    dir_: box.value() for dir_, box in win_dict.items()
+                }
+            }
+        return zone_data
+    def set_data(self, zone_data: dict):
+        self.clear_all_widgets()  # Optional: start clean
+        for zone_name, data in zone_data.items():
+            self.spawn_widget()
+            widget = self.all_widgets[-1]
+            combos = widget.findChildren(REVIVEComboBox)
+            edits = widget.findChildren(QLineEdit)
+            spinboxes = self.window_area_boxes_list[-1]
+
+            if len(combos) >= 3 and len(edits) >= 4:
+                combos[0].setCurrentText(zone_name)
+                combos[1].setCurrentText(data.get("zone_type", ""))
+                combos[2].setCurrentText(data.get("mechanical_type", ""))
+                edits[0].setText(data.get("#_occupants", ""))
+                edits[1].setText(data.get("exhaust_flow", ""))
+                edits[2].setText(data.get("supply_flow", ""))
+                edits[3].setText(data.get("chi", ""))
+
+                win_data = data.get("window_areas", {})
+                for direction, spin in spinboxes.items():
+                    spin.setValue(float(win_data.get(direction, 0)))
 class REVIVEFoundationWidgetSet(REVIVEDeletableWidgetSet):
     def __init__(self, add_label="Add", initial_widgets=1, max_widgets=5, label="", is_groupbox=False, parent=None):
         self.choices = []
@@ -418,6 +566,23 @@ class REVIVEFoundationWidgetSet(REVIVEDeletableWidgetSet):
             insul_combobox = x.findChildren(REVIVEComboBox)[1]
             insul_combobox.change_items(self.choices)
     
+    def clear_widgets(self):
+        for widget in self.all_widgets:
+            widget.setParent(None)  # This removes it from the layout/GUI
+        self.all_widgets.clear()
+    def spawn_widget_from_values(self, data_dict):
+        self.spawn_widget()
+        widget = self.all_widgets[-1]
+
+        comboboxes = widget.findChildren(REVIVEComboBox)
+        dbspinboxes = widget.findChildren(REVIVEDoubleSpinBox)
+
+        if len(comboboxes) >= 2 and len(dbspinboxes) >= 2:
+            comboboxes[0].setCurrentText(data_dict.get("interface", ""))
+            comboboxes[1].setCurrentText(data_dict.get("insulation", ""))
+            dbspinboxes[0].setValue(float(data_dict.get("perimeter", 0)))
+            dbspinboxes[1].setValue(float(data_dict.get("depth", 0)))
+    
     def __iter__(self):
         for x in super().__iter__():
             comboboxes = x.findChildren(REVIVEComboBox)
@@ -428,7 +593,19 @@ class REVIVEFoundationWidgetSet(REVIVEDeletableWidgetSet):
             depth_widg = dbspinboxes[1]
             yield (interface_widg, insulation_widg, perimeter_widg, depth_widg)
         
-    
+# class REVIVEZoneWidgetSet(REVIVEDeletableWidgetSet):
+#     def __init__(self, add_label="Add", initial_widgets=1, max_widgets=5, label="", is_groupbox=False, parent=None):
+#         self.choices = []
+#         super().__init__(add_label, initial_widgets, max_widgets, label, is_groupbox)
+#     def create_widget(self):
+#         zone_widget = QWidget()
+#         zone_hbox = QHBoxLayout()
+        
+#         #create zone name box
+        
+        
+        
+#         return super().create_widget()
 
 class REVIVESpacer(QWidget):
     def __init__(self):

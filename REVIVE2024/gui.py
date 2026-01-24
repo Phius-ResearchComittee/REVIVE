@@ -2,7 +2,6 @@
 import os
 import sys
 
-
 # dependency imports
 from PySide6.QtCore import (
     QSettings,
@@ -16,11 +15,11 @@ from PySide6.QtWidgets import (
 from PySide6.QtGui import QIcon
 
 # custom imports
-import gui_simulate_tab
-import gui_adorb_tab
-import gui_help_tab
-import gui_morph_tab
-import gui_runlist_maker_tab
+import tabs.simulation_tab.gui_simulate_tab as gui_simulate_tab
+import tabs.adorb_tab.gui_adorb_tab as gui_adorb_tab
+import tabs.help_tab.gui_help_tab as gui_help_tab
+import tabs.weathermorphing_tab.gui_morph_tab as gui_morph_tab
+import tabs.runlistmaker_tab.gui_runlist_maker_tab as gui_runlist_maker_tab
 
 class MyWidget(QWidget):
 
@@ -31,17 +30,17 @@ class MyWidget(QWidget):
 
         # set up app identity
         self.app_name = "REVIVEcalc"
-        self.version_no = "24.4.0"
+        self.version_no = "24.2.1"
         self.settings = QSettings("Phius", self.app_name)
         self.curr_dir = os.getcwd()
 
         # set up persistent app resources for exe
         self.app_directory = getattr(sys, "_MEIPASS", self.curr_dir)
         self.icon_file = os.path.join(self.app_directory, "Phius-Logo-RGB__Color_Icon.ico")
-        self.runlist_ops_file = os.path.join(self.app_directory, "phius_runlist_options.json")
+        self.runlist_ops_file = os.path.join(self.app_directory, "json/phius_runlist_options.json")
         self.help_tree_struc_file = os.path.join(self.app_directory, "help_tree_structure.txt")
-        self.help_tree_content_file = os.path.join(self.app_directory, "help_tree_content.json")
-        self.required_cols_file = os.path.join(self.app_directory, "required_columns.json")
+        self.help_tree_content_file = os.path.join(self.app_directory, "json/help_tree_content.json")
+        self.required_cols_file = os.path.join(self.app_directory, "json/required_columns.json")
 
         # customize window
         self.icon = QIcon()
