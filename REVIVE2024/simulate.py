@@ -254,9 +254,9 @@ def error_handler(fn, si: SimInputs, case_id: int, simulation_mgr=None):
     
     # otherwise pass the error to the gui
     # COMMENT OUT BLOCK TO DEBUG
-    # except Exception as e:
-    #     simulation_mgr.raise_exception(str(e))
-    #     return None
+    except Exception as e:
+        simulation_mgr.raise_exception(str(e))
+        return None
 
 
 
@@ -1221,6 +1221,7 @@ def collect_individual_simulation_results(si: SimInputs, case_id: int, simulatio
                 if (mean(TEMPdays[day])-((49.593 - 48.580*np.array(mean(RHdays[day])*0.01) +25.887*np.array(mean(RHdays[day])*0.01)**2))) > 0:
                     moraTotalDays = moraTotalDays+1
             mora_days_units[str(unit)] = moraTotalDays # TODO: ENSURE THAT UNIT IS A UNIQUE NAME
+            vanosTotalHours = sum(hourlyCool[(str(unit).upper()+ ':VANOS:Schedule Values [](Hourly)')].tolist())
         
         # compute max drybulb and dewpoint temp for cooling outage
         MaxDBOut = max(hourlyCool['Environment:Site Outdoor Air Drybulb Temperature [C](Hourly)'].tolist())
@@ -1308,6 +1309,7 @@ def collect_individual_simulation_results(si: SimInputs, case_id: int, simulatio
         "Run Name":case_name,
         "SET ≤ 12.2°C Hours (F)":HeatingSET,
         "Hours < 2°C [hr]":Below2C,
+        "Hours Above Vanos Threshold [hr]":vanosTotalHours,
         # arjun put extensible vanos keys here
         "Total Deadly Days":moraTotalDays,
         "Min outdoor DB [°C]":MinDBOut,
