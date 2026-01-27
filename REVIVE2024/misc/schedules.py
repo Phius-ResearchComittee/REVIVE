@@ -381,6 +381,77 @@ def ResilienceSchedules(idf, outage1start, outage1end, outage2start, outage2end,
         Field_5 = 'For: AllOtherDays',
         Field_6  ='Until: 24:00',
         Field_7 = 0)
+    
+def VanosZoneCalculations(idf, zone):
+
+    # Creating Vanos Schedule and EMS components for a given zone
+    idf.newidfobject('Schedule:Constant',
+        Name = (str(zone) + '_Vanos'),
+        Schedule_Type_Limits_Name = 'Any Number',
+        Hourly_Value = 0
+    )
+
+    idf.newidfobject('Schedule:Constant',
+        Name = (str(zone) + '_VanosLimit'),
+        Schedule_Type_Limits_Name = 'Any Number',
+        Hourly_Value = 0
+    )
+    
+    idf.newidfobject('Output:Table:TimeBins',
+        Key_Value = (str(zone) + '_Vanos'),
+        Variable_Name = 'Schedule Value',
+        Interval_Start = 0,
+        Interval_Size = 0.75,
+        Interval_Count = 1
+    )
+
+    # Trying the above method
+    # idf.newidfobject('Output:Table:Monthly',
+    #     Name = (str(zone) + '_Vanos'),
+    #     Digits_After_Decimal = 0,
+    #     Variable_or_Meter_1_Name = 'Schedule Value',
+    #     Aggregation_Type_for_Variable_or_Meter_1 = 'HoursPositive'
+    # )
+
+    # EMS Scripting
+
+    idf.newidfobject('EnergyManagementSystem:Sensor',
+        Name = (str(zone) + '_IRH'),
+        OutputVariable_or_OutputMeter_Index_Key_Name = (str(zone)),
+        OutputVariable_or_OutputMeter_Name = 'Zone Air Relative Humidity'
+    )
+
+    idf.newidfobject('EnergyManagementSystem:Actuator',
+        Name = (str(zone) + '_Vanos'),
+        Actuated_Component_Unique_Name = (str(zone) + '_Vanos'),
+        Actuated_Component_Type = 'Schedule:Constant',
+        Actuated_Component_Control_Type = 'Schedule Value'
+    )
+
+    idf.newidfobject('EnergyManagementSystem:Actuator',
+        Name = (str(zone) + '_VanosLimit'),
+        Actuated_Component_Unique_Name = (str(zone) + '_VanosLimit'),
+        Actuated_Component_Type = 'Schedule:Constant',
+        Actuated_Component_Control_Type = 'Schedule Value'
+    )
+
+    idf.newidfobject('EnergyManagementSystem:ProgramCallingManager',
+        Name = (str(zone) + '_VanosCaller'),
+        EnergyPlus_Model_Calling_Point = 'EndOfZoneTimestepAfterZoneReporting',
+        Program_Name_1 = (str(zone) + '_VanosCalculation')
+    )
+
+    idf.newidfobject('EnergyManagementSystem:Program',
+        Name = (str(zone) + '_VanosCalculation'),
+        Program_Line_1 = ('SET ' + (str(zone) + '_Vanos') + ' = 0'),
+        Program_Line_2 = ('SET ' + (str(zone) + '_VanosLimit') + ' = (-0.0032 *' + (str(zone) + '_IDB') + '^5) + (0.55 * ' + (str(zone) + '_IDB') + '^4) - (37.9 * ' + (str(zone) + '_IDB') + '^3) + (1299.7 * ' + (str(zone) + '_IDB') + '^2) - (22167.2 * ' + (str(zone) + '_IDB') + ') + 151867'),
+        Program_Line_3 = ('IF ' + (str(zone) + '_IRH') +' > ' + (str(zone) + '_VanosLimit')),
+        Program_Line_4 = ('SET ' + (str(zone) + '_Vanos') + ' = ' + (str(zone) + '_Vanos') + ' + 1'),
+        Program_Line_5 = 'ENDIF'
+        )
+
+
+# def VanosGeneralCalculations(zone):
 
 def AnnualControls(idf, unit_list):
     for zone in unit_list:

@@ -29,7 +29,7 @@ import math
 
 
 def WeatherMorphSine(idf, outage1start, outage1end, outage2start, outage2end,
-                     MorphFactorDB1, MorphFactorDP1, MorphFactorDB2, MorphFactorDP2):
+                     MorphFactorDB1, MorphFactorDP1, MorphFactorDB2, MorphFactorDP2, MorphType):
     
     if MorphFactorDB1 != 0:
         Morph1 = 1
@@ -112,39 +112,115 @@ def WeatherMorphSine(idf, outage1start, outage1end, outage2start, outage2end,
         Actuated_Component_Type = 'Weather Data',
         Actuated_Component_Control_Type = 'Outdoor Dew Point')
     
-    idf.newidfobject('EnergyManagementSystem:ProgramCallingManager',
-        Name = 'WeatherMorph',
-        EnergyPlus_Model_Calling_Point  ='BeginZoneTimestepBeforeSetCurrentWeather',
-        Program_Name_1 = 'DBMorph',
-        Program_Name_2 = 'DPMorph')
+    # --- LOGIC SPLIT START ---
     
-    idf.newidfobject('EnergyManagementSystem:Program',
-        Name = 'DBMorph',
-        Program_Line_1 = 'IF MorphOnOff == 1',
-        Program_Line_2 = 'SET ODB2 = (@TodayOutDryBulbTemp Hour TimeStepNum) + ' + str(MorphFactorDB1) + '*(@Sin (PI*Count/168))',
-        Program_Line_3 = 'SET Count2 = Count + 0.25',
-        Program_Line_4 = 'ELSEIF MorphOnOff == 2',
-        Program_Line_5 = 'SET ODB2 = (@TodayOutDryBulbTemp Hour TimeStepNum) +' + str(MorphFactorDB2) + '*(@Sin (PI*Count/168))',
-        Program_Line_6 = 'SET Count2 = Count + 0.25',
-        Program_Line_7 = 'ELSE',
-        Program_Line_8 = 'SET ODB2 = Null',
-        Program_Line_9 = 'SET Count2 = 0',
-        Program_Line_10 = 'ENDIF',
-        Program_Line_11 = 'RETURN')
+    if MorphType == "Classic Morph":
+        # Classic Morphing Protocol
+        idf.newidfobject('EnergyManagementSystem:ProgramCallingManager',
+            Name = 'WeatherMorph',
+            EnergyPlus_Model_Calling_Point  ='BeginZoneTimestepBeforeSetCurrentWeather',
+            Program_Name_1 = 'DBMorph',
+            Program_Name_2 = 'DPMorph')
+        
+        idf.newidfobject('EnergyManagementSystem:Program',
+            Name = 'DBMorph',
+            Program_Line_1 = 'IF MorphOnOff == 1',
+            Program_Line_2 = 'SET ODB2 = (@TodayOutDryBulbTemp Hour TimeStepNum) + ' + str(MorphFactorDB1) + '*(@Sin (PI*Count/168))',
+            Program_Line_3 = 'SET Count2 = Count + 0.25',
+            Program_Line_4 = 'ELSEIF MorphOnOff == 2',
+            Program_Line_5 = 'SET ODB2 = (@TodayOutDryBulbTemp Hour TimeStepNum) +' + str(MorphFactorDB2) + '*(@Sin (PI*Count/168))',
+            Program_Line_6 = 'SET Count2 = Count + 0.25',
+            Program_Line_7 = 'ELSE',
+            Program_Line_8 = 'SET ODB2 = Null',
+            Program_Line_9 = 'SET Count2 = 0',
+            Program_Line_10 = 'ENDIF',
+            Program_Line_11 = 'RETURN')
 
-    idf.newidfobject('EnergyManagementSystem:Program',
-        Name = 'DPMorph',
-        Program_Line_1 = 'IF MorphOnOff == 1',
-        Program_Line_2 = 'SET ODP2 = (@TodayOutDewPointTemp Hour TimeStepNum) + ' + str(MorphFactorDP1) + '*(@Sin (PI*Count/168))',
-        Program_Line_3 = 'SET Count2 = Count + 0.25',
-        Program_Line_4 = 'ELSEIF MorphOnOff == 2',
-        Program_Line_5 = 'SET ODP2 = (@TodayOutDewPointTemp Hour TimeStepNum) +' + str(MorphFactorDP2) + '*(@Sin (PI*Count/168))',
-        Program_Line_6 = 'SET Count2 = Count + 0.25',
-        Program_Line_7 = 'ELSE',
-        Program_Line_8 = 'SET ODP2 = Null',
-        Program_Line_9 = 'SET Count2 = 0',
-        Program_Line_10 = 'ENDIF',
-        Program_Line_11 = 'RETURN')
+        idf.newidfobject('EnergyManagementSystem:Program',
+            Name = 'DPMorph',
+            Program_Line_1 = 'IF MorphOnOff == 1',
+            Program_Line_2 = 'SET ODP2 = (@TodayOutDewPointTemp Hour TimeStepNum) + ' + str(MorphFactorDP1) + '*(@Sin (PI*Count/168))',
+            Program_Line_3 = 'SET Count2 = Count + 0.25',
+            Program_Line_4 = 'ELSEIF MorphOnOff == 2',
+            Program_Line_5 = 'SET ODP2 = (@TodayOutDewPointTemp Hour TimeStepNum) +' + str(MorphFactorDP2) + '*(@Sin (PI*Count/168))',
+            Program_Line_6 = 'SET Count2 = Count + 0.25',
+            Program_Line_7 = 'ELSE',
+            Program_Line_8 = 'SET ODP2 = Null',
+            Program_Line_9 = 'SET Count2 = 0',
+            Program_Line_10 = 'ENDIF',
+            Program_Line_11 = 'RETURN')
+            
+    elif MorphType == "Peaked Morph":
+        # Peaked Morphing Protocol
+        idf.newidfobject('EnergyManagementSystem:ProgramCallingManager',
+            Name = 'WeatherMorph',
+            EnergyPlus_Model_Calling_Point  ='BeginZoneTimestepBeforeSetCurrentWeather',
+            Program_Name_1 = 'DBMorph',
+            Program_Name_2 = 'DPMorph')
+        
+        idf.newidfobject('EnergyManagementSystem:Program',
+            Name = 'DBMorph',
+            Program_Line_1 = 'IF MorphOnOff == 1',
+            Program_Line_2 = 'SET ODB2 = (@TodayOutDryBulbTemp Hour TimeStepNum) + ' + str(MorphFactorDB1) + '*(2 * @Sin (PI*Count/168))',
+            Program_Line_3 = 'SET Count2 = Count + 0.25',
+            Program_Line_4 = 'ELSEIF MorphOnOff == 2',
+            Program_Line_5 = 'SET ODB2 = (@TodayOutDryBulbTemp Hour TimeStepNum) +' + str(MorphFactorDB2) + '*(2 * @Sin (PI*Count/168))',
+            Program_Line_6 = 'SET Count2 = Count + 0.25',
+            Program_Line_7 = 'ELSE',
+            Program_Line_8 = 'SET ODB2 = Null',
+            Program_Line_9 = 'SET Count2 = 0',
+            Program_Line_10 = 'ENDIF',
+            Program_Line_11 = 'RETURN')
+
+        idf.newidfobject('EnergyManagementSystem:Program',
+            Name = 'DPMorph',
+            Program_Line_1 = 'IF MorphOnOff == 1',
+            Program_Line_2 = 'SET ODP2 = (@TodayOutDewPointTemp Hour TimeStepNum) + ' + str(MorphFactorDP1) + '*(@Sin (PI*Count/168))',
+            Program_Line_3 = 'SET Count2 = Count + 0.25',
+            Program_Line_4 = 'ELSEIF MorphOnOff == 2',
+            Program_Line_5 = 'SET ODP2 = (@TodayOutDewPointTemp Hour TimeStepNum) +' + str(MorphFactorDP2) + '*(@Sin (PI*Count/168))',
+            Program_Line_6 = 'SET Count2 = Count + 0.25',
+            Program_Line_7 = 'ELSE',
+            Program_Line_8 = 'SET ODP2 = Null',
+            Program_Line_9 = 'SET Count2 = 0',
+            Program_Line_10 = 'ENDIF',
+            Program_Line_11 = 'RETURN')
+    
+    # --- LOGIC SPLIT END ---
+    
+    # idf.newidfobject('EnergyManagementSystem:ProgramCallingManager',
+    #     Name = 'WeatherMorph',
+    #     EnergyPlus_Model_Calling_Point  ='BeginZoneTimestepBeforeSetCurrentWeather',
+    #     Program_Name_1 = 'DBMorph',
+    #     Program_Name_2 = 'DPMorph')
+    
+    # idf.newidfobject('EnergyManagementSystem:Program',
+    #     Name = 'DBMorph',
+    #     Program_Line_1 = 'IF MorphOnOff == 1',
+    #     Program_Line_2 = 'SET ODB2 = (@TodayOutDryBulbTemp Hour TimeStepNum) + ' + str(MorphFactorDB1) + '*(@Sin (PI*Count/168))',
+    #     Program_Line_3 = 'SET Count2 = Count + 0.25',
+    #     Program_Line_4 = 'ELSEIF MorphOnOff == 2',
+    #     Program_Line_5 = 'SET ODB2 = (@TodayOutDryBulbTemp Hour TimeStepNum) +' + str(MorphFactorDB2) + '*(@Sin (PI*Count/168))',
+    #     Program_Line_6 = 'SET Count2 = Count + 0.25',
+    #     Program_Line_7 = 'ELSE',
+    #     Program_Line_8 = 'SET ODB2 = Null',
+    #     Program_Line_9 = 'SET Count2 = 0',
+    #     Program_Line_10 = 'ENDIF',
+    #     Program_Line_11 = 'RETURN')
+
+    # idf.newidfobject('EnergyManagementSystem:Program',
+    #     Name = 'DPMorph',
+    #     Program_Line_1 = 'IF MorphOnOff == 1',
+    #     Program_Line_2 = 'SET ODP2 = (@TodayOutDewPointTemp Hour TimeStepNum) + ' + str(MorphFactorDP1) + '*(@Sin (PI*Count/168))',
+    #     Program_Line_3 = 'SET Count2 = Count + 0.25',
+    #     Program_Line_4 = 'ELSEIF MorphOnOff == 2',
+    #     Program_Line_5 = 'SET ODP2 = (@TodayOutDewPointTemp Hour TimeStepNum) +' + str(MorphFactorDP2) + '*(@Sin (PI*Count/168))',
+    #     Program_Line_6 = 'SET Count2 = Count + 0.25',
+    #     Program_Line_7 = 'ELSE',
+    #     Program_Line_8 = 'SET ODP2 = Null',
+    #     Program_Line_9 = 'SET Count2 = 0',
+    #     Program_Line_10 = 'ENDIF',
+    #     Program_Line_11 = 'RETURN')
 
 
 def ComputeWeatherMorphFactors(epw_csv, summer_outage_start, winter_outage_start,

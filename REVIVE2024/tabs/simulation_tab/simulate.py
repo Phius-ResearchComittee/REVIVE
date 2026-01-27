@@ -301,7 +301,7 @@ def resilience_simulation_prep(si: SimInputs, case_id: int, simulation_mgr=None)
     ihg_dict = {}
     for Nbr in range(9):
         total_appliance_cost = fridge = dishWasher = clothesWasher = clothesDryer = fracHighEff = lights_cost = 0
-        for appliance_name, row in constructionList.filter(items=appliance_list, axis=0).iterrows():
+        for appliance_name, row in constructionList[constructionList.index.isin(appliance_list)].iterrows():
             rating = float(row["Appliance_Rating"]) # must be float for fractional efficiency
             cost = int(row["Mechanical Cost"])
             if 'FRIDGE' in appliance_name:
@@ -407,6 +407,8 @@ def resilience_simulation_prep(si: SimInputs, case_id: int, simulation_mgr=None)
     MorphFactorDP1 = runList['MorphFactorDP1'][runCount]
     MorphFactorDB2 = runList['MorphFactorDB2'][runCount]
     MorphFactorDP2 = runList['MorphFactorDP2'][runCount]
+    # MorphType
+    MorphType = runList['MORPH_TYPE'][runCount]
 
     # Controls 
     NatVentType  = str(runList['NAT_VENT_TYPE'][runCount])
@@ -598,8 +600,7 @@ def resilience_simulation_prep(si: SimInputs, case_id: int, simulation_mgr=None)
             constructionList['Layer_10'][item]]
 
             layerList = [x for x in layers if str(x) != 'nan']
-
-        envelope.constructionBuilder(idf1, constructionList['Name'][item],layerList)
+            envelope.constructionBuilder(idf1, constructionList['Name'][item],layerList)
 
     # Envelope inputs
     
@@ -641,9 +642,10 @@ def resilience_simulation_prep(si: SimInputs, case_id: int, simulation_mgr=None)
     
     for zone in unit_list:
         hvac.ResilienceERV(idf1, zone, vent_system_type, occ, ervSense, ervLatent)
+        schedules.VanosZoneCalculations(idf1, zone)
 
     weatherMorph.WeatherMorphSine(idf1, outage1start, outage1end, outage2start, outage2end,
-            MorphFactorDB1, MorphFactorDP1, MorphFactorDB2, MorphFactorDP2)
+            MorphFactorDB1, MorphFactorDP1, MorphFactorDB2, MorphFactorDP2, MorphType)
 
     # CHECKPOINT: before resilience simulation starts
     checkpoint(simulation_mgr)
@@ -1021,7 +1023,7 @@ def compute_adorb_costs(si: SimInputs, case_id: int, simulation_mgr=None):
     # compute direct maintenance and embodied C02 for appliances
     dirMR = carbonMeasureCost
     constructionList = pd.read_csv(si.construction_db)
-    constructionList['Name'] = constructionList['Name'].apply(lambda x: x.lower())
+    constructionList['Name'] = constructionList['Name'].apply(lambda x: x.lower() if isinstance(x, str) else x)
     constructionList = constructionList.set_index("Name")
     countryEmissionsDatabase = countryEmissionsDatabase.set_index("COUNTRY")
     price_of_carbon = 0.25 # units: $/kg according to spec
@@ -1174,6 +1176,9 @@ def collect_individual_simulation_results(si: SimInputs, case_id: int, simulatio
                 if (mean(TEMPdays[day])-((49.593 - 48.580*np.array(mean(RHdays[day])*0.01) +25.887*np.array(mean(RHdays[day])*0.01)**2))) > 0:
                     moraTotalDays = moraTotalDays+1
             mora_days_units[str(unit)] = moraTotalDays # TODO: ENSURE THAT UNIT IS A UNIQUE NAME
+            vanos_col = str(unit).upper()+ '_VANOS:Schedule Value [](Hourly)'
+            print(vanos_col)
+            vanosTotalHours = sum(hourlyCool[vanos_col].tolist()) if vanos_col in hourlyCool.columns else 0
         
         # compute max drybulb and dewpoint temp for cooling outage
         MaxDBOut = max(hourlyCool['Environment:Site Outdoor Air Drybulb Temperature [C](Hourly)'].tolist())
@@ -1261,6 +1266,7 @@ def collect_individual_simulation_results(si: SimInputs, case_id: int, simulatio
         "Run Name":case_name,
         "SET ≤ 12.2°C Hours (F)":HeatingSET,
         "Hours < 2°C [hr]":Below2C,
+        "Hours Above Vanos Threshold [hr]":vanosTotalHours,
         "Total Deadly Days":moraTotalDays,
         "Min outdoor DB [°C]":MinDBOut,
         "Min outdoor DP [°C]":MinDPOut,
