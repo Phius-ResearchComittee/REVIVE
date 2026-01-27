@@ -44,7 +44,7 @@ def demand_limiting(idf, zone):
         Reset_Control = 'Fixed',
         Minimum_Reset_Duration = 30,
         Maximum_Heating_Setpoint_Reset = 20,
-        Maximum_Cooling_Setpoint_Reset = 27,
+        Maximum_Cooling_Setpoint_Reset = 30,
         # Reset_Step_Change = ,
         Selection_Control = 'All',
         # Rotation_Duration = ,

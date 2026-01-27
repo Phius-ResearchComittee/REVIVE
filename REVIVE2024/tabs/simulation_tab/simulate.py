@@ -244,9 +244,9 @@ def error_handler(fn, si: SimInputs, case_id: int, simulation_mgr=None):
     
     # otherwise pass the error to the gui
     # COMMENT OUT BLOCK TO DEBUG
-    # except Exception as e:
-    #     simulation_mgr.raise_exception(str(e))
-    #     return None
+    except Exception as e:
+        simulation_mgr.raise_exception(str(e))
+        return None
 
 
 
@@ -635,7 +635,7 @@ def resilience_simulation_prep(si: SimInputs, case_id: int, simulation_mgr=None)
     schedules.zeroSch(idf1, 'BAClothesWasherSchedule')
     schedules.zeroSch(idf1, 'BADishwasherSchedule')
     schedules.ResilienceSchedules(idf1, outage1start, outage1end, outage2start, outage2end, 
-                                  coolingOutageStart,coolingOutageEnd,NatVentAvail,
+                                  coolingOutageStart,coolingOutageEnd,NatVentAvail,NatVentType,
                                   demandCoolingAvail,shadingAvail,outage1type)
     
     schedules.ResilienceControls(idf1, unit_list, NatVentType)
@@ -1177,7 +1177,6 @@ def collect_individual_simulation_results(si: SimInputs, case_id: int, simulatio
                     moraTotalDays = moraTotalDays+1
             mora_days_units[str(unit)] = moraTotalDays # TODO: ENSURE THAT UNIT IS A UNIQUE NAME
             vanos_col = str(unit).upper()+ '_VANOS:Schedule Value [](Hourly)'
-            print(vanos_col)
             vanosTotalHours = sum(hourlyCool[vanos_col].tolist()) if vanos_col in hourlyCool.columns else 0
         
         # compute max drybulb and dewpoint temp for cooling outage

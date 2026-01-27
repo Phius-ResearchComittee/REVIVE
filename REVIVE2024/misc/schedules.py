@@ -56,7 +56,7 @@ def zeroSch(idf,nameSch):
     )
 
 def ResilienceSchedules(idf, outage1start, outage1end, outage2start, outage2end, 
-                        coolingOutageStart,coolingOutageEnd,NatVentAvail,
+                        coolingOutageStart,coolingOutageEnd,NatVentAvail,NatVentType,
                         demandCoolingAvail,shadingAvail,outage1type):
     
     outage1start = datetime.datetime.strptime(outage1start, "%d-%b").strftime("%m/%d")
@@ -278,51 +278,76 @@ def ResilienceSchedules(idf, outage1start, outage1end, outage2start, outage2end,
             Field_19 = 'Until: 24:00',
             Field_20 = 1.0
             )
+
+    if NatVentType == "NatVent":
+        idf.newidfobject('Schedule:Compact',
+            Name = 'NatVent',
+            Schedule_Type_Limits_Name = 'On/Off',
+            Field_1 = ('Through: ' + str(coolingOutageStart)),
+            Field_2 = 'For: SummerDesignDay',
+            Field_3 = 'Until: 24:00',
+            Field_4 = 0,
+            Field_5 = 'For: AllOtherDays',
+            Field_6  ='Until: 24:00',
+            Field_7 = 0,
+            Field_8 = ('Through: ' + str(coolingOutageEnd)),
+            Field_9 = 'For: SummerDesignDay',
+            Field_10 = 'Until: 24:00',
+            Field_11 = 0,
+            Field_12 = 'For: AllOtherDays',
+            Field_13  ='Until: 24:00',
+            Field_14 = NatVentAvail,
+            Field_15 = 'Through: 12/31', 
+            Field_16 = 'For: AllDays',
+            Field_17 = 'Until: 24:00',
+            Field_18 = 0)
         
-    idf.newidfobject('Schedule:Compact',
-        Name = 'NatVent',
-        Schedule_Type_Limits_Name = 'On/Off',
-        Field_1 = ('Through: ' + str(coolingOutageStart)),
-        Field_2 = 'For: SummerDesignDay',
-        Field_3 = 'Until: 24:00',
-        Field_4 = 0,
-        Field_5 = 'For: AllOtherDays',
-        Field_6  ='Until: 24:00',
-        Field_7 = 0,
-        Field_8 = ('Through: ' + str(coolingOutageEnd)),
-        Field_9 = 'For: SummerDesignDay',
-        Field_10 = 'Until: 24:00',
-        Field_11 = 0,
-        Field_12 = 'For: AllOtherDays',
-        Field_13  ='Until: 24:00',
-        Field_14 = NatVentAvail,
-        Field_15 = 'Through: 12/31', 
-        Field_16 = 'For: AllDays',
-        Field_17 = 'Until: 24:00',
-        Field_18 = 0)
-
-    idf.newidfobject('Schedule:Compact',
-        Name = 'SchNatVent',
-        Schedule_Type_Limits_Name = 'On/Off',
-        Field_1 = ('Through: ' + str(coolingOutageStart)),
-        Field_2 = 'For: SummerDesignDay',
-        Field_3 = 'Until: 24:00',
-        Field_4 = 0,
-        Field_5 = 'For: AllOtherDays',
-        Field_6  ='Until: 24:00',
-        Field_7 = 0,
-        Field_8 = ('Through: ' + str(coolingOutageEnd)),
-        Field_9 = 'For: SummerDesignDay',
-        Field_10 = 'Until: 24:00',
-        Field_11 = 0,
-        Field_12 = 'For: AllOtherDays',
-        Field_13  ='Until: 24:00',
-        Field_14 = NatVentAvail,
-        Field_15 = 'Through: 12/31', 
-        Field_16 = 'For: AllDays',
-        Field_17 = 'Until: 24:00',
-        Field_18 = 0)
-
+    if NatVentType == "SchNatVent":
+        idf.newidfobject('Schedule:Compact',
+            Name = 'SchNatVent',
+            Schedule_Type_Limits_Name = 'On/Off',
+            Field_1 = ('Through: ' + str(coolingOutageStart)),
+            Field_2 = 'For: SummerDesignDay',
+            Field_3 = 'Until: 24:00',
+            Field_4 = 0,
+            Field_5 = 'For: AllOtherDays',
+            Field_6  ='Until: 24:00',
+            Field_7 = 0,
+            Field_8 = ('Through: ' + str(coolingOutageEnd)),
+            Field_9 = 'For: SummerDesignDay',
+            Field_10 = 'Until: 24:00',
+            Field_11 = 0,
+            Field_12 = 'For: AllOtherDays',
+            Field_13  ='Until: 24:00',
+            Field_14 = NatVentAvail,
+            Field_15 = 'Through: 12/31', 
+            Field_16 = 'For: AllDays',
+            Field_17 = 'Until: 24:00',
+            Field_18 = 0)
+        
+    if NatVentType == "DCinterlock":
+        idf.newidfobject('Schedule:Compact',
+            Name = 'DCinterlock',
+            Schedule_Type_Limits_Name = 'On/Off',
+            Field_1 = ('Through: ' + str(coolingOutageStart)),
+            Field_2 = 'For: SummerDesignDay',
+            Field_3 = 'Until: 24:00',
+            Field_4 = 0,
+            Field_5 = 'For: AllOtherDays',
+            Field_6  ='Until: 24:00',
+            Field_7 = 0,
+            Field_8 = ('Through: ' + str(coolingOutageEnd)),
+            Field_9 = 'For: SummerDesignDay',
+            Field_10 = 'Until: 24:00',
+            Field_11 = 0,
+            Field_12 = 'For: AllOtherDays',
+            Field_13  ='Until: 24:00',
+            Field_14 = NatVentAvail,
+            Field_15 = 'Through: 12/31', 
+            Field_16 = 'For: AllDays',
+            Field_17 = 'Until: 24:00',
+            Field_18 = 0)
+        
     idf.newidfobject('Schedule:Compact',
         Name = 'OutageCooling',
         Schedule_Type_Limits_Name = 'On/Off',
@@ -540,23 +565,48 @@ def ResilienceControls(idf, unit_list, NatVentType):
             Hourly_Value = 0
             )
         
-        idf.newidfobject('EnergyManagementSystem:Program',
-            Name = (str(zone) +'_SummerVentWB'),
-            Program_Line_1 = ('IF ' + (str(zone) + '_IWB') + '> 1+ OWB && NatVentAvail > 0 && Clock > 0'),
-            Program_Line_2 = ('SET ' + (str(zone) + 'WindowEconomizer') + ' = 1'),
-            Program_Line_3 = 'SET DC_Coolings = 0',
-            Program_Line_4 = 'ELSE',
-            Program_Line_5 = ('SET ' + (str(zone) + 'WindowEconomizer') + ' = 0'),
-            Program_Line_6 = 'ENDIF')
+        # idf.newidfobject('EnergyManagementSystem:Program',
+        #     Name = (str(zone) +'_SummerVentWB'),
+        #     Program_Line_1 = ('IF ' + (str(zone) + '_IWB') + '> 1+ OWB && NatVentAvail > 0 && Clock > 0'),
+        #     Program_Line_2 = ('SET ' + (str(zone) + 'WindowEconomizer') + ' = 1'),
+        #     Program_Line_3 = 'SET DC_Coolings = 0',
+        #     Program_Line_4 = 'ELSE',
+        #     Program_Line_5 = ('SET ' + (str(zone) + 'WindowEconomizer') + ' = 0'),
+        #     Program_Line_6 = 'ENDIF')
 
-        idf.newidfobject('EnergyManagementSystem:Program',
-            Name = (str(zone) + '_SummerVentDB'),
-            Program_Line_1 = ('IF ' + (str(zone) + '_IDB') + '> 1+ ODB && NatVentAvail > 0 && Clock > 0'),
-            Program_Line_2 = ('SET ' + (str(zone) + 'WindowEconomizer') + ' = 1'),
-            Program_Line_3 = 'SET DC_Coolings = 0',
-            Program_Line_4 = 'ELSE',
-            Program_Line_5 = ('SET ' + (str(zone) + 'WindowEconomizer') + ' = 0'),
-            Program_Line_6 = 'ENDIF')
+        if NatVentType == "SchNatVent":
+            idf.newidfobject('EnergyManagementSystem:Program',
+                Name = (str(zone) + '_SummerVentDB'),
+                Program_Line_1 = ('IF ' + (str(zone) + '_IDB') + '> 1+ ODB && NatVentAvail > 0 && Clock > 0'),
+                Program_Line_2 = ('SET ' + (str(zone) + 'WindowEconomizer') + ' = 1'),
+                Program_Line_3 = 'SET DC_Coolings = 0',
+                Program_Line_4 = 'ELSE',
+                Program_Line_5 = ('SET ' + (str(zone) + 'WindowEconomizer') + ' = 0'),
+                Program_Line_6 = 'ENDIF')
+            
+        if NatVentType == "NatVent":
+            idf.newidfobject('EnergyManagementSystem:Program',
+                Name = (str(zone) + '_SummerVentDB'),
+                Program_Line_1 = ('IF ' + (str(zone) + '_IDB') + '> 1+ ODB && NatVentAvail > 0'),
+                Program_Line_2 = ('SET ' + (str(zone) + 'WindowEconomizer') + ' = 1'),
+                Program_Line_3 = 'SET DC_Coolings = 0',
+                Program_Line_4 = 'ELSE',
+                Program_Line_5 = ('SET ' + (str(zone) + 'WindowEconomizer') + ' = 0'),
+                Program_Line_6 = 'ENDIF')
+            
+        if NatVentType == "DCinterlock":
+            idf.newidfobject('EnergyManagementSystem:Program',
+                Name = (str(zone) + '_SummerVentDB'),
+                Program_Line_1 = ('IF ' + (str(zone) + '_IDB') + '> 1+ ODB && ' + (str(zone) + '_IDB') + ' < 28 && NatVentAvail > 0'),
+                Program_Line_2 = ('SET ' + (str(zone) + 'WindowEconomizer') + ' = 1'),
+                Program_Line_3 = 'SET DC_Coolings = 0',
+                Program_Line_4 = 'ELSEIF NatVentAvail > 0',
+                Program_Line_5 = ('SET ' + (str(zone) + 'WindowEconomizer') + ' = 0'),
+                Program_Line_6 = 'SET DC_Coolings = 1',
+                Program_Line_7 = 'ELSE',
+                Program_Line_8 = ('SET ' + (str(zone) + 'WindowEconomizer') + ' = 0'),
+                Program_Line_9 = 'SET DC_Coolings = 0',
+                Program_Line_10 = 'ENDIF')
         
         idf.newidfobject('EnergyManagementSystem:Program',
             Name = (str(zone) + '_TBDelta'),
