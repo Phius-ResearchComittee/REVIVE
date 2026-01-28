@@ -536,6 +536,12 @@ def ResilienceControls(idf, unit_list, NatVentType):
             OutputVariable_or_OutputMeter_Index_Key_Name = (str(zone) + '_Zone_Air_Node'),
             OutputVariable_or_OutputMeter_Name = 'System Node Wetbulb Temperature')
         
+        
+        idf.newidfobject('EnergyManagementSystem:Sensor',
+            Name = (str(zone) + '_IDh'),
+            OutputVariable_or_OutputMeter_Index_Key_Name = (str(zone) + '_Zone_Air_Node'),
+            OutputVariable_or_OutputMeter_Name = 'System Node Enthalpy')    
+
         idf.newidfobject('EnergyManagementSystem:Sensor',
             Name = (str(zone) + '_IDB'),
             OutputVariable_or_OutputMeter_Index_Key_Name = str(zone),
@@ -565,14 +571,6 @@ def ResilienceControls(idf, unit_list, NatVentType):
             Hourly_Value = 0
             )
         
-        # idf.newidfobject('EnergyManagementSystem:Program',
-        #     Name = (str(zone) +'_SummerVentWB'),
-        #     Program_Line_1 = ('IF ' + (str(zone) + '_IWB') + '> 1+ OWB && NatVentAvail > 0 && Clock > 0'),
-        #     Program_Line_2 = ('SET ' + (str(zone) + 'WindowEconomizer') + ' = 1'),
-        #     Program_Line_3 = 'SET DC_Coolings = 0',
-        #     Program_Line_4 = 'ELSE',
-        #     Program_Line_5 = ('SET ' + (str(zone) + 'WindowEconomizer') + ' = 0'),
-        #     Program_Line_6 = 'ENDIF')
 
         if NatVentType == "SchNatVent":
             idf.newidfobject('EnergyManagementSystem:Program',
@@ -597,7 +595,7 @@ def ResilienceControls(idf, unit_list, NatVentType):
         if NatVentType == "DCinterlock":
             idf.newidfobject('EnergyManagementSystem:Program',
                 Name = (str(zone) + '_SummerVentDB'),
-                Program_Line_1 = ('IF ' + (str(zone) + '_IDB') + '> 1+ ODB && ' + (str(zone) + '_IDB') + ' < 28 && NatVentAvail > 0'),
+                Program_Line_1 = ('IF ' + (str(zone) + '_IDh') + '> ODh && ' + (str(zone) + '_IDB') + ' < 29.5 && NatVentAvail > 0'),
                 Program_Line_2 = ('SET ' + (str(zone) + 'WindowEconomizer') + ' = 1'),
                 Program_Line_3 = 'SET DC_Coolings = 0',
                 Program_Line_4 = 'ELSEIF NatVentAvail > 0',
@@ -633,6 +631,11 @@ def ResilienceControls(idf, unit_list, NatVentType):
         Name = 'ODB',
         OutputVariable_or_OutputMeter_Index_Key_Name ='*',
         OutputVariable_or_OutputMeter_Name = 'Site Outdoor Air Drybulb Temperature')
+
+    idf.newidfobject('EnergyManagementSystem:Sensor',
+        Name = 'ODh',
+        OutputVariable_or_OutputMeter_Index_Key_Name ='*',
+        OutputVariable_or_OutputMeter_Name = 'Site Outdoor Air Enthalpy')
 
     idf.newidfobject('EnergyManagementSystem:Sensor',
         Name = 'NatVentAvail',
