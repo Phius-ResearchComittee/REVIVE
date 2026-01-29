@@ -65,7 +65,7 @@ def SimulationOutputs(idf):
                 'Zone Ventilation Mass Flow Rate', 'Schedule Value', 'Electric Equipment Electricity Energy',
                 'Facility Total Purchased Electricity Energy', 'Zone Heat Index', 'Zone Thermal Comfort Pierce Model Standard Effective Temperature', 'Site Outdoor Air Relative Humidity',
                 'Site Outdoor Air Dewpoint Temperature', 'Zone Mean Air Dewpoint Temperature','Facility Total Surplus Electricity Energy',
-                'Outdoor Air Enthalpy', 'System Node Enthalpy']
+                'Outdoor Air Enthalpy', 'System Node Enthalpy','Zone Packaged Terminal Heat Pump Total Cooling Rate', 'Site Outdoor Air Enthalpy']
     meterVars = ['InteriorLights:Electricity', 'InteriorEquipment:Electricity', 'Fans:Electricity', 'Heating:Electricity', 'Cooling:Electricity', 'ElectricityNet:Facility',
                 'NaturalGas:Facility'] 
     for x in outputVars:

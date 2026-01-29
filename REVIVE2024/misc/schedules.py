@@ -526,7 +526,7 @@ def TBschedules(idf, unit_list):
 
 
 
-def ResilienceControls(idf, unit_list, NatVentType):
+def ResilienceControls(idf, unit_list, NatVentType, dh, IDBh):
 
     for zone in unit_list:
         # zone = str(zone).replace(' ','_')
@@ -570,7 +570,6 @@ def ResilienceControls(idf, unit_list, NatVentType):
             Schedule_Type_Limits_Name = 'Fraction',
             Hourly_Value = 0
             )
-        
 
         if NatVentType == "SchNatVent":
             idf.newidfobject('EnergyManagementSystem:Program',
@@ -595,7 +594,7 @@ def ResilienceControls(idf, unit_list, NatVentType):
         if NatVentType == "DCinterlock":
             idf.newidfobject('EnergyManagementSystem:Program',
                 Name = (str(zone) + '_SummerVentDB'),
-                Program_Line_1 = ('IF ' + (str(zone) + '_IDh') + '> ODh && ' + (str(zone) + '_IDB') + ' < 29.5 && NatVentAvail > 0'),
+                Program_Line_1 = ('IF ' + (str(zone) + '_IDh') + '> ' + str(dh) + ' + ODh && ' + (str(zone) + '_IDB') + ' < ' + str(IDBh) + ' && NatVentAvail > 0'),
                 Program_Line_2 = ('SET ' + (str(zone) + 'WindowEconomizer') + ' = 1'),
                 Program_Line_3 = 'SET DC_Coolings = 0',
                 Program_Line_4 = 'ELSEIF NatVentAvail > 0',

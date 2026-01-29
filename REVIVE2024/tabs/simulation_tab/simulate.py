@@ -244,9 +244,9 @@ def error_handler(fn, si: SimInputs, case_id: int, simulation_mgr=None):
     
     # otherwise pass the error to the gui
     # COMMENT OUT BLOCK TO DEBUG
-    except Exception as e:
-        simulation_mgr.raise_exception(str(e))
-        return None
+    # except Exception as e:
+    #     simulation_mgr.raise_exception(str(e))
+    #     return None
 
 
 
@@ -409,6 +409,9 @@ def resilience_simulation_prep(si: SimInputs, case_id: int, simulation_mgr=None)
     MorphFactorDP2 = runList['MorphFactorDP2'][runCount]
     # MorphType
     MorphType = runList['MORPH_TYPE'][runCount]
+
+    dh = runList['dh'][runCount]
+    IDBh = runList['IDB'][runCount]
 
     # Controls 
     NatVentType  = str(runList['NAT_VENT_TYPE'][runCount])
@@ -638,7 +641,7 @@ def resilience_simulation_prep(si: SimInputs, case_id: int, simulation_mgr=None)
                                   coolingOutageStart,coolingOutageEnd,NatVentAvail,NatVentType,
                                   demandCoolingAvail,shadingAvail,outage1type)
     
-    schedules.ResilienceControls(idf1, unit_list, NatVentType)
+    schedules.ResilienceControls(idf1, unit_list, NatVentType, dh, IDBh)
     
     for zone in unit_list:
         hvac.ResilienceERV(idf1, zone, vent_system_type, occ, ervSense, ervLatent)
