@@ -595,7 +595,7 @@ def ResilienceControls(idf, unit_list, NatVentType):
         if NatVentType == "DCinterlock":
             idf.newidfobject('EnergyManagementSystem:Program',
                 Name = (str(zone) + '_SummerVentDB'),
-                Program_Line_1 = ('IF ' + (str(zone) + '_IDh') + '> ODh && ' + (str(zone) + '_IDB') + ' < 29.5 && NatVentAvail > 0'),
+                Program_Line_1 = ('IF ' + (str(zone) + '_IDh') + '> 7000 + ODh && ' + (str(zone) + '_IDB') + ' < 29.5 && NatVentAvail > 0'),
                 Program_Line_2 = ('SET ' + (str(zone) + 'WindowEconomizer') + ' = 1'),
                 Program_Line_3 = 'SET DC_Coolings = 0',
                 Program_Line_4 = 'ELSEIF NatVentAvail > 0',
