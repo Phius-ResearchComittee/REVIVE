@@ -33,3 +33,4 @@ Outages
 -Demand Cooling Available
 -Natural Ventilation Available
 -Natural Ventilation Type
+Geometry
