@@ -182,7 +182,7 @@ def WindowVentilation(idf, zone, halfHeight, operableArea_N, operableArea_W,
         Minimum_Indoor_Temperature = 15,
         Maximum_Indoor_Temperature = 100,
         Delta_Temperature = -100,
-        Minimum_Outdoor_Temperature = -100,
+        Minimum_Outdoor_Temperature = 15,
         Maximum_Outdoor_Temperature = 100,
         Maximum_Wind_Speed = 10
         )
@@ -199,7 +199,7 @@ def WindowVentilation(idf, zone, halfHeight, operableArea_N, operableArea_W,
         Minimum_Indoor_Temperature = 15,
         Maximum_Indoor_Temperature = 100,
         Delta_Temperature = -100,
-        Minimum_Outdoor_Temperature = -100,
+        Minimum_Outdoor_Temperature = 15,
         Maximum_Outdoor_Temperature = 100,
         Maximum_Wind_Speed = 10
         )
@@ -216,7 +216,7 @@ def WindowVentilation(idf, zone, halfHeight, operableArea_N, operableArea_W,
         Minimum_Indoor_Temperature = 15,
         Maximum_Indoor_Temperature = 100,
         Delta_Temperature = -100,
-        Minimum_Outdoor_Temperature = -100,
+        Minimum_Outdoor_Temperature = 15,
         Maximum_Outdoor_Temperature = 100,
         Maximum_Wind_Speed = 10
         )
@@ -233,7 +233,7 @@ def WindowVentilation(idf, zone, halfHeight, operableArea_N, operableArea_W,
         Minimum_Indoor_Temperature = 15,
         Maximum_Indoor_Temperature = 100,
         Delta_Temperature = -100,
-        Minimum_Outdoor_Temperature = -100,
+        Minimum_Outdoor_Temperature = 15,
         Maximum_Outdoor_Temperature = 100,
         Maximum_Wind_Speed = 10
         )
