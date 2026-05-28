@@ -21,8 +21,8 @@ from PySide6.QtWidgets import (
     QToolButton,
     QPushButton,
     QTreeWidget,
-    QTreeWidgetItem
-    
+    QTreeWidgetItem,
+    QLayout,
 )
 
 
@@ -621,11 +621,26 @@ def stack_widgets_vertically(widget_list, label_list):
     new_layout = QFormLayout()
     new_layout.setLabelAlignment(Qt.AlignLeft)
     for widget, label in zip(widget_list, label_list):
+        if isinstance(widget, (list, tuple)):
+            layout_widget = QHBoxLayout()
+            for child_widget in widget:
+                if isinstance(child_widget, QWidget):
+                    layout_widget.addWidget(child_widget)
+                elif isinstance(child_widget, QLayout):
+                    layout_widget.addLayout(child_widget)
+            widget = layout_widget
+
         if label != "":
             label_widget = QLabel(f"{label}:")
-            new_layout.addRow(label_widget, widget)
+            if isinstance(widget, QLayout):
+                new_layout.addRow(label_widget, widget)
+            else:
+                new_layout.addRow(label_widget, widget)
         else:
-            new_layout.addWidget(widget)
+            if isinstance(widget, QLayout):
+                new_layout.addRow(widget)
+            else:
+                new_layout.addWidget(widget)
     
     # return new layout with padding
     padded_layout = QVBoxLayout()

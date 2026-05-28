@@ -114,7 +114,7 @@ def WeatherMorphSine(idf, outage1start, outage1end, outage2start, outage2end,
     
     # --- LOGIC SPLIT START ---
     
-    if MorphType == "Classic Morph":
+    if MorphType == "ClassicMorph":
         # Classic Morphing Protocol
         idf.newidfobject('EnergyManagementSystem:ProgramCallingManager',
             Name = 'WeatherMorph',
@@ -150,7 +150,7 @@ def WeatherMorphSine(idf, outage1start, outage1end, outage2start, outage2end,
             Program_Line_10 = 'ENDIF',
             Program_Line_11 = 'RETURN')
             
-    elif MorphType == "Peaked Morph":
+    elif MorphType == "PeakedMorph":
         # Peaked Morphing Protocol
         idf.newidfobject('EnergyManagementSystem:ProgramCallingManager',
             Name = 'WeatherMorph',

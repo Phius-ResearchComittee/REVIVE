@@ -2,12 +2,17 @@
 import csv
 import json
 import os
+import warnings
 # dependency imports
 import pandas as pd
+import matplotlib
+matplotlib.use('Qt5Agg')
+import matplotlib.pyplot as plt
 
 import eppy as eppy
 from eppy import modeleditor
-from eppy.modeleditor import IDF
+from eppy.modeleditor import IDF, IDDAlreadySetError
+from geomeppy import IDF as geoIDF
 
 
 from PySide6.QtCore import (
@@ -101,9 +106,10 @@ class RunlistMakerTab(QWidget):
         #--------------------------------------------
         #geometry file components
      
-        self.geometry_idf_file_source = REVIVEFilePicker("geometry file","idf")
-        self.geometry_epw_file_source = REVIVEFilePicker("epw file","idd")
+        self.geometry_idf_file_source = REVIVEFilePicker("IDF Geometry File","idf")
+        self.geometry_epw_file_source = REVIVEFilePicker("IDD file","idd")
         self.import_geometry_button = QPushButton("Import geometry file")
+        self.view_geometry_button = QPushButton("View geometry file")
         
         #geometry connection file
         self.geometry_idf_file_source.textChanged.connect(
@@ -113,12 +119,15 @@ class RunlistMakerTab(QWidget):
             lambda _ : self.import_geometry_button.setChecked(True)
         )
         self.import_geometry_button.clicked.connect(self.importZonesFromGeometry)
+
+        self.view_geometry_button.clicked.connect(self.viewGeometryFile)
         
         #Geometry file pane layout
         self.geometry_pane = QVBoxLayout()
         self.geometry_pane.addWidget(self.geometry_idf_file_source)
         self.geometry_pane.addWidget(self.geometry_epw_file_source)
         self.geometry_pane.addWidget(self.import_geometry_button)
+        self.geometry_pane.addWidget(self.view_geometry_button)
         
     
         
@@ -281,6 +290,7 @@ class RunlistMakerTab(QWidget):
         # create all the new widgets
         self.rl_epw_file = REVIVEFilePicker("EPW File", "epw")
         self.rl_ddy_file = REVIVEFilePicker("DDY File", "ddy")
+        self.rl_morph_type = REVIVEComboBox(items=["PeakedMorph","ClassicMorph"])
         self.rl_morph_factors = [REVIVEDoubleSpinBox(decimals=2, step_amt=0.01, min=-20, max=20) for _ in range(4)]
         self.rl_env_country = REVIVEComboBox()
         self.rl_grid_region = REVIVEComboBox()
@@ -304,8 +314,9 @@ class RunlistMakerTab(QWidget):
                         "DDY File"]
         ))
         new_layout.addLayout(stack_widgets_vertically(
-            widget_list=self.rl_morph_factors,
-            label_list=["Morph Factor 1 - Dry Bulb [°C]",
+            widget_list=[self.rl_morph_type] + self.rl_morph_factors,
+            label_list=["Morph Type",
+                        "Morph Factor 1 - Dry Bulb [°C]",
                         "Morph Factor 1 - Dewpoint [°C]",
                         "Morph Factor 2 - Dry Bulb [°C]",
                         "Morph Factor 2 - Dewpoint [°C]"]
@@ -511,7 +522,7 @@ class RunlistMakerTab(QWidget):
         self.rl_dem_cool_avail.setChecked(False)
         self.rl_nat_vent_avail = QCheckBox()
         self.rl_nat_vent_avail.setChecked(False)
-        self.rl_nat_vent_type = REVIVEComboBox(items=["NatVent","SchNatVent"])
+        self.rl_nat_vent_type = REVIVEComboBox(items=["NatVent","SchNatVent","DCinterlock"])
         self.rl_nat_vent_type.setEnabled(False)
         self.rl_nat_vent_avail.checkStateChanged.connect(
             lambda state : self.rl_nat_vent_type.setEnabled(state==Qt.Checked))
@@ -567,6 +578,7 @@ class RunlistMakerTab(QWidget):
         # site and utility
         self.runlist_dict["EPW"] = self.rl_epw_file.text()
         self.runlist_dict["DDY"] = self.rl_ddy_file.text()
+        self.runlist_dict["MORPH_TYPE"] = self.rl_morph_type.currentText()
         self.runlist_dict["MorphFactorDB1"] = self.rl_morph_factors[0].cleanText()
         self.runlist_dict["MorphFactorDP1"] = self.rl_morph_factors[1].cleanText()
         self.runlist_dict["MorphFactorDB2"] = self.rl_morph_factors[2].cleanText()
@@ -749,8 +761,11 @@ class RunlistMakerTab(QWidget):
             
             QMessageBox.warning(self, "Missing File", "Please select EPW file.")
             return
-            
-        IDF.setiddname(iddName)
+        
+        try:
+            IDF.setiddname(iddName)
+        except IDDAlreadySetError:
+            pass
         idf = IDF(idfName)
 
         zone_name_list = [str(zone.Name) for zone in idf.idfobjects["Zone"]]
@@ -766,8 +781,25 @@ class RunlistMakerTab(QWidget):
                 zone_name_combo = combo_boxes[0]
                 zone_name_combo.change_items(zone_name_list)
                 zone_name_combo.setCurrentText(name)
-            
-        
+
+    def viewGeometryFile(self):
+        idfName = self.geometry_idf_file_source.get_filename()   # C:/EnergyPlusV9-5-0/ExampleFiles/MultiStory.idf
+        iddName = self.geometry_epw_file_source.get_filename()    # C:/EnergyPlusV9-5-0/ExampleFiles/MultiStory.idf
+        if not idfName :
+            QMessageBox.warning(self, "Missing File", "Please select geometry file.")
+            return
+        try:
+            try:
+                geoIDF.setiddname(iddName)
+            except IDDAlreadySetError:
+                pass
+            idf = geoIDF(idfName)
+            with warnings.catch_warnings():
+                warnings.filterwarnings("ignore", category=UserWarning, message=".*FigureCanvasAgg.*")
+                geoIDF.view_model(idf)
+        except Exception as e:
+            QMessageBox.critical(self, "Error", f"Failed to read IDF file: {e}")
+            return
      
     def import_runlist_csv(self):
         path = self.runlist_import_from_csv_file_source.text()

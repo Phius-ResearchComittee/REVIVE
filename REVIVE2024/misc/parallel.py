@@ -14,7 +14,7 @@ from joblib import Parallel, delayed
 # import streamlit as st
 import eppy as eppy
 from eppy import modeleditor
-from eppy.modeleditor import IDF
+from eppy.modeleditor import IDF, IDDAlreadySetError
 from eppy.runner.run_functions import runIDFs
 # from PIL import Image, ImageTk
 import os
@@ -37,7 +37,10 @@ from pylatex.utils import italic
 os.chdir('C:\REVIVE v24.1.0\MF\MF Results')
 iddfile  = 'C:\EnergyPlusV9-5-0\Energy+.idd'
 epwFile = 'USA_IL_Chicago-Midway.AP.725340_TMY3.epw'
-IDF.setiddname(iddfile)
+try:
+    IDF.setiddname(iddfile)
+except IDDAlreadySetError:
+    pass
 
 files = os.listdir()
 runs = []
@@ -52,7 +55,10 @@ for file in files:
 
 
 def simulation(run):
-    IDF.setiddname(iddfile)
+    try:
+        IDF.setiddname(iddfile)
+    except IDDAlreadySetError:
+        pass
     idf = IDF(str(run), str(epwFile))
     idf.run(readvars=True,output_prefix=str(run))
 

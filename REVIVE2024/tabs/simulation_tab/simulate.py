@@ -8,7 +8,7 @@ from datetime import datetime as dt
 from datetime import timedelta
 from statistics import mean
 import eppy as eppy
-from eppy.modeleditor import IDF
+from eppy.modeleditor import IDF, IDDAlreadySetError
 from eppy.runner.run_functions import runIDFs
 from eppy.runner.run_functions import EnergyPlusRunError
 import multiprocessing.pool as mp_pool
@@ -265,7 +265,10 @@ def resilience_simulation_prep(si: SimInputs, case_id: int, simulation_mgr=None)
     weatherDatabase = si.weather_db
     constructionDatabase = si.construction_db
 
-    IDF.setiddname(iddfile)
+    try:
+        IDF.setiddname(iddfile)
+    except IDDAlreadySetError:
+        pass
 
     runList = si.run_list_df
     runCount = case_id
