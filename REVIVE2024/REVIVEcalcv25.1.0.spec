@@ -3,9 +3,9 @@
 
 a = Analysis(
     ['main.py'],
-    pathex=['.env\\Lib\\site-packages'],
+    pathex=['.venv\\Lib\\site-packages'],
     binaries=[],
-    datas=[('json\\help_tree_content.json', '.'), ('help_tree_structure.txt', '.'), ('json\\phius_runlist_options.json', '.'), ('json\\required_columns.json', '.'), ('Phius-Logo-RGB__Color_Icon.ico', '.')],
+    datas=[('help_tree_content.json', '.'), ('help_tree_structure.txt', '.'), ('phius_runlist_options.json', '.'), ('required_columns.json', '.'), ('Phius-Logo-RGB__Color_Icon.ico', '.')],
     hiddenimports=[],
     hookspath=[],
     hooksconfig={},
@@ -22,7 +22,7 @@ exe = EXE(
     a.binaries,
     a.datas,
     [],
-    name='REVIVEcalc',
+    name='REVIVEcalcv25.1.0',
     debug=False,
     bootloader_ignore_signals=False,
     strip=False,
@@ -35,5 +35,5 @@ exe = EXE(
     target_arch=None,
     codesign_identity=None,
     entitlements_file=None,
-    icon=['revive_phius_icon_v24.2.1.ico'],
+    icon=['revive_phius_icon_v25.1.0.ico'],
 )

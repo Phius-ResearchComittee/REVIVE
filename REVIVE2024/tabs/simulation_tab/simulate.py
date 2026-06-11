@@ -428,6 +428,7 @@ def resilience_simulation_prep(si: SimInputs, case_id: int, simulation_mgr=None)
     vent_system_type = runList['VENT_SYSTEM_TYPE'][runCount]
 
     gridRegion = runList['GRID_REGION'][runCount]
+    building_azimuth = runList['BUILDING_AZIMUTH'][runCount]
     #==============================================================================================================================
     # 4. Base IDF
     #==============================================================================================================================
@@ -488,7 +489,7 @@ def resilience_simulation_prep(si: SimInputs, case_id: int, simulation_mgr=None)
     # High level model information
     simControl.Version(idf1)
     simControl.SimulationControl(idf1)
-    simControl.Building(idf1,BaseFileName)
+    simControl.Building(idf1,BaseFileName, building_azimuth)
     simControl.CO2Balance(idf1)
     simControl.Timestep(idf1)
     simControl.RunPeriod(idf1)

@@ -40,11 +40,11 @@ def SimulationControl(idf):
         Maximum_Number_of_HVAC_Sizing_Simulation_Passes = 25
         )
     
-def Building(idf,fileName):
+def Building(idf,fileName, building_azimuth):
 
     idf.newidfobject('Building',
         Name = str(fileName),
-        North_Axis = 0,
+        North_Axis = float(building_azimuth),
         Terrain = 'City',
         Loads_Convergence_Tolerance_Value = 0.04,
         Temperature_Convergence_Tolerance_Value = 0.4,

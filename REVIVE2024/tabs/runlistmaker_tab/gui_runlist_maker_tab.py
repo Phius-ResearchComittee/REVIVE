@@ -290,6 +290,7 @@ class RunlistMakerTab(QWidget):
         # create all the new widgets
         self.rl_epw_file = REVIVEFilePicker("EPW File", "epw")
         self.rl_ddy_file = REVIVEFilePicker("DDY File", "ddy")
+        self.rl_building_azimuth = REVIVEDoubleSpinBox(decimals=1, step_amt=5, min=0, max=359.9)
         self.rl_morph_type = REVIVEComboBox(items=["PeakedMorph","ClassicMorph"])
         self.rl_morph_factors = [REVIVEDoubleSpinBox(decimals=2, step_amt=0.01, min=-20, max=20) for _ in range(4)]
         self.rl_env_country = REVIVEComboBox()
@@ -309,9 +310,11 @@ class RunlistMakerTab(QWidget):
         # add all new widgets to layout with labels
         new_layout.addLayout(stack_widgets_vertically(
             widget_list=[self.rl_epw_file,
-                         self.rl_ddy_file],
+                         self.rl_ddy_file,
+                         self.rl_building_azimuth],
             label_list=["EPW File",
-                        "DDY File"]
+                        "DDY File",
+                        "Building Azimuth"]
         ))
         new_layout.addLayout(stack_widgets_vertically(
             widget_list=[self.rl_morph_type] + self.rl_morph_factors,
@@ -396,7 +399,7 @@ class RunlistMakerTab(QWidget):
         self.rl_erv_latent = REVIVEDoubleSpinBox(max=1)
         self.rl_heating_cop = REVIVEDoubleSpinBox(max=10)
         self.rl_cooling_cop = REVIVEDoubleSpinBox(max=10)
-        self.rl_pv_size = REVIVESpinBox(step_amt=500)
+        self.rl_pv_size = REVIVESpinBox(step_amt=500,min=1)
         self.rl_pv_tilt = REVIVESpinBox(step_amt=10, min=0, max=90)
         self.rl_pv_azimuth = REVIVESpinBox(step_amt=10, max=360)
         self.appliance_list = ["Fridge","Dishwasher","Clotheswasher","Clothesdryer","Lights"]
@@ -446,7 +449,7 @@ class RunlistMakerTab(QWidget):
 
         # create all the new widgets
         self.rl_chi_val = REVIVEDoubleSpinBox(decimals=3, step_amt=0.001, max=5)
-        self.rl_infil_rate = REVIVEDoubleSpinBox(decimals=3, step_amt=0.01, min=0, max=1)
+        self.rl_infil_rate = REVIVEDoubleSpinBox(decimals=3, step_amt=0.01, min=0, max=5)
         self.rl_op_areas = [REVIVESpinBox(step_amt=1) for _ in range(4)]
         self.rl_foundation_set = REVIVEFoundationWidgetSet(add_label="Add Foundation Type", 
                                                            initial_widgets=1, 
@@ -578,7 +581,8 @@ class RunlistMakerTab(QWidget):
         # site and utility
         self.runlist_dict["EPW"] = self.rl_epw_file.text()
         self.runlist_dict["DDY"] = self.rl_ddy_file.text()
-        self.runlist_dict["MORPH_TYPE"] = self.rl_morph_type.currentText()
+        self.runlist_dict["BUILDING_AZIMUTH"] = self.rl_building_azimuth.cleanText()
+        self.runlist_dict["MORPH_TYPE"] = self.rl_morph_type.currentText() 
         self.runlist_dict["MorphFactorDB1"] = self.rl_morph_factors[0].cleanText()
         self.runlist_dict["MorphFactorDP1"] = self.rl_morph_factors[1].cleanText()
         self.runlist_dict["MorphFactorDB2"] = self.rl_morph_factors[2].cleanText()
@@ -769,7 +773,7 @@ class RunlistMakerTab(QWidget):
         idf = IDF(idfName)
 
         zone_name_list = [str(zone.Name) for zone in idf.idfobjects["Zone"]]
-        self.geometry_options["ZONES"] = zone_name_list
+        # self.geometry_options["ZONES"] = zone_name_list
         # self.runlist_dict["ZONES"] = self.rl_zone_set.get_data()
         for name in zone_name_list:
             self.rl_zone_set.spawn_widget()
@@ -875,7 +879,7 @@ class RunlistMakerTab(QWidget):
             flat_rows.append(row)
          # Validate structure
         # validation.validate_runlist_structure(self.required_cols_file, file_path)   
-        runlist_row["ZONES"] = json.dumps(flat_rows)
+        # runlist_row["ZONES"] = json.dumps(flat_rows)
         
         df = pd.DataFrame([runlist_row])
 

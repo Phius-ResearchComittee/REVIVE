@@ -36,11 +36,15 @@ class MyWidget(QWidget):
 
         # set up persistent app resources for exe
         self.app_directory = getattr(sys, "_MEIPASS", self.curr_dir)
+        self.resource_directory = os.path.join(self.app_directory, "json")
+        if not os.path.isdir(self.resource_directory):
+            self.resource_directory = self.app_directory
+
         self.icon_file = os.path.join(self.app_directory, "Phius-Logo-RGB__Color_Icon.ico")
-        self.runlist_ops_file = os.path.join(self.app_directory, "json/phius_runlist_options.json")
+        self.runlist_ops_file = os.path.join(self.resource_directory, "phius_runlist_options.json")
         self.help_tree_struc_file = os.path.join(self.app_directory, "help_tree_structure.txt")
-        self.help_tree_content_file = os.path.join(self.app_directory, "json/help_tree_content.json")
-        self.required_cols_file = os.path.join(self.app_directory, "json/required_columns.json")
+        self.help_tree_content_file = os.path.join(self.resource_directory, "help_tree_content.json")
+        self.required_cols_file = os.path.join(self.resource_directory, "required_columns.json")
 
         # customize window
         self.icon = QIcon()
